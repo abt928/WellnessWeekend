@@ -1,0 +1,263 @@
+"use client";
+import { useState, useEffect, useCallback } from "react";
+
+interface Variation {
+  id: string;
+  name: string;
+  price: number;
+}
+
+interface CatalogItem {
+  id: string;
+  name: string;
+  description: string;
+  category: string;
+  variations: Variation[];
+}
+
+interface CartEntry {
+  variationId: string;
+  name: string;
+  variantName: string;
+  price: number;
+  quantity: number;
+}
+
+const TABS = [
+  { key: "tickets", label: "🎫 Tickets", icon: "🎫" },
+  { key: "addons", label: "⚡ Add-Ons", icon: "⚡" },
+  { key: "cacao", label: "🍫 Cacao", icon: "🍫" },
+  { key: "merch", label: "👕 Merch", icon: "👕" },
+];
+
+function formatPrice(cents: number) {
+  return `$${(cents / 100).toFixed(cents % 100 === 0 ? 0 : 2)}`;
+}
+
+export default function Store() {
+  const [items, setItems] = useState<CatalogItem[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [activeTab, setActiveTab] = useState("tickets");
+  const [cart, setCart] = useState<CartEntry[]>([]);
+  const [cartOpen, setCartOpen] = useState(false);
+  const [checkingOut, setCheckingOut] = useState(false);
+
+  // Load catalog
+  useEffect(() => {
+    fetch("/api/square/catalog")
+      .then((r) => r.json())
+      .then((d) => { setItems(d.items || []); setLoading(false); })
+      .catch(() => setLoading(false));
+  }, []);
+
+  // Load cart from localStorage
+  useEffect(() => {
+    try {
+      const saved = localStorage.getItem("ww-cart");
+      if (saved) setCart(JSON.parse(saved));
+    } catch { /* noop */ }
+  }, []);
+
+  // Save cart
+  useEffect(() => {
+    localStorage.setItem("ww-cart", JSON.stringify(cart));
+  }, [cart]);
+
+  const addToCart = useCallback((item: CatalogItem, variation: Variation) => {
+    setCart((prev) => {
+      const existing = prev.find((c) => c.variationId === variation.id);
+      if (existing) {
+        return prev.map((c) =>
+          c.variationId === variation.id ? { ...c, quantity: c.quantity + 1 } : c
+        );
+      }
+      return [...prev, {
+        variationId: variation.id,
+        name: item.name,
+        variantName: variation.name,
+        price: variation.price,
+        quantity: 1,
+      }];
+    });
+  }, []);
+
+  const updateQty = useCallback((variationId: string, delta: number) => {
+    setCart((prev) =>
+      prev
+        .map((c) => c.variationId === variationId ? { ...c, quantity: c.quantity + delta } : c)
+        .filter((c) => c.quantity > 0)
+    );
+  }, []);
+
+  const cartTotal = cart.reduce((sum, c) => sum + c.price * c.quantity, 0);
+  const cartCount = cart.reduce((sum, c) => sum + c.quantity, 0);
+
+  const handleCheckout = async () => {
+    if (cart.length === 0) return;
+    setCheckingOut(true);
+    try {
+      const res = await fetch("/api/square/checkout", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          items: cart.map((c) => ({
+            variationId: c.variationId,
+            quantity: c.quantity,
+            name: c.name,
+          })),
+          returnUrl: window.location.origin,
+        }),
+      });
+      const data = await res.json();
+      if (data.checkoutUrl) {
+        window.location.href = data.checkoutUrl;
+      }
+    } catch {
+      setCheckingOut(false);
+    }
+  };
+
+  const filtered = items.filter((i) => i.category === activeTab);
+
+  return (
+    <section id="store" className="section store-section">
+      <p className="section-label">Shop & Reserve</p>
+      <h2 className="section-title" style={{ fontFamily: "var(--font-display)" }}>
+        Festival <em>Store</em>
+      </h2>
+      <p className="section-desc">
+        Secure your tickets, book add-on experiences, and grab merch — all processed
+        securely through Square.
+      </p>
+
+      {/* Category Tabs */}
+      <div className="store-tabs">
+        {TABS.map((t) => (
+          <button
+            key={t.key}
+            className={`store-tab${activeTab === t.key ? " active" : ""}`}
+            onClick={() => setActiveTab(t.key)}
+          >
+            {t.label}
+          </button>
+        ))}
+      </div>
+
+      {/* Items Grid */}
+      {loading ? (
+        <div className="store-loading">
+          <div className="store-spinner" />
+          <p>Loading catalog...</p>
+        </div>
+      ) : (
+        <div className="store-grid">
+          {filtered.map((item) => (
+            <div className="store-card" key={item.id}>
+              <div className="store-card-header">
+                <h3 className="store-card-name" style={{ fontFamily: "var(--font-display)" }}>
+                  {item.name}
+                </h3>
+                {item.variations.length === 1 && (
+                  <span className="store-card-price">
+                    {formatPrice(item.variations[0].price)}
+                  </span>
+                )}
+              </div>
+              <p className="store-card-desc">{item.description}</p>
+              <div className="store-card-actions">
+                {item.variations.length === 1 ? (
+                  <button
+                    className="store-add-btn"
+                    onClick={() => addToCart(item, item.variations[0])}
+                  >
+                    Add to Cart
+                  </button>
+                ) : (
+                  <div className="store-variants">
+                    {item.variations.map((v) => (
+                      <button
+                        key={v.id}
+                        className="store-variant-btn"
+                        onClick={() => addToCart(item, v)}
+                      >
+                        <span className="variant-name">{v.name}</span>
+                        <span className="variant-price">{formatPrice(v.price)}</span>
+                      </button>
+                    ))}
+                  </div>
+                )}
+              </div>
+            </div>
+          ))}
+          {filtered.length === 0 && !loading && (
+            <p className="store-empty">No items in this category yet.</p>
+          )}
+        </div>
+      )}
+
+      {/* Floating Cart Bar */}
+      {cartCount > 0 && (
+        <div className="cart-bar" onClick={() => setCartOpen(true)}>
+          <span className="cart-bar-count">{cartCount} item{cartCount !== 1 ? "s" : ""}</span>
+          <span className="cart-bar-label">View Cart</span>
+          <span className="cart-bar-total">{formatPrice(cartTotal)}</span>
+        </div>
+      )}
+
+      {/* Cart Drawer */}
+      {cartOpen && (
+        <div className="cart-overlay" onClick={() => setCartOpen(false)}>
+          <div className="cart-drawer" onClick={(e) => e.stopPropagation()}>
+            <div className="cart-header">
+              <h3 style={{ fontFamily: "var(--font-display)", fontSize: "1.3rem" }}>Your Cart</h3>
+              <button className="modal-close" onClick={() => setCartOpen(false)}>✕</button>
+            </div>
+
+            {cart.length === 0 ? (
+              <p style={{ color: "var(--sage)", padding: "2rem", textAlign: "center" }}>
+                Your cart is empty
+              </p>
+            ) : (
+              <>
+                <div className="cart-items">
+                  {cart.map((c) => (
+                    <div className="cart-item" key={c.variationId}>
+                      <div className="cart-item-info">
+                        <div className="cart-item-name">{c.name}</div>
+                        {c.variantName !== "Regular" && c.variantName !== c.name && (
+                          <div className="cart-item-variant">{c.variantName}</div>
+                        )}
+                      </div>
+                      <div className="cart-item-controls">
+                        <button className="qty-btn" onClick={() => updateQty(c.variationId, -1)}>−</button>
+                        <span className="qty-num">{c.quantity}</span>
+                        <button className="qty-btn" onClick={() => updateQty(c.variationId, 1)}>+</button>
+                      </div>
+                      <div className="cart-item-price">{formatPrice(c.price * c.quantity)}</div>
+                    </div>
+                  ))}
+                </div>
+                <div className="cart-footer">
+                  <div className="cart-total">
+                    <span>Total</span>
+                    <span style={{ fontFamily: "var(--font-display)", fontSize: "1.3rem" }}>
+                      {formatPrice(cartTotal)}
+                    </span>
+                  </div>
+                  <button
+                    className="cart-checkout-btn"
+                    onClick={handleCheckout}
+                    disabled={checkingOut}
+                  >
+                    {checkingOut ? "Redirecting to checkout..." : "Proceed to Checkout"}
+                  </button>
+                  <p className="cart-secure">🔒 Secure checkout powered by Square</p>
+                </div>
+              </>
+            )}
+          </div>
+        </div>
+      )}
+    </section>
+  );
+}

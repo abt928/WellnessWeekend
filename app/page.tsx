@@ -6,6 +6,7 @@ import Schedule from "@/components/Schedule";
 import FAQ from "@/components/FAQ";
 import GetInvolved from "@/components/GetInvolved";
 import NewsletterForm from "@/components/NewsletterForm";
+import Store from "@/components/Store";
 
 /* ── static data ── */
 const practitioners = [
@@ -284,6 +285,9 @@ export default function Home() {
 
       {/* ═══ SCHEDULE ═══ */}
       <Schedule />
+
+      {/* ═══ STORE ═══ */}
+      <Store />
 
       {/* ═══ PACKAGES ═══ */}
       <section id="packages" className="section packages">

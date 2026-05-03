@@ -61,6 +61,13 @@ function getCookie(name: string): string | undefined {
   return match ? decodeURIComponent(match[2]) : undefined;
 }
 
+/** Set a first-party cookie */
+function setCookie(name: string, value: string, days: number) {
+  if (typeof document === "undefined") return;
+  const expires = new Date(Date.now() + days * 86400000).toUTCString();
+  document.cookie = `${name}=${encodeURIComponent(value)};expires=${expires};path=/;SameSite=Lax`;
+}
+
 /** Get ttclid from URL params or cookie */
 function getTtclid(): string | undefined {
   if (typeof window === "undefined") return undefined;
@@ -81,6 +88,8 @@ function getMetaClickIds(): { fbc?: string; fbp?: string } {
     const fbclid = new URLSearchParams(window.location.search).get("fbclid");
     if (fbclid) {
       fbc = `fb.1.${Date.now()}.${fbclid}`;
+      // Persist as first-party cookie so it survives navigation (90 days)
+      setCookie("_fbc", fbc, 90);
     }
   }
   
@@ -228,6 +237,27 @@ function getExternalId(): string {
   return eid;
 }
 
+/** Persist known user PII for cross-event matching */
+function saveKnownUser(email?: string, phone?: string) {
+  if (typeof window === "undefined") return;
+  try {
+    if (email) localStorage.setItem("ww-em", email.trim().toLowerCase());
+    if (phone) localStorage.setItem("ww-ph", phone.replace(/\D/g, ""));
+  } catch { /* quota exceeded, ignore */ }
+}
+
+/** Retrieve previously captured user PII */
+function getKnownUser(): { email?: string; phone?: string } {
+  if (typeof window === "undefined") return {};
+  try {
+    const email = localStorage.getItem("ww-em") || undefined;
+    const phone = localStorage.getItem("ww-ph") || undefined;
+    return { email, phone };
+  } catch {
+    return {};
+  }
+}
+
 async function fireServerEvent(
   event: string,
   eventId: string,
@@ -319,14 +349,25 @@ function trackEvent(
   const metaEvent = META_EVENT_MAP[internalEvent] || internalEvent;
   const gaEvent = GA_EVENT_MAP[internalEvent] || internalEvent;
 
+  // Persist email/phone when provided, and enrich events that lack them
+  if (data?.email || data?.phone) {
+    saveKnownUser(data.email, data.phone);
+  }
+  const enriched: TrackingEventData = { ...data };
+  if (!enriched.email || !enriched.phone) {
+    const known = getKnownUser();
+    if (!enriched.email && known.email) enriched.email = known.email;
+    if (!enriched.phone && known.phone) enriched.phone = known.phone;
+  }
+
   // Client-side pixels (immediate)
-  fireTikTok(tiktokEvent, eventId, data);
-  fireMeta(metaEvent, eventId, data);
-  fireGA(gaEvent, eventId, data);
+  fireTikTok(tiktokEvent, eventId, enriched);
+  fireMeta(metaEvent, eventId, enriched);
+  fireGA(gaEvent, eventId, enriched);
 
   // Server-side CAPI (async, fire-and-forget)
   if (!options?.skipServer) {
-    fireServerEvent(internalEvent, eventId, data);
+    fireServerEvent(internalEvent, eventId, enriched);
   }
 }
 

@@ -9,6 +9,7 @@ import NewsletterForm from "@/components/NewsletterForm";
 import Store from "@/components/Store";
 import Gallery from "@/components/Gallery";
 import FloatingActions from "@/components/FloatingActions";
+import ConversionNudges from "@/components/ConversionNudges";
 import {
   FlameIcon,
   LeafIcon,
@@ -95,6 +96,7 @@ export default function Home() {
       />
       <Navigation />
       <FloatingActions />
+      <ConversionNudges />
 
       {/* ═══ HERO ═══ */}
       <section className="hero">

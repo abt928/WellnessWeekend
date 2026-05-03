@@ -218,6 +218,9 @@ export default function Store() {
         Choose your tickets, add-on experiences, and merch to craft the perfect
         Wellness Weekend, all processed securely through Square.
       </p>
+      <p className="store-capacity" style={{ fontFamily: "var(--font-accent)" }}>
+        ✦ An intimate gathering limited to 200 seekers ✦
+      </p>
 
       {/* Category Tabs */}
       <div className="store-tabs">

@@ -27,3 +27,12 @@ export const newsletter = pgTable("newsletter", {
   email: varchar("email", { length: 255 }).notNull().unique(),
   createdAt: timestamp("created_at").defaultNow().notNull(),
 });
+
+export const leads = pgTable("leads", {
+  id: serial("id").primaryKey(),
+  name: varchar("name", { length: 255 }).notNull(),
+  email: varchar("email", { length: 255 }).notNull(),
+  message: text("message").notNull(),
+  source: varchar("source", { length: 100 }).default("message_form").notNull(),
+  createdAt: timestamp("created_at").defaultNow().notNull(),
+});

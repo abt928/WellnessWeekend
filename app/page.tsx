@@ -8,6 +8,7 @@ import GetInvolved from "@/components/GetInvolved";
 import NewsletterForm from "@/components/NewsletterForm";
 import Store from "@/components/Store";
 import Gallery from "@/components/Gallery";
+import FloatingActions from "@/components/FloatingActions";
 import {
   FlameIcon,
   LeafIcon,
@@ -93,6 +94,7 @@ export default function Home() {
         dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
       />
       <Navigation />
+      <FloatingActions />
 
       {/* ═══ HERO ═══ */}
       <section className="hero">

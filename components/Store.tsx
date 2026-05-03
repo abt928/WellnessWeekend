@@ -78,6 +78,13 @@ export default function Store() {
     localStorage.setItem("ww-cart", JSON.stringify(cart));
   }, [cart]);
 
+  // Listen for external cart open requests (from FloatingActions FAB)
+  useEffect(() => {
+    const handler = () => setCartOpen(true);
+    window.addEventListener("open-cart", handler);
+    return () => window.removeEventListener("open-cart", handler);
+  }, []);
+
   const addToCart = useCallback((item: CatalogItem, variation: Variation) => {
     setCart((prev) => {
       const existing = prev.find((c) => c.variationId === variation.id);

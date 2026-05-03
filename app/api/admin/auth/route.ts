@@ -1,7 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { cookies } from "next/headers";
 
-const ADMIN_PASSWORD = "wellness26$";
 const SESSION_TOKEN = "ww-admin-ok"; // simple static token
 const COOKIE_NAME = "admin-session";
 
@@ -9,7 +8,13 @@ export async function POST(req: NextRequest) {
   try {
     const { password } = await req.json();
 
-    if (password !== ADMIN_PASSWORD) {
+    const adminPassword = process.env.ADMIN_PASSWORD;
+    if (!adminPassword) {
+      console.error("CRITICAL: ADMIN_PASSWORD environment variable is not set.");
+      return NextResponse.json({ error: "Server misconfiguration" }, { status: 500 });
+    }
+
+    if (password !== adminPassword) {
       return NextResponse.json({ error: "Invalid password" }, { status: 401 });
     }
 

@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
+import { WebhooksHelper } from "square";
 
 export const dynamic = "force-dynamic";
 
@@ -162,7 +163,28 @@ async function fireGA4Purchase(value: number, currency: string) {
 
 export async function POST(req: NextRequest) {
   try {
-    const payload: SquareWebhookPayload = await req.json();
+    const rawBody = await req.text();
+    const signature = req.headers.get("x-square-hmacsha256-signature");
+    const signatureKey = process.env.SQUARE_WEBHOOK_SIGNATURE_KEY;
+    const notificationUrl = process.env.SQUARE_WEBHOOK_URL || "https://wellnessweekendak.com/api/square/webhook";
+
+    // Validate Square signature to ensure event authenticity
+    if (signatureKey && signature) {
+      const isValid = WebhooksHelper.verifySignature({
+        requestBody: rawBody,
+        signatureHeader: signature,
+        signatureKey,
+        notificationUrl
+      });
+      if (!isValid) {
+        console.error("[Webhook] Invalid Square signature");
+        return NextResponse.json({ error: "Invalid signature" }, { status: 403 });
+      }
+    } else if (!signatureKey) {
+      console.warn("[Webhook] Missing SQUARE_WEBHOOK_SIGNATURE_KEY, skipping validation (unsafe)");
+    }
+
+    const payload: SquareWebhookPayload = JSON.parse(rawBody);
 
     // Only process payment.completed events
     if (payload.type !== "payment.completed") {

@@ -129,7 +129,16 @@ export default function Store() {
       value: cartTotal / 100,
       currency: "USD",
       quantity: cartCount,
+      contentId: cart[0]?.variationId || "wellness-weekend-checkout",
+      contentName: cart.map((c) => c.name).join(", "),
+      contentType: "product",
       description: cart.map((c) => c.name).join(", "),
+      contents: cart.map((c) => ({
+        contentId: c.variationId,
+        quantity: c.quantity,
+        price: c.price / 100,
+        name: c.name,
+      })),
     });
 
     // Save cart context for the thank-you page to fire purchase event with value

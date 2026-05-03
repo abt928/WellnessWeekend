@@ -35,6 +35,7 @@ export interface TrackingEventData {
   email?: string;        // for server-side matching + Advanced Matching
   phone?: string;        // for server-side matching
   description?: string;  // form type etc.
+  contents?: { contentId: string; quantity: number; price?: number; name?: string }[];
 }
 
 // ─── Utilities ───────────────────────────────────────────────────────
@@ -106,11 +107,32 @@ function fireTikTok(event: string, eventId: string, data?: TrackingEventData) {
   const params: Record<string, unknown> = {};
   if (data?.value) params.value = data.value;
   if (data?.currency) params.currency = data.currency || "USD";
-  if (data?.contentId) params.content_id = data.contentId;
-  if (data?.contentName) params.content_name = data.contentName;
-  if (data?.contentType) params.content_type = data.contentType;
   if (data?.quantity) params.quantity = data.quantity;
   if (data?.description) params.description = data.description;
+
+  // TikTok requires content_id on commerce events — always include it
+  params.content_id = data?.contentId || data?.contentName || "wellness-weekend";
+  if (data?.contentName) params.content_name = data.contentName;
+  if (data?.contentType) params.content_type = data.contentType || "product";
+
+  // Build contents array for TikTok (required for AddToCart, Checkout, Purchase)
+  if (data?.contents && data.contents.length > 0) {
+    params.contents = data.contents.map((c) => ({
+      content_id: c.contentId,
+      content_name: c.name || c.contentId,
+      content_type: "product",
+      quantity: c.quantity,
+      price: c.price,
+    }));
+  } else if (data?.contentId || data?.contentName) {
+    params.contents = [{
+      content_id: data.contentId || data.contentName || "wellness-weekend",
+      content_name: data.contentName || data.contentId || "Wellness Weekend",
+      content_type: data.contentType || "product",
+      quantity: data.quantity || 1,
+      price: data.value,
+    }];
+  }
 
   try {
     window.ttq.track(
@@ -131,10 +153,23 @@ function fireMeta(event: string, eventId: string, data?: TrackingEventData) {
   };
   if (data?.value) params.value = data.value;
   if (data?.currency) params.currency = data.currency || "USD";
-  if (data?.contentId) params.content_ids = [data.contentId];
   if (data?.contentName) params.content_name = data.contentName;
   if (data?.contentType) params.content_type = data.contentType;
   if (data?.quantity) params.num_items = data.quantity;
+
+  // Meta needs content_ids array
+  if (data?.contents && data.contents.length > 0) {
+    params.content_ids = data.contents.map((c) => c.contentId);
+    params.contents = data.contents.map((c) => ({
+      id: c.contentId,
+      quantity: c.quantity,
+      item_price: c.price,
+    }));
+  } else if (data?.contentId) {
+    params.content_ids = [data.contentId];
+  } else if (data?.contentName) {
+    params.content_ids = [data.contentName];
+  }
 
   try {
     window.fbq("track", event, params, { eventID: eventId });

@@ -1,4 +1,5 @@
 import Link from "next/link";
+import ThankYouTracker from "./ThankYouTracker";
 
 export const metadata = {
   title: "Thank You | Wellness Weekend 2026",
@@ -8,6 +9,7 @@ export const metadata = {
 export default function ThankYou() {
   return (
     <main className="thankyou">
+      <ThankYouTracker />
       <div className="thankyou-content">
         <div className="thankyou-icon">✨</div>
         <h1 className="thankyou-title" style={{ fontFamily: "var(--font-display)" }}>

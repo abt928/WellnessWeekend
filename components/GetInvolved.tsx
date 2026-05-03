@@ -1,5 +1,6 @@
 "use client";
 import { useState, FormEvent } from "react";
+import { trackFormSubmit } from "@/lib/tracking";
 
 type FormType = "vendor" | "volunteer" | null;
 
@@ -52,6 +53,10 @@ export default function GetInvolved() {
       });
       if (!res.ok) throw new Error();
       setStatus("success");
+      trackFormSubmit({
+        description: `${activeForm}_application`,
+        email: data.email as string,
+      });
     } catch {
       setStatus("error");
     }

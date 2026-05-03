@@ -1,5 +1,6 @@
 "use client";
 import { useState, FormEvent } from "react";
+import { trackLead } from "@/lib/tracking";
 
 export default function NewsletterForm() {
   const [status, setStatus] = useState<"idle" | "sending" | "success" | "error">("idle");
@@ -7,7 +8,7 @@ export default function NewsletterForm() {
   async function handleSubmit(e: FormEvent<HTMLFormElement>) {
     e.preventDefault();
     setStatus("sending");
-    const email = new FormData(e.currentTarget).get("email");
+    const email = new FormData(e.currentTarget).get("email") as string;
 
     try {
       const res = await fetch("/api/newsletter", {
@@ -17,6 +18,7 @@ export default function NewsletterForm() {
       });
       if (!res.ok) throw new Error();
       setStatus("success");
+      trackLead({ email, description: "newsletter_signup" });
     } catch {
       setStatus("error");
     }

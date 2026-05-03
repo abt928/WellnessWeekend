@@ -1,5 +1,6 @@
 "use client";
 import { useState, useEffect, useCallback } from "react";
+import { trackAddToCart, trackInitiateCheckout } from "@/lib/tracking";
 
 interface Variation {
   id: string;
@@ -92,6 +93,14 @@ export default function Store() {
         quantity: 1,
       }];
     });
+    trackAddToCart({
+      contentId: variation.id,
+      contentName: item.name,
+      contentType: "product",
+      value: variation.price / 100,
+      currency: "USD",
+      quantity: 1,
+    });
   }, []);
 
   const updateQty = useCallback((variationId: string, delta: number) => {
@@ -108,6 +117,12 @@ export default function Store() {
   const handleCheckout = async () => {
     if (cart.length === 0) return;
     setCheckingOut(true);
+    trackInitiateCheckout({
+      value: cartTotal / 100,
+      currency: "USD",
+      quantity: cartCount,
+      description: cart.map((c) => c.name).join(", "),
+    });
     try {
       const res = await fetch("/api/square/checkout", {
         method: "POST",

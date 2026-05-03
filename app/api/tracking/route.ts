@@ -5,20 +5,30 @@ export const dynamic = "force-dynamic";
 /**
  * Server-side tracking endpoint — receives events from the client and fans out
  * to TikTok Events API and Meta Conversions API for redundant signal.
+ *
+ * Key: uses the SAME event_id as the client-side pixel for deduplication.
+ * Also receives pre-hashed email, fbc/fbp, and ttclid for match rate.
  */
 
 interface TrackingPayload {
   event: string;
+  eventId: string; // shared with client pixel for deduplication
   value?: number;
   currency?: string;
   contentId?: string;
   contentName?: string;
   contentType?: string;
   quantity?: number;
-  email?: string;
+  email?: string;        // raw email (also used for TikTok)
+  hashedEmail?: string;  // SHA-256 hashed email for Meta
+  hashedPhone?: string;  // SHA-256 hashed phone for Meta
+  phone?: string;        // raw phone for TikTok
   description?: string;
   url?: string;
   userAgent?: string;
+  fbc?: string;          // Meta click ID cookie
+  fbp?: string;          // Meta browser ID cookie
+  ttclid?: string;       // TikTok click ID
 }
 
 // ─── TikTok Events API ──────────────────────────────────────────────
@@ -46,7 +56,7 @@ async function sendTikTokEvent(payload: TrackingPayload, ip: string) {
   const body = {
     pixel_code: pixelId,
     event: tiktokEvent,
-    event_id: `${tiktokEvent}_${Date.now()}_${Math.random().toString(36).slice(2, 9)}`,
+    event_id: payload.eventId, // MUST match client pixel event_id for dedup
     timestamp: new Date().toISOString(),
     context: {
       user_agent: payload.userAgent || "",
@@ -54,16 +64,16 @@ async function sendTikTokEvent(payload: TrackingPayload, ip: string) {
       page: {
         url: payload.url || "",
       },
-      ...(payload.email
-        ? {
-            user: {
-              email: payload.email,
-            },
-          }
-        : {}),
+      user: {
+        ...(payload.email ? { email: payload.email.trim().toLowerCase() } : {}),
+        ...(payload.phone ? { phone_number: payload.phone.replace(/\D/g, "") } : {}),
+        ...(payload.ttclid ? { ttclid: payload.ttclid } : {}),
+      },
     },
     properties: {
-      ...(payload.value ? { value: payload.value, currency: payload.currency || "USD" } : {}),
+      ...(payload.value
+        ? { value: payload.value, currency: payload.currency || "USD" }
+        : {}),
       ...(payload.contentId ? { content_id: payload.contentId } : {}),
       ...(payload.contentName ? { content_name: payload.contentName } : {}),
       ...(payload.contentType ? { content_type: payload.contentType } : {}),
@@ -73,25 +83,25 @@ async function sendTikTokEvent(payload: TrackingPayload, ip: string) {
   };
 
   try {
-    const res = await fetch("https://business-api.tiktok.com/open_api/v1.3/event/track/", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        "Access-Token": accessToken,
-      },
-      body: JSON.stringify({
-        pixel_code: pixelId,
-        event: tiktokEvent,
-        event_id: body.event_id,
-        timestamp: body.timestamp,
-        context: body.context,
-        properties: body.properties,
-      }),
-    });
+    const res = await fetch(
+      "https://business-api.tiktok.com/open_api/v1.3/event/track/",
+      {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          "Access-Token": accessToken,
+        },
+        body: JSON.stringify(body),
+      }
+    );
 
     if (!res.ok) {
       const errorText = await res.text();
-      console.error("[Tracking] TikTok Events API error:", res.status, errorText);
+      console.error(
+        "[Tracking] TikTok Events API error:",
+        res.status,
+        errorText
+      );
     }
   } catch (e) {
     console.error("[Tracking] TikTok Events API request failed:", e);
@@ -120,22 +130,34 @@ async function sendMetaEvent(payload: TrackingPayload, ip: string) {
 
   const metaEvent = eventMap[payload.event] || payload.event;
 
+  // Build user_data with hashed PII + click identifiers
+  const userData: Record<string, unknown> = {
+    client_ip_address: ip,
+    client_user_agent: payload.userAgent || "",
+  };
+
+  // Use pre-hashed email/phone for CAPI (Meta requires SHA-256)
+  if (payload.hashedEmail) userData.em = [payload.hashedEmail];
+  if (payload.hashedPhone) userData.ph = [payload.hashedPhone];
+
+  // Click ID cookies — critical for match rate
+  if (payload.fbc) userData.fbc = payload.fbc;
+  if (payload.fbp) userData.fbp = payload.fbp;
+
   const eventData: Record<string, unknown> = {
     event_name: metaEvent,
     event_time: Math.floor(Date.now() / 1000),
-    event_id: `${metaEvent}_${Date.now()}_${Math.random().toString(36).slice(2, 9)}`,
+    event_id: payload.eventId, // MUST match client pixel eventID for dedup
     event_source_url: payload.url || "",
     action_source: "website",
-    user_data: {
-      client_ip_address: ip,
-      client_user_agent: payload.userAgent || "",
-      ...(payload.email ? { em: [payload.email] } : {}),
-    },
+    user_data: userData,
   };
 
   if (payload.value || payload.contentId) {
     eventData.custom_data = {
-      ...(payload.value ? { value: payload.value, currency: payload.currency || "USD" } : {}),
+      ...(payload.value
+        ? { value: payload.value, currency: payload.currency || "USD" }
+        : {}),
       ...(payload.contentId ? { content_ids: [payload.contentId] } : {}),
       ...(payload.contentName ? { content_name: payload.contentName } : {}),
       ...(payload.contentType ? { content_type: payload.contentType } : {}),
@@ -155,7 +177,11 @@ async function sendMetaEvent(payload: TrackingPayload, ip: string) {
 
     if (!res.ok) {
       const errorText = await res.text();
-      console.error("[Tracking] Meta Conversions API error:", res.status, errorText);
+      console.error(
+        "[Tracking] Meta Conversions API error:",
+        res.status,
+        errorText
+      );
     }
   } catch (e) {
     console.error("[Tracking] Meta Conversions API request failed:", e);
@@ -169,7 +195,10 @@ export async function POST(req: NextRequest) {
     const payload: TrackingPayload = await req.json();
 
     if (!payload.event) {
-      return NextResponse.json({ error: "Event name required" }, { status: 400 });
+      return NextResponse.json(
+        { error: "Event name required" },
+        { status: 400 }
+      );
     }
 
     // Get client IP from headers
@@ -187,6 +216,9 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ success: true });
   } catch (error) {
     console.error("[Tracking] Route error:", error);
-    return NextResponse.json({ error: "Tracking failed" }, { status: 500 });
+    return NextResponse.json(
+      { error: "Tracking failed" },
+      { status: 500 }
+    );
   }
 }

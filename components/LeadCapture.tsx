@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { SparklesIcon } from "@/components/Icons";
+import { trackLead } from "@/lib/tracking";
 
 export default function LeadCapture() {
   const [email, setEmail] = useState("");
@@ -21,18 +22,8 @@ export default function LeadCapture() {
       setStatus("success");
       setEmail("");
 
-      // Fire tracking events
-      if (typeof window !== "undefined") {
-        const w = window as unknown as Record<string, unknown>;
-        // TikTok
-        if (w.ttq) {
-          (w.ttq as { track: (event: string, data: Record<string, unknown>) => void }).track("SubmitForm", { content_name: "lead_capture" });
-        }
-        // Meta
-        if (w.fbq) {
-          (w.fbq as (...args: unknown[]) => void)("track", "Lead", { content_name: "lead_capture" });
-        }
-      }
+      // Fire unified tracking: both pixels + server CAPI with email for matching
+      trackLead({ email, description: "lead_capture" });
     } catch {
       setStatus("error");
     }

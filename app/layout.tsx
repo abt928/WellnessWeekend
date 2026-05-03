@@ -105,6 +105,52 @@ export default function RootLayout({
     >
       <body style={{ fontFamily: "var(--font-body)" }}>
         {children}
+
+        {/* Schema.org JSON-LD for Meta Pixel Automatic Microdata (Event & Ticketing) */}
+        <Script
+          id="schema-event"
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{
+            __html: JSON.stringify({
+              "@context": "https://schema.org",
+              "@type": "Festival",
+              name: "Wellness Weekend 2026",
+              description: "A once-in-a-lifetime transformational gathering in the Alaskan wilderness. Sound healing, earth medicine, movement & bodywork.",
+              startDate: "2026-08-08T12:00:00-08:00",
+              endDate: "2026-08-10T15:00:00-08:00",
+              eventAttendanceMode: "https://schema.org/OfflineEventAttendanceMode",
+              eventStatus: "https://schema.org/EventScheduled",
+              location: {
+                "@type": "Place",
+                name: "The Land",
+                address: {
+                  "@type": "PostalAddress",
+                  addressLocality: "Sutton",
+                  addressRegion: "AK",
+                  addressCountry: "US",
+                },
+              },
+              image: [
+                "https://wellnessweekendak.com/images/hero.png"
+              ],
+              offers: {
+                "@type": "Offer",
+                name: "General Admission Tier 1",
+                price: "444.00",
+                priceCurrency: "USD",
+                availability: "https://schema.org/InStock",
+                validFrom: "2026-01-01T00:00:00-08:00",
+                url: "https://wellnessweekendak.com/#tickets",
+              },
+              organizer: {
+                "@type": "Organization",
+                name: "Wellness Weekend",
+                url: "https://wellnessweekendak.com",
+              },
+            }),
+          }}
+        />
+
         <Analytics />
 
         {/* Google Analytics (gtag.js) */}

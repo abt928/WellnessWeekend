@@ -211,6 +211,84 @@ async function sendMetaEvent(payload: TrackingPayload, ip: string) {
   }
 }
 
+// ─── GA4 Measurement Protocol ────────────────────────────────────────
+
+async function sendGA4Event(payload: TrackingPayload) {
+  const measurementId = process.env.NEXT_PUBLIC_GA_ID || "G-1BNLVMK3HB";
+  const apiSecret = process.env.GA4_API_SECRET;
+
+  if (!apiSecret) return;
+
+  const gaEventMap: Record<string, string> = {
+    Lead: "generate_lead",
+    SubmitForm: "form_submit",
+    AddToCart: "add_to_cart",
+    InitiateCheckout: "begin_checkout",
+    Purchase: "purchase",
+    CompletePayment: "purchase",
+    ViewContent: "view_item",
+    PageView: "page_view",
+  };
+
+  const gaEvent = gaEventMap[payload.event] || payload.event;
+
+  // Build items array for GA4 (required for ecommerce events)
+  const items = payload.contents?.map((c) => ({
+    item_id: c.contentId,
+    item_name: c.name || c.contentId,
+    quantity: c.quantity,
+    price: c.price,
+  })) || (payload.contentId ? [{
+    item_id: payload.contentId,
+    item_name: payload.contentName || payload.contentId,
+    quantity: payload.quantity || 1,
+    price: payload.value,
+  }] : undefined);
+
+  const eventParams: Record<string, unknown> = {};
+  if (payload.value) eventParams.value = payload.value;
+  eventParams.currency = payload.currency || "USD";
+  if (items) eventParams.items = items;
+  if (payload.description) eventParams.event_category = payload.description;
+  if (payload.contentName) eventParams.item_name = payload.contentName;
+
+  // Use externalId as client_id for cross-device, or generate one
+  const clientId = payload.externalId || `server_${Date.now()}`;
+
+  const body = {
+    client_id: clientId,
+    events: [
+      {
+        name: gaEvent,
+        params: {
+          ...eventParams,
+          event_id: payload.eventId,
+          engagement_time_msec: "100",
+          session_id: String(Math.floor(Date.now() / 1000)),
+        },
+      },
+    ],
+  };
+
+  try {
+    const res = await fetch(
+      `https://www.google-analytics.com/mp/collect?measurement_id=${measurementId}&api_secret=${apiSecret}`,
+      {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(body),
+      }
+    );
+
+    if (!res.ok) {
+      const errorText = await res.text();
+      console.error("[Tracking] GA4 Measurement Protocol error:", res.status, errorText);
+    }
+  } catch (e) {
+    console.error("[Tracking] GA4 Measurement Protocol request failed:", e);
+  }
+}
+
 // ─── Route Handler ───────────────────────────────────────────────────
 
 export async function POST(req: NextRequest) {
@@ -231,10 +309,11 @@ export async function POST(req: NextRequest) {
       req.headers.get("cf-connecting-ip") ||
       "0.0.0.0";
 
-    // Fan out to both APIs concurrently
+    // Fan out to all 3 APIs concurrently
     await Promise.allSettled([
       sendTikTokEvent(payload, ip),
       sendMetaEvent(payload, ip),
+      sendGA4Event(payload),
     ]);
 
     return NextResponse.json({ success: true });

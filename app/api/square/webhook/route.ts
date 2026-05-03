@@ -117,6 +117,47 @@ async function fireMetaPurchase(value: number, currency: string, email?: string)
   }
 }
 
+// ─── GA4 Measurement Protocol ────────────────────────────────────────
+
+async function fireGA4Purchase(value: number, currency: string) {
+  const measurementId = process.env.NEXT_PUBLIC_GA_ID || "G-1BNLVMK3HB";
+  const apiSecret = process.env.GA4_API_SECRET;
+  if (!apiSecret) return;
+
+  try {
+    await fetch(
+      `https://www.google-analytics.com/mp/collect?measurement_id=${measurementId}&api_secret=${apiSecret}`,
+      {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          client_id: `webhook_${Date.now()}`,
+          events: [
+            {
+              name: "purchase",
+              params: {
+                value,
+                currency,
+                transaction_id: `wh_${Date.now()}_${Math.random().toString(36).slice(2, 7)}`,
+                items: [{
+                  item_id: "wellness-weekend-purchase",
+                  item_name: "Wellness Weekend Tickets",
+                  quantity: 1,
+                  price: value,
+                }],
+                engagement_time_msec: "100",
+                session_id: String(Math.floor(Date.now() / 1000)),
+              },
+            },
+          ],
+        }),
+      }
+    );
+  } catch (e) {
+    console.error("[Webhook] GA4 API error:", e);
+  }
+}
+
 // ─── Route Handler ───────────────────────────────────────────────────
 
 export async function POST(req: NextRequest) {
@@ -144,10 +185,11 @@ export async function POST(req: NextRequest) {
       email || "(no email)"
     );
 
-    // Fire conversion events to both platforms
+    // Fire conversion events to all 3 platforms
     await Promise.allSettled([
       fireTikTokPurchase(value, currency, email),
       fireMetaPurchase(value, currency, email),
+      fireGA4Purchase(value, currency),
     ]);
 
     return NextResponse.json({ received: true, tracked: true });

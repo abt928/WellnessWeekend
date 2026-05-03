@@ -267,13 +267,24 @@ export default function AdminPage() {
                   {activeTabConfig.columns.map((col) => (
                     <td key={col}>
                       {col === "created_at"
-                        ? new Date(row[col] as string).toLocaleDateString("en-US", {
-                            month: "short",
-                            day: "numeric",
-                            year: "numeric",
-                            hour: "2-digit",
-                            minute: "2-digit",
-                          })
+                        ? (() => {
+                            const raw = String(row[col] ?? "");
+                            if (!raw) return "—";
+                            // Ensure timezone info: if no Z or +/- offset, append Z (UTC)
+                            const isoStr = raw.includes("Z") || raw.includes("+") || /\d{2}:\d{2}$/.test(raw) === false
+                              ? raw.replace(" ", "T") + (raw.includes("Z") || raw.includes("+") ? "" : "Z")
+                              : raw.replace(" ", "T");
+                            const d = new Date(isoStr);
+                            return isNaN(d.getTime())
+                              ? raw
+                              : d.toLocaleDateString("en-US", {
+                                  month: "short",
+                                  day: "numeric",
+                                  year: "numeric",
+                                  hour: "2-digit",
+                                  minute: "2-digit",
+                                });
+                          })()
                         : String(row[col] ?? "—")}
                     </td>
                   ))}

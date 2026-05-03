@@ -8,7 +8,7 @@ export const vendors = pgTable("vendors", {
   category: varchar("category", { length: 100 }).notNull(),
   website: varchar("website", { length: 500 }),
   description: text("description").notNull(),
-  createdAt: timestamp("created_at").defaultNow().notNull(),
+  createdAt: timestamp("created_at", { withTimezone: true }).defaultNow().notNull(),
 });
 
 export const volunteers = pgTable("volunteers", {
@@ -19,13 +19,13 @@ export const volunteers = pgTable("volunteers", {
   interest: varchar("interest", { length: 100 }).notNull(),
   experience: text("experience"),
   availability: varchar("availability", { length: 100 }).notNull(),
-  createdAt: timestamp("created_at").defaultNow().notNull(),
+  createdAt: timestamp("created_at", { withTimezone: true }).defaultNow().notNull(),
 });
 
 export const newsletter = pgTable("newsletter", {
   id: serial("id").primaryKey(),
   email: varchar("email", { length: 255 }).notNull().unique(),
-  createdAt: timestamp("created_at").defaultNow().notNull(),
+  createdAt: timestamp("created_at", { withTimezone: true }).defaultNow().notNull(),
 });
 
 export const leads = pgTable("leads", {
@@ -35,5 +35,5 @@ export const leads = pgTable("leads", {
   phone: varchar("phone", { length: 50 }),
   message: text("message").notNull(),
   source: varchar("source", { length: 100 }).default("message_form").notNull(),
-  createdAt: timestamp("created_at").defaultNow().notNull(),
+  createdAt: timestamp("created_at", { withTimezone: true }).defaultNow().notNull(),
 });

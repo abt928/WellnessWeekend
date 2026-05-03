@@ -200,6 +200,17 @@ function fireGA(event: string, eventId: string, data?: TrackingEventData) {
 
 // ─── Server-side redundant event ─────────────────────────────────────
 
+/** Get or create a persistent external ID for cross-device matching */
+function getExternalId(): string {
+  if (typeof window === "undefined") return "";
+  let eid = localStorage.getItem("ww-eid");
+  if (!eid) {
+    eid = `ww_${Date.now()}_${Math.random().toString(36).slice(2, 11)}`;
+    localStorage.setItem("ww-eid", eid);
+  }
+  return eid;
+}
+
 async function fireServerEvent(
   event: string,
   eventId: string,
@@ -210,13 +221,21 @@ async function fireServerEvent(
     const hashedEmail = data?.email
       ? await sha256(data.email)
       : undefined;
-    
+
     const hashedPhone = data?.phone
       ? await sha256(data.phone.replace(/\D/g, ""))
       : undefined;
 
     const { fbc, fbp } = getMetaClickIds();
     const ttclid = getTtclid();
+    const externalId = getExternalId();
+
+    // Capture fbclid and gclid from URL
+    const urlParams = typeof window !== "undefined"
+      ? new URLSearchParams(window.location.search)
+      : null;
+    const fbclid = urlParams?.get("fbclid") || undefined;
+    const gclid = urlParams?.get("gclid") || undefined;
 
     await fetch("/api/tracking", {
       method: "POST",
@@ -230,6 +249,9 @@ async function fireServerEvent(
         fbc,
         fbp,
         ttclid,
+        externalId,
+        fbclid,
+        gclid,
         url: typeof window !== "undefined" ? window.location.href : undefined,
         userAgent:
           typeof navigator !== "undefined" ? navigator.userAgent : undefined,

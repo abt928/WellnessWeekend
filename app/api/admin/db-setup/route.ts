@@ -18,7 +18,7 @@ export async function POST(req: NextRequest) {
   try {
     const sql = neon(url);
 
-    // Create all tables if they don't exist
+    // Create all tables if they don't exist (using TIMESTAMPTZ for proper timezone handling)
     await sql`
       CREATE TABLE IF NOT EXISTS vendors (
         id SERIAL PRIMARY KEY,
@@ -28,7 +28,7 @@ export async function POST(req: NextRequest) {
         category VARCHAR(100) NOT NULL,
         website VARCHAR(500),
         description TEXT NOT NULL,
-        created_at TIMESTAMP DEFAULT NOW() NOT NULL
+        created_at TIMESTAMPTZ DEFAULT NOW() NOT NULL
       )
     `;
 
@@ -41,7 +41,7 @@ export async function POST(req: NextRequest) {
         interest VARCHAR(100) NOT NULL,
         experience TEXT,
         availability VARCHAR(100) NOT NULL,
-        created_at TIMESTAMP DEFAULT NOW() NOT NULL
+        created_at TIMESTAMPTZ DEFAULT NOW() NOT NULL
       )
     `;
 
@@ -49,7 +49,7 @@ export async function POST(req: NextRequest) {
       CREATE TABLE IF NOT EXISTS newsletter (
         id SERIAL PRIMARY KEY,
         email VARCHAR(255) NOT NULL UNIQUE,
-        created_at TIMESTAMP DEFAULT NOW() NOT NULL
+        created_at TIMESTAMPTZ DEFAULT NOW() NOT NULL
       )
     `;
 
@@ -61,14 +61,20 @@ export async function POST(req: NextRequest) {
         phone VARCHAR(50),
         message TEXT NOT NULL,
         source VARCHAR(100) DEFAULT 'message_form' NOT NULL,
-        created_at TIMESTAMP DEFAULT NOW() NOT NULL
+        created_at TIMESTAMPTZ DEFAULT NOW() NOT NULL
       )
     `;
+
+    // Alter existing columns from TIMESTAMP to TIMESTAMPTZ if they exist
+    await sql`ALTER TABLE vendors ALTER COLUMN created_at TYPE TIMESTAMPTZ USING created_at AT TIME ZONE 'UTC'`;
+    await sql`ALTER TABLE volunteers ALTER COLUMN created_at TYPE TIMESTAMPTZ USING created_at AT TIME ZONE 'UTC'`;
+    await sql`ALTER TABLE newsletter ALTER COLUMN created_at TYPE TIMESTAMPTZ USING created_at AT TIME ZONE 'UTC'`;
+    await sql`ALTER TABLE leads ALTER COLUMN created_at TYPE TIMESTAMPTZ USING created_at AT TIME ZONE 'UTC'`;
 
     return NextResponse.json({
       success: true,
       tables: ["vendors", "volunteers", "newsletter", "leads"],
-      message: "All tables verified / created successfully.",
+      message: "All tables verified / created. Timestamps upgraded to TIMESTAMPTZ.",
     });
   } catch (e) {
     console.error("DB setup error:", e);

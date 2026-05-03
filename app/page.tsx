@@ -7,6 +7,7 @@ import FAQ from "@/components/FAQ";
 import GetInvolved from "@/components/GetInvolved";
 import NewsletterForm from "@/components/NewsletterForm";
 import Store from "@/components/Store";
+import Gallery from "@/components/Gallery";
 
 /* ── static data ── */
 const practitioners = [
@@ -254,6 +255,9 @@ export default function Home() {
           </Reveal>
         </div>
       </section>
+
+      {/* ═══ GALLERY ═══ */}
+      <Gallery />
 
       {/* ═══ PRACTITIONERS ═══ */}
       <section id="practitioners" className="section practitioners">

@@ -42,12 +42,25 @@ export default function Store() {
   const [cartOpen, setCartOpen] = useState(false);
   const [checkingOut, setCheckingOut] = useState(false);
 
+  const [error, setError] = useState<string | null>(null);
+
   // Load catalog
   useEffect(() => {
     fetch("/api/square/catalog")
       .then((r) => r.json())
-      .then((d) => { setItems(d.items || []); setLoading(false); })
-      .catch(() => setLoading(false));
+      .then((d) => {
+        if (d.error) {
+          setError(d.error);
+          setLoading(false);
+          return;
+        }
+        setItems(d.items || []); 
+        setLoading(false); 
+      })
+      .catch(() => {
+        setError("Failed to fetch catalog. Please check Square credentials.");
+        setLoading(false);
+      });
   }, []);
 
   // Load cart from localStorage
@@ -144,7 +157,12 @@ export default function Store() {
       </div>
 
       {/* Items Grid */}
-      {loading ? (
+      {error ? (
+        <div style={{ backgroundColor: "rgba(255, 100, 100, 0.1)", border: "1px solid rgba(255, 100, 100, 0.3)", padding: "2rem", borderRadius: "8px", margin: "2rem 0", color: "#ff8888", textAlign: "center" }}>
+          <p style={{ fontFamily: "var(--font-display)", fontSize: "1.5rem", marginBottom: "0.5rem" }}>Square Integration Missing</p>
+          <p>It looks like the <code>.env</code> file is missing or lacks the correct Square credentials. Please review the <code>.env.example</code> file and provide your Square access token to load the catalog.</p>
+        </div>
+      ) : loading ? (
         <div className="store-loading">
           <div className="store-spinner" />
           <p>Loading catalog...</p>

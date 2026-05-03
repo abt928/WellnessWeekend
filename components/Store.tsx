@@ -123,6 +123,16 @@ export default function Store() {
       quantity: cartCount,
       description: cart.map((c) => c.name).join(", "),
     });
+
+    // Save cart context for the thank-you page to fire purchase event with value
+    localStorage.setItem("ww-checkout", JSON.stringify({
+      value: cartTotal / 100,
+      currency: "USD",
+      quantity: cartCount,
+      items: cart.map((c) => c.name).join(", "),
+      timestamp: Date.now(),
+    }));
+
     try {
       const res = await fetch("/api/square/checkout", {
         method: "POST",
@@ -138,6 +148,8 @@ export default function Store() {
       });
       const data = await res.json();
       if (data.checkoutUrl) {
+        // Clear the cart since checkout started
+        setCart([]);
         window.location.href = data.checkoutUrl;
       }
     } catch {

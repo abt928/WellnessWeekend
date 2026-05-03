@@ -11,7 +11,7 @@ interface TabConfig {
 }
 
 const TABS: TabConfig[] = [
-  { key: "leads", label: "Leads", columns: ["id", "name", "email", "message", "source", "created_at"] },
+  { key: "leads", label: "Leads", columns: ["id", "name", "email", "phone", "message", "source", "created_at"] },
   { key: "newsletter", label: "Newsletter", columns: ["id", "email", "created_at"] },
   { key: "vendors", label: "Vendors", columns: ["id", "name", "email", "business", "category", "website", "description", "created_at"] },
   { key: "volunteers", label: "Volunteers", columns: ["id", "name", "email", "phone", "interest", "experience", "availability", "created_at"] },
@@ -20,6 +20,7 @@ const TABS: TabConfig[] = [
 export default function AdminPage() {
   const [authenticated, setAuthenticated] = useState(false);
   const [password, setPassword] = useState("");
+  const [rememberMe, setRememberMe] = useState(false);
   const [loginError, setLoginError] = useState("");
   const [loginLoading, setLoginLoading] = useState(false);
 
@@ -29,6 +30,17 @@ export default function AdminPage() {
   const [search, setSearch] = useState("");
   const [loading, setLoading] = useState(false);
   const [dbSetupStatus, setDbSetupStatus] = useState<string | null>(null);
+
+  // Load saved password on mount
+  useEffect(() => {
+    try {
+      const saved = localStorage.getItem("ww-admin-pw");
+      if (saved) {
+        setPassword(saved);
+        setRememberMe(true);
+      }
+    } catch { /* noop */ }
+  }, []);
 
   // Check if already authenticated on mount
   useEffect(() => {
@@ -52,6 +64,12 @@ export default function AdminPage() {
 
     if (res.ok) {
       setAuthenticated(true);
+      // Save or clear password based on remember me
+      if (rememberMe) {
+        localStorage.setItem("ww-admin-pw", password);
+      } else {
+        localStorage.removeItem("ww-admin-pw");
+      }
       setPassword("");
     } else {
       setLoginError("Invalid password");
@@ -148,6 +166,14 @@ export default function AdminPage() {
               className="admin-input"
               autoFocus
             />
+            <label className="admin-remember">
+              <input
+                type="checkbox"
+                checked={rememberMe}
+                onChange={(e) => setRememberMe(e.target.checked)}
+              />
+              Remember password
+            </label>
             {loginError && <p className="admin-error">{loginError}</p>}
             <button type="submit" className="admin-login-btn" disabled={loginLoading}>
               {loginLoading ? "Signing in..." : "Sign In"}

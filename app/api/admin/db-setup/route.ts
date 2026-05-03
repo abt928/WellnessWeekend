@@ -10,7 +10,7 @@ export async function POST(req: NextRequest) {
   const url = process.env.DATABASE_URL;
   if (!url) {
     return NextResponse.json(
-      { error: "DATABASE_URL not configured" },
+      { error: "DATABASE_URL not configured. Add it to Vercel environment variables." },
       { status: 500 }
     );
   }
@@ -58,6 +58,7 @@ export async function POST(req: NextRequest) {
         id SERIAL PRIMARY KEY,
         name VARCHAR(255) NOT NULL,
         email VARCHAR(255) NOT NULL,
+        phone VARCHAR(50),
         message TEXT NOT NULL,
         source VARCHAR(100) DEFAULT 'message_form' NOT NULL,
         created_at TIMESTAMP DEFAULT NOW() NOT NULL
@@ -72,7 +73,7 @@ export async function POST(req: NextRequest) {
   } catch (e) {
     console.error("DB setup error:", e);
     return NextResponse.json(
-      { error: "Failed to set up database tables" },
+      { error: "Failed to set up database tables. Check DATABASE_URL." },
       { status: 500 }
     );
   }

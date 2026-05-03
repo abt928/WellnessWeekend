@@ -4,7 +4,7 @@ import { leads } from "@/lib/schema";
 
 export async function POST(req: Request) {
   try {
-    const { name, email, message } = await req.json();
+    const { name, email, phone, message } = await req.json();
 
     if (!name || !email || !message) {
       return NextResponse.json(
@@ -17,6 +17,7 @@ export async function POST(req: Request) {
     await db.insert(leads).values({
       name: name.trim(),
       email: email.trim().toLowerCase(),
+      phone: phone?.trim() || null,
       message: message.trim(),
       source: "message_form",
     });

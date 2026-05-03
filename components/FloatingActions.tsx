@@ -14,7 +14,7 @@ interface CartEntry {
 export default function FloatingActions() {
   const [cartCount, setCartCount] = useState(0);
   const [showMessage, setShowMessage] = useState(false);
-  const [formData, setFormData] = useState({ name: "", email: "", message: "" });
+  const [formData, setFormData] = useState({ name: "", email: "", phone: "", message: "" });
   const [status, setStatus] = useState<"idle" | "sending" | "sent" | "error">("idle");
 
   // Sync cart count from localStorage
@@ -33,9 +33,7 @@ export default function FloatingActions() {
       }
     };
     syncCart();
-    // Listen for storage changes (from other tabs or Store component updates)
     window.addEventListener("storage", syncCart);
-    // Poll every 2s to catch same-tab updates
     const interval = setInterval(syncCart, 2000);
     return () => {
       window.removeEventListener("storage", syncCart);
@@ -45,10 +43,8 @@ export default function FloatingActions() {
 
   const handleCartClick = useCallback(() => {
     if (cartCount > 0) {
-      // Dispatch a custom event that the Store component can listen for
       window.dispatchEvent(new CustomEvent("open-cart"));
     } else {
-      // Scroll to store section
       document.getElementById("store")?.scrollIntoView({ behavior: "smooth" });
     }
   }, [cartCount]);
@@ -65,13 +61,15 @@ export default function FloatingActions() {
       });
 
       if (res.ok) {
+        // Fire tracking to Meta, TikTok, and GA4
         trackLead({
           email: formData.email,
+          phone: formData.phone || undefined,
           description: "message_form",
           contentName: "Lead Message Form",
         });
         setStatus("sent");
-        setFormData({ name: "", email: "", message: "" });
+        setFormData({ name: "", email: "", phone: "", message: "" });
       } else {
         setStatus("error");
       }
@@ -151,6 +149,16 @@ export default function FloatingActions() {
                         placeholder="your@email.com"
                       />
                     </div>
+                  </div>
+                  <div className="form-group">
+                    <label htmlFor="lead-phone">Phone <span style={{ opacity: 0.5 }}>(optional)</span></label>
+                    <input
+                      id="lead-phone"
+                      type="tel"
+                      value={formData.phone}
+                      onChange={(e) => setFormData((p) => ({ ...p, phone: e.target.value }))}
+                      placeholder="(555) 123-4567"
+                    />
                   </div>
                   <div className="form-group">
                     <label htmlFor="lead-message">Message</label>

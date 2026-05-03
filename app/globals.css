@@ -1557,6 +1557,13 @@ body {
 .admin-login-btn:hover { transform: translateY(-2px); box-shadow: 0 8px 25px rgba(212,168,83,0.4); }
 .admin-login-btn:disabled { opacity: 0.6; cursor: not-allowed; }
 .admin-error { color: var(--coral); font-size: 0.85rem; margin: 0; }
+.admin-remember {
+  display: flex; align-items: center; gap: 0.5rem;
+  color: rgba(255,255,255,0.5); font-size: 0.85rem; cursor: pointer;
+}
+.admin-remember input[type="checkbox"] {
+  accent-color: var(--aurora); width: 16px; height: 16px; cursor: pointer;
+}
 
 /* Dashboard */
 .admin-dashboard { max-width: 1400px; margin: 0 auto; padding: 1.5rem 2rem; }

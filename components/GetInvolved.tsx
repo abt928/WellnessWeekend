@@ -1,6 +1,7 @@
 "use client";
 import { useState, FormEvent } from "react";
 import { trackFormSubmit } from "@/lib/tracking";
+import { MeditateIcon, StorefrontIcon, HandsIcon, DiamondIcon } from "@/components/Icons";
 
 type FormType = "vendor" | "volunteer" | null;
 
@@ -76,7 +77,7 @@ export default function GetInvolved() {
       <div className="involve-grid">
         {/* Instructor - Waitlist */}
         <div className="involve-card">
-          <div className="involve-icon">🧘</div>
+          <div className="involve-icon"><MeditateIcon size={32} color="var(--psyche-cyan)" /></div>
           <h3 className="involve-title" style={{ fontFamily: "var(--font-display)" }}>
             Instructor Application
           </h3>
@@ -100,7 +101,7 @@ export default function GetInvolved() {
 
         {/* Vendor */}
         <div className="involve-card">
-          <div className="involve-icon">🏪</div>
+          <div className="involve-icon"><StorefrontIcon size={32} color="var(--psyche-cyan)" /></div>
           <h3 className="involve-title" style={{ fontFamily: "var(--font-display)" }}>
             Vendor Application
           </h3>
@@ -124,7 +125,7 @@ export default function GetInvolved() {
 
         {/* Volunteer */}
         <div className="involve-card">
-          <div className="involve-icon">🙌</div>
+          <div className="involve-icon"><HandsIcon size={32} color="var(--psyche-cyan)" /></div>
           <h3 className="involve-title" style={{ fontFamily: "var(--font-display)" }}>
             Volunteer Application
           </h3>
@@ -147,7 +148,7 @@ export default function GetInvolved() {
 
         {/* Sponsor */}
         <div className="involve-card">
-          <div className="involve-icon">💎</div>
+          <div className="involve-icon"><DiamondIcon size={32} color="var(--psyche-cyan)" /></div>
           <h3 className="involve-title" style={{ fontFamily: "var(--font-display)" }}>
             Sponsor Application
           </h3>

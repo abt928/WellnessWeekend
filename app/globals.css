@@ -953,6 +953,191 @@ body {
 .reveal.visible > *:nth-child(3) { transition-delay: 0.16s; }
 .reveal.visible > *:nth-child(4) { transition-delay: 0.24s; }
 
+/* ========== LEAD CAPTURE ========== */
+.lead-capture {
+  position: relative;
+  padding: 6rem 2rem;
+  background: linear-gradient(
+    135deg,
+    var(--forest) 0%,
+    #1a2e2a 30%,
+    #2a1f3d 70%,
+    var(--forest) 100%
+  );
+  text-align: center;
+  overflow: hidden;
+}
+.lead-capture::before {
+  content: ''; position: absolute; inset: 0; pointer-events: none;
+  background:
+    radial-gradient(ellipse at 30% 50%, rgba(78,205,196,0.1) 0%, transparent 50%),
+    radial-gradient(ellipse at 70% 50%, rgba(139,95,191,0.1) 0%, transparent 50%);
+}
+.lead-capture-inner {
+  position: relative;
+  max-width: 620px;
+  margin: 0 auto;
+}
+.lead-capture-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.4rem 1rem;
+  background: rgba(212,168,83,0.1);
+  border: 1px solid rgba(212,168,83,0.3);
+  border-radius: 30px;
+  font-size: 0.75rem;
+  color: var(--gold);
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  margin-bottom: 1.5rem;
+}
+.lead-capture-title {
+  font-size: clamp(1.8rem, 4vw, 2.8rem);
+  font-weight: 300;
+  color: white;
+  margin-bottom: 1rem;
+  line-height: 1.2;
+}
+.lead-capture-title em {
+  font-style: italic;
+  color: var(--psyche-cyan);
+}
+.lead-capture-desc {
+  color: rgba(255,255,255,0.55);
+  font-size: 1.05rem;
+  line-height: 1.7;
+  margin-bottom: 2rem;
+}
+.lead-capture-form {
+  display: flex;
+  gap: 0.75rem;
+  max-width: 500px;
+  margin: 0 auto;
+  flex-wrap: wrap;
+  justify-content: center;
+}
+.lead-capture-input {
+  flex: 1;
+  min-width: 220px;
+  padding: 0.95rem 1.4rem;
+  border: 1px solid rgba(255,255,255,0.15);
+  border-radius: 30px;
+  background: rgba(255,255,255,0.06);
+  color: white;
+  font-size: 0.95rem;
+  font-family: inherit;
+  transition: border-color 0.3s;
+}
+.lead-capture-input:focus {
+  outline: none;
+  border-color: var(--psyche-cyan);
+}
+.lead-capture-input::placeholder { color: rgba(255,255,255,0.3); }
+.lead-capture-btn {
+  padding: 0.95rem 2.5rem;
+  background: linear-gradient(135deg, var(--gold), var(--coral));
+  border: none;
+  border-radius: 30px;
+  color: white;
+  font-size: 0.9rem;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  cursor: pointer;
+  font-weight: 600;
+  font-family: inherit;
+  transition: all 0.3s;
+  white-space: nowrap;
+}
+.lead-capture-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 25px rgba(212,168,83,0.4);
+}
+.lead-capture-btn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+  transform: none;
+}
+.lead-capture-success {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.75rem;
+  padding: 1.5rem 2rem;
+  background: rgba(78,205,196,0.08);
+  border: 1px solid rgba(78,205,196,0.2);
+  border-radius: 16px;
+  color: var(--psyche-cyan);
+  font-size: 1rem;
+}
+.lead-capture-error {
+  color: var(--coral);
+  font-size: 0.85rem;
+  margin-top: 0.75rem;
+}
+.lead-capture-note {
+  color: rgba(255,255,255,0.25);
+  font-size: 0.75rem;
+  margin-top: 1.25rem;
+  letter-spacing: 0.05em;
+}
+
+/* ========== PARTNER CARDS ========== */
+.partner-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 2rem;
+  max-width: 600px;
+  margin: 0 auto;
+}
+.partner-card {
+  background: rgba(255,255,255,0.03);
+  border: 1px solid rgba(124,144,112,0.15);
+  border-radius: 20px;
+  padding: 2.5rem 2rem;
+  text-align: center;
+  transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+}
+.partner-card:hover {
+  transform: translateY(-6px);
+  border-color: rgba(78,205,196,0.3);
+  background: rgba(78,205,196,0.04);
+}
+.partner-icon-wrap {
+  width: 64px;
+  height: 64px;
+  margin: 0 auto 1.25rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(78,205,196,0.08);
+  border: 1px solid rgba(78,205,196,0.15);
+  border-radius: 16px;
+  transition: all 0.3s;
+}
+.partner-card:hover .partner-icon-wrap {
+  background: rgba(78,205,196,0.15);
+  border-color: rgba(78,205,196,0.3);
+  transform: scale(1.1);
+}
+.partner-name {
+  font-size: 1.2rem;
+  color: var(--forest);
+  margin-bottom: 0.25rem;
+}
+.partner-role {
+  font-size: 0.8rem;
+  color: var(--sage);
+  letter-spacing: 0.05em;
+}
+
+/* Store tab icon spacing */
+.store-tab { display: inline-flex; align-items: center; gap: 0.4rem; }
+.store-tab svg { flex-shrink: 0; }
+
+/* Involve icon sizing for SVGs */
+.involve-icon svg { width: 32px; height: 32px; }
+
 /* ========== MASONRY GALLERY ========== */
 .gallery-section {
   padding: 8rem 2rem;

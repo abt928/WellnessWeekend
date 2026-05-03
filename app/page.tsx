@@ -8,11 +8,19 @@ import GetInvolved from "@/components/GetInvolved";
 import NewsletterForm from "@/components/NewsletterForm";
 import Store from "@/components/Store";
 import Gallery from "@/components/Gallery";
+import LeadCapture from "@/components/LeadCapture";
+import {
+  FlameIcon,
+  LeafIcon,
+  CommunityIcon,
+  SoundWaveIcon,
+  PlaneIcon,
+} from "@/components/Icons";
 
 /* ── static data ── */
 const partners = [
-  { name: "Sound Space", role: "Sound Healing Partner", icon: "🔊" },
-  { name: "Alaska Fly Dog", role: "Adventure Partner", icon: "🛩️" },
+  { name: "Sound Space", role: "Sound Healing Partner", Icon: SoundWaveIcon },
+  { name: "Alaska Fly Dog", role: "Adventure Partner", Icon: PlaneIcon },
 ];
 
 const testimonials = [
@@ -33,6 +41,27 @@ const testimonials = [
       "Alaska's energy is unlike anything else. Combine that with this incredible community and you get pure magic. Already booked for next year.",
     author: "Aria L.",
     loc: "Sedona, AZ",
+  },
+];
+
+const pillars = [
+  {
+    img: "/images/sound-healing.png",
+    Icon: FlameIcon,
+    title: "Transformation",
+    desc: "The 8/8 Lion\u2019s Gate Activation Ceremony, sacred drumming circles led by White Eagle Medicine Woman, plant medicine work, and deep shamanic journeys that shatter boundaries and ignite rebirth.",
+  },
+  {
+    img: "/images/earth-medicine.png",
+    Icon: LeafIcon,
+    title: "Integration",
+    desc: "Sound healing, breathwork, yoga, bodywork, and earth medicine \u2014 practices that help you anchor and embody the shifts. Take the transformation home with you.",
+  },
+  {
+    img: "/images/movement.png",
+    Icon: CommunityIcon,
+    title: "Community",
+    desc: "Ecstatic dance, communal meals, campfire circles, and shared ceremony. A tribe of 200+ seekers holding space for each other under the midnight sun.",
   },
 ];
 
@@ -114,33 +143,16 @@ export default function Home() {
         </Reveal>
         <Reveal>
           <div className="pillars">
-            {[
-              {
-                img: "/images/sound-healing.png",
-                icon: "🔥",
-                title: "Transformation",
-                desc: "The 8/8 Lion's Gate Activation Ceremony, sacred drumming circles led by White Eagle Medicine Woman, plant medicine work, and deep shamanic journeys that shatter boundaries and ignite rebirth.",
-              },
-              {
-                img: "/images/earth-medicine.png",
-                icon: "🌿",
-                title: "Integration",
-                desc: "Sound healing, breathwork, yoga, bodywork, and earth medicine — practices that help you anchor and embody the shifts. Take the transformation home with you.",
-              },
-              {
-                img: "/images/movement.png",
-                icon: "🤝",
-                title: "Community",
-                desc: "Ecstatic dance, communal meals, campfire circles, and shared ceremony. A tribe of 200+ seekers holding space for each other under the midnight sun.",
-              },
-            ].map((p) => (
+            {pillars.map((p) => (
               <div className="pillar" key={p.title}>
                 <div className="pillar-img">
                   <Image src={p.img} alt={p.title} fill style={{ objectFit: "cover" }} />
                 </div>
                 <div className="pillar-overlay" />
                 <div className="pillar-content">
-                  <div className="pillar-icon">{p.icon}</div>
+                  <div className="pillar-icon">
+                    <p.Icon size={36} color="white" />
+                  </div>
                   <h3 className="pillar-title" style={{ fontFamily: "var(--font-display)" }}>{p.title}</h3>
                   <p className="pillar-desc">{p.desc}</p>
                 </div>
@@ -187,6 +199,9 @@ export default function Home() {
         </div>
       </section>
 
+      {/* ═══ LEAD CAPTURE ═══ */}
+      <LeadCapture />
+
       {/* ═══ SCHEDULE ═══ */}
       <Schedule />
 
@@ -203,12 +218,14 @@ export default function Home() {
           </p>
         </Reveal>
         <Reveal>
-          <div className="practitioner-grid" style={{ gridTemplateColumns: "repeat(2, 1fr)", maxWidth: "600px" }}>
+          <div className="partner-grid">
             {partners.map((p) => (
-              <div className="practitioner-card" key={p.name}>
-                <div className="practitioner-avatar">{p.icon}</div>
-                <div className="practitioner-name" style={{ fontFamily: "var(--font-display)" }}>{p.name}</div>
-                <div className="practitioner-role">{p.role}</div>
+              <div className="partner-card" key={p.name}>
+                <div className="partner-icon-wrap">
+                  <p.Icon size={32} color="var(--psyche-cyan)" />
+                </div>
+                <div className="partner-name" style={{ fontFamily: "var(--font-display)" }}>{p.name}</div>
+                <div className="partner-role">{p.role}</div>
               </div>
             ))}
           </div>
@@ -253,7 +270,7 @@ export default function Home() {
       {/* ═══ FOOTER ═══ */}
       <footer className="footer">
         <h2 className="footer-title" style={{ fontFamily: "var(--font-display)" }}>
-          See You Under the <em>Midnight Sun</em> ✨
+          See You Under the <em>Midnight Sun</em>
         </h2>
         <p className="footer-text">
           Join our mailing list for early-bird pricing and festival updates.

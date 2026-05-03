@@ -1,6 +1,7 @@
 "use client";
 import { useState, useEffect, useCallback } from "react";
 import { trackAddToCart, trackInitiateCheckout } from "@/lib/tracking";
+import { TicketIcon, SparkleIcon, CupIcon, ShirtIcon } from "@/components/Icons";
 
 interface Variation {
   id: string;
@@ -25,10 +26,10 @@ interface CartEntry {
 }
 
 const TABS = [
-  { key: "tickets", label: "🎫 Tickets", icon: "🎫" },
-  { key: "addons", label: "⚡ Add-Ons", icon: "⚡" },
-  { key: "cacao", label: "🍫 Cacao", icon: "🍫" },
-  { key: "merch", label: "👕 Merch", icon: "👕" },
+  { key: "tickets", label: "Tickets", Icon: TicketIcon },
+  { key: "addons", label: "Add-Ons", Icon: SparkleIcon },
+  { key: "cacao", label: "Cacao", Icon: CupIcon },
+  { key: "merch", label: "Merch", Icon: ShirtIcon },
 ];
 
 function formatPrice(cents: number) {
@@ -178,6 +179,7 @@ export default function Store() {
             className={`store-tab${activeTab === t.key ? " active" : ""}`}
             onClick={() => setActiveTab(t.key)}
           >
+            <t.Icon size={16} />
             {t.label}
           </button>
         ))}

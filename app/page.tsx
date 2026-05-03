@@ -281,6 +281,11 @@ export default function Home() {
           <a href="#">Facebook</a>
           <a href="#">Contact Us</a>
         </div>
+        <div className="footer-legal">
+          <a href="/privacy">Privacy Policy</a>
+          <span className="footer-legal-sep">·</span>
+          <a href="/terms">Terms of Service</a>
+        </div>
         <div className="footer-bottom">
           © 2026 Wellness Weekend · Sutton, Alaska · All rights reserved
         </div>

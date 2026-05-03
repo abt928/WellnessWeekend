@@ -25,7 +25,11 @@ const cormorant = Cormorant_Garamond({
 
 export const metadata: Metadata = {
   metadataBase: new URL("https://wellnessweekendak.com"),
-  title: "Wellness Weekend — 4th Annual Healing Arts Festival | Sutton, Alaska",
+  title: {
+    default:
+      "Wellness Weekend — 4th Annual Healing Arts Festival | Sutton, Alaska",
+    template: "%s — Wellness Weekend",
+  },
   description:
     "Join 200+ seekers for a transformational weekend of sound healing, earth medicine, and movement under Alaska's midnight sun. August 8–10, 2026 in Sutton, Alaska.",
   keywords: [
@@ -37,20 +41,55 @@ export const metadata: Metadata = {
     "midnight sun",
     "transformational experience",
     "new age festival",
+    "plant medicine ceremony",
+    "breathwork retreat",
+    "shamanic healing",
+    "Lions Gate portal",
   ],
+  alternates: {
+    canonical: "https://wellnessweekendak.com",
+  },
   icons: {
     apple: "/apple-touch-icon.jpeg",
   },
-  other: {
-    "theme-color": "#2D3A2E",
-    "apple-mobile-web-app-status-bar-style": "black-translucent",
+  robots: {
+    index: true,
+    follow: true,
+    googleBot: {
+      index: true,
+      follow: true,
+      "max-video-preview": -1,
+      "max-image-preview": "large",
+      "max-snippet": -1,
+    },
   },
   openGraph: {
     title: "Wellness Weekend — Healing Arts Festival Under the Midnight Sun",
     description:
       "A once-in-a-lifetime transformational gathering in the Alaskan wilderness. Sound healing, earth medicine, movement & bodywork. August 8–10, 2026.",
     type: "website",
+    url: "https://wellnessweekendak.com",
+    siteName: "Wellness Weekend",
+    locale: "en_US",
+    images: [
+      {
+        url: "/images/hero.png",
+        width: 1200,
+        height: 630,
+        alt: "Wellness Weekend — Healing Arts Festival in Sutton, Alaska under the midnight sun",
+      },
+    ],
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "Wellness Weekend — Healing Arts Festival Under the Midnight Sun",
+    description:
+      "Join 200+ seekers for sound healing, earth medicine, and movement under Alaska's midnight sun. August 8–10, 2026.",
     images: ["/images/hero.png"],
+  },
+  other: {
+    "theme-color": "#2D3A2E",
+    "apple-mobile-web-app-status-bar-style": "black-translucent",
   },
 };
 

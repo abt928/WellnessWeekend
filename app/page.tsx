@@ -66,8 +66,54 @@ const pillars = [
 ];
 
 export default function Home() {
+  const jsonLd = {
+    "@context": "https://schema.org",
+    "@type": "Event",
+    name: "Wellness Weekend — 4th Annual Healing Arts Festival",
+    description:
+      "A transformational weekend of sound healing, earth medicine, and movement under Alaska's midnight sun. Featuring the 8/8 Lion's Gate Activation Ceremony, sacred drumming circles, plant medicine work, breathwork, yoga, ecstatic dance, and more.",
+    startDate: "2026-08-08",
+    endDate: "2026-08-10",
+    eventAttendanceMode: "https://schema.org/OfflineEventAttendanceMode",
+    eventStatus: "https://schema.org/EventScheduled",
+    location: {
+      "@type": "Place",
+      name: "Warrior Lodge",
+      address: {
+        "@type": "PostalAddress",
+        addressLocality: "Sutton",
+        addressRegion: "AK",
+        addressCountry: "US",
+      },
+    },
+    image: ["https://wellnessweekendak.com/images/hero.png"],
+    organizer: {
+      "@type": "Organization",
+      name: "Wellness Weekend",
+      url: "https://wellnessweekendak.com",
+    },
+    offers: {
+      "@type": "AggregateOffer",
+      url: "https://wellnessweekendak.com/#store",
+      availability: "https://schema.org/InStock",
+      priceCurrency: "USD",
+    },
+    performer: [
+      {
+        "@type": "Person",
+        name: "White Eagle Medicine Woman",
+      },
+    ],
+    typicalAgeRange: "18+",
+    maximumAttendeeCapacity: 200,
+  };
+
   return (
     <>
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+      />
       <Navigation />
 
       {/* ═══ HERO ═══ */}

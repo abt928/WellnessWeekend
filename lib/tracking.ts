@@ -148,6 +148,23 @@ function fireTikTok(event: string, eventId: string, data?: TrackingEventData) {
 function fireMeta(event: string, eventId: string, data?: TrackingEventData) {
   if (typeof window === "undefined" || !window.fbq) return;
 
+  // Reinit pixel with Advanced Matching when PII is available
+  if (data?.email) {
+    const pixelId = process.env.NEXT_PUBLIC_META_PIXEL_ID;
+    if (pixelId) {
+      try {
+        const amParams: Record<string, string> = {
+          em: data.email.trim().toLowerCase(),
+          external_id: getExternalId(),
+        };
+        if (data.phone) amParams.ph = data.phone.replace(/\D/g, "");
+        window.fbq("init", pixelId, amParams);
+      } catch (e) {
+        console.warn("[Tracking] Meta Advanced Matching reinit error:", e);
+      }
+    }
+  }
+
   const params: Record<string, unknown> = {
     eventID: eventId, // Meta uses eventID in the client pixel for dedup
   };

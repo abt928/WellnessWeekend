@@ -35,6 +35,17 @@ interface TrackingPayload {
   contents?: { contentId: string; quantity: number; price?: number; name?: string }[];
 }
 
+// ─── Utilities ───────────────────────────────────────────────────────
+
+/** Server-side SHA-256 hash */
+async function sha256(input: string): Promise<string> {
+  const encoder = new TextEncoder();
+  const data = encoder.encode(input.trim().toLowerCase());
+  const hashBuffer = await crypto.subtle.digest("SHA-256", data);
+  const hashArray = Array.from(new Uint8Array(hashBuffer));
+  return hashArray.map((b) => b.toString(16).padStart(2, "0")).join("");
+}
+
 // ─── TikTok Events API ──────────────────────────────────────────────
 
 async function sendTikTokEvent(payload: TrackingPayload, ip: string) {
@@ -158,8 +169,11 @@ async function sendMetaEvent(payload: TrackingPayload, ip: string) {
   if (payload.fbc) userData.fbc = payload.fbc;
   if (payload.fbp) userData.fbp = payload.fbp;
 
-  // External ID for cross-device matching
-  if (payload.externalId) userData.external_id = [payload.externalId];
+  // External ID for cross-device matching (Meta requires SHA-256 hash)
+  if (payload.externalId) {
+    const hashedExternalId = await sha256(payload.externalId);
+    userData.external_id = [hashedExternalId];
+  }
 
   // Build content_ids from contents array or single contentId
   const contentIds = payload.contents?.map((c) => c.contentId) ||

@@ -148,7 +148,17 @@ export default function RootLayout({
             s.parentNode.insertBefore(t,s)}(window, document,'script',
             'https://connect.facebook.net/en_US/fbevents.js');
             if('${process.env.NEXT_PUBLIC_META_PIXEL_ID || ""}') {
-              fbq('init', '${process.env.NEXT_PUBLIC_META_PIXEL_ID || ""}');
+              // Build Advanced Matching params for better Event Match Quality
+              var _wwAm = {};
+              try {
+                var _eid = localStorage.getItem('ww-eid');
+                if (!_eid) {
+                  _eid = 'ww_' + Date.now() + '_' + Math.random().toString(36).slice(2,11);
+                  localStorage.setItem('ww-eid', _eid);
+                }
+                _wwAm.external_id = _eid;
+              } catch(e) {}
+              fbq('init', '${process.env.NEXT_PUBLIC_META_PIXEL_ID || ""}', _wwAm);
               fbq('track', 'PageView');
             }
           `}

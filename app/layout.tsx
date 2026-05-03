@@ -38,6 +38,13 @@ export const metadata: Metadata = {
     "transformational experience",
     "new age festival",
   ],
+  icons: {
+    apple: "/apple-touch-icon.jpeg",
+  },
+  other: {
+    "theme-color": "#2D3A2E",
+    "apple-mobile-web-app-status-bar-style": "black-translucent",
+  },
   openGraph: {
     title: "Wellness Weekend — Healing Arts Festival Under the Midnight Sun",
     description:

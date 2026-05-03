@@ -59,8 +59,15 @@ async function fireTikTokPurchase(value: number, currency: string, email?: strin
         properties: {
           value,
           currency,
+          content_id: "wellness-weekend-purchase",
           content_type: "product",
           description: "square_webhook_purchase",
+          contents: [{
+            content_id: "wellness-weekend-purchase",
+            content_type: "product",
+            quantity: 1,
+            price: value,
+          }],
         },
       }),
     });
@@ -97,6 +104,8 @@ async function fireMetaPurchase(value: number, currency: string, email?: string)
                 value,
                 currency,
                 content_type: "product",
+                content_ids: ["wellness-weekend-purchase"],
+                content_name: "Wellness Weekend Tickets",
               },
             },
           ],

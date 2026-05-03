@@ -1,6 +1,6 @@
 "use client";
-import { useState, useEffect, useCallback } from "react";
-import { trackAddToCart, trackInitiateCheckout } from "@/lib/tracking";
+import { useState, useEffect, useCallback, useRef } from "react";
+import { trackAddToCart, trackInitiateCheckout, trackViewContent } from "@/lib/tracking";
 import { TicketIcon, SparkleIcon, CupIcon, ShirtIcon } from "@/components/Icons";
 
 interface Variation {
@@ -64,6 +64,32 @@ export default function Store() {
         setLoading(false);
       });
   }, []);
+
+  // Fire ViewContent when the store section scrolls into view (once)
+  const storeRef = useRef<HTMLElement | null>(null);
+  const viewFired = useRef(false);
+  useEffect(() => {
+    if (viewFired.current || typeof IntersectionObserver === "undefined") return;
+    const el = document.getElementById("store");
+    if (!el) return;
+    storeRef.current = el;
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        if (entry.isIntersecting && !viewFired.current) {
+          viewFired.current = true;
+          trackViewContent({
+            contentId: "wellness-weekend-store",
+            contentName: "Wellness Weekend Store",
+            contentType: "product_group",
+          });
+          observer.disconnect();
+        }
+      },
+      { threshold: 0.3 }
+    );
+    observer.observe(el);
+    return () => observer.disconnect();
+  }, [loading]); // re-run when loading completes so store section exists
 
   // Load cart from localStorage
   useEffect(() => {
@@ -147,6 +173,12 @@ export default function Store() {
       currency: "USD",
       quantity: cartCount,
       items: cart.map((c) => c.name).join(", "),
+      contents: cart.map((c) => ({
+        contentId: c.variationId,
+        quantity: c.quantity,
+        price: c.price / 100,
+        name: c.name,
+      })),
       timestamp: Date.now(),
     }));
 

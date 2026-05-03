@@ -5,7 +5,8 @@ import { trackPurchase } from "@/lib/tracking";
 /**
  * Client component that fires a purchase conversion event once on mount.
  * Reads cart context from localStorage (saved before Square redirect) to
- * include the actual purchase value and item names in the conversion event.
+ * include the actual purchase value, item names, and content IDs in the
+ * conversion event for TikTok, Meta, and GA4.
  * Uses a ref guard to prevent double-firing in React strict mode.
  */
 export default function ThankYouTracker() {
@@ -19,7 +20,10 @@ export default function ThankYouTracker() {
     let value: number | undefined;
     let currency = "USD";
     let quantity: number | undefined;
+    let contentId = "wellness-weekend-purchase";
+    let contentName = "Wellness Weekend Tickets";
     let description = "square_checkout_complete";
+    let contents: { contentId: string; quantity: number; price?: number; name?: string }[] | undefined;
 
     try {
       const raw = localStorage.getItem("ww-checkout");
@@ -31,6 +35,12 @@ export default function ThankYouTracker() {
           currency = checkout.currency || "USD";
           quantity = checkout.quantity;
           description = checkout.items || description;
+          contentName = checkout.items || contentName;
+          // Restore individual item content IDs if available
+          if (checkout.contents) {
+            contents = checkout.contents;
+            contentId = checkout.contents[0]?.contentId || contentId;
+          }
         }
         // Clear it so it doesn't fire again on a future visit
         localStorage.removeItem("ww-checkout");
@@ -39,11 +49,18 @@ export default function ThankYouTracker() {
       /* noop */
     }
 
+    // Clear cart after successful purchase
+    localStorage.removeItem("ww-cart");
+
     trackPurchase({
       value,
       currency,
       quantity,
+      contentId,
+      contentName,
+      contentType: "product",
       description,
+      contents,
     });
   }, []);
 

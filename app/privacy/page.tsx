@@ -33,8 +33,10 @@ export default function PrivacyPolicy() {
             <section className="legal-section">
               <h2>1. Introduction</h2>
               <p>
-                Wellness Weekend (&ldquo;we,&rdquo; &ldquo;us,&rdquo; or
-                &ldquo;our&rdquo;) operates the website{" "}
+                Wellness Weekend, operated by{" "}
+                <strong>Sound Healing Products LLC</strong>{" "}
+                (&ldquo;we,&rdquo; &ldquo;us,&rdquo; or
+                &ldquo;our&rdquo;), operates the website{" "}
                 <strong>wellnessweekendak.com</strong> and related services. This
                 Privacy Policy explains how we collect, use, disclose, and
                 safeguard your information when you visit our website, purchase
@@ -133,7 +135,24 @@ export default function PrivacyPolicy() {
                 .
               </p>
 
-              <h3>3.3 Vercel Analytics</h3>
+              <h3>3.3 Google Analytics</h3>
+              <p>
+                We use Google Analytics 4 (provided by Google LLC) to collect
+                anonymous usage data including page views, events, session
+                duration, and conversion metrics. Google Analytics may set cookies
+                to identify unique visitors and track behavior across sessions.
+                For more information, see{" "}
+                <a
+                  href="https://policies.google.com/privacy"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                >
+                  Google&rsquo;s Privacy Policy
+                </a>
+                .
+              </p>
+
+              <h3>3.4 Vercel Analytics</h3>
               <p>
                 We use Vercel Analytics to collect anonymous, aggregated usage
                 data to understand site performance and visitor behavior. This
@@ -298,13 +317,20 @@ export default function PrivacyPolicy() {
               </p>
               <div className="legal-contact">
                 <p>
-                  <strong>Wellness Weekend</strong>
+                  <strong>Sound Healing Products LLC</strong>
                 </p>
+                <p>d/b/a Wellness Weekend</p>
                 <p>Sutton, Alaska</p>
                 <p>
                   Email:{" "}
-                  <a href="mailto:info@wellnessweekendak.com">
-                    info@wellnessweekendak.com
+                  <a href="mailto:support@thesoundspace.us">
+                    support@thesoundspace.us
+                  </a>
+                </p>
+                <p>
+                  Phone:{" "}
+                  <a href="tel:+19076004390">
+                    +1 (907) 600-4390
                   </a>
                 </p>
               </div>

@@ -34,9 +34,11 @@ export default function TermsOfService() {
               <h2>1. Acceptance of Terms</h2>
               <p>
                 By accessing or using the Wellness Weekend website
-                (wellnessweekendak.com) and related services, you agree to be
-                bound by these Terms of Service (&ldquo;Terms&rdquo;). If you do
-                not agree, do not use our services.
+                (wellnessweekendak.com), operated by{" "}
+                <strong>Sound Healing Products LLC</strong>, and related
+                services, you agree to be bound by these Terms of Service
+                (&ldquo;Terms&rdquo;). If you do not agree, do not use our
+                services.
               </p>
             </section>
 
@@ -139,10 +141,11 @@ export default function TermsOfService() {
                 <li>Camping and outdoor living conditions</li>
               </ul>
               <p>
-                To the fullest extent permitted by law, you release Wellness
-                Weekend, its organizers, staff, volunteers, sponsors, and partners
-                from any claims, damages, or liability arising from your
-                attendance or participation in the festival.
+                To the fullest extent permitted by law, you release Sound Healing
+                Products LLC (d/b/a Wellness Weekend), its organizers, staff,
+                volunteers, sponsors, and partners from any claims, damages, or
+                liability arising from your attendance or participation in the
+                festival.
               </p>
             </section>
 
@@ -204,11 +207,12 @@ export default function TermsOfService() {
             <section className="legal-section">
               <h2>12. Limitation of Liability</h2>
               <p>
-                To the maximum extent permitted by law, Wellness Weekend shall not
-                be liable for any indirect, incidental, special, consequential, or
-                punitive damages arising from your use of our website, attendance
-                at our events, or these Terms. Our total liability shall not exceed
-                the amount you paid for your ticket or merchandise.
+                To the maximum extent permitted by law, Sound Healing Products LLC
+                (d/b/a Wellness Weekend) shall not be liable for any indirect,
+                incidental, special, consequential, or punitive damages arising
+                from your use of our website, attendance at our events, or these
+                Terms. Our total liability shall not exceed the amount you paid
+                for your ticket or merchandise.
               </p>
             </section>
 
@@ -249,13 +253,20 @@ export default function TermsOfService() {
               </p>
               <div className="legal-contact">
                 <p>
-                  <strong>Wellness Weekend</strong>
+                  <strong>Sound Healing Products LLC</strong>
                 </p>
+                <p>d/b/a Wellness Weekend</p>
                 <p>Sutton, Alaska</p>
                 <p>
                   Email:{" "}
-                  <a href="mailto:info@wellnessweekendak.com">
-                    info@wellnessweekendak.com
+                  <a href="mailto:support@thesoundspace.us">
+                    support@thesoundspace.us
+                  </a>
+                </p>
+                <p>
+                  Phone:{" "}
+                  <a href="tel:+19076004390">
+                    +1 (907) 600-4390
                   </a>
                 </p>
               </div>

@@ -277,9 +277,10 @@ export default function Home() {
         </p>
         <NewsletterForm />
         <div className="footer-socials">
-          <a href="#">Instagram</a>
-          <a href="#">Facebook</a>
-          <a href="#">Contact Us</a>
+          <a href="https://www.instagram.com/wellnessweekend.ak" target="_blank" rel="noopener noreferrer">Instagram</a>
+          <a href="https://www.facebook.com/wellnessweekend.ak/" target="_blank" rel="noopener noreferrer">Facebook</a>
+          <a href="https://www.tiktok.com/@the.soundspace" target="_blank" rel="noopener noreferrer">TikTok</a>
+          <a href="mailto:support@thesoundspace.us">Contact Us</a>
         </div>
         <div className="footer-legal">
           <a href="/privacy">Privacy Policy</a>
@@ -287,7 +288,11 @@ export default function Home() {
           <a href="/terms">Terms of Service</a>
         </div>
         <div className="footer-bottom">
-          © 2026 Wellness Weekend · Sutton, Alaska · All rights reserved
+          © {new Date().getFullYear()}{" "}
+          <a href="https://www.thesoundspace.us/" target="_blank" rel="noopener noreferrer" style={{ color: "inherit", textDecoration: "underline", textUnderlineOffset: "3px" }}>
+            Sound Healing Products LLC
+          </a>{" "}
+          · Sutton, Alaska · All rights reserved
         </div>
       </footer>
     </>

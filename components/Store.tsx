@@ -1,7 +1,7 @@
 "use client";
 import { useState, useEffect, useCallback, useRef } from "react";
 import { trackAddToCart, trackInitiateCheckout, trackViewContent } from "@/lib/tracking";
-import { TicketIcon, SparkleIcon, CupIcon, ShirtIcon } from "@/components/Icons";
+import { TicketIcon, SparkleIcon, CupIcon, ShirtIcon, LotusIcon, CloseIcon } from "@/components/Icons";
 
 interface Variation {
   id: string;
@@ -218,8 +218,8 @@ export default function Store() {
         Choose your tickets, add-on experiences, and merch to craft the perfect
         Wellness Weekend, all processed securely through Square.
       </p>
-      <p className="store-capacity" style={{ fontFamily: "var(--font-accent)" }}>
-        ✦ An intimate gathering limited to 200 seekers ✦
+      <p className="store-capacity" style={{ fontFamily: "var(--font-accent)", display: "flex", alignItems: "center", justifyContent: "center", gap: "0.5rem" }}>
+        <LotusIcon size={16} color="var(--aurora)" /> An intimate gathering limited to 200 seekers <LotusIcon size={16} color="var(--aurora)" />
       </p>
 
       {/* Category Tabs */}
@@ -308,7 +308,7 @@ export default function Store() {
           <div className="cart-drawer" onClick={(e) => e.stopPropagation()}>
             <div className="cart-header">
               <h3 style={{ fontFamily: "var(--font-display)", fontSize: "1.3rem" }}>Your Cart</h3>
-              <button className="modal-close" onClick={() => setCartOpen(false)}>✕</button>
+              <button className="modal-close" onClick={() => setCartOpen(false)}><CloseIcon size={18} /></button>
             </div>
 
             {cart.length === 0 ? (

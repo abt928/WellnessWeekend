@@ -1,7 +1,7 @@
 "use client";
 import { useState, FormEvent } from "react";
 import { trackFormSubmit } from "@/lib/tracking";
-import { MeditateIcon, StorefrontIcon, HandsIcon, DiamondIcon } from "@/components/Icons";
+import { MeditateIcon, StorefrontIcon, HandsIcon, DiamondIcon, CloseIcon, SparklesIcon } from "@/components/Icons";
 
 type FormType = "vendor" | "volunteer" | null;
 
@@ -173,11 +173,11 @@ export default function GetInvolved() {
       {activeForm && (
         <div className="modal-overlay" onClick={() => setActiveForm(null)}>
           <div className="modal-content" onClick={(e) => e.stopPropagation()}>
-            <button className="modal-close" onClick={() => setActiveForm(null)}>✕</button>
+            <button className="modal-close" onClick={() => setActiveForm(null)}><CloseIcon size={18} /></button>
 
             {status === "success" ? (
               <div className="modal-success">
-                <div className="modal-success-icon">✨</div>
+                <div className="modal-success-icon"><SparklesIcon size={36} color="var(--gold)" /></div>
                 <h3 style={{ fontFamily: "var(--font-display)", fontSize: "1.5rem", color: "var(--forest)" }}>
                   Application Received!
                 </h3>

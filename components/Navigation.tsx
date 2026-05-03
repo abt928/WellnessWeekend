@@ -1,5 +1,6 @@
 "use client";
 import { useEffect, useState, useCallback } from "react";
+import { CloseIcon } from "@/components/Icons";
 
 export default function Navigation() {
   const [scrolled, setScrolled] = useState(false);
@@ -65,7 +66,7 @@ export default function Navigation() {
                 Wellness Weekend
               </div>
               <button className="mobile-menu-close" onClick={closeMenu} aria-label="Close menu">
-                ✕
+                <CloseIcon size={20} />
               </button>
             </div>
             <ul className="mobile-menu-links">

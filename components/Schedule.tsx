@@ -1,13 +1,14 @@
 "use client";
-import { useState } from "react";
+import { useState, type ReactNode } from "react";
+import { LeafIcon, FlameIcon, SoundWaveIcon, CommunityIcon, MoonIcon } from "@/components/Icons";
 
 type Track = "body" | "spirit" | "sound" | "community";
 
-const trackMeta: Record<Track, { icon: string; label: string; color: string }> = {
-  body: { icon: "🌿", label: "Body", color: "#7C9070" },
-  spirit: { icon: "🔮", label: "Spirit", color: "#8B5FBF" },
-  sound: { icon: "🎶", label: "Sound", color: "#4ecdc4" },
-  community: { icon: "🤝", label: "Community", color: "#E8956A" },
+const trackMeta: Record<Track, { icon: ReactNode; label: string; color: string }> = {
+  body: { icon: <LeafIcon size={14} color="#7C9070" />, label: "Body", color: "#7C9070" },
+  spirit: { icon: <MoonIcon size={14} color="#8B5FBF" />, label: "Spirit", color: "#8B5FBF" },
+  sound: { icon: <SoundWaveIcon size={14} color="#4ecdc4" />, label: "Sound", color: "#4ecdc4" },
+  community: { icon: <CommunityIcon size={14} color="#E8956A" />, label: "Community", color: "#E8956A" },
 };
 
 interface ScheduleEvent {
@@ -20,7 +21,7 @@ interface ScheduleEvent {
 
 interface ScheduleBlock {
   label: string;
-  heading: string;
+  heading: ReactNode;
   theme: string;
   events: ScheduleEvent[];
 }
@@ -28,7 +29,7 @@ interface ScheduleBlock {
 const days: ScheduleBlock[] = [
   {
     label: "Friday · Aug 8",
-    heading: "🌑 Arrival + Grounding",
+    heading: <><MoonIcon size={20} color="var(--aurora-light)" /> Arrival + Grounding</>,
     theme: "Land, Arrival, Intention",
     events: [
       { time: "12:00 PM", event: "Gates Open", detail: "Welcome to the land. Check in, set up camp, settle in", track: "community" },
@@ -45,7 +46,7 @@ const days: ScheduleBlock[] = [
   },
   {
     label: "Saturday · Aug 9",
-    heading: "🔥 Activation + Transformation",
+    heading: <><FlameIcon size={20} color="var(--coral)" /> Activation + Transformation</>,
     theme: "Expansion, Ceremony, Expression",
     events: [
       { time: "8:00 AM", event: "Lionsgate Activation + Floating Sound Bath", location: "Lake / Aerial", track: "sound" },
@@ -63,7 +64,7 @@ const days: ScheduleBlock[] = [
   },
   {
     label: "Sunday · Aug 10",
-    heading: "🌕 Integration + Community",
+    heading: <><LeafIcon size={20} color="var(--sage)" /> Integration + Community</>,
     theme: "Soft Landing, Heart Opening",
     events: [
       { time: "9:00 AM", event: "Handpan Sound Journey", location: "Main Stage", track: "sound" },
@@ -164,8 +165,8 @@ export default function Schedule() {
       {/* Sunday Family Day */}
       {active === 2 && (
         <div className="family-day">
-          <h3 className="family-day-title" style={{ fontFamily: "var(--font-display)" }}>
-            🌿 Sunday Family Day
+          <h3 className="family-day-title" style={{ fontFamily: "var(--font-display)", display: "flex", alignItems: "center", gap: "0.5rem", justifyContent: "center" }}>
+            <LeafIcon size={22} color="var(--sage)" /> Sunday Family Day
           </h3>
           <p className="family-day-subtitle">Wellness for All Ages · All Proceeds to Nonprofits</p>
           <div className="family-day-grid">

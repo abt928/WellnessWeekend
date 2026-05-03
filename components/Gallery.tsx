@@ -3,6 +3,7 @@
 import { useState, useCallback } from "react";
 import Image from "next/image";
 import Reveal from "@/components/Reveal";
+import { CloseIcon } from "@/components/Icons";
 
 const IMAGES = [
   { src: "/images/gallery/2025-08-09_Festival_Wellness_Group-Dancing-Labyrinth.jpg", alt: "Group dancing labyrinth", w: 4000, h: 6000 },
@@ -80,7 +81,7 @@ export default function Gallery() {
       {/* Lightbox */}
       {lightbox !== null && (
         <div className="lightbox" onClick={closeLightbox}>
-          <button className="lightbox-close" onClick={closeLightbox} aria-label="Close lightbox">✕</button>
+          <button className="lightbox-close" onClick={closeLightbox} aria-label="Close lightbox"><CloseIcon size={20} /></button>
           <button
             className="lightbox-nav lightbox-prev"
             onClick={(e) => { e.stopPropagation(); goPrev(); }}

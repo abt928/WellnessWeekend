@@ -2,6 +2,7 @@
 
 import { useState, useEffect, useCallback, useRef } from "react";
 import { trackLead } from "@/lib/tracking";
+import { LeafIcon, CloseIcon, MoonIcon, SparklesIcon } from "@/components/Icons";
 
 /**
  * Gentle conversion nudges:
@@ -138,7 +139,7 @@ export default function ConversionNudges() {
       {/* ── Return Visitor Welcome Toast ── */}
       {showWelcomeBack && (
         <div className="welcome-toast" role="status" aria-live="polite">
-          <span className="welcome-toast-icon">🌿</span>
+          <span className="welcome-toast-icon"><LeafIcon size={18} color="var(--sage-light)" /></span>
           <span>Welcome back, seeker. Your journey continues.</span>
         </div>
       )}
@@ -158,12 +159,12 @@ export default function ConversionNudges() {
               onClick={() => setShowExitIntent(false)}
               aria-label="Close"
             >
-              ✕
+              <CloseIcon size={16} />
             </button>
 
             {status === "sent" ? (
               <div className="exit-success">
-                <div className="exit-icon">🌙</div>
+                <div className="exit-icon"><MoonIcon size={36} color="var(--aurora-light)" /></div>
                 <h3 className="exit-title" style={{ fontFamily: "var(--font-display)" }}>
                   You&apos;re <em>Connected</em>
                 </h3>
@@ -174,7 +175,7 @@ export default function ConversionNudges() {
               </div>
             ) : (
               <>
-                <div className="exit-icon">✨</div>
+                <div className="exit-icon"><SparklesIcon size={36} color="var(--gold)" /></div>
                 <h3 className="exit-title" style={{ fontFamily: "var(--font-display)" }}>
                   Before You <em>Go</em>
                 </h3>

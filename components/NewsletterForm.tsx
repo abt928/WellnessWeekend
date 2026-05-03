@@ -1,6 +1,7 @@
 "use client";
 import { useState, FormEvent } from "react";
 import { trackLead } from "@/lib/tracking";
+import { SunIcon } from "@/components/Icons";
 
 export default function NewsletterForm() {
   const [status, setStatus] = useState<"idle" | "sending" | "success" | "error">("idle");
@@ -28,7 +29,7 @@ export default function NewsletterForm() {
     return (
       <div className="newsletter" style={{ justifyContent: "center" }}>
         <p style={{ color: "var(--gold-light)", fontSize: "0.95rem" }}>
-          ✨ You&apos;re on the list! See you under the midnight sun.
+          <SunIcon size={18} color="var(--gold)" /> You&apos;re on the list! See you under the midnight sun.
         </p>
       </div>
     );

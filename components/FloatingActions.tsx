@@ -2,6 +2,7 @@
 
 import { useState, useEffect, useCallback } from "react";
 import { trackLead } from "@/lib/tracking";
+import { CloseIcon, EnvelopeIcon } from "@/components/Icons";
 
 interface CartEntry {
   variationId: string;
@@ -108,11 +109,11 @@ export default function FloatingActions() {
       {showMessage && (
         <div className="modal-overlay" onClick={() => setShowMessage(false)}>
           <div className="modal-content" onClick={(e) => e.stopPropagation()}>
-            <button className="modal-close" onClick={() => setShowMessage(false)} aria-label="Close">✕</button>
+            <button className="modal-close" onClick={() => setShowMessage(false)} aria-label="Close"><CloseIcon size={18} /></button>
 
             {status === "sent" ? (
               <div className="modal-success">
-                <div className="modal-success-icon">✉️</div>
+                <div className="modal-success-icon"><EnvelopeIcon size={32} color="var(--aurora)" /></div>
                 <h3 className="modal-title" style={{ fontFamily: "var(--font-display)" }}>
                   Message Sent!
                 </h3>

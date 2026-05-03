@@ -74,11 +74,35 @@ export default function GetInvolved() {
       </p>
 
       <div className="involve-grid">
-        {/* Vendor CTA */}
+        {/* Instructor - Waitlist */}
+        <div className="involve-card">
+          <div className="involve-icon">🧘</div>
+          <h3 className="involve-title" style={{ fontFamily: "var(--font-display)" }}>
+            Instructor Application
+          </h3>
+          <p className="involve-desc">
+            Instructor applications for 2026 are now full. Join the waitlist
+            to be notified of openings or for priority consideration in future years.
+          </p>
+          <ul className="involve-perks">
+            <li>Applications are full for 2026</li>
+            <li>Waitlist for cancellations</li>
+            <li>Priority for 2027 gathering</li>
+          </ul>
+          <button
+            className="involve-btn"
+            style={{ opacity: 0.7, background: "var(--sage)" }}
+            onClick={() => { setActiveForm("vendor"); setStatus("idle"); }}
+          >
+            Join Waitlist
+          </button>
+        </div>
+
+        {/* Vendor */}
         <div className="involve-card">
           <div className="involve-icon">🏪</div>
           <h3 className="involve-title" style={{ fontFamily: "var(--font-display)" }}>
-            Become a Vendor
+            Vendor Application
           </h3>
           <p className="involve-desc">
             Share your healing arts, handmade goods, crystals, wellness products, or
@@ -98,11 +122,11 @@ export default function GetInvolved() {
           </button>
         </div>
 
-        {/* Volunteer CTA */}
+        {/* Volunteer */}
         <div className="involve-card">
           <div className="involve-icon">🙌</div>
           <h3 className="involve-title" style={{ fontFamily: "var(--font-display)" }}>
-            Volunteer With Us
+            Volunteer Application
           </h3>
           <p className="involve-desc">
             Give your time and energy to help create this sacred container. Volunteers
@@ -119,6 +143,30 @@ export default function GetInvolved() {
             onClick={() => { setActiveForm("volunteer"); setStatus("idle"); }}
           >
             Apply as Volunteer
+          </button>
+        </div>
+
+        {/* Sponsor */}
+        <div className="involve-card">
+          <div className="involve-icon">💎</div>
+          <h3 className="involve-title" style={{ fontFamily: "var(--font-display)" }}>
+            Sponsor Application
+          </h3>
+          <p className="involve-desc">
+            Align your brand with Alaska&apos;s premier healing arts festival. Custom
+            sponsorship packages designed for maximum visibility and impact.
+          </p>
+          <ul className="involve-perks">
+            <li>Logo on all festival materials</li>
+            <li>Dedicated brand activation space</li>
+            <li>VIP passes for your team</li>
+            <li>Social media features</li>
+          </ul>
+          <button
+            className="involve-btn"
+            onClick={() => { setActiveForm("vendor"); setStatus("idle"); }}
+          >
+            Apply as Sponsor
           </button>
         </div>
       </div>

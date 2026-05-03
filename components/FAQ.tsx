@@ -16,11 +16,11 @@ const faqs = [
   },
   {
     q: "Are meals included?",
-    a: "Wildflower, Aurora, and Midnight Sun packages include organic, locally-sourced meals. Seedling pass holders can purchase meal plans or bring their own food. Vegan, vegetarian, and gluten-free options always available.",
+    a: "Meals are available for purchase on-site from our curated food vendors and the Cacao Bar. Vegan, vegetarian, and gluten-free options are always available. Beverage tokens can be pre-purchased in the store.",
   },
   {
     q: "What is the cancellation policy?",
-    a: "Full refund up to 60 days before the festival. 50% refund 30–60 days out. Within 30 days, your ticket can be transferred to another attendee. We also offer credit toward next year's gathering.",
+    a: "All ticket sales are final — there are no refunds for cancellations. However, we can apply a credit toward next year's gathering. Tickets may also be transferred to another attendee at any time. Contact us to arrange a transfer or credit.",
   },
   {
     q: "Is this suitable for beginners?",

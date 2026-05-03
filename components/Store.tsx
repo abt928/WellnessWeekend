@@ -161,13 +161,13 @@ export default function Store() {
 
   return (
     <section id="store" className="section store-section">
-      <p className="section-label">Shop & Reserve</p>
+      <p className="section-label">Build Your Experience</p>
       <h2 className="section-title" style={{ fontFamily: "var(--font-display)" }}>
-        Festival <em>Store</em>
+        Create Your <em>Weekend</em>
       </h2>
       <p className="section-desc">
-        Secure your tickets, book add-on experiences, and grab merch — all processed
-        securely through Square.
+        Choose your tickets, add-on experiences, and merch to craft the perfect
+        Wellness Weekend — all processed securely through Square.
       </p>
 
       {/* Category Tabs */}

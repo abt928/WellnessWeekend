@@ -10,78 +10,9 @@ import Store from "@/components/Store";
 import Gallery from "@/components/Gallery";
 
 /* ── static data ── */
-const practitioners = [
-  { name: "Luna Ravenwood", role: "Sound Healer", icon: "🔮" },
-  { name: "Cedar Whitehawk", role: "Ceremonial Shaman", icon: "🪶" },
-  { name: "Sage Moonfire", role: "Breathwork Facilitator", icon: "🌬️" },
-  { name: "Aurora Clearwater", role: "Plant Medicine Guide", icon: "🍄" },
-  { name: "River Stoneheart", role: "Yoga Teacher", icon: "🧘" },
-  { name: "Willow Earthsong", role: "Reiki Master", icon: "✨" },
-  { name: "Ember Goldleaf", role: "Cacao Ceremonialist", icon: "🍫" },
-  { name: "Sky Driftwood", role: "Ecstatic Dance DJ", icon: "🎵" },
-];
-
-const packages = [
-  {
-    icon: "🌱",
-    name: "Seedling",
-    price: "$222",
-    per: "per person",
-    features: [
-      "Full weekend pass",
-      "All workshops & ceremonies",
-      "Communal camping area",
-      "Access to communal kitchen",
-      "Welcome gift bundle",
-    ],
-  },
-  {
-    icon: "🌸",
-    name: "Wildflower",
-    price: "$444",
-    per: "per person",
-    features: [
-      "Everything in Seedling",
-      "Furnished glamping tent",
-      "All organic meals included",
-      "Herbal welcome kit",
-      "Guided nature walk",
-      "Morning tea ceremony",
-    ],
-  },
-  {
-    icon: "🌌",
-    name: "Aurora",
-    price: "$777",
-    per: "per person",
-    featured: true,
-    badge: "Most Popular",
-    features: [
-      "Everything in Wildflower",
-      "Private heated yurt",
-      "Two spa treatments",
-      "Sacred plant medicine ceremony",
-      "Midnight sun meditation",
-      "Crystal grid keepsake",
-      "Priority workshop seating",
-    ],
-  },
-  {
-    icon: "☀️",
-    name: "Midnight Sun",
-    price: "$1,111",
-    per: "per person",
-    features: [
-      "Everything in Aurora",
-      "Luxury private cabin",
-      "Helicopter glacier tour",
-      "Private shamanic ceremony",
-      "Personal concierge",
-      "All plant medicine ceremonies",
-      "Exclusive farewell dinner",
-      "Lifetime alumni access",
-    ],
-  },
+const partners = [
+  { name: "Sound Space", role: "Sound Healing Partner", icon: "🔊" },
+  { name: "Alaska Fly Dog", role: "Adventure Partner", icon: "🛩️" },
 ];
 
 const testimonials = [
@@ -126,7 +57,7 @@ export default function Home() {
           </p>
           <p className="hero-date">August 8 – 10, 2026 · Sutton, Alaska</p>
           <CountdownTimer />
-          <a href="#packages" className="hero-cta">
+          <a href="#store" className="hero-cta">
             Reserve Your Journey
           </a>
         </div>
@@ -157,7 +88,7 @@ export default function Home() {
             {[
               { n: "4th", l: "Year" },
               { n: "200+", l: "Seekers" },
-              { n: "30+", l: "Practitioners" },
+              { n: "75+", l: "Practitioners" },
               { n: "3", l: "Days" },
             ].map((s) => (
               <div className="stat" key={s.l}>
@@ -169,16 +100,16 @@ export default function Home() {
         </Reveal>
       </section>
 
-      {/* ═══ EXPERIENCE ═══ */}
+      {/* ═══ THREE PILLARS ═══ */}
       <section id="experience" className="section experience">
         <Reveal>
           <p className="section-label">The Experience</p>
           <h2 className="section-title" style={{ fontFamily: "var(--font-display)" }}>
-            Three Pillars of <em>Healing</em>
+            Three Pillars of <em>Wellness Weekend</em>
           </h2>
           <p className="section-desc">
-            Every offering at Wellness Weekend is designed to nourish body, mind, and
-            spirit — rooted in ancient wisdom and held in sacred Alaskan earth.
+            Every offering at Wellness Weekend is woven through three guiding principles —
+            the pillars that shape every ceremony, workshop, and moment of connection.
           </p>
         </Reveal>
         <Reveal>
@@ -186,21 +117,21 @@ export default function Home() {
             {[
               {
                 img: "/images/sound-healing.png",
-                icon: "🔮",
-                title: "Sound & Vibration",
-                desc: "Crystal bowls, tuning forks, gong baths, vocal toning, and sacred instruments guide you into deep states of consciousness and vibrational healing.",
+                icon: "🔥",
+                title: "Transformation",
+                desc: "The 8/8 Lion's Gate Activation Ceremony, sacred drumming circles led by White Eagle Medicine Woman, plant medicine work, and deep shamanic journeys that shatter boundaries and ignite rebirth.",
               },
               {
                 img: "/images/earth-medicine.png",
-                icon: "🍄",
-                title: "Plant Medicine & Ceremony",
-                desc: "Sacred plant medicine ceremonies led by experienced shamans. Cacao rituals, herbal elixirs, wildcrafting, and deep ceremonial work in the Alaskan wilderness.",
+                icon: "🌿",
+                title: "Integration",
+                desc: "Sound healing, breathwork, yoga, bodywork, and earth medicine — practices that help you anchor and embody the shifts. Take the transformation home with you.",
               },
               {
                 img: "/images/movement.png",
-                icon: "✨",
-                title: "Movement & Bodywork",
-                desc: "Ecstatic dance, sunrise yoga, breathwork journeys, reiki, Thai massage, and somatic release — move energy through the body.",
+                icon: "🤝",
+                title: "Community",
+                desc: "Ecstatic dance, communal meals, campfire circles, and shared ceremony. A tribe of 200+ seekers holding space for each other under the midnight sun.",
               },
             ].map((p) => (
               <div className="pillar" key={p.title}>
@@ -256,24 +187,24 @@ export default function Home() {
         </div>
       </section>
 
-      {/* ═══ GALLERY ═══ */}
-      <Gallery />
+      {/* ═══ SCHEDULE ═══ */}
+      <Schedule />
 
-      {/* ═══ PRACTITIONERS ═══ */}
-      <section id="practitioners" className="section practitioners">
+      {/* ═══ BRAND PARTNERS ═══ */}
+      <section id="partners" className="section practitioners">
         <Reveal>
-          <p className="section-label">Our Guides</p>
+          <p className="section-label">Our Partners</p>
           <h2 className="section-title" style={{ fontFamily: "var(--font-display)" }}>
-            Meet the <em>Practitioners</em>
+            Featured <em>Brand Partners</em>
           </h2>
           <p className="section-desc">
-            Handpicked healers, teachers, and guides from across North America — each bringing
-            decades of practice and deep reverence for the healing arts.
+            Proud to collaborate with brands that share our vision for healing,
+            adventure, and community in the Alaskan wilderness.
           </p>
         </Reveal>
         <Reveal>
-          <div className="practitioner-grid">
-            {practitioners.map((p) => (
+          <div className="practitioner-grid" style={{ gridTemplateColumns: "repeat(2, 1fr)", maxWidth: "600px" }}>
+            {partners.map((p) => (
               <div className="practitioner-card" key={p.name}>
                 <div className="practitioner-avatar">{p.icon}</div>
                 <div className="practitioner-name" style={{ fontFamily: "var(--font-display)" }}>{p.name}</div>
@@ -287,44 +218,14 @@ export default function Home() {
       {/* ═══ GET INVOLVED ═══ */}
       <GetInvolved />
 
-      {/* ═══ SCHEDULE ═══ */}
-      <Schedule />
-
-      {/* ═══ STORE ═══ */}
+      {/* ═══ STORE — "Create Your Weekend" ═══ */}
       <Store />
 
-      {/* ═══ PACKAGES ═══ */}
-      <section id="packages" className="section packages">
-        <Reveal>
-          <p className="section-label">Choose Your Path</p>
-          <h2 className="section-title" style={{ fontFamily: "var(--font-display)" }}>
-            Festival <em>Packages</em>
-          </h2>
-          <p className="section-desc">
-            Every package includes the full Wellness Weekend experience. Choose the
-            level of comfort and immersion that calls to you.
-          </p>
-        </Reveal>
-        <Reveal>
-          <div className="package-grid">
-            {packages.map((p) => (
-              <div className={`package-card${p.featured ? " featured" : ""}`} key={p.name}>
-                {p.badge && <span className="package-badge">{p.badge}</span>}
-                <div className="package-icon">{p.icon}</div>
-                <div className="package-name" style={{ fontFamily: "var(--font-display)" }}>{p.name}</div>
-                <div className="package-price" style={{ fontFamily: "var(--font-display)" }}>{p.price}</div>
-                <div className="package-per">{p.per}</div>
-                <ul className="package-features">
-                  {p.features.map((f) => (
-                    <li key={f}>{f}</li>
-                  ))}
-                </ul>
-                <button className="package-btn">Reserve Now</button>
-              </div>
-            ))}
-          </div>
-        </Reveal>
-      </section>
+      {/* ═══ FAQ ═══ */}
+      <FAQ />
+
+      {/* ═══ GALLERY ═══ */}
+      <Gallery />
 
       {/* ═══ TESTIMONIALS ═══ */}
       <section className="section testimonials">
@@ -348,9 +249,6 @@ export default function Home() {
           </div>
         </Reveal>
       </section>
-
-      {/* ═══ FAQ ═══ */}
-      <FAQ />
 
       {/* ═══ FOOTER ═══ */}
       <footer className="footer">

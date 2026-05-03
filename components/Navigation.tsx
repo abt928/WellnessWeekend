@@ -21,7 +21,6 @@ export default function Navigation() {
         <li><a href="#alaska">The Land</a></li>
         <li><a href="#schedule">Schedule</a></li>
         <li><a href="#store">Store</a></li>
-        <li><a href="#packages">Packages</a></li>
         <li><a href="#faq">FAQ</a></li>
       </ul>
       <a href="#store"><button className="nav-cta">Reserve Your Spot</button></a>

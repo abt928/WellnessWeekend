@@ -5,19 +5,19 @@ import Image from "next/image";
 import Reveal from "@/components/Reveal";
 
 const IMAGES = [
-  { src: "/images/gallery/2025-08-09_Festival_Wellness_Group-Dancing-Labyrinth.jpg", alt: "Group dancing labyrinth", span: "tall" },
-  { src: "/images/gallery/2025-08-09_Festival_Wellness_Woman-Dancing-Colorful-Dress.jpg", alt: "Woman dancing in colorful dress", span: "normal" },
-  { src: "/images/gallery/2023-08-06_Festival_Wellness_Crystal-Bowls-Sound-Healing.jpg", alt: "Crystal bowls sound healing", span: "normal" },
-  { src: "/images/gallery/2025-08-09_Festival_Wellness_Woman-Dancing-Laughing.jpg", alt: "Woman dancing and laughing", span: "tall" },
-  { src: "/images/gallery/2023-08-06_Festival_Wellness_Women-Laying-Grass-Drumming.jpg", alt: "Women laying in grass drumming", span: "normal" },
-  { src: "/images/gallery/2024-01-28_Festival_Wellness_Outdoor-Sound-Healing-Setup.png", alt: "Outdoor sound healing setup", span: "wide" },
-  { src: "/images/gallery/2025-08-09_Festival_Wellness_Group-Circle-Meditation.jpg", alt: "Group circle meditation", span: "normal" },
-  { src: "/images/gallery/2025-08-09_Festival_Wellness_Woman-Harmonium-Gong.jpg", alt: "Woman with harmonium and gong", span: "tall" },
-  { src: "/images/gallery/2025-08-10_Festival_Wellness_Woman-Dancing-Barefoot.jpg", alt: "Woman dancing barefoot", span: "normal" },
-  { src: "/images/gallery/2023-08-06_Festival_Wellness_Evening-Campfire.jpg", alt: "Evening campfire gathering", span: "wide" },
-  { src: "/images/gallery/2024-08-01_Festival_Wellness_Woman-Playing-Drum-Gong.jpg", alt: "Woman playing drum and gong", span: "normal" },
-  { src: "/images/gallery/2025-08-09_Festival_Wellness_Group-Circle-Arms-Raised.jpg", alt: "Group circle with arms raised", span: "normal" },
-  { src: "/images/gallery/2025-08-09_Festival_Wellness_Woman-Smiling-White-Shirt.jpg", alt: "Woman smiling in white shirt", span: "tall" },
+  { src: "/images/gallery/2025-08-09_Festival_Wellness_Group-Dancing-Labyrinth.jpg", alt: "Group dancing labyrinth", w: 4000, h: 6000 },
+  { src: "/images/gallery/2025-08-09_Festival_Wellness_Woman-Dancing-Colorful-Dress.jpg", alt: "Woman dancing in colorful dress", w: 4000, h: 6000 },
+  { src: "/images/gallery/2023-08-06_Festival_Wellness_Crystal-Bowls-Sound-Healing.jpg", alt: "Crystal bowls sound healing", w: 4032, h: 3024 },
+  { src: "/images/gallery/2025-08-09_Festival_Wellness_Woman-Dancing-Laughing.jpg", alt: "Woman dancing and laughing", w: 4000, h: 6000 },
+  { src: "/images/gallery/2023-08-06_Festival_Wellness_Women-Laying-Grass-Drumming.jpg", alt: "Women laying in grass drumming", w: 1500, h: 1000 },
+  { src: "/images/gallery/2024-01-28_Festival_Wellness_Outdoor-Sound-Healing-Setup.png", alt: "Outdoor sound healing setup", w: 1792, h: 1024 },
+  { src: "/images/gallery/2025-08-09_Festival_Wellness_Group-Circle-Meditation.jpg", alt: "Group circle meditation", w: 4000, h: 6000 },
+  { src: "/images/gallery/2025-08-09_Festival_Wellness_Woman-Harmonium-Gong.jpg", alt: "Woman with harmonium and gong", w: 4000, h: 6000 },
+  { src: "/images/gallery/2025-08-10_Festival_Wellness_Woman-Dancing-Barefoot.jpg", alt: "Woman dancing barefoot", w: 4000, h: 6000 },
+  { src: "/images/gallery/2023-08-06_Festival_Wellness_Evening-Campfire.jpg", alt: "Evening campfire gathering", w: 4032, h: 3024 },
+  { src: "/images/gallery/2024-08-01_Festival_Wellness_Woman-Playing-Drum-Gong.jpg", alt: "Woman playing drum and gong", w: 3024, h: 4032 },
+  { src: "/images/gallery/2025-08-09_Festival_Wellness_Group-Circle-Arms-Raised.jpg", alt: "Group circle with arms raised", w: 4000, h: 6000 },
+  { src: "/images/gallery/2025-08-09_Festival_Wellness_Woman-Smiling-White-Shirt.jpg", alt: "Woman smiling in white shirt", w: 4000, h: 6000 },
 ] as const;
 
 export default function Gallery() {
@@ -55,16 +55,17 @@ export default function Gallery() {
             {IMAGES.map((img, idx) => (
               <div
                 key={idx}
-                className={`masonry-item masonry-${img.span}`}
+                className="masonry-item"
                 style={{ animationDelay: `${idx * 0.06}s` }}
                 onClick={() => openLightbox(idx)}
               >
                 <Image
                   src={img.src}
                   alt={img.alt}
-                  fill
+                  width={img.w}
+                  height={img.h}
                   sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
-                  style={{ objectFit: "cover" }}
+                  className="masonry-img"
                 />
                 <div className="masonry-overlay">
                   <span className="masonry-caption">{img.alt}</span>

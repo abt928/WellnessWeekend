@@ -1219,6 +1219,7 @@ body {
   overflow: hidden;
   cursor: pointer;
   animation: masonryPopIn 0.6s cubic-bezier(0.16, 1, 0.3, 1) both;
+  line-height: 0; /* removes gap below inline images */
 }
 
 @keyframes masonryPopIn {
@@ -1232,17 +1233,16 @@ body {
   }
 }
 
-/* Aspect ratios for visual variety */
-.masonry-normal { aspect-ratio: 4 / 3; }
-.masonry-tall   { aspect-ratio: 3 / 4; }
-.masonry-wide   { aspect-ratio: 16 / 9; }
-
-.masonry-item img {
+/* Images fill column width, height is intrinsic */
+.masonry-img {
+  width: 100%;
+  height: auto;
+  display: block;
   transition: transform 0.6s cubic-bezier(0.16, 1, 0.3, 1), filter 0.6s ease;
 }
-.masonry-item:hover img {
-  transform: scale(1.08);
-  filter: brightness(1.05);
+.masonry-item:hover .masonry-img {
+  transform: scale(1.05);
+  filter: brightness(1.08);
 }
 
 .masonry-overlay {

@@ -286,6 +286,8 @@ export default function Home() {
           <a href="/privacy">Privacy Policy</a>
           <span className="footer-legal-sep">·</span>
           <a href="/terms">Terms of Service</a>
+          <span className="footer-legal-sep">·</span>
+          <a href="/guidelines">Community Guidelines</a>
         </div>
         <div className="footer-bottom">
           © {new Date().getFullYear()}{" "}

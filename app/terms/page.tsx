@@ -275,6 +275,7 @@ export default function TermsOfService() {
 
           <footer className="legal-footer">
             <Link href="/privacy">Privacy Policy</Link>
+            <Link href="/guidelines">Community Guidelines</Link>
             <Link href="/">Return to Home</Link>
           </footer>
         </div>

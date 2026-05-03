@@ -339,6 +339,7 @@ export default function PrivacyPolicy() {
 
           <footer className="legal-footer">
             <Link href="/terms">Terms of Service</Link>
+            <Link href="/guidelines">Community Guidelines</Link>
             <Link href="/">Return to Home</Link>
           </footer>
         </div>

@@ -20,6 +20,8 @@ declare global {
       identify: (params: Record<string, unknown>) => void;
     };
     fbq: (...args: unknown[]) => void;
+    gtag: (...args: unknown[]) => void;
+    dataLayer: unknown[];
   }
 }
 
@@ -141,6 +143,26 @@ function fireMeta(event: string, eventId: string, data?: TrackingEventData) {
   }
 }
 
+function fireGA(event: string, eventId: string, data?: TrackingEventData) {
+  if (typeof window === "undefined" || !window.gtag) return;
+
+  const params: Record<string, unknown> = {
+    event_id: eventId,
+  };
+  if (data?.value) params.value = data.value;
+  if (data?.currency) params.currency = data.currency || "USD";
+  if (data?.contentId) params.item_id = data.contentId;
+  if (data?.contentName) params.item_name = data.contentName;
+  if (data?.quantity) params.quantity = data.quantity;
+  if (data?.description) params.description = data.description;
+
+  try {
+    window.gtag("event", event, params);
+  } catch (e) {
+    console.warn("[Tracking] GA4 event error:", e);
+  }
+}
+
 // ─── Server-side redundant event ─────────────────────────────────────
 
 async function fireServerEvent(
@@ -203,6 +225,15 @@ const META_EVENT_MAP: Record<string, string> = {
   ViewContent: "ViewContent",
 };
 
+const GA_EVENT_MAP: Record<string, string> = {
+  Lead: "generate_lead",
+  SubmitForm: "form_submit",
+  AddToCart: "add_to_cart",
+  InitiateCheckout: "begin_checkout",
+  Purchase: "purchase",
+  ViewContent: "view_item",
+};
+
 /** Core tracking function — fires both pixels + server CAPI with shared event_id */
 function trackEvent(
   internalEvent: string,
@@ -212,10 +243,12 @@ function trackEvent(
   const eventId = generateEventId(internalEvent);
   const tiktokEvent = TIKTOK_EVENT_MAP[internalEvent] || internalEvent;
   const metaEvent = META_EVENT_MAP[internalEvent] || internalEvent;
+  const gaEvent = GA_EVENT_MAP[internalEvent] || internalEvent;
 
   // Client-side pixels (immediate)
   fireTikTok(tiktokEvent, eventId, data);
   fireMeta(metaEvent, eventId, data);
+  fireGA(gaEvent, eventId, data);
 
   // Server-side CAPI (async, fire-and-forget)
   if (!options?.skipServer) {

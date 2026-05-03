@@ -75,30 +75,6 @@ export default function GetInvolved() {
       </p>
 
       <div className="involve-grid">
-        {/* Instructor - Waitlist */}
-        <div className="involve-card">
-          <div className="involve-icon"><MeditateIcon size={32} color="var(--psyche-cyan)" /></div>
-          <h3 className="involve-title" style={{ fontFamily: "var(--font-display)" }}>
-            Instructor Application
-          </h3>
-          <p className="involve-desc">
-            Instructor applications for 2026 are now full. Join the waitlist
-            to be notified of openings or for priority consideration in future years.
-          </p>
-          <ul className="involve-perks">
-            <li>Applications are full for 2026</li>
-            <li>Waitlist for cancellations</li>
-            <li>Priority for 2027 gathering</li>
-          </ul>
-          <button
-            className="involve-btn"
-            style={{ opacity: 0.7, background: "var(--sage)" }}
-            onClick={() => { setActiveForm("vendor"); setStatus("idle"); }}
-          >
-            Join Waitlist
-          </button>
-        </div>
-
         {/* Vendor */}
         <div className="involve-card">
           <div className="involve-icon"><StorefrontIcon size={32} color="var(--psyche-cyan)" /></div>
@@ -123,29 +99,6 @@ export default function GetInvolved() {
           </button>
         </div>
 
-        {/* Volunteer */}
-        <div className="involve-card">
-          <div className="involve-icon"><HandsIcon size={32} color="var(--psyche-cyan)" /></div>
-          <h3 className="involve-title" style={{ fontFamily: "var(--font-display)" }}>
-            Volunteer Application
-          </h3>
-          <p className="involve-desc">
-            Give your time and energy to help create this sacred container. Volunteers
-            are the heartbeat of Wellness Weekend.
-          </p>
-          <ul className="involve-perks">
-            <li>Free weekend pass</li>
-            <li>Volunteer camping included</li>
-            <li>Meals provided during shifts</li>
-          </ul>
-          <button
-            className="involve-btn"
-            onClick={() => { setActiveForm("volunteer"); setStatus("idle"); }}
-          >
-            Apply as Volunteer
-          </button>
-        </div>
-
         {/* Sponsor */}
         <div className="involve-card">
           <div className="involve-icon"><DiamondIcon size={32} color="var(--psyche-cyan)" /></div>
@@ -159,7 +112,6 @@ export default function GetInvolved() {
           <ul className="involve-perks">
             <li>Logo on all festival materials</li>
             <li>Dedicated brand activation space</li>
-            <li>VIP passes for your team</li>
             <li>Social media features</li>
           </ul>
           <button
@@ -167,6 +119,52 @@ export default function GetInvolved() {
             onClick={() => { setActiveForm("vendor"); setStatus("idle"); }}
           >
             Apply as Sponsor
+          </button>
+        </div>
+
+        {/* Volunteer */}
+        <div className="involve-card">
+          <div className="involve-icon"><HandsIcon size={32} color="var(--psyche-cyan)" /></div>
+          <h3 className="involve-title" style={{ fontFamily: "var(--font-display)" }}>
+            Volunteer Application
+          </h3>
+          <p className="involve-desc">
+            Give your time and energy to help create this sacred container. Volunteers
+            are the heartbeat of Wellness Weekend.
+          </p>
+          <ul className="involve-perks">
+            <li>Free weekend pass</li>
+            <li>Volunteer camping included</li>
+          </ul>
+          <button
+            className="involve-btn"
+            onClick={() => { setActiveForm("volunteer"); setStatus("idle"); }}
+          >
+            Apply as Volunteer
+          </button>
+        </div>
+
+        {/* Instructor - Waitlist */}
+        <div className="involve-card">
+          <div className="involve-icon"><MeditateIcon size={32} color="var(--psyche-cyan)" /></div>
+          <h3 className="involve-title" style={{ fontFamily: "var(--font-display)" }}>
+            Instructor Application
+          </h3>
+          <p className="involve-desc">
+            Instructor applications for 2026 are now full. Join the waitlist
+            to be notified of openings or for priority consideration in future years.
+          </p>
+          <ul className="involve-perks">
+            <li>Applications are full for 2026</li>
+            <li>Waitlist for cancellations</li>
+            <li>Priority for 2027 gathering</li>
+          </ul>
+          <button
+            className="involve-btn"
+            style={{ opacity: 0.7, background: "var(--sage)" }}
+            onClick={() => { setActiveForm("vendor"); setStatus("idle"); }}
+          >
+            Join Waitlist
           </button>
         </div>
       </div>

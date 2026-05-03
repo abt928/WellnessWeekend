@@ -8,7 +8,6 @@ import GetInvolved from "@/components/GetInvolved";
 import NewsletterForm from "@/components/NewsletterForm";
 import Store from "@/components/Store";
 import Gallery from "@/components/Gallery";
-import LeadCapture from "@/components/LeadCapture";
 import {
   FlameIcon,
   LeafIcon,
@@ -21,27 +20,6 @@ import {
 const partners = [
   { name: "Sound Space", role: "Sound Healing Partner", Icon: SoundWaveIcon },
   { name: "Alaska Fly Dog", role: "Adventure Partner", Icon: PlaneIcon },
-];
-
-const testimonials = [
-  {
-    quote:
-      "The plant medicine ceremony under the midnight sun shattered every boundary I thought I had. I left Alaska a completely different person. This is not just a festival. It's a portal.",
-    author: "Maya S.",
-    loc: "Portland, OR",
-  },
-  {
-    quote:
-      "The ceremonial shamans hold space like nothing I've ever experienced. Combined with Alaska's raw energy and the midnight sun, it's genuinely otherworldly. Bring tissues.",
-    author: "James R.",
-    loc: "Denver, CO",
-  },
-  {
-    quote:
-      "Alaska's energy is unlike anything else. Combine that with this incredible community and you get pure magic. Already booked for next year.",
-    author: "Aria L.",
-    loc: "Sedona, AZ",
-  },
 ];
 
 const pillars = [
@@ -133,7 +111,7 @@ export default function Home() {
           <p className="hero-date">August 8 – 10, 2026 · Sutton, Alaska</p>
           <CountdownTimer />
           <a href="#store" className="hero-cta">
-            Reserve Your Journey
+            Experience the Weekend
           </a>
         </div>
         <div className="scroll-indicator">
@@ -142,7 +120,7 @@ export default function Home() {
         </div>
       </section>
 
-      {/* ═══ ABOUT ═══ */}
+      {/* ═══ ABOUT / VISION ═══ */}
       <section id="about" className="section about">
         <Reveal>
           <p className="section-label">Our Vision</p>
@@ -174,6 +152,9 @@ export default function Home() {
           </div>
         </Reveal>
       </section>
+
+      {/* ═══ SCHEDULE ═══ */}
+      <Schedule />
 
       {/* ═══ THREE PILLARS ═══ */}
       <section id="experience" className="section experience">
@@ -208,7 +189,13 @@ export default function Home() {
         </Reveal>
       </section>
 
-      {/* ═══ ALASKA ═══ */}
+      {/* ═══ TICKETS STORE ═══ */}
+      <Store />
+
+      {/* ═══ GALLERY ═══ */}
+      <Gallery />
+
+      {/* ═══ ALASKA / THE LAND ═══ */}
       <section id="alaska" className="alaska">
         <div className="alaska-bg">
           <Image src="/images/alaska.png" alt="Vast Alaskan wilderness" fill style={{ objectFit: "cover" }} />
@@ -245,11 +232,8 @@ export default function Home() {
         </div>
       </section>
 
-      {/* ═══ LEAD CAPTURE ═══ */}
-      <LeadCapture />
-
-      {/* ═══ SCHEDULE ═══ */}
-      <Schedule />
+      {/* ═══ FAQ ═══ */}
+      <FAQ />
 
       {/* ═══ BRAND PARTNERS ═══ */}
       <section id="partners" className="section practitioners">
@@ -280,38 +264,6 @@ export default function Home() {
 
       {/* ═══ GET INVOLVED ═══ */}
       <GetInvolved />
-
-      {/* ═══ STORE — "Create Your Weekend" ═══ */}
-      <Store />
-
-      {/* ═══ FAQ ═══ */}
-      <FAQ />
-
-      {/* ═══ GALLERY ═══ */}
-      <Gallery />
-
-      {/* ═══ TESTIMONIALS ═══ */}
-      <section className="section testimonials">
-        <Reveal>
-          <p className="section-label">Voices from the Circle</p>
-          <h2 className="section-title" style={{ fontFamily: "var(--font-display)" }}>
-            What Past Attendees <em>Say</em>
-          </h2>
-        </Reveal>
-        <Reveal>
-          <div className="testimonial-grid">
-            {testimonials.map((t) => (
-              <div className="testimonial-card" key={t.author}>
-                <p className="testimonial-quote" style={{ fontFamily: "var(--font-accent)" }}>
-                  &ldquo;{t.quote}&rdquo;
-                </p>
-                <div className="testimonial-author">{t.author}</div>
-                <div className="testimonial-loc">{t.loc}</div>
-              </div>
-            ))}
-          </div>
-        </Reveal>
-      </section>
 
       {/* ═══ FOOTER ═══ */}
       <footer className="footer">

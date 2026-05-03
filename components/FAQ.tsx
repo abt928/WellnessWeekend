@@ -8,7 +8,7 @@ const faqs = [
   },
   {
     q: "What's the weather like in August?",
-    a: "Sutton, Alaska enjoys long summer days with temperatures between 55–75°F. Evenings can cool to 40–50°F. The midnight sun provides nearly 20 hours of daylight — bring an eye mask for sleeping!",
+    a: "Sutton, Alaska enjoys long summer days with temperatures between 55–75°F. Evenings can cool to 40–50°F. The midnight sun provides nearly 20 hours of daylight; bring an eye mask for sleeping!",
   },
   {
     q: "How do I get to the festival?",
@@ -20,7 +20,7 @@ const faqs = [
   },
   {
     q: "What is the cancellation policy?",
-    a: "All ticket sales are final — there are no refunds for cancellations. However, we can apply a credit toward next year's gathering. Tickets may also be transferred to another attendee at any time. Contact us to arrange a transfer or credit.",
+    a: "All ticket sales are final: there are no refunds for cancellations. However, we can apply a credit toward next year’s gathering. Tickets may also be transferred to another attendee at any time. Contact us to arrange a transfer or credit.",
   },
   {
     q: "Is this suitable for beginners?",

@@ -44,7 +44,7 @@ export default function Gallery() {
               A Glimpse of the <em>Magic</em>
             </h2>
             <p className="section-desc">
-              Real moments captured from previous gatherings — the joy,
+              Real moments captured from previous gatherings: the joy,
               connection, and healing that unfolds under the midnight sun.
             </p>
           </div>

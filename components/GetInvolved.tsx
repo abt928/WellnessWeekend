@@ -71,7 +71,7 @@ export default function GetInvolved() {
       </h2>
       <p className="section-desc">
         Wellness Weekend is built by community. Whether you&apos;re a healer, maker,
-        or someone who wants to serve — there&apos;s a place for you.
+        or someone who wants to serve, there&apos;s a place for you.
       </p>
 
       <div className="involve-grid">

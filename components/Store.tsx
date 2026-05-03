@@ -168,7 +168,7 @@ export default function Store() {
       </h2>
       <p className="section-desc">
         Choose your tickets, add-on experiences, and merch to craft the perfect
-        Wellness Weekend — all processed securely through Square.
+        Wellness Weekend, all processed securely through Square.
       </p>
 
       {/* Category Tabs */}

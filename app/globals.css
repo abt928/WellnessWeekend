@@ -27,6 +27,10 @@ body {
   color: var(--charcoal);
   line-height: 1.6;
   overflow-x: hidden;
+  font-kerning: normal;
+  font-optical-sizing: auto;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
 }
 
 /* ========== PSYCHEDELIC KEYFRAMES ========== */
@@ -206,15 +210,16 @@ body {
 .section-title {
   font-size: clamp(2rem, 4vw, 3.5rem); text-align: center;
   color: var(--forest); line-height: 1.15; margin-bottom: 1.5rem;
-  font-weight: 300;
+  font-weight: 300; text-wrap: balance;
 }
 .section-title em {
   font-style: italic;
   color: var(--aurora);
 }
 .section-desc {
-  max-width: 680px; margin: 0 auto 3rem; text-align: center;
+  max-width: 65ch; margin: 0 auto 3rem; text-align: center;
   color: rgba(43,45,43,0.55); font-size: 1.05rem; line-height: 1.8;
+  text-wrap: pretty;
 }
 
 /* ========== ABOUT / STATS ========== */
@@ -292,8 +297,7 @@ body {
   font-size: 2rem; margin-bottom: 0.75rem;
   width: 48px; height: 48px;
   display: flex; align-items: center; justify-content: center;
-  background: rgba(255,255,255,0.1); border-radius: 12px;
-  backdrop-filter: blur(4px); -webkit-backdrop-filter: blur(4px);
+  background: rgba(255,255,255,0.08); border-radius: 12px;
 }
 .pillar-title {
   font-size: 1.5rem; font-weight: 400; margin-bottom: 0.5rem;

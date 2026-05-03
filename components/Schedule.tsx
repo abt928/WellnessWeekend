@@ -31,7 +31,7 @@ const days: ScheduleBlock[] = [
     heading: "🌑 Arrival + Grounding",
     theme: "Land, Arrival, Intention",
     events: [
-      { time: "12:00 PM", event: "Gates Open", detail: "Welcome to the land — check in, set up camp, settle in", track: "community" },
+      { time: "12:00 PM", event: "Gates Open", detail: "Welcome to the land. Check in, set up camp, settle in", track: "community" },
       { time: "3:00 PM", event: "Opening Ceremony & Land Acknowledgement", location: "Main Stage", track: "spirit" },
       { time: "4:00 PM", event: "Paddleboard Yoga", location: "Lake", track: "body" },
       { time: "4:00 PM", event: "Yin Yoga & Sound Savasana", detail: "with Mary", location: "Wellness Tent", track: "body" },

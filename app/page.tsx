@@ -26,7 +26,7 @@ const partners = [
 const testimonials = [
   {
     quote:
-      "The plant medicine ceremony under the midnight sun shattered every boundary I thought I had. I left Alaska a completely different person. This is not just a festival — it's a portal.",
+      "The plant medicine ceremony under the midnight sun shattered every boundary I thought I had. I left Alaska a completely different person. This is not just a festival. It's a portal.",
     author: "Maya S.",
     loc: "Portland, OR",
   },
@@ -55,7 +55,7 @@ const pillars = [
     img: "/images/earth-medicine.png",
     Icon: LeafIcon,
     title: "Integration",
-    desc: "Sound healing, breathwork, yoga, bodywork, and earth medicine \u2014 practices that help you anchor and embody the shifts. Take the transformation home with you.",
+    desc: "Sound healing, breathwork, yoga, bodywork, and earth medicine: practices that help you anchor and embody the shifts. Take the transformation home with you.",
   },
   {
     img: "/images/movement.png",
@@ -107,7 +107,7 @@ export default function Home() {
             Wellness Weekend is a transformational gathering where seekers, healers, and
             free spirits come together in Alaska&apos;s breathtaking wilderness for sacred
             plant medicine ceremonies, sound healing, and deep shamanic work. Our festival
-            falls on the powerful 8/8 Lion&apos;s Gate Portal — a time of heightened cosmic
+            falls on the powerful 8/8 Lion&apos;s Gate Portal, a time of heightened cosmic
             energy and spiritual awakening. For three days, guided by ceremonial shamans
             under the midnight sun, we dissolve boundaries and remember who we truly are.
           </p>
@@ -137,7 +137,7 @@ export default function Home() {
             Three Pillars of <em>Wellness Weekend</em>
           </h2>
           <p className="section-desc">
-            Every offering at Wellness Weekend is woven through three guiding principles —
+            Every offering at Wellness Weekend is woven through three guiding principles:
             the pillars that shape every ceremony, workshop, and moment of connection.
           </p>
         </Reveal>
@@ -178,7 +178,7 @@ export default function Home() {
               Nestled in the Matanuska Valley at the foot of the Chugach Mountains,
               our gathering grounds offer glacier-fed rivers, ancient boreal forests,
               and endless wildflower meadows. In August, Alaska&apos;s legendary midnight
-              sun bathes the land in golden light nearly around the clock — creating a
+              sun bathes the land in golden light nearly around the clock, creating a
               dreamlike atmosphere where time dissolves and healing deepens.
             </p>
             <div className="alaska-features">

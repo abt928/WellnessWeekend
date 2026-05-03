@@ -132,6 +132,27 @@ export default function RootLayout({
               ;n.type="text/javascript",n.async=!0,n.src=r+"?sdkid="+e+"&lib="+t;e=document.getElementsByTagName("script")[0];e.parentNode.insertBefore(n,e)};
               ttq.load('D7RCRM3C77U0A0BNAG00');
               ttq.page();
+              // Identify with external_id for cross-event matching
+              try {
+                var _ttEid = localStorage.getItem('ww-eid');
+                if (!_ttEid) {
+                  _ttEid = 'ww_' + Date.now() + '_' + Math.random().toString(36).slice(2,11);
+                  localStorage.setItem('ww-eid', _ttEid);
+                }
+                var _ttIdentify = { external_id: _ttEid };
+                var _ttEm = localStorage.getItem('ww-em');
+                if (_ttEm) _ttIdentify.email = _ttEm;
+                var _ttPh = localStorage.getItem('ww-ph');
+                if (_ttPh) _ttIdentify.phone_number = _ttPh;
+                ttq.identify(_ttIdentify);
+              } catch(e) {}
+              // Persist ttclid from URL as first-party cookie
+              try {
+                var _ttclid = new URLSearchParams(window.location.search).get('ttclid');
+                if (_ttclid) {
+                  document.cookie = 'ttclid=' + encodeURIComponent(_ttclid) + ';max-age=7776000;path=/;SameSite=Lax';
+                }
+              } catch(e) {}
             }(window, document, 'ttq');
           `}
         </Script>

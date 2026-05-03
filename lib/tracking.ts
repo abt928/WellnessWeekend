@@ -72,7 +72,13 @@ function setCookie(name: string, value: string, days: number) {
 function getTtclid(): string | undefined {
   if (typeof window === "undefined") return undefined;
   const params = new URLSearchParams(window.location.search);
-  return params.get("ttclid") || getCookie("ttclid") || undefined;
+  const fromUrl = params.get("ttclid");
+  if (fromUrl) {
+    // Persist as first-party cookie so it survives navigation (90 days)
+    setCookie("ttclid", fromUrl, 90);
+    return fromUrl;
+  }
+  return getCookie("ttclid") || undefined;
 }
 
 /** Get fbclid / fbc / fbp for Meta matching */
@@ -101,16 +107,17 @@ function getMetaClickIds(): { fbc?: string; fbp?: string } {
 function fireTikTok(event: string, eventId: string, data?: TrackingEventData) {
   if (typeof window === "undefined" || !window.ttq) return;
 
-  // Identify user for Advanced Matching if email provided
-  if (data?.email) {
-    try {
-      window.ttq.identify({
-        email: data.email.trim().toLowerCase(),
-        ...(data.phone ? { phone_number: data.phone } : {}),
-      });
-    } catch (e) {
-      console.warn("[Tracking] TikTok identify error:", e);
-    }
+  // Identify user for Advanced Matching — always send external_id,
+  // add email/phone when available
+  try {
+    const identifyParams: Record<string, unknown> = {
+      external_id: getExternalId(),
+    };
+    if (data?.email) identifyParams.email = data.email.trim().toLowerCase();
+    if (data?.phone) identifyParams.phone_number = data.phone;
+    window.ttq.identify(identifyParams);
+  } catch (e) {
+    console.warn("[Tracking] TikTok identify error:", e);
   }
 
   const params: Record<string, unknown> = {};

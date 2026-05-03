@@ -7,19 +7,19 @@
 
 | Token               | Hex       | Name             | Role                              |
 |---------------------|-----------|------------------|-----------------------------------|
-| `--sage`            | `#7C9070` | Lichen Green     | Muted accent, labels, metadata    |
-| `--forest`          | `#2D3A2E` | Old Growth       | Primary dark, text, nav, footer   |
+| `--sage`            | `#6B7F60` | Lichen Green     | Muted accent, labels, metadata    |
+| `--forest`          | `#243028` | Old Growth       | Primary dark, text, nav, footer   |
 | `--aurora`          | `#8B5FBF` | Amethyst Glow    | Primary brand accent              |
-| `--gold`            | `#D4A853` | Midnight Gold    | CTAs, badges, urgency             |
+| `--gold`            | `#C9983F` | Midnight Gold    | CTAs, badges, urgency             |
 | `--rose`            | `#C4847A` | Canyon Rose      | Secondary warm accent             |
 | `--coral`           | `#E8956A` | Salmon Fire      | Gradient pairing with gold        |
-| `--cream`           | `#FAF7F2` | Bone White       | Section bg (warm)                 |
-| `--warm-white`      | `#FFFEF9` | Eggshell         | Card bg, alt sections             |
-| `--charcoal`        | `#2B2D2B` | Forest Charcoal  | Body text                         |
-| `--psyche-pink`     | `#E06BAC` | Ceremonial Pink  | Psychedelic gradient accent       |
-| `--psyche-cyan`     | `#4ECDC4` | Spirit Teal      | Highlight, emphasis, hero em      |
-| `--psyche-indigo`   | `#5B3E96` | Deep Ceremony    | Stat numbers, dark accent         |
-| `--psyche-amber`    | `#F4A940` | Sun Ember        | Warm psychedelic accent           |
+| `--cream`           | `#F7F3EC` | Bone White       | Section bg (warm)                 |
+| `--warm-white`      | `#FBF9F4` | Eggshell         | Card bg, alt sections             |
+| `--charcoal`        | `#333533` | Forest Charcoal  | Body text                         |
+| `--psyche-pink`     | `#D4639F` | Ceremonial Pink  | Psychedelic gradient accent       |
+| `--psyche-cyan`     | `#3DB8AF` | Spirit Teal      | Highlight, emphasis, hero em      |
+| `--psyche-indigo`   | `#4F3682` | Deep Ceremony    | Stat numbers, dark accent         |
+| `--psyche-amber`    | `#E59C32` | Sun Ember        | Warm psychedelic accent           |
 
 ## Typography
 
@@ -30,7 +30,7 @@
 | Accent     | Cormorant Garamond | 300–600   | Subtitles, quotes, descriptions|
 
 ## Spacing Scale
-Base unit: `1rem`. Sections use `7rem` vertical padding. Cards: `2.5rem` internal. Gaps: `1.5–2rem` grid.
+Base unit: `1rem`. Sections use `7rem` vertical padding. Section labels: `1.25rem` bottom margin. Section titles: `2rem` bottom margin. Section descriptions: `3.5rem` bottom margin. Cards: `2.5rem` internal. Grids: `2–2.5rem` gaps.
 
 ## Border Radius
 - Buttons/pills: `30px` (full-round)

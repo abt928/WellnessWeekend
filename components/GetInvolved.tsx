@@ -136,7 +136,6 @@ export default function GetInvolved() {
             <li>Free weekend pass</li>
             <li>Volunteer camping included</li>
             <li>Meals provided during shifts</li>
-            <li>Community & karma yoga</li>
           </ul>
           <button
             className="involve-btn"

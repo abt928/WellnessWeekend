@@ -340,8 +340,32 @@ async function fireServerEvent(
     try {
       if (typeof Clarity !== "undefined") {
         Clarity.event(event);
+
+        // Tag the session with commerce context for Clarity filters
+        if (data?.value) Clarity.setTag("value", `$${data.value}`);
+        if (data?.contentName) Clarity.setTag("item", data.contentName);
+        if (data?.currency) Clarity.setTag("currency", data.currency);
+
+        // Funnel stage tagging — lets you filter recordings by where users dropped off
+        const funnelStage: Record<string, string> = {
+          ViewContent: "browsing",
+          AddToCart: "cart",
+          InitiateCheckout: "checkout",
+          Purchase: "purchased",
+          Lead: "lead",
+          SubmitForm: "applied",
+        };
+        if (funnelStage[event]) {
+          Clarity.setTag("funnel_stage", funnelStage[event]);
+        }
+
+        // Upgrade high-value sessions so Clarity prioritizes recording them
+        const highValueEvents = ["InitiateCheckout", "Purchase", "Lead"];
+        if (highValueEvents.includes(event)) {
+          Clarity.upgrade(event);
+        }
       }
-    } catch (e) {}
+    } catch (e) { /* Clarity not loaded yet, safe to ignore */ }
     
   } catch (e) {
     console.warn("[Tracking] Server event error:", e);

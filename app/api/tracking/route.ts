@@ -85,8 +85,15 @@ async function sendTikTokEvent(payload: TrackingPayload, ip: string) {
   // Hash user data for TikTok (requires SHA-256 for email, phone, external_id)
   const ttHashedEmail = payload.hashedEmail
     || (payload.email ? await sha256(payload.email) : undefined);
-  const ttHashedPhone = payload.hashedPhone
-    || (payload.phone ? await sha256(payload.phone.replace(/\D/g, "")) : undefined);
+    
+  let ttHashedPhone = payload.hashedPhone;
+  if (!ttHashedPhone && payload.phone) {
+    const e164 = payload.phone.replace(/\D/g, "").length === 10 
+      ? `+1${payload.phone.replace(/\D/g, "")}` 
+      : `+${payload.phone.replace(/\D/g, "")}`;
+    ttHashedPhone = await sha256(e164);
+  }
+
   const ttHashedExternalId = payload.externalId
     ? await sha256(payload.externalId) : undefined;
 

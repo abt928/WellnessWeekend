@@ -61,6 +61,15 @@ function getCookie(name: string): string | undefined {
   return match ? decodeURIComponent(match[2]) : undefined;
 }
 
+/** Format a US phone number to E.164 (+1) for Meta/TikTok matching */
+export function formatPhoneE164(phone?: string): string | undefined {
+  if (!phone) return undefined;
+  const digits = phone.replace(/\D/g, "");
+  if (digits.length === 10) return `+1${digits}`;
+  if (digits.length === 11 && digits.startsWith("1")) return `+${digits}`;
+  return digits.length > 0 ? digits : undefined;
+}
+
 /** Set a first-party cookie */
 function setCookie(name: string, value: string, days: number) {
   if (typeof document === "undefined") return;
@@ -114,7 +123,10 @@ function fireTikTok(event: string, eventId: string, data?: TrackingEventData) {
       external_id: getExternalId(),
     };
     if (data?.email) identifyParams.email = data.email.trim().toLowerCase();
-    if (data?.phone) identifyParams.phone_number = data.phone;
+    if (data?.phone) {
+      const e164 = formatPhoneE164(data.phone);
+      if (e164) identifyParams.phone_number = e164;
+    }
     window.ttq.identify(identifyParams);
   } catch (e) {
     console.warn("[Tracking] TikTok identify error:", e);
@@ -173,7 +185,8 @@ function fireMeta(event: string, eventId: string, data?: TrackingEventData) {
           em: data.email.trim().toLowerCase(),
           external_id: getExternalId(),
         };
-        if (data.phone) amParams.ph = data.phone.replace(/\D/g, "");
+        const e164 = formatPhoneE164(data.phone);
+        if (e164) amParams.ph = e164.replace("+", ""); // Meta accepts numeric with or without +, but +1 format is best
         window.fbq("init", pixelId, amParams);
       } catch (e) {
         console.warn("[Tracking] Meta Advanced Matching reinit error:", e);
@@ -249,7 +262,10 @@ function saveKnownUser(email?: string, phone?: string) {
   if (typeof window === "undefined") return;
   try {
     if (email) localStorage.setItem("ww-em", email.trim().toLowerCase());
-    if (phone) localStorage.setItem("ww-ph", phone.replace(/\D/g, ""));
+    if (phone) {
+      const e164 = formatPhoneE164(phone);
+      if (e164) localStorage.setItem("ww-ph", e164);
+    }
   } catch { /* quota exceeded, ignore */ }
 }
 
@@ -276,8 +292,9 @@ async function fireServerEvent(
       ? await sha256(data.email)
       : undefined;
 
-    const hashedPhone = data?.phone
-      ? await sha256(data.phone.replace(/\D/g, ""))
+    const e164Phone = formatPhoneE164(data?.phone);
+    const hashedPhone = e164Phone
+      ? await sha256(e164Phone)
       : undefined;
 
     const { fbc, fbp } = getMetaClickIds();

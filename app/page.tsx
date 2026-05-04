@@ -117,8 +117,9 @@ export default function Home() {
           </p>
           <p className="hero-date">August 8 – 10, 2026 · Sutton, Alaska</p>
           <a href="#store" className="hero-cta">
-            Experience the Weekend
+            Get Your Tickets
           </a>
+          <p className="hero-pricing-hint">Day passes from $44 · Full weekend from $222</p>
           <CountdownTimer />
         </div>
         <div className="scroll-indicator">

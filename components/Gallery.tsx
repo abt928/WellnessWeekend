@@ -11,7 +11,7 @@ const IMAGES = [
   { src: "/images/gallery/2023-08-06_Festival_Wellness_Crystal-Bowls-Sound-Healing.jpg", alt: "Crystal bowls sound healing", w: 4032, h: 3024 },
   { src: "/images/gallery/2025-08-09_Festival_Wellness_Woman-Dancing-Laughing.jpg", alt: "Woman dancing and laughing", w: 4000, h: 6000 },
   { src: "/images/gallery/2023-08-06_Festival_Wellness_Women-Laying-Grass-Drumming.jpg", alt: "Women laying in grass drumming", w: 1500, h: 1000 },
-  { src: "/images/gallery/2024-01-28_Festival_Wellness_Outdoor-Sound-Healing-Setup.png", alt: "Outdoor sound healing setup", w: 1792, h: 1024 },
+  { src: "/images/gallery/2024-01-28_Festival_Wellness_Outdoor-Sound-Healing-Setup.jpg", alt: "Outdoor sound healing setup", w: 1200, h: 686 },
   { src: "/images/gallery/2025-08-09_Festival_Wellness_Group-Circle-Meditation.jpg", alt: "Group circle meditation", w: 4000, h: 6000 },
   { src: "/images/gallery/2025-08-09_Festival_Wellness_Woman-Harmonium-Gong.jpg", alt: "Woman with harmonium and gong", w: 4000, h: 6000 },
   { src: "/images/gallery/2025-08-10_Festival_Wellness_Woman-Dancing-Barefoot.jpg", alt: "Woman dancing barefoot", w: 4000, h: 6000 },
@@ -79,6 +79,7 @@ export default function Gallery() {
                   height={img.h}
                   sizes="(max-width: 768px) 50vw, (max-width: 1024px) 50vw, 33vw"
                   quality={75}
+                  loading="lazy"
                   className="masonry-img"
                 />
                 <div className="masonry-overlay">

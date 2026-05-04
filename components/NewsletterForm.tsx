@@ -37,7 +37,7 @@ export default function NewsletterForm() {
 
   return (
     <form className="newsletter" onSubmit={handleSubmit}>
-      <input name="email" type="email" required placeholder="Your email address" />
+      <input name="email" type="email" required placeholder="Your email address" aria-label="Email address" />
       <button type="submit" disabled={status === "sending"}>
         {status === "sending" ? "..." : status === "error" ? "Retry" : "Subscribe"}
       </button>

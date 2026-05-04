@@ -48,6 +48,51 @@ body {
   color: var(--cream);
 }
 
+/* ── Skip link — visible on keyboard focus, hidden otherwise ── */
+.skip-link {
+  position: fixed;
+  top: -100px;
+  left: 1rem;
+  z-index: 1000;
+  background: var(--cream);
+  color: var(--forest);
+  padding: 0.75rem 1.25rem;
+  border-radius: 8px;
+  font-family: var(--font-body);
+  font-size: 0.9rem;
+  font-weight: 600;
+  text-decoration: none;
+  box-shadow: 0 12px 32px rgba(0, 0, 0, 0.4);
+  transition: top 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+}
+.skip-link:focus,
+.skip-link:focus-visible {
+  top: 1rem;
+  outline: 2px solid var(--aurora);
+  outline-offset: 2px;
+}
+
+/* ── Site-wide focus-visible — consistent aurora ring on keyboard focus ── */
+*:focus { outline: none; }
+button:focus-visible,
+a:focus-visible,
+[role="button"]:focus-visible,
+[tabindex]:focus-visible,
+.gloss-trigger:focus-visible {
+  outline: 2px solid var(--aurora);
+  outline-offset: 3px;
+  border-radius: 4px;
+}
+input:focus-visible,
+select:focus-visible,
+textarea:focus-visible {
+  outline: 2px solid var(--aurora);
+  outline-offset: 1px;
+}
+@media (prefers-reduced-motion: reduce) {
+  .skip-link { transition: none; }
+}
+
 /* Display font applies to all heading-shaped surfaces; no inline fontFamily required */
 .section-title, .hero-title, .footer-title, .modal-title,
 .pillar-title, .involve-title, .store-card-name,
@@ -459,16 +504,23 @@ body {
 }
 .alaska-bg { position: absolute; inset: 0; z-index: 0; }
 .alaska-bg img { width: 100%; height: 100%; object-fit: cover; }
+/* Asymmetric vignette: heavier at bottom-left where text sits, photo breathes upper-right.
+   Layered: a horizontal floor-darken AND a radial pool around the text block. */
 .alaska-overlay {
   position: absolute; inset: 0; z-index: 1;
-  /* asymmetric vignette: dark at bottom-left where text sits, transparent at upper-right where photo breathes */
-  background: radial-gradient(
-    ellipse 80% 60% at 20% 90%,
-    rgba(36, 48, 40, 0.85) 0%,
-    rgba(36, 48, 40, 0.55) 35%,
-    rgba(36, 48, 40, 0.05) 75%,
-    transparent 100%
-  );
+  background:
+    linear-gradient(0deg,
+      rgba(20, 28, 22, 0.75) 0%,
+      rgba(20, 28, 22, 0.45) 28%,
+      rgba(20, 28, 22, 0.05) 55%,
+      transparent 75%),
+    radial-gradient(
+      ellipse 90% 70% at 18% 88%,
+      rgba(20, 28, 22, 0.92) 0%,
+      rgba(20, 28, 22, 0.65) 30%,
+      rgba(20, 28, 22, 0.20) 65%,
+      transparent 100%
+    );
 }
 .alaska-content {
   position: relative; z-index: 2;
@@ -480,6 +532,7 @@ body {
   text-align: left;
   color: var(--gold-light);
   margin-bottom: 1.25rem;
+  text-shadow: 0 2px 12px rgba(0, 0, 0, 0.4);
 }
 .alaska-title {
   text-align: left;
@@ -490,13 +543,16 @@ body {
   line-height: 0.95;
   margin-bottom: 2rem;
   text-wrap: balance;
+  /* Soft halo so the title stays legible even where the radial vignette is lighter */
+  text-shadow: 0 4px 24px rgba(0, 0, 0, 0.6), 0 1px 2px rgba(0, 0, 0, 0.5);
 }
 .alaska-text {
-  color: rgba(255,255,255,0.88);
+  color: rgba(255, 255, 255, 0.95);
   font-size: var(--type-body);
   line-height: 1.8;
   max-width: 50ch;
   font-family: var(--font-body);
+  text-shadow: 0 2px 14px rgba(0, 0, 0, 0.55), 0 1px 2px rgba(0, 0, 0, 0.4);
 }
 
 /* Tags become a horizontal band along the bottom — single-line scroll on mobile */
@@ -1210,6 +1266,9 @@ body {
   transition: opacity 0.7s cubic-bezier(0.16, 1, 0.3, 1), transform 0.7s cubic-bezier(0.16, 1, 0.3, 1);
 }
 .reveal.visible { opacity: 1; transform: translateY(0); }
+@media (prefers-reduced-motion: reduce) {
+  .reveal { opacity: 1; transform: none; transition: none; }
+}
 
 /* staggered children */
 .reveal.visible > *:nth-child(1) { transition-delay: 0s; }
@@ -2270,11 +2329,11 @@ body {
   --surface-page:     oklch(18% 0.012 145);   /* deep forest, slightly warmer than #243028 */
   --surface-elevated: oklch(23% 0.015 150);   /* card / FAQ panel */
   --surface-raised:   oklch(28% 0.018 150);   /* hover / pressed */
-  --ink:              #F0EBE0;                 /* primary text on dark */
-  --ink-muted:        rgba(240, 235, 224, 0.72);
-  --ink-faint:        rgba(240, 235, 224, 0.5);
-  --line-subtle:      rgba(240, 235, 224, 0.08);
-  --line-medium:      rgba(240, 235, 224, 0.16);
+  --ink:              #F0EBE0;                 /* primary text on dark — ≥7:1 vs surface-page */
+  --ink-muted:        rgba(240, 235, 224, 0.82); /* WCAG AA body — bumped 0.72 → 0.82 */
+  --ink-faint:        rgba(240, 235, 224, 0.65); /* metadata / captions — bumped 0.5 → 0.65 */
+  --line-subtle:      rgba(240, 235, 224, 0.10);
+  --line-medium:      rgba(240, 235, 224, 0.18);
 }
 
 body {
@@ -2318,8 +2377,24 @@ body {
 .schedule-time { color: var(--ink-faint); }
 .schedule-empty { color: var(--ink-faint); }
 .schedule-timeline { border-left-color: var(--line-medium); }
+.schedule-item {
+  transition: background 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+}
 .schedule-item:hover { background: rgba(139, 95, 191, 0.08); }
-.schedule-item::before { border-color: var(--surface-page); }
+.schedule-item::before {
+  border-color: var(--surface-page);
+  transition: box-shadow 0.4s cubic-bezier(0.16, 1, 0.3, 1), transform 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+}
+.schedule-item:hover::before {
+  /* Track-color halo on hover — ties decoration to information */
+  box-shadow: 0 0 0 4px color-mix(in srgb, var(--dot-color, var(--sage)) 18%, transparent),
+              0 0 14px 2px color-mix(in srgb, var(--dot-color, var(--sage)) 35%, transparent);
+  transform: scale(1.15);
+}
+@media (prefers-reduced-motion: reduce) {
+  .schedule-item, .schedule-item::before { transition: none; }
+  .schedule-item:hover::before { transform: none; }
+}
 
 .track-pill {
   border-color: var(--line-medium);
@@ -2440,8 +2515,27 @@ body {
   background: var(--aurora);
   background-size: auto;
   animation: none;
+  position: relative;
 }
 .hero-cta:hover { background: var(--aurora-light); }
+/* Aurora underline draws in on hover — one-shot, deliberate */
+.hero-cta::after {
+  content: '';
+  position: absolute;
+  left: 1.5rem;
+  right: 1.5rem;
+  bottom: 0.6rem;
+  height: 1px;
+  background: rgba(240, 235, 224, 0.85);
+  transform: scaleX(0);
+  transform-origin: left center;
+  transition: transform 0.45s cubic-bezier(0.16, 1, 0.3, 1);
+}
+.hero-cta:hover::after { transform: scaleX(1); }
+.hero-cta:focus-visible::after { transform: scaleX(1); }
+@media (prefers-reduced-motion: reduce) {
+  .hero-cta::after { transition: none; }
+}
 
 /* Cart checkout CTA */
 .cart-checkout-btn {

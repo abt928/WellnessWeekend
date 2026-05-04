@@ -1,7 +1,8 @@
 "use client";
 
-import { useState, useEffect, useCallback } from "react";
+import { useState, useEffect, useCallback, useId, useRef } from "react";
 import { trackLead } from "@/lib/tracking";
+import { useFocusTrap } from "@/lib/useFocusTrap";
 import { CloseIcon, EnvelopeIcon } from "@/components/Icons";
 
 interface CartEntry {
@@ -18,6 +19,17 @@ export default function FloatingActions() {
   const [revealed, setRevealed] = useState(false);
   const [formData, setFormData] = useState({ name: "", email: "", phone: "", message: "" });
   const [status, setStatus] = useState<"idle" | "sending" | "sent" | "error">("idle");
+  const messageModalRef = useRef<HTMLDivElement>(null);
+  const messageTitleId = useId();
+  useFocusTrap(showMessage, messageModalRef);
+
+  // Escape closes the message modal
+  useEffect(() => {
+    if (!showMessage) return;
+    const onKey = (e: KeyboardEvent) => { if (e.key === "Escape") setShowMessage(false); };
+    window.addEventListener("keydown", onKey);
+    return () => window.removeEventListener("keydown", onKey);
+  }, [showMessage]);
 
   // Reveal FABs only after the user scrolls past ~half the hero — first paint stays clean.
   useEffect(() => {
@@ -128,13 +140,20 @@ export default function FloatingActions() {
       {/* Message Modal */}
       {showMessage && (
         <div className="modal-overlay" onClick={() => setShowMessage(false)}>
-          <div className="modal-content" onClick={(e) => e.stopPropagation()}>
-            <button className="modal-close" onClick={() => setShowMessage(false)} aria-label="Close"><CloseIcon size={18} /></button>
+          <div
+            className="modal-content"
+            onClick={(e) => e.stopPropagation()}
+            ref={messageModalRef}
+            role="dialog"
+            aria-modal="true"
+            aria-labelledby={messageTitleId}
+          >
+            <button className="modal-close" onClick={() => setShowMessage(false)} aria-label="Close dialog"><CloseIcon size={18} /></button>
 
             {status === "sent" ? (
               <div className="modal-success">
-                <div className="modal-success-icon"><EnvelopeIcon size={32} color="var(--aurora)" /></div>
-                <h3 className="modal-title" style={{ fontFamily: "var(--font-display)" }}>
+                <div className="modal-success-icon" aria-hidden="true"><EnvelopeIcon size={32} color="var(--aurora)" /></div>
+                <h3 id={messageTitleId} className="modal-title">
                   Message Sent!
                 </h3>
                 <p style={{ color: "var(--sage)", fontSize: "0.95rem" }}>
@@ -143,7 +162,7 @@ export default function FloatingActions() {
               </div>
             ) : (
               <>
-                <h3 className="modal-title" style={{ fontFamily: "var(--font-display)" }}>
+                <h3 id={messageTitleId} className="modal-title">
                   Write a Message
                 </h3>
                 <form className="modal-form" onSubmit={handleSubmit}>

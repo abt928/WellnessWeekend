@@ -98,6 +98,9 @@ export default function Home() {
       <FloatingActions />
       <ConversionNudges />
 
+      <a className="skip-link" href="#main">Skip to main content</a>
+      <main id="main">
+
       {/* ═══ HERO ═══ */}
       <section className="hero">
         <div className="hero-bg">
@@ -266,6 +269,8 @@ export default function Home() {
 
       {/* ═══ GET INVOLVED ═══ */}
       <GetInvolved />
+
+      </main>
 
       {/* ═══ FOOTER ═══ */}
       <footer className="footer">

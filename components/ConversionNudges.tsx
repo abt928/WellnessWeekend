@@ -1,7 +1,8 @@
 "use client";
 
-import { useState, useEffect, useCallback, useRef } from "react";
+import { useState, useEffect, useCallback, useId, useRef } from "react";
 import { trackLead } from "@/lib/tracking";
+import { useFocusTrap } from "@/lib/useFocusTrap";
 import { LeafIcon, CloseIcon, MoonIcon, SparklesIcon } from "@/components/Icons";
 
 /**
@@ -17,6 +18,17 @@ export default function ConversionNudges() {
   const [showWelcomeBack, setShowWelcomeBack] = useState(false);
   const exitShown = useRef(false);
   const scrollDepth = useRef(0);
+  const exitModalRef = useRef<HTMLDivElement>(null);
+  const exitTitleId = useId();
+  useFocusTrap(showExitIntent, exitModalRef);
+
+  // Escape closes exit-intent
+  useEffect(() => {
+    if (!showExitIntent) return;
+    const onKey = (e: KeyboardEvent) => { if (e.key === "Escape") setShowExitIntent(false); };
+    window.addEventListener("keydown", onKey);
+    return () => window.removeEventListener("keydown", onKey);
+  }, [showExitIntent]);
 
   // ── Return visitor detection ──
   useEffect(() => {
@@ -149,11 +161,15 @@ export default function ConversionNudges() {
         <div
           className="exit-overlay"
           onClick={() => setShowExitIntent(false)}
-          role="dialog"
-          aria-modal="true"
-          aria-label="Stay connected"
         >
-          <div className="exit-content" onClick={(e) => e.stopPropagation()}>
+          <div
+            className="exit-content"
+            onClick={(e) => e.stopPropagation()}
+            ref={exitModalRef}
+            role="dialog"
+            aria-modal="true"
+            aria-labelledby={exitTitleId}
+          >
             <button
               className="exit-close"
               onClick={() => setShowExitIntent(false)}
@@ -165,7 +181,7 @@ export default function ConversionNudges() {
             {status === "sent" ? (
               <div className="exit-success">
                 <div className="exit-icon"><MoonIcon size={36} color="var(--aurora-light)" /></div>
-                <h3 className="exit-title">
+                <h3 id={exitTitleId} className="exit-title">
                   Connected.
                 </h3>
                 <p className="exit-desc">
@@ -176,7 +192,7 @@ export default function ConversionNudges() {
             ) : (
               <>
                 <div className="exit-icon"><SparklesIcon size={36} color="var(--gold)" /></div>
-                <h3 className="exit-title">
+                <h3 id={exitTitleId} className="exit-title">
                   Before you go.
                 </h3>
                 <p className="exit-desc">
@@ -191,6 +207,7 @@ export default function ConversionNudges() {
                     onChange={(e) => setEmail(e.target.value)}
                     placeholder="your@email.com"
                     className="exit-input"
+                    aria-label="Email address"
                     autoFocus
                   />
                   <button

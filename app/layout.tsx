@@ -9,7 +9,7 @@ import "./globals.css";
 const spectral = Spectral({
   subsets: ["latin"],
   display: "swap",
-  weight: ["400", "700"],
+  weight: ["400", "500", "600", "700"],
   style: ["normal", "italic"],
   variable: "--font-display",
 });
@@ -17,7 +17,7 @@ const spectral = Spectral({
 const manrope = Manrope({
   subsets: ["latin"],
   display: "swap",
-  weight: ["400", "600", "700"],
+  weight: ["400", "500", "600", "700"],
   variable: "--font-body",
 });
 

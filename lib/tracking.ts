@@ -267,7 +267,7 @@ function saveKnownUser(email?: string, phone?: string) {
       const cleaned = email.trim().toLowerCase();
       localStorage.setItem("ww-em", cleaned);
       if (typeof Clarity !== "undefined") {
-         try { Clarity.identify(getExternalId(), undefined, undefined, cleaned); } catch(e) {}
+         try { Clarity.identify(getExternalId(), undefined, undefined, cleaned); } catch {}
       }
     }
     if (phone) {
@@ -365,7 +365,7 @@ async function fireServerEvent(
           Clarity.upgrade(event);
         }
       }
-    } catch (e) { /* Clarity not loaded yet, safe to ignore */ }
+    } catch { /* Clarity not loaded yet, safe to ignore */ }
     
   } catch (e) {
     console.warn("[Tracking] Server event error:", e);

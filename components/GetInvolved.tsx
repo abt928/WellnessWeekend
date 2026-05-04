@@ -1,6 +1,7 @@
 "use client";
-import { useState, useEffect, FormEvent } from "react";
+import { useState, useEffect, useId, useRef, FormEvent } from "react";
 import { trackFormSubmit } from "@/lib/tracking";
+import { useFocusTrap } from "@/lib/useFocusTrap";
 import { MeditateIcon, StorefrontIcon, HandsIcon, DiamondIcon, CloseIcon, SparklesIcon } from "@/components/Icons";
 
 type FormType = "vendor" | "volunteer" | "sponsor" | "instructor_waitlist" | null;
@@ -91,6 +92,8 @@ export default function GetInvolved() {
   const [activeForm, setActiveForm] = useState<FormType>(null);
   const [status, setStatus] = useState<"idle" | "sending" | "success" | "error">("idle");
   const [errorMsg, setErrorMsg] = useState<string | null>(null);
+  const modalRef = useRef<HTMLDivElement>(null);
+  const titleId = useId();
 
   function openForm(form: NonNullable<FormType>) {
     setActiveForm(form);
@@ -111,6 +114,8 @@ export default function GetInvolved() {
     window.addEventListener("keydown", onKey);
     return () => window.removeEventListener("keydown", onKey);
   }, [activeForm]);
+
+  useFocusTrap(activeForm !== null, modalRef);
 
   async function handleSubmit(e: FormEvent<HTMLFormElement>) {
     e.preventDefault();
@@ -291,13 +296,20 @@ export default function GetInvolved() {
       {/* Modal Overlay */}
       {activeForm && (
         <div className="modal-overlay" onClick={closeForm}>
-          <div className="modal-content" onClick={(e) => e.stopPropagation()}>
-            <button className="modal-close" onClick={closeForm}><CloseIcon size={18} /></button>
+          <div
+            className="modal-content"
+            onClick={(e) => e.stopPropagation()}
+            ref={modalRef}
+            role="dialog"
+            aria-modal="true"
+            aria-labelledby={titleId}
+          >
+            <button className="modal-close" onClick={closeForm} aria-label="Close dialog"><CloseIcon size={18} /></button>
 
             {status === "success" ? (
               <div className="modal-success">
-                <div className="modal-success-icon"><SparklesIcon size={36} color="var(--gold)" /></div>
-                <h3 style={{ fontSize: "1.5rem", color: "var(--forest)", margin: 0 }}>
+                <div className="modal-success-icon" aria-hidden="true"><SparklesIcon size={36} color="var(--gold)" /></div>
+                <h3 id={titleId} style={{ fontSize: "1.5rem", color: "var(--forest)", margin: 0 }}>
                   {successCopyByForm[activeForm].heading}
                 </h3>
                 <p style={{ color: "var(--sage)", marginTop: "0.5rem" }}>
@@ -309,7 +321,7 @@ export default function GetInvolved() {
               </div>
             ) : (
               <>
-                <h3 className="modal-title">
+                <h3 id={titleId} className="modal-title">
                   {modalTitleByForm[activeForm]}
                 </h3>
 

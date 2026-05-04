@@ -1,6 +1,7 @@
 "use client";
-import { useState, useEffect, useCallback, useRef } from "react";
+import { useState, useEffect, useCallback, useId, useRef } from "react";
 import { trackAddToCart, trackInitiateCheckout, trackViewContent } from "@/lib/tracking";
+import { useFocusTrap } from "@/lib/useFocusTrap";
 import { TicketIcon, SparkleIcon, CupIcon, ShirtIcon, LotusIcon, CloseIcon } from "@/components/Icons";
 
 interface Variation {
@@ -129,6 +130,17 @@ export default function Store() {
     window.addEventListener("open-cart", handler);
     return () => window.removeEventListener("open-cart", handler);
   }, []);
+
+  // Cart drawer a11y: focus trap + escape-to-close
+  const cartDrawerRef = useRef<HTMLDivElement>(null);
+  const cartTitleId = useId();
+  useFocusTrap(cartOpen, cartDrawerRef);
+  useEffect(() => {
+    if (!cartOpen) return;
+    const onKey = (e: KeyboardEvent) => { if (e.key === "Escape") setCartOpen(false); };
+    window.addEventListener("keydown", onKey);
+    return () => window.removeEventListener("keydown", onKey);
+  }, [cartOpen]);
 
   const addToCart = useCallback((item: CatalogItem, variation: Variation) => {
     setCart((prev) => {
@@ -329,10 +341,17 @@ export default function Store() {
       {/* Cart Drawer */}
       {cartOpen && (
         <div className="cart-overlay" onClick={() => setCartOpen(false)}>
-          <div className="cart-drawer" onClick={(e) => e.stopPropagation()}>
+          <div
+            className="cart-drawer"
+            onClick={(e) => e.stopPropagation()}
+            ref={cartDrawerRef}
+            role="dialog"
+            aria-modal="true"
+            aria-labelledby={cartTitleId}
+          >
             <div className="cart-header">
-              <h3 style={{ fontFamily: "var(--font-display)", fontSize: "1.3rem", margin: 0 }}>Your Cart</h3>
-              <button className="modal-close" onClick={() => setCartOpen(false)}><CloseIcon size={18} /></button>
+              <h3 id={cartTitleId} style={{ fontFamily: "var(--font-display)", fontSize: "1.3rem", margin: 0 }}>Your Cart</h3>
+              <button className="modal-close" onClick={() => setCartOpen(false)} aria-label="Close cart"><CloseIcon size={18} /></button>
             </div>
 
             {cart.length === 0 ? (

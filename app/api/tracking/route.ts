@@ -129,7 +129,7 @@ async function sendTikTokEvent(payload: TrackingPayload, ip: string) {
 
   try {
     const res = await fetch(
-      "https://business-api.tiktok.com/open_api/v1.3/event/track/",
+      "https://business-api.tiktok.com/open_api/v1.3/pixel/track/",
       {
         method: "POST",
         headers: {

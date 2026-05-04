@@ -42,7 +42,7 @@ async function fireTikTokPurchase(value: number, currency: string, email?: strin
   if (!accessToken || !pixelId) return;
 
   try {
-    await fetch("https://business-api.tiktok.com/open_api/v1.3/event/track/", {
+    await fetch("https://business-api.tiktok.com/open_api/v1.3/pixel/track/", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",

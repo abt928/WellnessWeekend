@@ -14,7 +14,7 @@ export default function ThankYou() {
       <div className="thankyou-content">
         <div className="thankyou-icon"><SparklesIcon size={40} color="var(--gold)" /></div>
         <h1 className="thankyou-title" style={{ fontFamily: "var(--font-display)" }}>
-          You&apos;re <em>In</em>
+          You&apos;re in.
         </h1>
         <p className="thankyou-text">
           Your order has been confirmed and you&apos;ll receive a confirmation

@@ -24,7 +24,7 @@ export default function PrivacyPolicy() {
               className="legal-title"
               style={{ fontFamily: "var(--font-display)" }}
             >
-              Privacy <em>Policy</em>
+              Privacy policy.
             </h1>
             <p className="legal-effective">Effective Date: May 3, 2026</p>
           </header>

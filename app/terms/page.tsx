@@ -24,7 +24,7 @@ export default function TermsOfService() {
               className="legal-title"
               style={{ fontFamily: "var(--font-display)" }}
             >
-              Terms of <em>Service</em>
+              Terms of service.
             </h1>
             <p className="legal-effective">Effective Date: May 3, 2026</p>
           </header>

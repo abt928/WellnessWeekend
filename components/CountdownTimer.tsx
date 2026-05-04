@@ -4,7 +4,7 @@ import { useEffect, useState } from "react";
 const TARGET = new Date("2026-08-08T00:00:00-09:00").getTime();
 
 export default function CountdownTimer() {
-  const [diff, setDiff] = useState({ days: 0, hours: 0, mins: 0, secs: 0 });
+  const [diff, setDiff] = useState<{ days: number; hours: number } | null>(null);
 
   useEffect(() => {
     const tick = () => {
@@ -13,30 +13,23 @@ export default function CountdownTimer() {
       setDiff({
         days: Math.floor(d / 86400000),
         hours: Math.floor((d % 86400000) / 3600000),
-        mins: Math.floor((d % 3600000) / 60000),
-        secs: Math.floor((d % 60000) / 1000),
       });
     };
     tick();
-    const id = setInterval(tick, 1000);
+    // Mins/hours resolution is enough — no per-second ticking competing for attention.
+    const id = setInterval(tick, 60000);
     return () => clearInterval(id);
   }, []);
 
+  if (!diff) return <p className="countdown-line" aria-hidden="true">&nbsp;</p>;
+
   return (
-    <div className="countdown">
-      {[
-        { n: diff.days, l: "Days" },
-        { n: diff.hours, l: "Hours" },
-        { n: diff.mins, l: "Minutes" },
-        { n: diff.secs, l: "Seconds" },
-      ].map((item) => (
-        <div className="countdown-item" key={item.l}>
-          <span className="countdown-number" style={{ fontFamily: "var(--font-display)" }}>
-            {String(item.n).padStart(2, "0")}
-          </span>
-          <span className="countdown-label">{item.l}</span>
-        </div>
-      ))}
-    </div>
+    <p className="countdown-line">
+      <span className="countdown-line-num">{diff.days}</span>
+      <span className="countdown-line-label">days</span>
+      <span className="countdown-line-sep">·</span>
+      <span className="countdown-line-num">{diff.hours}</span>
+      <span className="countdown-line-label">hours from now</span>
+    </p>
   );
 }

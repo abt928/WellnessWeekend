@@ -37,9 +37,9 @@ export default function LeadCapture() {
           <span>Limited Spots Available</span>
         </div>
         <h2 className="lead-capture-title" style={{ fontFamily: "var(--font-display)" }}>
-          Don&apos;t Miss <em>This Year&apos;s</em> Gathering
+          Don&apos;t miss this year&apos;s gathering.
         </h2>
-        <p className="lead-capture-desc" style={{ fontFamily: "var(--font-accent)" }}>
+        <p className="lead-capture-desc">
           Join 200+ seekers for three days of transformation, healing, and deep connection
           under Alaska&apos;s midnight sun. Get early access to tickets, schedule announcements,
           and exclusive updates.

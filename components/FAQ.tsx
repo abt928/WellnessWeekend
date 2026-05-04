@@ -37,8 +37,8 @@ export default function FAQ() {
   return (
     <section id="faq" className="section faq">
       <p className="section-label">Questions & Answers</p>
-      <h2 className="section-title" style={{ fontFamily: "var(--font-display)" }}>
-        Everything You <em>Need to Know</em>
+      <h2 className="section-title">
+        Questions.
       </h2>
       <div className="faq-list">
         {faqs.map((f, i) => (

@@ -1,36 +1,32 @@
 import type { Metadata } from "next";
-import { Playfair_Display, Inter, Cormorant_Garamond } from "next/font/google";
+import { Spectral, Manrope } from "next/font/google";
 import Script from "next/script";
 import { Analytics } from "@vercel/analytics/next";
 import { SpeedInsights } from "@vercel/speed-insights/next";
 import ClarityTracker from "@/components/ClarityTracker";
 import "./globals.css";
 
-const playfair = Playfair_Display({
+const spectral = Spectral({
   subsets: ["latin"],
   display: "swap",
+  weight: ["400", "700"],
+  style: ["normal", "italic"],
   variable: "--font-display",
 });
 
-const inter = Inter({
+const manrope = Manrope({
   subsets: ["latin"],
   display: "swap",
+  weight: ["400", "600", "700"],
   variable: "--font-body",
-});
-
-const cormorant = Cormorant_Garamond({
-  subsets: ["latin"],
-  display: "swap",
-  weight: ["300", "400", "500", "600"],
-  variable: "--font-accent",
 });
 
 export const metadata: Metadata = {
   metadataBase: new URL("https://wellnessweekendak.com"),
   title: {
     default:
-      "Wellness Weekend — 4th Annual Healing Arts Festival | Sutton, Alaska",
-    template: "%s — Wellness Weekend",
+      "Wellness Weekend · 4th Annual Healing Arts Festival · Sutton, Alaska",
+    template: "%s · Wellness Weekend",
   },
   description:
     "Join 200+ seekers for a transformational weekend of sound healing, earth medicine, and movement under Alaska's midnight sun. August 8–10, 2026 in Sutton, Alaska.",
@@ -66,7 +62,7 @@ export const metadata: Metadata = {
     },
   },
   openGraph: {
-    title: "Wellness Weekend — Healing Arts Festival Under the Midnight Sun",
+    title: "Wellness Weekend · Healing Arts Festival Under the Midnight Sun",
     description:
       "A once-in-a-lifetime transformational gathering in the Alaskan wilderness. Sound healing, earth medicine, movement & bodywork. August 8–10, 2026.",
     type: "website",
@@ -78,13 +74,13 @@ export const metadata: Metadata = {
         url: "/images/hero.png",
         width: 1200,
         height: 630,
-        alt: "Wellness Weekend — Healing Arts Festival in Sutton, Alaska under the midnight sun",
+        alt: "Wellness Weekend, a healing arts festival in Sutton, Alaska under the midnight sun",
       },
     ],
   },
   twitter: {
     card: "summary_large_image",
-    title: "Wellness Weekend — Healing Arts Festival Under the Midnight Sun",
+    title: "Wellness Weekend · Healing Arts Festival Under the Midnight Sun",
     description:
       "Join 200+ seekers for sound healing, earth medicine, and movement under Alaska's midnight sun. August 8–10, 2026.",
     images: ["/images/hero.png"],
@@ -103,9 +99,9 @@ export default function RootLayout({
   return (
     <html
       lang="en"
-      className={`${playfair.variable} ${inter.variable} ${cormorant.variable}`}
+      className={`${spectral.variable} ${manrope.variable}`}
     >
-      <body style={{ fontFamily: "var(--font-body)" }}>
+      <body>
         {children}
         <ClarityTracker />
 
@@ -236,6 +232,7 @@ export default function RootLayout({
         </Script>
         {process.env.NEXT_PUBLIC_META_PIXEL_ID && (
           <noscript>
+            {/* eslint-disable-next-line @next/next/no-img-element -- noscript fallback for Meta Pixel; next/image cannot run without JS */}
             <img
               height="1"
               width="1"

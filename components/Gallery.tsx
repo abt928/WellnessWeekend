@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useCallback } from "react";
+import { useState, useCallback, useEffect } from "react";
 import Image from "next/image";
 import Reveal from "@/components/Reveal";
 import { CloseIcon } from "@/components/Icons";
@@ -35,14 +35,26 @@ export default function Gallery() {
     setLightbox((prev) => (prev !== null ? (prev - 1 + IMAGES.length) % IMAGES.length : null));
   }, []);
 
+  // Keyboard navigation while lightbox is open
+  useEffect(() => {
+    if (lightbox === null) return;
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key === "Escape") closeLightbox();
+      else if (e.key === "ArrowRight") goNext();
+      else if (e.key === "ArrowLeft") goPrev();
+    };
+    window.addEventListener("keydown", onKey);
+    return () => window.removeEventListener("keydown", onKey);
+  }, [lightbox, closeLightbox, goNext, goPrev]);
+
   return (
     <>
       <section id="gallery" className="section gallery-section">
         <Reveal>
           <div className="gallery-header">
             <p className="section-label">Moments in Time</p>
-            <h2 className="section-title" style={{ fontFamily: "var(--font-display)" }}>
-              A Glimpse of the <em>Magic</em>
+            <h2 className="section-title">
+              Moments.
             </h2>
             <p className="section-desc">
               Real moments captured from previous gatherings: the joy,

@@ -26,7 +26,7 @@ export default function Navigation() {
 
   return (
     <nav className={`nav${scrolled ? " scrolled" : ""}${menuOpen ? " menu-open" : ""}`}>
-      <div className="nav-logo" style={{ fontFamily: "var(--font-display)" }}>
+      <div className="nav-logo">
         Wellness Weekend
       </div>
 
@@ -40,10 +40,12 @@ export default function Navigation() {
         <li><a href="#faq">FAQ</a></li>
       </ul>
 
-      {/* Desktop CTA */}
-      <a href="#store" className="nav-cta-link">
-        <button className="nav-cta">Reserve Your Spot</button>
-      </a>
+      {/* Desktop CTA — surfaces only after first scroll past hero */}
+      {scrolled && (
+        <a href="#store" className="nav-cta-link">
+          <button className="nav-cta">Reserve Your Spot</button>
+        </a>
+      )}
 
       {/* Mobile hamburger button */}
       <button
@@ -62,7 +64,7 @@ export default function Navigation() {
         <div className="mobile-menu-overlay" onClick={closeMenu}>
           <div className="mobile-menu" onClick={(e) => e.stopPropagation()}>
             <div className="mobile-menu-header">
-              <div className="nav-logo" style={{ fontFamily: "var(--font-display)" }}>
+              <div className="nav-logo">
                 Wellness Weekend
               </div>
               <button className="mobile-menu-close" onClick={closeMenu} aria-label="Close menu">

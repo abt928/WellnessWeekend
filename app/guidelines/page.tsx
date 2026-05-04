@@ -24,7 +24,7 @@ export default function CommunityGuidelines() {
               className="legal-title"
               style={{ fontFamily: "var(--font-display)" }}
             >
-              Community <em>Guidelines</em>
+              Community guidelines.
             </h1>
             <p className="legal-effective">
               Peace · Love · Unity · Respect

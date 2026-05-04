@@ -136,8 +136,8 @@ export default function ConversionNudges() {
 
   return (
     <>
-      {/* ── Return Visitor Welcome Toast ── */}
-      {showWelcomeBack && (
+      {/* ── Return Visitor Welcome Toast — suppressed if exit-intent is active (one nudge at a time) ── */}
+      {showWelcomeBack && !showExitIntent && (
         <div className="welcome-toast" role="status" aria-live="polite">
           <span className="welcome-toast-icon"><LeafIcon size={18} color="var(--sage-light)" /></span>
           <span>Welcome back, seeker. Your journey continues.</span>
@@ -165,8 +165,8 @@ export default function ConversionNudges() {
             {status === "sent" ? (
               <div className="exit-success">
                 <div className="exit-icon"><MoonIcon size={36} color="var(--aurora-light)" /></div>
-                <h3 className="exit-title" style={{ fontFamily: "var(--font-display)" }}>
-                  You&apos;re <em>Connected</em>
+                <h3 className="exit-title">
+                  Connected.
                 </h3>
                 <p className="exit-desc">
                   We&apos;ll send gentle updates as the gathering draws near.
@@ -176,12 +176,12 @@ export default function ConversionNudges() {
             ) : (
               <>
                 <div className="exit-icon"><SparklesIcon size={36} color="var(--gold)" /></div>
-                <h3 className="exit-title" style={{ fontFamily: "var(--font-display)" }}>
-                  Before You <em>Go</em>
+                <h3 className="exit-title">
+                  Before you go.
                 </h3>
-                <p className="exit-desc" style={{ fontFamily: "var(--font-accent)" }}>
-                  The universe brought you here for a reason.
-                  Stay connected and be first to know when early-bird pricing opens.
+                <p className="exit-desc">
+                  Be first to know when early-bird tickets open and when the schedule drops.
+                  No noise. A few thoughtful updates as the gathering approaches.
                 </p>
                 <form className="exit-form" onSubmit={handleSubmit}>
                   <input
@@ -202,7 +202,7 @@ export default function ConversionNudges() {
                   </button>
                 </form>
                 {status === "error" && (
-                  <p className="exit-error">Something shifted. Try once more.</p>
+                  <p className="exit-error">Couldn&apos;t send. Please try once more.</p>
                 )}
                 <button
                   className="exit-skip"

@@ -32,19 +32,46 @@ const TABS = [
   { key: "merch", label: "Merch", Icon: ShirtIcon },
 ];
 
+const MAX_QTY_PER_ITEM = 20;
+
 function formatPrice(cents: number) {
   return `$${(cents / 100).toFixed(cents % 100 === 0 ? 0 : 2)}`;
+}
+
+function readInitialCart(): CartEntry[] {
+  if (typeof window === "undefined") return [];
+  try {
+    const saved = window.localStorage.getItem("ww-cart");
+    return saved ? JSON.parse(saved) : [];
+  } catch {
+    return [];
+  }
+}
+
+function readInitialTab(): string {
+  if (typeof window === "undefined") return "tickets";
+  const tab = new URLSearchParams(window.location.search).get("tab");
+  return TABS.some((t) => t.key === tab) ? (tab as string) : "tickets";
 }
 
 export default function Store() {
   const [items, setItems] = useState<CatalogItem[]>([]);
   const [loading, setLoading] = useState(true);
-  const [activeTab, setActiveTab] = useState("tickets");
-  const [cart, setCart] = useState<CartEntry[]>([]);
+  const [activeTab, setActiveTabState] = useState<string>(readInitialTab);
+  const [cart, setCart] = useState<CartEntry[]>(readInitialCart);
   const [cartOpen, setCartOpen] = useState(false);
   const [checkingOut, setCheckingOut] = useState(false);
 
   const [error, setError] = useState<string | null>(null);
+
+  const setActiveTab = useCallback((key: string) => {
+    setActiveTabState(key);
+    if (typeof window === "undefined") return;
+    const url = new URL(window.location.href);
+    if (key === "tickets") url.searchParams.delete("tab");
+    else url.searchParams.set("tab", key);
+    window.history.replaceState({}, "", url.toString());
+  }, []);
 
   // Load catalog
   useEffect(() => {
@@ -91,15 +118,7 @@ export default function Store() {
     return () => observer.disconnect();
   }, [loading]); // re-run when loading completes so store section exists
 
-  // Load cart from localStorage
-  useEffect(() => {
-    try {
-      const saved = localStorage.getItem("ww-cart");
-      if (saved) setCart(JSON.parse(saved));
-    } catch { /* noop */ }
-  }, []);
-
-  // Save cart
+  // Cart hydration is the lazy initializer above (readInitialCart). Persist on changes:
   useEffect(() => {
     localStorage.setItem("ww-cart", JSON.stringify(cart));
   }, [cart]);
@@ -115,6 +134,7 @@ export default function Store() {
     setCart((prev) => {
       const existing = prev.find((c) => c.variationId === variation.id);
       if (existing) {
+        if (existing.quantity >= MAX_QTY_PER_ITEM) return prev;
         return prev.map((c) =>
           c.variationId === variation.id ? { ...c, quantity: c.quantity + 1 } : c
         );
@@ -140,7 +160,11 @@ export default function Store() {
   const updateQty = useCallback((variationId: string, delta: number) => {
     setCart((prev) =>
       prev
-        .map((c) => c.variationId === variationId ? { ...c, quantity: c.quantity + delta } : c)
+        .map((c) =>
+          c.variationId === variationId
+            ? { ...c, quantity: Math.min(c.quantity + delta, MAX_QTY_PER_ITEM) }
+            : c
+        )
         .filter((c) => c.quantity > 0)
     );
   }, []);
@@ -211,14 +235,14 @@ export default function Store() {
   return (
     <section id="store" className="section store-section">
       <p className="section-label">Build Your Experience</p>
-      <h2 className="section-title" style={{ fontFamily: "var(--font-display)" }}>
-        Create Your <em>Weekend</em>
+      <h2 className="section-title">
+        Build your weekend.
       </h2>
       <p className="section-desc">
         Choose your tickets, add-on experiences, and merch to craft the perfect
         Wellness Weekend, all processed securely through Square.
       </p>
-      <p className="store-capacity" style={{ fontFamily: "var(--font-accent)", display: "flex", alignItems: "center", justifyContent: "center", gap: "0.5rem" }}>
+      <p className="store-capacity" style={{ display: "flex", alignItems: "center", justifyContent: "center", gap: "0.5rem" }}>
         <LotusIcon size={16} color="var(--aurora)" /> An intimate gathering limited to 200 seekers <LotusIcon size={16} color="var(--aurora)" />
       </p>
 
@@ -239,8 +263,8 @@ export default function Store() {
       {/* Items Grid */}
       {error ? (
         <div style={{ backgroundColor: "rgba(255, 100, 100, 0.1)", border: "1px solid rgba(255, 100, 100, 0.3)", padding: "2rem", borderRadius: "8px", margin: "2rem 0", color: "#ff8888", textAlign: "center" }}>
-          <p style={{ fontFamily: "var(--font-display)", fontSize: "1.5rem", marginBottom: "0.5rem" }}>Square Integration Missing</p>
-          <p>It looks like the <code>.env</code> file is missing or lacks the correct Square credentials. Please review the <code>.env.example</code> file and provide your Square access token to load the catalog.</p>
+          <p style={{ fontFamily: "var(--font-display)", fontSize: "1.5rem", marginBottom: "0.5rem" }}>Catalog unavailable</p>
+          <p>We can&apos;t load tickets right now. Please refresh, or come back in a few minutes.</p>
         </div>
       ) : loading ? (
         <div className="store-loading">
@@ -252,7 +276,7 @@ export default function Store() {
           {filtered.map((item) => (
             <div className="store-card" key={item.id}>
               <div className="store-card-header">
-                <h3 className="store-card-name" style={{ fontFamily: "var(--font-display)" }}>
+                <h3 className="store-card-name">
                   {item.name}
                 </h3>
                 {item.variations.length === 1 && (
@@ -307,7 +331,7 @@ export default function Store() {
         <div className="cart-overlay" onClick={() => setCartOpen(false)}>
           <div className="cart-drawer" onClick={(e) => e.stopPropagation()}>
             <div className="cart-header">
-              <h3 style={{ fontFamily: "var(--font-display)", fontSize: "1.3rem" }}>Your Cart</h3>
+              <h3 style={{ fontFamily: "var(--font-display)", fontSize: "1.3rem", margin: 0 }}>Your Cart</h3>
               <button className="modal-close" onClick={() => setCartOpen(false)}><CloseIcon size={18} /></button>
             </div>
 

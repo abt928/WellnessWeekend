@@ -17,10 +17,20 @@ const TABS: TabConfig[] = [
   { key: "volunteers", label: "Volunteers", columns: ["id", "name", "email", "phone", "interest", "experience", "availability", "created_at"] },
 ];
 
+function readSavedPassword(): { value: string; remembered: boolean } {
+  if (typeof window === "undefined") return { value: "", remembered: false };
+  try {
+    const saved = window.localStorage.getItem("ww-admin-pw");
+    return { value: saved ?? "", remembered: Boolean(saved) };
+  } catch {
+    return { value: "", remembered: false };
+  }
+}
+
 export default function AdminPage() {
   const [authenticated, setAuthenticated] = useState(false);
-  const [password, setPassword] = useState("");
-  const [rememberMe, setRememberMe] = useState(false);
+  const [password, setPassword] = useState<string>(() => readSavedPassword().value);
+  const [rememberMe, setRememberMe] = useState<boolean>(() => readSavedPassword().remembered);
   const [loginError, setLoginError] = useState("");
   const [loginLoading, setLoginLoading] = useState(false);
 
@@ -30,17 +40,6 @@ export default function AdminPage() {
   const [search, setSearch] = useState("");
   const [loading, setLoading] = useState(false);
   const [dbSetupStatus, setDbSetupStatus] = useState<string | null>(null);
-
-  // Load saved password on mount
-  useEffect(() => {
-    try {
-      const saved = localStorage.getItem("ww-admin-pw");
-      if (saved) {
-        setPassword(saved);
-        setRememberMe(true);
-      }
-    } catch { /* noop */ }
-  }, []);
 
   // Check if already authenticated on mount
   useEffect(() => {
@@ -102,9 +101,10 @@ export default function AdminPage() {
     setLoading(false);
   }, []);
 
-  // Fetch data when tab or search changes
+  // Fetch data when tab or search changes (canonical fetch-on-deps pattern; rule over-flags this)
   useEffect(() => {
     if (authenticated) {
+      // eslint-disable-next-line react-hooks/set-state-in-effect
       fetchData(activeTab, search);
     }
   }, [authenticated, activeTab, search, fetchData]);

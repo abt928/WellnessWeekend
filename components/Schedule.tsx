@@ -1,8 +1,18 @@
 "use client";
 import { useState, type ReactNode } from "react";
 import { LeafIcon, FlameIcon, SoundWaveIcon, CommunityIcon, MoonIcon } from "@/components/Icons";
+import EventGloss from "@/components/EventGloss";
 
 type Track = "body" | "spirit" | "sound" | "community";
+
+const LIONSGATE_GLOSS =
+  "Lionsgate refers to the 8/8 alignment of Earth, the Sun, and the star Sirius. In some spiritual traditions it's held as an annual portal of heightened energy.";
+const AYNI_GLOSS =
+  "An Andean ceremony of reciprocity. A small bundle of seeds, flowers, and offerings is built and given back to the mountain spirits.";
+const CE5_GLOSS =
+  "CE5 (Close Encounter of the Fifth Kind): a consciousness-based contact protocol. Stargazing and intentioned meditation under the night sky.";
+const KAI_CHI_DO_GLOSS =
+  "A movement practice that combines qigong with dance, developed by Master Lotus Sky.";
 
 const trackMeta: Record<Track, { icon: ReactNode; label: string; color: string }> = {
   body: { icon: <LeafIcon size={14} color="#7C9070" />, label: "Body", color: "#7C9070" },
@@ -17,6 +27,7 @@ interface ScheduleEvent {
   detail?: string;
   track: Track;
   location?: string;
+  gloss?: string;
 }
 
 interface ScheduleBlock {
@@ -41,7 +52,7 @@ const days: ScheduleBlock[] = [
       { time: "5:00 PM", event: "Myofascial Release Journey", detail: "with Jon", location: "Wellness Tent", track: "body" },
       { time: "7:00 PM", event: "Sunset Sound Healing at the Lake", location: "Main Stage / Lake", track: "sound" },
       { time: "8:30 PM", event: "Music Program Begins", location: "Main Stage", track: "sound" },
-      { time: "10:00 PM", event: "CE5 Gathering: Beyond the Veil Pt. 1", detail: "Stargazing & contact meditation", location: "Stargazing Zone", track: "spirit" },
+      { time: "10:00 PM", event: "CE5 Gathering: Beyond the Veil Pt. 1", detail: "Stargazing & contact meditation", location: "Stargazing Zone", track: "spirit", gloss: CE5_GLOSS },
     ],
   },
   {
@@ -49,17 +60,17 @@ const days: ScheduleBlock[] = [
     heading: <><FlameIcon size={20} color="var(--coral)" /> Activation + Transformation</>,
     theme: "Expansion, Ceremony, Expression",
     events: [
-      { time: "8:00 AM", event: "Lionsgate Activation + Floating Sound Bath", location: "Lake / Aerial", track: "sound" },
+      { time: "8:00 AM", event: "Lionsgate Activation + Floating Sound Bath", location: "Lake / Aerial", track: "sound", gloss: LIONSGATE_GLOSS },
       { time: "9:00 AM", event: "Morning Yoga + Breathwork", location: "Main Stage", track: "body" },
-      { time: "10:00 AM", event: "Workshop: Kai Chi Do", detail: "with Lotus", location: "Wellness Tent", track: "body" },
-      { time: "11:00 AM", event: "AYNI Despacho Ceremony", location: "Main Stage", track: "spirit" },
+      { time: "10:00 AM", event: "Workshop: Kai Chi Do", detail: "with Lotus", location: "Wellness Tent", track: "body", gloss: KAI_CHI_DO_GLOSS },
+      { time: "11:00 AM", event: "AYNI Despacho Ceremony", location: "Main Stage", track: "spirit", gloss: AYNI_GLOSS },
       { time: "12:00 PM", event: "Integration + Marketplace", detail: "Vendor Village · Food + Tea Lounge · Community Connection", location: "Village", track: "community" },
       { time: "2:00 PM", event: "Paddleboard Yoga", location: "Lake", track: "body" },
       { time: "4:00 PM", event: "Tarot + Tea Lounge", location: "Integration Space", track: "spirit" },
       { time: "6:00 PM", event: "Cacao Ceremony", location: "Main Stage", track: "spirit" },
-      { time: "8:00 PM", event: "Lionsgate Drumming Ceremony", detail: "with White Eagle Medicine Woman", location: "Main Stage", track: "spirit" },
+      { time: "8:00 PM", event: "Lionsgate Drumming Ceremony", detail: "with White Eagle Medicine Woman", location: "Main Stage", track: "spirit", gloss: LIONSGATE_GLOSS },
       { time: "9:30 PM", event: "Ecstatic Dance + Music Activation", location: "Main Stage", track: "sound" },
-      { time: "11:30 PM", event: "CE5 Gathering: Beyond the Veil Pt. 2", location: "Stargazing Zone", track: "spirit" },
+      { time: "11:30 PM", event: "CE5 Gathering: Beyond the Veil Pt. 2", location: "Stargazing Zone", track: "spirit", gloss: CE5_GLOSS },
     ],
   },
   {
@@ -85,9 +96,27 @@ const familyDay = [
   { time: "All Day", event: "Vendor Village + Nonprofit Activations", track: "community" as Track },
 ];
 
+const DAY_KEYS = ["friday", "saturday", "sunday"] as const;
+
+function readInitialDay(): number {
+  if (typeof window === "undefined") return 0;
+  const day = new URLSearchParams(window.location.search).get("day");
+  const idx = DAY_KEYS.indexOf(day as typeof DAY_KEYS[number]);
+  return idx >= 0 ? idx : 0;
+}
+
 export default function Schedule() {
-  const [active, setActive] = useState(0);
+  const [active, setActiveState] = useState<number>(readInitialDay);
   const [trackFilter, setTrackFilter] = useState<Track | null>(null);
+
+  const setActive = (i: number) => {
+    setActiveState(i);
+    if (typeof window === "undefined") return;
+    const url = new URL(window.location.href);
+    if (i === 0) url.searchParams.delete("day");
+    else url.searchParams.set("day", DAY_KEYS[i]);
+    window.history.replaceState({}, "", url.toString());
+  };
 
   const currentDay = days[active];
   const filteredEvents = trackFilter
@@ -97,8 +126,8 @@ export default function Schedule() {
   return (
     <section id="schedule" className="section schedule">
       <p className="section-label">The Journey</p>
-      <h2 className="section-title" style={{ fontFamily: "var(--font-display)" }}>
-        Three Days of <em>Transformation</em>
+      <h2 className="section-title">
+        Friday · Saturday · Sunday
       </h2>
 
       {/* Track Filter Pills */}
@@ -136,23 +165,23 @@ export default function Schedule() {
 
       {/* Day Theme */}
       <div className="schedule-theme">
-        <span className="schedule-heading" style={{ fontFamily: "var(--font-display)" }}>
+        <span className="schedule-heading">
           {currentDay.heading}
         </span>
         <span className="schedule-theme-text">{currentDay.theme}</span>
       </div>
 
-      {/* Timeline */}
-      <div className="schedule-timeline">
+      {/* Timeline — re-keyed on day/filter change so cross-fade animation re-fires */}
+      <div className="schedule-timeline" key={`${active}-${trackFilter ?? "all"}`}>
         {filteredEvents.map((e, i) => (
           <div className="schedule-item" key={i} style={{ "--dot-color": trackMeta[e.track].color } as React.CSSProperties}>
             <div className="schedule-time">
               {e.time}
               {e.location && <span className="schedule-location"> · {e.location}</span>}
             </div>
-            <div className="schedule-event" style={{ fontFamily: "var(--font-display)" }}>
+            <div className="schedule-event">
               <span className="schedule-track-icon">{trackMeta[e.track].icon}</span>
-              {e.event}
+              {e.gloss ? <EventGloss term={e.event} gloss={e.gloss} /> : e.event}
             </div>
             {e.detail && <div className="schedule-detail">{e.detail}</div>}
           </div>
@@ -165,15 +194,18 @@ export default function Schedule() {
       {/* Sunday Family Day */}
       {active === 2 && (
         <div className="family-day">
-          <h3 className="family-day-title" style={{ fontFamily: "var(--font-display)", display: "flex", alignItems: "center", gap: "0.5rem", justifyContent: "center" }}>
+          <h3 className="family-day-title" style={{ display: "flex", alignItems: "center", gap: "0.5rem", justifyContent: "center" }}>
             <LeafIcon size={22} color="var(--sage)" /> Sunday Family Day
           </h3>
           <p className="family-day-subtitle">Wellness for All Ages · All Proceeds to Nonprofits</p>
           <div className="family-day-grid">
             {familyDay.map((e, i) => (
               <div className="family-day-card" key={i}>
-                <span className="schedule-track-icon">{trackMeta[e.track].icon}</span>
-                <div className="family-day-name" style={{ fontFamily: "var(--font-display)" }}>{e.event}</div>
+                <div className="family-day-time">{e.time}</div>
+                <div className="family-day-name">
+                  <span className="schedule-track-icon">{trackMeta[e.track].icon}</span>
+                  {e.event}
+                </div>
                 {e.detail && <div className="family-day-detail">{e.detail}</div>}
               </div>
             ))}

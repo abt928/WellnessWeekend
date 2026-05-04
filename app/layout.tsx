@@ -3,6 +3,7 @@ import { Playfair_Display, Inter, Cormorant_Garamond } from "next/font/google";
 import Script from "next/script";
 import { Analytics } from "@vercel/analytics/next";
 import { SpeedInsights } from "@vercel/speed-insights/next";
+import ClarityTracker from "@/components/ClarityTracker";
 import "./globals.css";
 
 const playfair = Playfair_Display({
@@ -106,6 +107,7 @@ export default function RootLayout({
     >
       <body style={{ fontFamily: "var(--font-body)" }}>
         {children}
+        <ClarityTracker />
 
         {/* Schema.org JSON-LD for Meta Pixel Automatic Microdata (Event & Ticketing) */}
         <Script

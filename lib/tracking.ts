@@ -10,6 +10,8 @@
  *  - ttclid forwarding to TikTok CAPI
  */
 
+import Clarity from "@microsoft/clarity";
+
 // ─── Types ───────────────────────────────────────────────────────────
 
 declare global {
@@ -261,7 +263,13 @@ function getExternalId(): string {
 function saveKnownUser(email?: string, phone?: string) {
   if (typeof window === "undefined") return;
   try {
-    if (email) localStorage.setItem("ww-em", email.trim().toLowerCase());
+    if (email) {
+      const cleaned = email.trim().toLowerCase();
+      localStorage.setItem("ww-em", cleaned);
+      if (typeof Clarity !== "undefined") {
+         try { Clarity.identify(getExternalId(), undefined, undefined, cleaned); } catch(e) {}
+      }
+    }
     if (phone) {
       const e164 = formatPhoneE164(phone);
       if (e164) localStorage.setItem("ww-ph", e164);
@@ -328,6 +336,13 @@ async function fireServerEvent(
           typeof navigator !== "undefined" ? navigator.userAgent : undefined,
       }),
     });
+
+    try {
+      if (typeof Clarity !== "undefined") {
+        Clarity.event(event);
+      }
+    } catch (e) {}
+    
   } catch (e) {
     console.warn("[Tracking] Server event error:", e);
   }

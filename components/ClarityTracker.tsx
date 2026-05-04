@@ -3,15 +3,14 @@
 import { useEffect } from "react";
 import Clarity from "@microsoft/clarity";
 
+const CLARITY_PROJECT_ID = process.env.NEXT_PUBLIC_CLARITY_PROJECT_ID || "wlnikp7pcm";
+
 export default function ClarityTracker() {
   useEffect(() => {
-    const projectId = process.env.NEXT_PUBLIC_CLARITY_PROJECT_ID;
-    if (projectId) {
-      try {
-        Clarity.init(projectId);
-      } catch (e) {
-        console.warn("[Clarity] Initialization failed:", e);
-      }
+    try {
+      Clarity.init(CLARITY_PROJECT_ID);
+    } catch (e) {
+      console.warn("[Clarity] Initialization failed:", e);
     }
   }, []);
 

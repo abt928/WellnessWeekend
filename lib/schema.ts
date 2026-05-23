@@ -65,3 +65,29 @@ export const instructorWaitlist = pgTable("instructor_waitlist", {
   offering: text("offering").notNull(),
   createdAt: timestamp("created_at", { withTimezone: true }).defaultNow().notNull(),
 });
+
+export const affiliates = pgTable("affiliates", {
+  id: serial("id").primaryKey(),
+  name: varchar("name", { length: 255 }).notNull(),
+  email: varchar("email", { length: 255 }).notNull().unique(),
+  code: varchar("code", { length: 20 }).notNull().unique(),
+  company: varchar("company", { length: 255 }),
+  website: varchar("website", { length: 500 }),
+  description: text("description"),
+  commissionPct: integer("commission_pct").notNull().default(10),
+  status: varchar("status", { length: 20 }).notNull().default("pending"), // pending | active | inactive
+  passwordHash: text("password_hash").notNull(),
+  notes: text("notes"),
+  createdAt: timestamp("created_at", { withTimezone: true }).defaultNow().notNull(),
+});
+
+export const referralEvents = pgTable("referral_events", {
+  id: serial("id").primaryKey(),
+  affiliateCode: varchar("affiliate_code", { length: 20 }).notNull(),
+  eventType: varchar("event_type", { length: 20 }).notNull(), // click | lead | purchase
+  orderId: varchar("order_id", { length: 100 }),
+  orderAmountCents: integer("order_amount_cents"),
+  commissionCents: integer("commission_cents"),
+  email: varchar("email", { length: 255 }),
+  createdAt: timestamp("created_at", { withTimezone: true }).defaultNow().notNull(),
+});

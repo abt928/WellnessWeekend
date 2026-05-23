@@ -12,9 +12,10 @@ interface CartItem {
 
 export async function POST(req: NextRequest) {
   try {
-    const { items, returnUrl } = (await req.json()) as {
+    const { items, returnUrl, referralCode } = (await req.json()) as {
       items: CartItem[];
       returnUrl?: string;
+      referralCode?: string;
     };
 
     if (!items || items.length === 0) {
@@ -36,6 +37,7 @@ export async function POST(req: NextRequest) {
       order: {
         locationId,
         lineItems,
+        ...(referralCode ? { referenceId: `ref:${referralCode}` } : {}),
       },
       checkoutOptions: {
         redirectUrl: `${baseUrl}/thank-you`,

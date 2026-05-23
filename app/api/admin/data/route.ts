@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { getDb } from "@/lib/db";
-import { leads, newsletter, vendors, volunteers } from "@/lib/schema";
+import { leads, newsletter, vendors, volunteers, sponsors, instructorWaitlist, affiliates, referralEvents } from "@/lib/schema";
 import { isAdminAuthenticated } from "@/app/api/admin/auth/route";
 import { desc, sql } from "drizzle-orm";
 
@@ -9,6 +9,10 @@ const TABLES = {
   newsletter,
   vendors,
   volunteers,
+  sponsors,
+  instructor_waitlist: instructorWaitlist,
+  affiliates,
+  referral_events: referralEvents,
 } as const;
 
 type TableName = keyof typeof TABLES;
@@ -23,7 +27,7 @@ export async function GET(req: NextRequest) {
 
   if (!table || !(table in TABLES)) {
     return NextResponse.json(
-      { error: "Invalid table. Use: leads, newsletter, vendors, volunteers" },
+      { error: `Invalid table. Use: ${Object.keys(TABLES).join(", ")}` },
       { status: 400 }
     );
   }
@@ -34,7 +38,6 @@ export async function GET(req: NextRequest) {
 
     let rows;
     if (search && "email" in schema) {
-      // Filter by email or name if the table has those columns
       rows = await db
         .select()
         .from(schema)
@@ -49,12 +52,14 @@ export async function GET(req: NextRequest) {
         .limit(500);
     }
 
+    // Strip passwordHash from affiliates before sending
+    if (table === "affiliates") {
+      rows = (rows as Record<string, unknown>[]).map(({ passwordHash: _ph, ...rest }) => rest);
+    }
+
     return NextResponse.json({ rows, count: rows.length });
   } catch (e) {
     console.error("Admin data fetch error:", e);
-    return NextResponse.json(
-      { error: "Failed to fetch data" },
-      { status: 500 }
-    );
+    return NextResponse.json({ error: "Failed to fetch data" }, { status: 500 });
   }
 }

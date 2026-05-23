@@ -2332,14 +2332,18 @@ textarea:focus-visible {
 /* ════════════════════════════════════════════════════════════════ */
 
 :root {
-  --surface-page:     oklch(13% 0.030 290);   /* deep purple — no green tint */
-  --surface-elevated: oklch(18% 0.035 290);   /* card / FAQ panel */
-  --surface-raised:   oklch(23% 0.040 290);   /* hover / pressed */
-  --ink:              #F0EBE0;                 /* primary text — ≥13:1 vs surface-page */
-  --ink-muted:        rgba(240, 235, 224, 0.90); /* body text — strong contrast */
-  --ink-faint:        rgba(240, 235, 224, 0.75); /* metadata / captions */
+  --surface-page:     oklch(13% 0.030 290);
+  --surface-elevated: oklch(18% 0.035 290);
+  --surface-raised:   oklch(23% 0.040 290);
+  --ink:              #F0EBE0;
+  --ink-muted:        rgba(240, 235, 224, 0.90);
+  --ink-faint:        rgba(240, 235, 224, 0.75);
   --line-subtle:      rgba(240, 235, 224, 0.10);
   --line-medium:      rgba(240, 235, 224, 0.18);
+  /* All green text variables become white on dark canvas */
+  --forest:           #F0EBE0;
+  --sage:             rgba(240, 235, 224, 0.75);
+  --charcoal:         #F0EBE0;
 }
 
 body {

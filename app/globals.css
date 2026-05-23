@@ -1467,6 +1467,37 @@ textarea:focus-visible {
   letter-spacing: 0.05em;
 }
 
+/* Logo card variant */
+.partner-card-logo {
+  flex: 0 1 300px;
+  padding: 2rem 2rem 1.5rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1rem;
+  background: rgba(255,255,255,0.92);
+  border: none;
+  border-radius: 20px;
+}
+.partner-card-logo:hover {
+  background: rgba(255,255,255,0.97);
+  border-color: transparent;
+}
+.partner-logo-img-wrap {
+  width: 100%;
+  height: 110px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+}
+.partner-card-logo .partner-role {
+  color: #666;
+  font-size: 0.75rem;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+
 /* Store tab icon spacing */
 .store-tab { display: inline-flex; align-items: center; gap: 0.4rem; }
 .store-tab svg { flex-shrink: 0; }

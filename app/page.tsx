@@ -14,14 +14,24 @@ import {
   FlameIcon,
   LeafIcon,
   CommunityIcon,
-  SoundWaveIcon,
-  PlaneIcon,
 } from "@/components/Icons";
 
 /* ── static data ── */
 const partners = [
-  { name: "Sound Space", role: "Sound Healing Partner", Icon: SoundWaveIcon },
-  { name: "Alaska Fly Dog", role: "Adventure Partner", Icon: PlaneIcon },
+  {
+    name: "Alaska Fly Dog",
+    role: "Massage · Adventures in Wellness",
+    logo: "/logos/alaska-fly-dog.png",
+    logoWidth: 260,
+    logoHeight: 120,
+  },
+  {
+    name: "The Sound Space",
+    role: "Sound Healing Partner",
+    logo: "/logos/sound-space.png",
+    logoWidth: 120,
+    logoHeight: 120,
+  },
 ];
 
 const pillars = [
@@ -256,11 +266,16 @@ export default function Home() {
         <Reveal>
           <div className="partner-grid">
             {partners.map((p) => (
-              <div className="partner-card" key={p.name}>
-                <div className="partner-icon-wrap">
-                  <p.Icon size={32} color="var(--psyche-cyan)" />
+              <div className="partner-card partner-card-logo" key={p.name}>
+                <div className="partner-logo-img-wrap">
+                  <Image
+                    src={p.logo}
+                    alt={p.name}
+                    width={p.logoWidth}
+                    height={p.logoHeight}
+                    style={{ objectFit: "contain", width: "100%", height: "100%" }}
+                  />
                 </div>
-                <div className="partner-name">{p.name}</div>
                 <div className="partner-role">{p.role}</div>
               </div>
             ))}

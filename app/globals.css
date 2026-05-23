@@ -622,7 +622,7 @@ textarea:focus-visible {
 }
 .track-pill {
   padding: 0.45rem 1rem; border: 1px solid rgba(124,144,112,0.2); border-radius: 20px;
-  background: transparent; color: var(--charcoal); font-size: 0.78rem;
+  background: transparent; color: var(--charcoal); font-size: 0.85rem;
   cursor: pointer; transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
   font-family: inherit; letter-spacing: 0.05em;
 }
@@ -681,7 +681,7 @@ textarea:focus-visible {
   box-shadow: 0 0 6px color-mix(in srgb, var(--dot-color, var(--sage)) 40%, transparent);
 }
 .schedule-time {
-  font-size: 0.75rem; color: var(--sage); letter-spacing: 0.06em;
+  font-size: 0.82rem; color: var(--sage); letter-spacing: 0.06em;
   margin-bottom: 0.2rem;
 }
 .schedule-location {
@@ -690,7 +690,7 @@ textarea:focus-visible {
 }
 .schedule-track-icon { margin-right: 0.4rem; }
 .schedule-event { font-size: 1.05rem; color: var(--forest); font-weight: 500; }
-.schedule-detail { font-size: 0.88rem; color: rgba(43,43,43,0.68); margin-top: 0.15rem; font-family: var(--font-body); }
+.schedule-detail { font-size: 0.95rem; color: rgba(43,43,43,0.68); margin-top: 0.15rem; font-family: var(--font-body); }
 .schedule-empty {
   text-align: center; padding: 2rem; color: var(--sage);
   font-style: italic; font-size: 0.95rem;
@@ -913,7 +913,7 @@ textarea:focus-visible {
   color: var(--aurora);
 }
 .store-card-desc {
-  font-size: 0.88rem; color: rgba(43,43,43,0.68); line-height: 1.6; margin-bottom: 1.25rem;
+  font-size: 0.95rem; color: rgba(43,43,43,0.68); line-height: 1.6; margin-bottom: 1.25rem;
   font-family: var(--font-body);
 }
 .store-card-actions { margin-top: auto; }
@@ -2332,12 +2332,12 @@ textarea:focus-visible {
 /* ════════════════════════════════════════════════════════════════ */
 
 :root {
-  --surface-page:     oklch(18% 0.012 145);   /* deep forest, slightly warmer than #243028 */
-  --surface-elevated: oklch(23% 0.015 150);   /* card / FAQ panel */
-  --surface-raised:   oklch(28% 0.018 150);   /* hover / pressed */
-  --ink:              #F0EBE0;                 /* primary text on dark — ≥7:1 vs surface-page */
-  --ink-muted:        rgba(240, 235, 224, 0.82); /* WCAG AA body — bumped 0.72 → 0.82 */
-  --ink-faint:        rgba(240, 235, 224, 0.65); /* metadata / captions — bumped 0.5 → 0.65 */
+  --surface-page:     oklch(13% 0.030 290);   /* deep purple — no green tint */
+  --surface-elevated: oklch(18% 0.035 290);   /* card / FAQ panel */
+  --surface-raised:   oklch(23% 0.040 290);   /* hover / pressed */
+  --ink:              #F0EBE0;                 /* primary text — ≥13:1 vs surface-page */
+  --ink-muted:        rgba(240, 235, 224, 0.90); /* body text — strong contrast */
+  --ink-faint:        rgba(240, 235, 224, 0.75); /* metadata / captions */
   --line-subtle:      rgba(240, 235, 224, 0.10);
   --line-medium:      rgba(240, 235, 224, 0.18);
 }
@@ -2381,6 +2381,7 @@ body {
 .schedule-event { color: var(--ink); }
 .schedule-detail { color: var(--ink-muted); }
 .schedule-time { color: var(--ink-faint); }
+.schedule-location { color: var(--ink-faint); font-style: italic; }
 .schedule-empty { color: var(--ink-faint); }
 .schedule-timeline { border-left-color: var(--line-medium); }
 .schedule-item {

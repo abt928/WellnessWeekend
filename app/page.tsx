@@ -119,7 +119,6 @@ export default function Home() {
           <a href="#store" className="hero-cta">
             Get Your Tickets
           </a>
-          <p className="hero-pricing-hint">Day passes from $44 · Full weekend from $222</p>
           <CountdownTimer />
         </div>
         <div className="scroll-indicator">

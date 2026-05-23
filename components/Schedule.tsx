@@ -49,8 +49,8 @@ const days: ScheduleBlock[] = [
       { time: "4:00 PM", event: "Tea Lounge Opens", track: "community" },
       { time: "4:00 PM", event: "Yin Yoga & Sound Savasana", detail: "with Mary", track: "body" },
       { time: "5:00 PM", event: "Myofascial Release Journey", detail: "with Jon", location: "Wellness Tent", track: "body" },
-      { time: "6:00 PM", event: "Keys to Kreation", detail: "J Brave", track: "sound" },
-      { time: "8:30 PM", event: "Cacao Ceremony · Heart Activation · Ecstatic Dance", detail: "with AZ · Zwami · Flowscape", location: "Main Stage", track: "spirit" },
+      { time: "6:00 PM", event: "Keys to Kreation", track: "sound" },
+      { time: "8:30 PM", event: "Cacao Ceremony · Heart Activation · Ecstatic Dance", location: "Main Stage", track: "spirit" },
     ],
   },
   {
@@ -58,7 +58,7 @@ const days: ScheduleBlock[] = [
     heading: <><FlameIcon size={20} color="var(--coral)" /> Activation + Transformation</>,
     theme: "Expansion, Ceremony, Expression",
     events: [
-      { time: "7:00 AM", event: "Peace Pixy Music", location: "Lake", track: "sound" },
+      { time: "7:00 AM", event: "Morning Music Set", location: "Lake", track: "sound" },
       { time: "8:00 AM", event: "Lionsgate Activation + Floating Sound Bath", location: "Lake / Aerial", track: "sound", gloss: LIONSGATE_GLOSS },
       { time: "9:00 AM", event: "Morning Yoga + Breathwork", location: "Main Stage", track: "body" },
       { time: "10:00 AM", event: "Quantum Light Activation", detail: "with Shawn", track: "spirit" },
@@ -70,7 +70,7 @@ const days: ScheduleBlock[] = [
       { time: "4:00 PM", event: "Tea Lounge", track: "community" },
       { time: "7:00 PM", event: "Cacao Ceremony", location: "Main Stage", track: "spirit" },
       { time: "8:00 PM", event: "Lionsgate Drumming Ceremony", detail: "with White Eagle Medicine Woman", location: "Main Stage", track: "spirit", gloss: LIONSGATE_GLOSS },
-      { time: "9:30 PM", event: "Ecstatic Dance + Music Activation", detail: "J Brave · Zwami", location: "Main Stage", track: "sound" },
+      { time: "9:30 PM", event: "Ecstatic Dance + Music Activation", location: "Main Stage", track: "sound" },
     ],
   },
   {
@@ -78,14 +78,14 @@ const days: ScheduleBlock[] = [
     heading: <><LeafIcon size={20} color="var(--sage)" /> Integration + Community</>,
     theme: "Soft Landing, Heart Opening",
     events: [
-      { time: "9:00 AM", event: "Peace Pixy Sound Journey", location: "Labyrinth Garden", track: "sound" },
+      { time: "9:00 AM", event: "Sound Journey", location: "Labyrinth Garden", track: "sound" },
       { time: "10:00 AM", event: "Earth Awareness Practice", detail: "with Gail", location: "Outdoor Space", track: "body" },
       { time: "11:00 AM", event: "Message from the Bees Ecstatic Dance", location: "Main Stage", track: "sound" },
-      { time: "1:00 PM", event: "Kuf Knotz + Christine Elise", location: "Main Stage", track: "sound" },
-      { time: "3:00 PM", event: "J Brave", location: "Main Stage", track: "sound" },
+      { time: "1:00 PM", event: "Live Music", location: "Main Stage", track: "sound" },
+      { time: "3:00 PM", event: "Live Music", location: "Main Stage", track: "sound" },
       { time: "4:00 PM", event: "Paddleboard Yoga", location: "Lake", track: "body" },
       { time: "5:00 PM", event: "Closing Ceremony + Integration Circle", location: "Main Stage", track: "spirit" },
-      { time: "Evening", event: "Evening of Music · Ecstatic Dance", detail: "Flowscape · Check-out by 10 PM", location: "Main Stage", track: "sound" },
+      { time: "Evening", event: "Evening of Music · Ecstatic Dance", detail: "Check-out by 10 PM", location: "Main Stage", track: "sound" },
     ],
   },
 ];

@@ -112,6 +112,9 @@ export default function Home() {
           <h1 className="hero-title">
             Wellness <em>Weekend</em>
           </h1>
+          <div className="hero-horse" aria-hidden="true">
+            <Image src="/images/fire-horse.png" alt="" fill style={{ objectFit: "contain" }} />
+          </div>
           <p className="hero-subtitle">
             A Healing Arts Gathering Under the Midnight Sun
           </p>
@@ -156,6 +159,72 @@ export default function Home() {
             </p>
           </Reveal>
         </div>
+      </section>
+
+      {/* ═══ 8/8 LION'S GATE PORTAL ═══ */}
+      <section id="portal" className="section lionsgate">
+        <Reveal>
+          <p className="section-label">August 8, 2026</p>
+          <h2 className="section-title">The 8/8 Lion&apos;s Gate Portal.</h2>
+          <p className="lionsgate-portal-date">8 · 8</p>
+        </Reveal>
+        <div className="lionsgate-grid">
+          <Reveal>
+            <div className="lionsgate-text">
+              <p>
+                Every year on August 8th, Earth aligns with the Sun and Sirius — the
+                brightest star in our sky, revered by ancient Egyptians as the Spiritual Sun.
+                The Pyramids of Giza were oriented to Sirius&apos;s heliacal rising; its annual
+                reappearance after 70 days of absence marked the flooding of the Nile and the
+                Egyptian New Year. Across cultures and across millennia, this alignment has
+                been understood as a gateway — a thinning of the veil between earthly life
+                and higher consciousness.
+              </p>
+              <p>
+                In numerology, 8 carries the energy of infinite flow, abundance, and the
+                eternal cycle. Two 8s in alignment multiply that force. On 8/8, intentions
+                held in the heart crystallize with unusual clarity, the body opens to receive
+                light codes from higher realms, and collective ceremony amplifies exponentially.
+              </p>
+              <p>
+                Wellness Weekend 2026 rises directly on this portal. Our Saturday arc is built
+                around the opening: a dawn Lionsgate Activation + Floating Sound Bath, the sacred
+                Ayni Despacho Ceremony, and the Lionsgate Drumming Ceremony at nightfall led by
+                White Eagle Medicine Woman — a full day of ceremony, movement, and music held
+                inside the field of the 8/8 gateway.
+              </p>
+            </div>
+          </Reveal>
+          <Reveal>
+            <div className="lionsgate-poster">
+              <Image
+                src="/images/fire-horse.png"
+                alt="Wellness Weekend 2026 — Fire Horse, 8/8 Lion's Gate"
+                fill
+                style={{ objectFit: "contain" }}
+              />
+            </div>
+          </Reveal>
+        </div>
+        <Reveal>
+          <div className="lionsgate-pillars">
+            <div className="lionsgate-pillar">
+              <div className="lionsgate-pillar-icon">✦</div>
+              <h3>Sirius Rising</h3>
+              <p>The brightest star in the night sky, aligned with the Sun each 8/8. Ancient civilizations built their temples to its return — a star long held as the portal to accelerated spiritual evolution.</p>
+            </div>
+            <div className="lionsgate-pillar">
+              <div className="lionsgate-pillar-icon">∞</div>
+              <h3>The Infinite 8</h3>
+              <p>In numerology, 8 is the number of abundance, power, and the eternal cycle. Doubled on 8/8, this energy amplifies — a day when what you call in, answers.</p>
+            </div>
+            <div className="lionsgate-pillar">
+              <div className="lionsgate-pillar-icon">🔥</div>
+              <h3>Sacred Activation</h3>
+              <p>Our entire Saturday is a ceremony arc built on the portal: dawn sound bath, Ayni ceremony, cacao, and the Lionsgate Drumming Ceremony at nightfall under the Alaskan sky.</p>
+            </div>
+          </div>
+        </Reveal>
       </section>
 
       {/* ═══ SCHEDULE ═══ */}

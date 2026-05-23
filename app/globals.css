@@ -229,8 +229,26 @@ textarea:focus-visible {
 }
 .hero-cta { animation: heroRise 0.8s cubic-bezier(0.16, 1, 0.3, 1) 0.5s backwards; }
 .countdown-line { opacity: 0; animation: heroRise 0.8s cubic-bezier(0.16, 1, 0.3, 1) 0.65s forwards; }
+/* Hero fire horse */
+.hero-horse {
+  position: relative;
+  width: clamp(220px, 38vw, 400px);
+  height: clamp(220px, 38vw, 400px);
+  margin: 1.25rem auto 1.5rem;
+  animation: horsePulse 5s ease-in-out infinite, heroRise 0.9s cubic-bezier(0.16, 1, 0.3, 1) 0.28s backwards;
+}
+@keyframes horsePulse {
+  0%, 100% {
+    filter: drop-shadow(0 0 24px rgba(201,152,63,0.55)) drop-shadow(0 0 60px rgba(201,152,63,0.25));
+    transform: scale(1);
+  }
+  50% {
+    filter: drop-shadow(0 0 48px rgba(201,152,63,0.9)) drop-shadow(0 0 100px rgba(201,152,63,0.45));
+    transform: scale(1.025);
+  }
+}
 @media (prefers-reduced-motion: reduce) {
-  .hero-badge, .hero-title, .hero-subtitle, .hero-content > p, .hero-cta, .countdown-line {
+  .hero-badge, .hero-title, .hero-subtitle, .hero-content > p, .hero-cta, .countdown-line, .hero-horse {
     opacity: 1;
     animation: none;
   }
@@ -405,6 +423,99 @@ textarea:focus-visible {
 @media (max-width: 768px) {
   .about-grid { grid-template-columns: 1fr; gap: 2rem; }
   .about-desc { padding-top: 0; }
+}
+
+/* ========== 8/8 LION'S GATE PORTAL ========== */
+.lionsgate {
+  position: relative;
+  overflow: hidden;
+}
+.lionsgate::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(ellipse at 50% 20%, rgba(201,152,63,0.07) 0%, transparent 65%),
+              radial-gradient(ellipse at 20% 80%, rgba(139,95,191,0.05) 0%, transparent 55%);
+  pointer-events: none;
+}
+.lionsgate-portal-date {
+  text-align: center;
+  font-size: clamp(4rem, 10vw, 8rem);
+  font-family: var(--font-display);
+  font-weight: 300;
+  font-style: italic;
+  color: var(--gold);
+  letter-spacing: 0.15em;
+  margin: 0.5rem 0 3.5rem;
+  opacity: 0.85;
+  line-height: 1;
+}
+.lionsgate-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 4rem;
+  align-items: center;
+  max-width: 1100px;
+  margin: 0 auto 4rem;
+}
+.lionsgate-text p {
+  font-size: var(--type-body);
+  line-height: 1.85;
+  color: var(--ink-muted);
+  margin-bottom: 1.25rem;
+  font-family: var(--font-body);
+}
+.lionsgate-text p:last-child { margin-bottom: 0; }
+.lionsgate-poster {
+  position: relative;
+  height: clamp(360px, 48vw, 560px);
+  border-radius: 24px;
+  overflow: hidden;
+  box-shadow: 0 0 60px rgba(201,152,63,0.18), 0 24px 60px rgba(0,0,0,0.45);
+}
+.lionsgate-pillars {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 1.5rem;
+  max-width: 1100px;
+  margin: 0 auto;
+}
+.lionsgate-pillar {
+  background: rgba(201,152,63,0.05);
+  border: 1px solid rgba(201,152,63,0.15);
+  border-radius: 20px;
+  padding: 2rem 1.75rem;
+  text-align: center;
+  transition: border-color 0.3s, background 0.3s;
+}
+.lionsgate-pillar:hover {
+  background: rgba(201,152,63,0.09);
+  border-color: rgba(201,152,63,0.28);
+}
+.lionsgate-pillar-icon {
+  font-size: 1.75rem;
+  margin-bottom: 0.75rem;
+  display: block;
+}
+.lionsgate-pillar h3 {
+  font-size: 1.05rem;
+  color: var(--gold-light);
+  margin-bottom: 0.6rem;
+  font-family: var(--font-display);
+  font-weight: 400;
+  letter-spacing: 0.05em;
+}
+.lionsgate-pillar p {
+  font-size: 0.9rem;
+  color: var(--ink-muted);
+  line-height: 1.75;
+  font-family: var(--font-body);
+}
+@media (max-width: 768px) {
+  .lionsgate-grid { grid-template-columns: 1fr; gap: 2.5rem; }
+  .lionsgate-poster { height: 380px; }
+  .lionsgate-pillars { grid-template-columns: 1fr; }
+  .lionsgate-portal-date { font-size: clamp(3rem, 15vw, 5rem); }
 }
 
 /* ========== EXPERIENCE PILLARS ========== */

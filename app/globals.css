@@ -740,8 +740,14 @@ textarea:focus-visible {
 .track-pill:hover { transform: scale(1.05); }
 .track-pill:active { transform: scale(0.95); transition-duration: 0.1s; }
 .track-pill.active {
-  background: var(--forest); color: white; border-color: var(--forest);
-  box-shadow: 0 4px 12px rgba(45,58,46,0.2);
+  background: var(--pill-color, var(--forest)); color: white; border-color: var(--pill-color, var(--forest));
+  box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+}
+.venue-new-badge {
+  display: inline-block; font-size: 0.6rem; font-weight: 700; letter-spacing: 0.08em;
+  background: #D4639F; color: white; border-radius: 4px;
+  padding: 0.1em 0.35em; margin-left: 0.3rem; vertical-align: middle;
+  line-height: 1.4;
 }
 
 /* Day tabs */
@@ -2523,7 +2529,7 @@ body {
   color: var(--ink-muted);
 }
 .track-pill.active {
-  background: var(--ink); color: var(--surface-page); border-color: var(--ink);
+  background: var(--pill-color, var(--ink)); color: white; border-color: var(--pill-color, var(--ink));
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4);
 }
 .schedule-day-btn {

@@ -1,27 +1,28 @@
 "use client";
 import { useState, type ReactNode } from "react";
-import { LeafIcon, FlameIcon, SoundWaveIcon, CommunityIcon, MoonIcon } from "@/components/Icons";
+import { LeafIcon, FlameIcon, SoundWaveIcon, CommunityIcon, MoonIcon, CupIcon } from "@/components/Icons";
 import EventGloss from "@/components/EventGloss";
 
-type Track = "body" | "spirit" | "sound" | "community";
+type Venue = "main-stage" | "lake" | "tea-lounge" | "labyrinth" | "outdoor";
 
 const LIONSGATE_GLOSS =
   "Lionsgate refers to the 8/8 alignment of Earth, the Sun, and the star Sirius. In some spiritual traditions it's held as an annual portal of heightened energy.";
 const AYNI_GLOSS =
   "An Andean ceremony of reciprocity. A small bundle of seeds, flowers, and offerings is built and given back to the mountain spirits.";
 
-const trackMeta: Record<Track, { icon: ReactNode; label: string; color: string }> = {
-  body: { icon: <LeafIcon size={14} color="#7C9070" />, label: "Body", color: "#7C9070" },
-  spirit: { icon: <MoonIcon size={14} color="#8B5FBF" />, label: "Spirit", color: "#8B5FBF" },
-  sound: { icon: <SoundWaveIcon size={14} color="#4ecdc4" />, label: "Sound", color: "#4ecdc4" },
-  community: { icon: <CommunityIcon size={14} color="#E8956A" />, label: "Community", color: "#E8956A" },
+const venueMeta: Record<Venue, { icon: ReactNode; label: string; color: string; isNew?: boolean }> = {
+  "main-stage": { icon: <FlameIcon    size={14} color="#E8956A" />, label: "Main Stage",        color: "#E8956A" },
+  "lake":       { icon: <SoundWaveIcon size={14} color="#3DB8AF" />, label: "Lakeside",          color: "#3DB8AF" },
+  "tea-lounge": { icon: <CupIcon      size={14} color="#D4639F" />, label: "Tea Lounge",         color: "#D4639F", isNew: true },
+  "labyrinth":  { icon: <MoonIcon     size={14} color="#8B5FBF" />, label: "Labyrinth Garden",   color: "#8B5FBF", isNew: true },
+  "outdoor":    { icon: <LeafIcon     size={14} color="#7C9070" />, label: "Nature & Activities", color: "#7C9070" },
 };
 
 interface ScheduleEvent {
   time: string;
   event: string;
   detail?: string;
-  track: Track;
+  venue: Venue;
   location?: string;
   gloss?: string;
 }
@@ -39,18 +40,18 @@ const days: ScheduleBlock[] = [
     heading: <><MoonIcon size={20} color="var(--aurora-light)" /> Arrival + Grounding</>,
     theme: "Land, Arrival, Intention",
     events: [
-      { time: "9:00 AM", event: "Gates Open", detail: "Vendor & staff setup", track: "community" },
-      { time: "12:00 PM", event: "Guest Check-In Begins", track: "community" },
-      { time: "1:00 PM", event: "Opening Ceremony", detail: "Land Acknowledgement · Dance Alchemy with Ashleigh", location: "Main Stage", track: "spirit" },
-      { time: "2:00 PM", event: "Paddleboard Yoga", location: "Lake", track: "body" },
-      { time: "2:00 PM", event: "Sauna Open for Booking", track: "body" },
-      { time: "2:00 PM", event: "Arts & Craft Table Open", track: "community" },
-      { time: "3:00 PM", event: "Guided Meditation", detail: "with Dixie", track: "spirit" },
-      { time: "4:00 PM", event: "Tea Lounge Opens", track: "community" },
-      { time: "4:00 PM", event: "Yin Yoga & Sound Savasana", detail: "with Mary", track: "body" },
-      { time: "5:00 PM", event: "Myofascial Release Journey", detail: "with Jon", location: "Wellness Tent", track: "body" },
-      { time: "6:00 PM", event: "Keys to Kreation", track: "sound" },
-      { time: "8:30 PM", event: "Cacao Ceremony · Heart Activation · Ecstatic Dance", location: "Main Stage", track: "spirit" },
+      { time: "9:00 AM",  event: "Gates Open",                                                     detail: "Vendor & staff setup",                               venue: "outdoor"    },
+      { time: "12:00 PM", event: "Guest Check-In Begins",                                                                                                         venue: "outdoor"    },
+      { time: "1:00 PM",  event: "Opening Ceremony",                                               detail: "Land Acknowledgement · Dance Alchemy with Ashleigh", location: "Main Stage",       venue: "main-stage" },
+      { time: "2:00 PM",  event: "Paddleboard Yoga",                                                                                                              location: "Lakeside",         venue: "lake"       },
+      { time: "2:00 PM",  event: "Sauna Open for Booking",                                                                                                        venue: "outdoor"    },
+      { time: "2:00 PM",  event: "Arts & Craft Table Open",                                                                                                       venue: "outdoor"    },
+      { time: "3:00 PM",  event: "Guided Meditation",                                              detail: "with Dixie",                                         location: "Labyrinth Garden",  venue: "labyrinth"  },
+      { time: "4:00 PM",  event: "Tea Lounge Opens",                                                                                                              location: "Tea Lounge",        venue: "tea-lounge" },
+      { time: "4:00 PM",  event: "Yin Yoga & Sound Savasana",                                      detail: "with Mary",                                          venue: "outdoor"    },
+      { time: "5:00 PM",  event: "Myofascial Release Journey",                                     detail: "with Jon",                                           location: "Wellness Tent",     venue: "outdoor"    },
+      { time: "6:00 PM",  event: "Keys to Kreation",                                                                                                              location: "Main Stage",        venue: "main-stage" },
+      { time: "8:30 PM",  event: "Cacao Ceremony · Heart Activation · Ecstatic Dance",                                                                           location: "Main Stage",        venue: "main-stage" },
     ],
   },
   {
@@ -58,44 +59,44 @@ const days: ScheduleBlock[] = [
     heading: <><FlameIcon size={20} color="var(--coral)" /> Activation + Transformation</>,
     theme: "Expansion, Ceremony, Expression",
     events: [
-      { time: "7:00 AM", event: "Morning Music Set", location: "Lake", track: "sound" },
-      { time: "8:00 AM", event: "Lionsgate Activation + Floating Sound Bath", location: "Lake / Aerial", track: "sound", gloss: LIONSGATE_GLOSS },
-      { time: "9:00 AM", event: "Morning Yoga + Breathwork", location: "Main Stage", track: "body" },
-      { time: "10:00 AM", event: "Quantum Light Activation", detail: "with Shawn", track: "spirit" },
-      { time: "10:00 AM", event: "Aerial Silk Class", track: "body" },
-      { time: "11:00 AM", event: "Ayni Despacho Ceremony", location: "Lodge", track: "spirit", gloss: AYNI_GLOSS },
-      { time: "11:00 AM", event: "Feel Good Flow", detail: "with Jenni", track: "body" },
-      { time: "12:00 – 2:00 PM", event: "Community Connection", detail: "Vendor Village · Food + Tea Lounge", location: "Village", track: "community" },
-      { time: "2:00 PM", event: "Paddleboard Yoga", location: "Lake", track: "body" },
-      { time: "4:00 PM", event: "Tea Lounge", track: "community" },
-      { time: "7:00 PM", event: "Cacao Ceremony", location: "Main Stage", track: "spirit" },
-      { time: "8:00 PM", event: "Lionsgate Drumming Ceremony", detail: "with White Eagle Medicine Woman", location: "Main Stage", track: "spirit", gloss: LIONSGATE_GLOSS },
-      { time: "9:30 PM", event: "Ecstatic Dance + Music Activation", location: "Main Stage", track: "sound" },
+      { time: "7:00 AM",       event: "Morning Music Set",                                                                                                        location: "Lakeside",          venue: "lake"       },
+      { time: "8:00 AM",       event: "Lionsgate Activation + Floating Sound Bath",                                                                              location: "Lakeside / Aerial",  venue: "lake",      gloss: LIONSGATE_GLOSS },
+      { time: "9:00 AM",       event: "Morning Yoga + Breathwork",                                                                                               location: "Main Stage",        venue: "main-stage" },
+      { time: "10:00 AM",      event: "Quantum Light Activation",                                  detail: "with Shawn",                                         location: "Labyrinth Garden",  venue: "labyrinth"  },
+      { time: "10:00 AM",      event: "Aerial Silk Class",                                                                                                        venue: "outdoor"    },
+      { time: "11:00 AM",      event: "Ayni Despacho Ceremony",                                                                                                  location: "Main Stage",        venue: "main-stage", gloss: AYNI_GLOSS },
+      { time: "11:00 AM",      event: "Feel Good Flow",                                            detail: "with Jenni",                                         venue: "outdoor"    },
+      { time: "12:00 – 2:00 PM", event: "Community Connection",                                   detail: "Vendor Village · Food + Tea Lounge",                  location: "Village",           venue: "outdoor"    },
+      { time: "2:00 PM",       event: "Paddleboard Yoga",                                                                                                         location: "Lakeside",          venue: "lake"       },
+      { time: "4:00 PM",       event: "Tea Lounge",                                                                                                               location: "Tea Lounge",        venue: "tea-lounge" },
+      { time: "7:00 PM",       event: "Cacao Ceremony",                                                                                                          location: "Main Stage",        venue: "main-stage" },
+      { time: "8:00 PM",       event: "Lionsgate Drumming Ceremony",                               detail: "with White Eagle Medicine Woman",                    location: "Main Stage",        venue: "main-stage", gloss: LIONSGATE_GLOSS },
+      { time: "9:30 PM",       event: "Ecstatic Dance + Music Activation",                                                                                       location: "Main Stage",        venue: "main-stage" },
     ],
   },
   {
     label: "Sunday · Aug 9",
-    heading: <><LeafIcon size={20} color="var(--sage)" /> Integration + Community</>,
+    heading: <><LeafIcon size={20} color="#7C9070" /> Integration + Community</>,
     theme: "Soft Landing, Heart Opening",
     events: [
-      { time: "9:00 AM", event: "Sound Journey", location: "Labyrinth Garden", track: "sound" },
-      { time: "10:00 AM", event: "Earth Awareness Practice", detail: "with Gail", location: "Outdoor Space", track: "body" },
-      { time: "11:00 AM", event: "Message from the Bees Ecstatic Dance", location: "Main Stage", track: "sound" },
-      { time: "1:00 PM", event: "Live Music", location: "Main Stage", track: "sound" },
-      { time: "3:00 PM", event: "Live Music", location: "Main Stage", track: "sound" },
-      { time: "4:00 PM", event: "Paddleboard Yoga", location: "Lake", track: "body" },
-      { time: "5:00 PM", event: "Closing Ceremony + Integration Circle", location: "Main Stage", track: "spirit" },
-      { time: "Evening", event: "Evening of Music · Ecstatic Dance", detail: "Check-out by 10 PM", location: "Main Stage", track: "sound" },
+      { time: "9:00 AM",  event: "Sound Journey",                                                                                                                 location: "Labyrinth Garden",  venue: "labyrinth"  },
+      { time: "10:00 AM", event: "Earth Awareness Practice",                                       detail: "with Gail",                                          location: "Outdoor Space",     venue: "outdoor"    },
+      { time: "11:00 AM", event: "Message from the Bees Ecstatic Dance",                                                                                         location: "Main Stage",        venue: "main-stage" },
+      { time: "1:00 PM",  event: "Live Music",                                                                                                                    location: "Main Stage",        venue: "main-stage" },
+      { time: "3:00 PM",  event: "Live Music",                                                                                                                    location: "Main Stage",        venue: "main-stage" },
+      { time: "4:00 PM",  event: "Paddleboard Yoga",                                                                                                              location: "Lakeside",          venue: "lake"       },
+      { time: "5:00 PM",  event: "Closing Ceremony + Integration Circle",                                                                                        location: "Main Stage",        venue: "main-stage" },
+      { time: "Evening",  event: "Evening of Music · Ecstatic Dance",                              detail: "Check-out by 10 PM",                                  location: "Main Stage",        venue: "main-stage" },
     ],
   },
 ];
 
-const familyDay = [
-  { time: "All Day", event: "Laugh Your Way to Wellness", detail: "with Alex", track: "body" as Track },
-  { time: "All Day", event: "Yoga for Health", detail: "with Logan Forehand", track: "body" as Track },
-  { time: "All Day", event: "Yogassage", detail: "with Sarah", track: "body" as Track },
-  { time: "All Day", event: "Arts & Crafts Workshops", detail: "Needlefelting", track: "community" as Track },
-  { time: "All Day", event: "Crystal Scavenger Hunt", track: "community" as Track },
+const familyDay: { time: string; event: string; detail?: string; venue: Venue }[] = [
+  { time: "All Day", event: "Laugh Your Way to Wellness", detail: "with Alex",          venue: "outdoor"   },
+  { time: "All Day", event: "Yoga for Health",            detail: "with Logan Forehand", venue: "outdoor"   },
+  { time: "All Day", event: "Yogassage",                  detail: "with Sarah",          venue: "outdoor"   },
+  { time: "All Day", event: "Arts & Crafts Workshops",    detail: "Needlefelting",       venue: "outdoor"   },
+  { time: "All Day", event: "Crystal Scavenger Hunt",                                    venue: "labyrinth" },
 ];
 
 const DAY_KEYS = ["friday", "saturday", "sunday"] as const;
@@ -109,7 +110,7 @@ function readInitialDay(): number {
 
 export default function Schedule() {
   const [active, setActiveState] = useState<number>(readInitialDay);
-  const [trackFilter, setTrackFilter] = useState<Track | null>(null);
+  const [venueFilter, setVenueFilter] = useState<Venue | null>(null);
 
   const setActive = (i: number) => {
     setActiveState(i);
@@ -121,8 +122,8 @@ export default function Schedule() {
   };
 
   const currentDay = days[active];
-  const filteredEvents = trackFilter
-    ? currentDay.events.filter((e) => e.track === trackFilter)
+  const filteredEvents = venueFilter
+    ? currentDay.events.filter((e) => e.venue === venueFilter)
     : currentDay.events;
 
   return (
@@ -132,22 +133,23 @@ export default function Schedule() {
         Friday · Saturday · Sunday
       </h2>
 
-      {/* Track Filter Pills */}
+      {/* Venue Filter Pills */}
       <div className="track-filters">
         <button
-          className={`track-pill${trackFilter === null ? " active" : ""}`}
-          onClick={() => setTrackFilter(null)}
+          className={`track-pill${venueFilter === null ? " active" : ""}`}
+          onClick={() => setVenueFilter(null)}
         >
           All
         </button>
-        {(Object.entries(trackMeta) as [Track, typeof trackMeta.body][]).map(([key, meta]) => (
+        {(Object.entries(venueMeta) as [Venue, typeof venueMeta["main-stage"]][]).map(([key, meta]) => (
           <button
             key={key}
-            className={`track-pill${trackFilter === key ? " active" : ""}`}
+            className={`track-pill${venueFilter === key ? " active" : ""}`}
             style={{ "--pill-color": meta.color } as React.CSSProperties}
-            onClick={() => setTrackFilter(trackFilter === key ? null : key)}
+            onClick={() => setVenueFilter(venueFilter === key ? null : key)}
           >
             {meta.icon} {meta.label}
+            {meta.isNew && <span className="venue-new-badge">NEW</span>}
           </button>
         ))}
       </div>
@@ -173,23 +175,23 @@ export default function Schedule() {
         <span className="schedule-theme-text">{currentDay.theme}</span>
       </div>
 
-      {/* Timeline — re-keyed on day/filter change so cross-fade animation re-fires */}
-      <div className="schedule-timeline" key={`${active}-${trackFilter ?? "all"}`}>
+      {/* Timeline */}
+      <div className="schedule-timeline" key={`${active}-${venueFilter ?? "all"}`}>
         {filteredEvents.map((e, i) => (
-          <div className="schedule-item" key={i} style={{ "--dot-color": trackMeta[e.track].color } as React.CSSProperties}>
+          <div className="schedule-item" key={i} style={{ "--dot-color": venueMeta[e.venue].color } as React.CSSProperties}>
             <div className="schedule-time">
               {e.time}
               {e.location && <span className="schedule-location"> · {e.location}</span>}
             </div>
             <div className="schedule-event">
-              <span className="schedule-track-icon">{trackMeta[e.track].icon}</span>
+              <span className="schedule-track-icon">{venueMeta[e.venue].icon}</span>
               {e.gloss ? <EventGloss term={e.event} gloss={e.gloss} /> : e.event}
             </div>
             {e.detail && <div className="schedule-detail">{e.detail}</div>}
           </div>
         ))}
         {filteredEvents.length === 0 && (
-          <div className="schedule-empty">No {trackMeta[trackFilter!].label} events on this day</div>
+          <div className="schedule-empty">No {venueMeta[venueFilter!].label} events on this day</div>
         )}
       </div>
 
@@ -197,7 +199,7 @@ export default function Schedule() {
       {active === 2 && (
         <div className="family-day">
           <h3 className="family-day-title" style={{ display: "flex", alignItems: "center", gap: "0.5rem", justifyContent: "center" }}>
-            <LeafIcon size={22} color="var(--sage)" /> Sunday Family Day
+            <LeafIcon size={22} color="#7C9070" /> Sunday Family Day
           </h3>
           <p className="family-day-subtitle">Wellness for All Ages · All Proceeds to Nonprofits</p>
           <div className="family-day-grid">
@@ -205,7 +207,7 @@ export default function Schedule() {
               <div className="family-day-card" key={i}>
                 <div className="family-day-time">{e.time}</div>
                 <div className="family-day-name">
-                  <span className="schedule-track-icon">{trackMeta[e.track].icon}</span>
+                  <span className="schedule-track-icon">{venueMeta[e.venue].icon}</span>
                   {e.event}
                 </div>
                 {e.detail && <div className="family-day-detail">{e.detail}</div>}

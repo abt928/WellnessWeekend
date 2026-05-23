@@ -9,10 +9,6 @@ const LIONSGATE_GLOSS =
   "Lionsgate refers to the 8/8 alignment of Earth, the Sun, and the star Sirius. In some spiritual traditions it's held as an annual portal of heightened energy.";
 const AYNI_GLOSS =
   "An Andean ceremony of reciprocity. A small bundle of seeds, flowers, and offerings is built and given back to the mountain spirits.";
-const CE5_GLOSS =
-  "CE5 (Close Encounter of the Fifth Kind): a consciousness-based contact protocol. Stargazing and intentioned meditation under the night sky.";
-const KAI_CHI_DO_GLOSS =
-  "A movement practice that combines qigong with dance, developed by Master Lotus Sky.";
 
 const trackMeta: Record<Track, { icon: ReactNode; label: string; color: string }> = {
   body: { icon: <LeafIcon size={14} color="#7C9070" />, label: "Body", color: "#7C9070" },
@@ -43,16 +39,18 @@ const days: ScheduleBlock[] = [
     heading: <><MoonIcon size={20} color="var(--aurora-light)" /> Arrival + Grounding</>,
     theme: "Land, Arrival, Intention",
     events: [
-      { time: "12:00 PM", event: "Gates Open", detail: "Welcome to the land. Check in, set up camp, settle in", track: "community" },
-      { time: "3:00 PM", event: "Opening Ceremony & Land Acknowledgement", location: "Main Stage", track: "spirit" },
-      { time: "4:00 PM", event: "Paddleboard Yoga", location: "Lake", track: "body" },
-      { time: "4:00 PM", event: "Yin Yoga & Sound Savasana", detail: "with Mary", location: "Wellness Tent", track: "body" },
-      { time: "5:00 PM", event: "Dance Alchemy", detail: "with Ashleigh", location: "Main Stage", track: "body" },
-      { time: "5:00 PM", event: "The Silent Retreat Within", detail: "with Lynn", location: "Indoor Space", track: "spirit" },
+      { time: "9:00 AM", event: "Gates Open", detail: "Vendor & staff setup", track: "community" },
+      { time: "12:00 PM", event: "Guest Check-In Begins", track: "community" },
+      { time: "1:00 PM", event: "Opening Ceremony", detail: "Land Acknowledgement · Dance Alchemy with Ashleigh", location: "Main Stage", track: "spirit" },
+      { time: "2:00 PM", event: "Paddleboard Yoga", location: "Lake", track: "body" },
+      { time: "2:00 PM", event: "Sauna Open for Booking", track: "body" },
+      { time: "2:00 PM", event: "Arts & Craft Table Open", track: "community" },
+      { time: "3:00 PM", event: "Guided Meditation", detail: "with Dixie", track: "spirit" },
+      { time: "4:00 PM", event: "Tea Lounge Opens", track: "community" },
+      { time: "4:00 PM", event: "Yin Yoga & Sound Savasana", detail: "with Mary", track: "body" },
       { time: "5:00 PM", event: "Myofascial Release Journey", detail: "with Jon", location: "Wellness Tent", track: "body" },
-      { time: "7:00 PM", event: "Sunset Sound Healing at the Lake", location: "Main Stage / Lake", track: "sound" },
-      { time: "8:30 PM", event: "Music Program Begins", location: "Main Stage", track: "sound" },
-      { time: "10:00 PM", event: "CE5 Gathering: Beyond the Veil Pt. 1", detail: "Stargazing & contact meditation", location: "Stargazing Zone", track: "spirit", gloss: CE5_GLOSS },
+      { time: "6:00 PM", event: "Keys to Kreation", detail: "J Brave", track: "sound" },
+      { time: "8:30 PM", event: "Cacao Ceremony · Heart Activation · Ecstatic Dance", detail: "with AZ · Zwami · Flowscape", location: "Main Stage", track: "spirit" },
     ],
   },
   {
@@ -60,17 +58,19 @@ const days: ScheduleBlock[] = [
     heading: <><FlameIcon size={20} color="var(--coral)" /> Activation + Transformation</>,
     theme: "Expansion, Ceremony, Expression",
     events: [
+      { time: "7:00 AM", event: "Peace Pixy Music", location: "Lake", track: "sound" },
       { time: "8:00 AM", event: "Lionsgate Activation + Floating Sound Bath", location: "Lake / Aerial", track: "sound", gloss: LIONSGATE_GLOSS },
       { time: "9:00 AM", event: "Morning Yoga + Breathwork", location: "Main Stage", track: "body" },
-      { time: "10:00 AM", event: "Workshop: Kai Chi Do", detail: "with Lotus", location: "Wellness Tent", track: "body", gloss: KAI_CHI_DO_GLOSS },
-      { time: "11:00 AM", event: "AYNI Despacho Ceremony", location: "Main Stage", track: "spirit", gloss: AYNI_GLOSS },
-      { time: "12:00 PM", event: "Integration + Marketplace", detail: "Vendor Village · Food + Tea Lounge · Community Connection", location: "Village", track: "community" },
+      { time: "10:00 AM", event: "Quantum Light Activation", detail: "with Shawn", track: "spirit" },
+      { time: "10:00 AM", event: "Aerial Silk Class", track: "body" },
+      { time: "11:00 AM", event: "Ayni Despacho Ceremony", location: "Lodge", track: "spirit", gloss: AYNI_GLOSS },
+      { time: "11:00 AM", event: "Feel Good Flow", detail: "with Jenni", track: "body" },
+      { time: "12:00 – 2:00 PM", event: "Community Connection", detail: "Vendor Village · Food + Tea Lounge", location: "Village", track: "community" },
       { time: "2:00 PM", event: "Paddleboard Yoga", location: "Lake", track: "body" },
-      { time: "4:00 PM", event: "Tarot + Tea Lounge", location: "Integration Space", track: "spirit" },
-      { time: "6:00 PM", event: "Cacao Ceremony", location: "Main Stage", track: "spirit" },
+      { time: "4:00 PM", event: "Tea Lounge", track: "community" },
+      { time: "7:00 PM", event: "Cacao Ceremony", location: "Main Stage", track: "spirit" },
       { time: "8:00 PM", event: "Lionsgate Drumming Ceremony", detail: "with White Eagle Medicine Woman", location: "Main Stage", track: "spirit", gloss: LIONSGATE_GLOSS },
-      { time: "9:30 PM", event: "Ecstatic Dance + Music Activation", location: "Main Stage", track: "sound" },
-      { time: "11:30 PM", event: "CE5 Gathering: Beyond the Veil Pt. 2", location: "Stargazing Zone", track: "spirit", gloss: CE5_GLOSS },
+      { time: "9:30 PM", event: "Ecstatic Dance + Music Activation", detail: "J Brave · Zwami", location: "Main Stage", track: "sound" },
     ],
   },
   {
@@ -78,13 +78,14 @@ const days: ScheduleBlock[] = [
     heading: <><LeafIcon size={20} color="var(--sage)" /> Integration + Community</>,
     theme: "Soft Landing, Heart Opening",
     events: [
-      { time: "9:00 AM", event: "Handpan Sound Journey", location: "Main Stage", track: "sound" },
+      { time: "9:00 AM", event: "Peace Pixy Sound Journey", location: "Labyrinth Garden", track: "sound" },
       { time: "10:00 AM", event: "Earth Awareness Practice", detail: "with Gail", location: "Outdoor Space", track: "body" },
       { time: "11:00 AM", event: "Message from the Bees Ecstatic Dance", location: "Main Stage", track: "sound" },
-      { time: "1:00 PM", event: "Live Music: J Brave + Kuf Knotz", location: "Main Stage", track: "sound" },
-      { time: "3:00 PM", event: "Spiritual Social Hour", location: "Integration Lounge", track: "community" },
+      { time: "1:00 PM", event: "Kuf Knotz + Christine Elise", location: "Main Stage", track: "sound" },
+      { time: "3:00 PM", event: "J Brave", location: "Main Stage", track: "sound" },
       { time: "4:00 PM", event: "Paddleboard Yoga", location: "Lake", track: "body" },
-      { time: "4:30 PM", event: "Closing Ceremony + Integration Circle", location: "Main Stage", track: "spirit" },
+      { time: "5:00 PM", event: "Closing Ceremony + Integration Circle", location: "Main Stage", track: "spirit" },
+      { time: "Evening", event: "Evening of Music · Ecstatic Dance", detail: "Flowscape · Check-out by 10 PM", location: "Main Stage", track: "sound" },
     ],
   },
 ];
@@ -92,8 +93,9 @@ const days: ScheduleBlock[] = [
 const familyDay = [
   { time: "All Day", event: "Laugh Your Way to Wellness", detail: "with Alex", track: "body" as Track },
   { time: "All Day", event: "Yoga for Health", detail: "with Logan Forehand", track: "body" as Track },
-  { time: "All Day", event: "Family Yoga", detail: "by Yoga Om", track: "body" as Track },
-  { time: "All Day", event: "Vendor Village + Nonprofit Activations", track: "community" as Track },
+  { time: "All Day", event: "Yogassage", detail: "with Sarah", track: "body" as Track },
+  { time: "All Day", event: "Arts & Crafts Workshops", detail: "Needlefelting", track: "community" as Track },
+  { time: "All Day", event: "Crystal Scavenger Hunt", track: "community" as Track },
 ];
 
 const DAY_KEYS = ["friday", "saturday", "sunday"] as const;

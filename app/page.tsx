@@ -52,8 +52,8 @@ export default function Home() {
     name: "Wellness Weekend · 4th Annual Healing Arts Festival",
     description:
       "A transformational weekend of sound healing, earth medicine, and movement under Alaska's midnight sun. Featuring the 8/8 Lion's Gate Activation Ceremony, sacred drumming circles, plant medicine work, breathwork, yoga, ecstatic dance, and more.",
-    startDate: "2026-08-08",
-    endDate: "2026-08-10",
+    startDate: "2026-08-07",
+    endDate: "2026-08-09",
     eventAttendanceMode: "https://schema.org/OfflineEventAttendanceMode",
     eventStatus: "https://schema.org/EventScheduled",
     location: {
@@ -115,7 +115,7 @@ export default function Home() {
           <p className="hero-subtitle">
             A Healing Arts Gathering Under the Midnight Sun
           </p>
-          <p className="hero-date">August 8 – 10, 2026 · Sutton, Alaska</p>
+          <p className="hero-date">August 7 – 9, 2026 · Sutton, Alaska</p>
           <a href="#store" className="hero-cta">
             Get Your Tickets
           </a>

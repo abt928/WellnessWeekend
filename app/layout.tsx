@@ -29,7 +29,7 @@ export const metadata: Metadata = {
     template: "%s · Wellness Weekend",
   },
   description:
-    "Join 200+ seekers for a transformational weekend of sound healing, earth medicine, and movement under Alaska's midnight sun. August 8–10, 2026 in Sutton, Alaska.",
+    "Join 200+ seekers for a transformational weekend of sound healing, earth medicine, and movement under Alaska's midnight sun. August 7–9, 2026 in Sutton, Alaska.",
   keywords: [
     "healing arts festival",
     "wellness retreat Alaska",
@@ -64,7 +64,7 @@ export const metadata: Metadata = {
   openGraph: {
     title: "Wellness Weekend · Healing Arts Festival Under the Midnight Sun",
     description:
-      "A once-in-a-lifetime transformational gathering in the Alaskan wilderness. Sound healing, earth medicine, movement & bodywork. August 8–10, 2026.",
+      "A once-in-a-lifetime transformational gathering in the Alaskan wilderness. Sound healing, earth medicine, movement & bodywork. August 7–9, 2026.",
     type: "website",
     url: "https://wellnessweekendak.com",
     siteName: "Wellness Weekend",
@@ -82,7 +82,7 @@ export const metadata: Metadata = {
     card: "summary_large_image",
     title: "Wellness Weekend · Healing Arts Festival Under the Midnight Sun",
     description:
-      "Join 200+ seekers for sound healing, earth medicine, and movement under Alaska's midnight sun. August 8–10, 2026.",
+      "Join 200+ seekers for sound healing, earth medicine, and movement under Alaska's midnight sun. August 7–9, 2026.",
     images: ["/images/hero.png"],
   },
   other: {
@@ -115,8 +115,8 @@ export default function RootLayout({
               "@type": "Festival",
               name: "Wellness Weekend 2026",
               description: "A once-in-a-lifetime transformational gathering in the Alaskan wilderness. Sound healing, earth medicine, movement & bodywork.",
-              startDate: "2026-08-08T12:00:00-08:00",
-              endDate: "2026-08-10T15:00:00-08:00",
+              startDate: "2026-08-07T12:00:00-08:00",
+              endDate: "2026-08-09T15:00:00-08:00",
               eventAttendanceMode: "https://schema.org/OfflineEventAttendanceMode",
               eventStatus: "https://schema.org/EventScheduled",
               location: {

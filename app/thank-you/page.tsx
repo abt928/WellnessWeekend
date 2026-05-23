@@ -24,7 +24,7 @@ export default function ThankYou() {
         <div className="thankyou-details">
           <div className="thankyou-detail">
             <span className="thankyou-detail-icon"><CalendarIcon size={20} color="var(--aurora)" /></span>
-            <span>August 8–10, 2026</span>
+            <span>August 7–9, 2026</span>
           </div>
           <div className="thankyou-detail">
             <span className="thankyou-detail-icon"><MapPinIcon size={20} color="var(--aurora)" /></span>

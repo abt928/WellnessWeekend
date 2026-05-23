@@ -39,7 +39,7 @@ interface ScheduleBlock {
 
 const days: ScheduleBlock[] = [
   {
-    label: "Friday · Aug 8",
+    label: "Friday · Aug 7",
     heading: <><MoonIcon size={20} color="var(--aurora-light)" /> Arrival + Grounding</>,
     theme: "Land, Arrival, Intention",
     events: [
@@ -56,7 +56,7 @@ const days: ScheduleBlock[] = [
     ],
   },
   {
-    label: "Saturday · Aug 9",
+    label: "Saturday · Aug 8",
     heading: <><FlameIcon size={20} color="var(--coral)" /> Activation + Transformation</>,
     theme: "Expansion, Ceremony, Expression",
     events: [
@@ -74,7 +74,7 @@ const days: ScheduleBlock[] = [
     ],
   },
   {
-    label: "Sunday · Aug 10",
+    label: "Sunday · Aug 9",
     heading: <><LeafIcon size={20} color="var(--sage)" /> Integration + Community</>,
     theme: "Soft Landing, Heart Opening",
     events: [

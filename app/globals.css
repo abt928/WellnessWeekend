@@ -1665,6 +1665,17 @@ textarea:focus-visible {
   color: var(--sage);
   letter-spacing: 0.05em;
 }
+.partner-card-logo {
+  flex: 0 1 300px;
+  padding: 2rem 1.5rem 1.5rem;
+}
+.partner-logo-svg {
+  display: block;
+  width: 100%;
+  max-width: 200px;
+  height: auto;
+  margin: 0 auto 0.75rem;
+}
 
 /* Store tab icon spacing */
 .store-tab { display: inline-flex; align-items: center; gap: 0.4rem; }

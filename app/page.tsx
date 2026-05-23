@@ -10,15 +10,8 @@ import Store from "@/components/Store";
 import Gallery from "@/components/Gallery";
 import FloatingActions from "@/components/FloatingActions";
 import ConversionNudges from "@/components/ConversionNudges";
-import {
-  SoundWaveIcon,
-  PlaneIcon,
-} from "@/components/Icons";
-
-const partners = [
-  { name: "Sound Space", role: "Sound Healing Partner", Icon: SoundWaveIcon },
-  { name: "Alaska Fly Dog", role: "Massage · Adventures in Wellness", Icon: PlaneIcon },
-];
+import SoundSpaceLogo from "@/components/SoundSpaceLogo";
+import AlaskaFlyDogLogo from "@/components/AlaskaFlyDogLogo";
 
 export default function Home() {
   const jsonLd = {
@@ -261,15 +254,13 @@ export default function Home() {
         </Reveal>
         <Reveal>
           <div className="partner-grid">
-            {partners.map((p) => (
-              <div className="partner-card" key={p.name}>
-                <div className="partner-icon-wrap">
-                  <p.Icon size={32} color="var(--psyche-cyan)" />
-                </div>
-                <div className="partner-name">{p.name}</div>
-                <div className="partner-role">{p.role}</div>
-              </div>
-            ))}
+            <div className="partner-card partner-card-logo">
+              <SoundSpaceLogo className="partner-logo-svg" />
+              <div className="partner-role">Sound Healing Partner</div>
+            </div>
+            <div className="partner-card partner-card-logo">
+              <AlaskaFlyDogLogo className="partner-logo-svg" />
+            </div>
           </div>
         </Reveal>
       </section>

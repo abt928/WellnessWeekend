@@ -1,8 +1,11 @@
 "use client";
 
 import { useState, useEffect, useCallback } from "react";
+import type { AdminRole } from "@/app/api/admin/auth/route";
 
-type TableName = "leads" | "newsletter" | "vendors" | "volunteers";
+type TableName =
+  | "leads" | "newsletter" | "vendors" | "volunteers"
+  | "sponsors" | "instructor_waitlist" | "affiliates" | "referral_events";
 
 interface TabConfig {
   key: TableName;
@@ -10,12 +13,78 @@ interface TabConfig {
   columns: string[];
 }
 
-const TABS: TabConfig[] = [
-  { key: "leads", label: "Leads", columns: ["id", "name", "email", "phone", "message", "source", "created_at"] },
-  { key: "newsletter", label: "Newsletter", columns: ["id", "email", "created_at"] },
-  { key: "vendors", label: "Vendors", columns: ["id", "name", "email", "business", "category", "website", "description", "created_at"] },
-  { key: "volunteers", label: "Volunteers", columns: ["id", "name", "email", "phone", "interest", "experience", "availability", "created_at"] },
+const ALL_TABS: TabConfig[] = [
+  { key: "leads",               label: "Leads",        columns: ["id","name","email","phone","message","source","created_at"] },
+  { key: "newsletter",          label: "Newsletter",   columns: ["id","email","created_at"] },
+  { key: "sponsors",            label: "Sponsors",     columns: ["id","name","email","company","budget_range","interests","goals","created_at"] },
+  { key: "vendors",             label: "Vendors",      columns: ["id","name","email","business","category","description","created_at"] },
+  { key: "volunteers",          label: "Volunteers",   columns: ["id","name","email","phone","interest","availability","created_at"] },
+  { key: "instructor_waitlist", label: "Instructors",  columns: ["id","name","email","phone","modality","years_teaching","interested_in_2026","interested_in_2027","offering","created_at"] },
+  { key: "affiliates",          label: "Affiliates",   columns: ["id","name","email","code","company","commission_pct","status","notes","created_at"] },
+  { key: "referral_events",     label: "Referrals",    columns: ["id","affiliate_code","event_type","order_id","order_amount_cents","commission_cents","created_at"] },
 ];
+
+// ── Sales / Dashboard types ──────────────────────────────────────────
+
+interface SalesKPI {
+  totalOrders: number;
+  totalRevenueCents: number;
+  avgOrderCents: number;
+  affiliateOrders: number;
+  affiliateRevenueCents: number;
+  totalCommissionCents: number;
+}
+
+interface LeaderboardRow {
+  referral_code: string;
+  affiliate_name: string | null;
+  affiliate_company: string | null;
+  order_count: number;
+  revenue_cents: number;
+  commission_cents: number;
+}
+
+interface RecentOrder {
+  id: number;
+  square_payment_id: string | null;
+  amount_cents: number;
+  currency: string;
+  customer_email: string | null;
+  referral_code: string | null;
+  status: string;
+  created_at: string;
+}
+
+interface DailyRevenue {
+  day: string;
+  orders: number;
+  revenue_cents: number;
+}
+
+interface SalesData {
+  kpi: SalesKPI;
+  leaderboard: LeaderboardRow[];
+  recentOrders: RecentOrder[];
+  dailyRevenue: DailyRevenue[];
+}
+
+interface BudgetItem {
+  id: number;
+  type: string;
+  category: string;
+  description: string;
+  amount_cents: number;
+  notes: string | null;
+  created_at: string;
+}
+
+interface BudgetTotals {
+  revenue_target_cents: number;
+  expense_cents: number;
+  income_cents: number;
+}
+
+// ── Helpers ──────────────────────────────────────────────────────────
 
 function readSavedPassword(): { value: string; remembered: boolean } {
   if (typeof window === "undefined") return { value: "", remembered: false };
@@ -27,25 +96,366 @@ function readSavedPassword(): { value: string; remembered: boolean } {
   }
 }
 
+function fmtDate(raw: unknown): string {
+  const str = String(raw ?? "");
+  if (!str) return "—";
+  const iso = str.includes("Z") || str.includes("+") ? str.replace(" ", "T") : str.replace(" ", "T") + "Z";
+  const d = new Date(iso);
+  return isNaN(d.getTime())
+    ? str
+    : d.toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric", hour: "2-digit", minute: "2-digit" });
+}
+
+function usd(cents: number) {
+  return `$${(cents / 100).toLocaleString("en-US", { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
+}
+
+// ── KPI Card ─────────────────────────────────────────────────────────
+
+function KPICard({ label, value, sub, highlight }: { label: string; value: string; sub?: string; highlight?: boolean }) {
+  return (
+    <div style={{
+      background: "var(--surface-elevated)", border: "1px solid var(--line-medium)",
+      borderRadius: "12px", padding: "1.25rem 1.5rem", minWidth: "160px",
+    }}>
+      <div style={{ fontSize: "1.6rem", fontWeight: 700, color: highlight ? "#3DB8AF" : "var(--ink)", fontFamily: "var(--font-display)" }}>
+        {value}
+      </div>
+      <div style={{ fontSize: "0.72rem", color: "var(--ink-muted)", textTransform: "uppercase", letterSpacing: "0.07em", marginTop: "0.3rem" }}>
+        {label}
+      </div>
+      {sub && <div style={{ fontSize: "0.75rem", color: "var(--ink-muted)", marginTop: "0.2rem" }}>{sub}</div>}
+    </div>
+  );
+}
+
+// ── Dashboard Tab ─────────────────────────────────────────────────────
+
+function DashboardTab() {
+  const [sales, setSales] = useState<SalesData | null>(null);
+  const [budget, setBudget] = useState<{ items: BudgetItem[]; totals: BudgetTotals } | null>(null);
+  const [salesLoading, setSalesLoading] = useState(true);
+  const [budgetLoading, setBudgetLoading] = useState(true);
+  const [addingBudget, setAddingBudget] = useState(false);
+  const [budgetForm, setBudgetForm] = useState({ type: "expense", category: "", description: "", amount: "", notes: "" });
+  const [budgetSaving, setBudgetSaving] = useState(false);
+
+  const fetchSales = useCallback(async () => {
+    setSalesLoading(true);
+    try {
+      const res = await fetch("/api/admin/sales");
+      if (res.ok) setSales(await res.json());
+    } finally {
+      setSalesLoading(false);
+    }
+  }, []);
+
+  const fetchBudget = useCallback(async () => {
+    setBudgetLoading(true);
+    try {
+      const res = await fetch("/api/admin/budget");
+      if (res.ok) setBudget(await res.json());
+    } finally {
+      setBudgetLoading(false);
+    }
+  }, []);
+
+  useEffect(() => {
+    fetchSales();
+    fetchBudget();
+  }, [fetchSales, fetchBudget]);
+
+  const saveBudgetItem = async () => {
+    setBudgetSaving(true);
+    const amountCents = Math.round(parseFloat(budgetForm.amount) * 100);
+    await fetch("/api/admin/budget", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ ...budgetForm, amountCents }),
+    });
+    setBudgetSaving(false);
+    setAddingBudget(false);
+    setBudgetForm({ type: "expense", category: "", description: "", amount: "", notes: "" });
+    fetchBudget();
+  };
+
+  const deleteBudgetItem = async (id: number) => {
+    await fetch("/api/admin/budget", {
+      method: "DELETE",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ id }),
+    });
+    fetchBudget();
+  };
+
+  const cell = {
+    padding: "0.6rem 0.75rem", borderBottom: "1px solid var(--line-subtle)",
+    fontSize: "0.82rem", color: "var(--ink)", verticalAlign: "middle" as const,
+  };
+  const hcell = {
+    ...cell, color: "var(--ink-muted)", fontSize: "0.7rem",
+    textTransform: "uppercase" as const, letterSpacing: "0.06em", fontWeight: 600, background: "var(--surface-elevated)",
+  };
+
+  const netRevenue = budget ? (budget.totals.income_cents - budget.totals.expense_cents) : null;
+  const revenueTarget = budget?.totals.revenue_target_cents ?? 0;
+
+  return (
+    <div style={{ padding: "1.5rem 2rem", display: "flex", flexDirection: "column", gap: "2rem" }}>
+
+      {/* Sales KPIs */}
+      <section>
+        <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: "1rem" }}>
+          <h2 style={{ fontSize: "0.8rem", fontWeight: 600, color: "var(--ink-muted)", textTransform: "uppercase", letterSpacing: "0.08em", margin: 0 }}>
+            Live Sales Ledger
+          </h2>
+          <button onClick={fetchSales} style={{ fontSize: "0.78rem", color: "var(--psyche-cyan)", background: "none", border: "none", cursor: "pointer", padding: 0 }}>
+            Refresh
+          </button>
+        </div>
+        {salesLoading ? (
+          <div style={{ color: "var(--ink-muted)", fontSize: "0.85rem" }}>Loading…</div>
+        ) : sales ? (
+          <>
+            <div style={{ display: "flex", flexWrap: "wrap", gap: "1rem", marginBottom: "1.5rem" }}>
+              <KPICard label="Total Revenue" value={usd(sales.kpi.totalRevenueCents)} highlight />
+              <KPICard label="Orders" value={String(sales.kpi.totalOrders)} />
+              <KPICard label="Avg Order" value={usd(sales.kpi.avgOrderCents)} />
+              <KPICard label="Affiliate Orders" value={String(sales.kpi.affiliateOrders)} sub={`${usd(sales.kpi.affiliateRevenueCents)} revenue`} />
+              <KPICard label="Commissions Owed" value={usd(sales.kpi.totalCommissionCents)} />
+            </div>
+
+            {/* Affiliate leaderboard */}
+            {sales.leaderboard.length > 0 && (
+              <div style={{ marginBottom: "1.5rem" }}>
+                <h3 style={{ fontSize: "0.75rem", color: "var(--ink-muted)", textTransform: "uppercase", letterSpacing: "0.07em", marginBottom: "0.75rem" }}>
+                  Partner Leaderboard
+                </h3>
+                <div style={{ overflowX: "auto" }}>
+                  <table style={{ width: "100%", borderCollapse: "collapse", background: "var(--surface-elevated)", borderRadius: "10px", overflow: "hidden" }}>
+                    <thead>
+                      <tr>
+                        {["Partner", "Code", "Orders", "Revenue", "Commission"].map(h => (
+                          <th key={h} style={hcell}>{h}</th>
+                        ))}
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {sales.leaderboard.map((row) => (
+                        <tr key={row.referral_code}>
+                          <td style={cell}>{row.affiliate_name || row.affiliate_company || "—"}</td>
+                          <td style={{ ...cell, fontFamily: "monospace", color: "var(--psyche-cyan)" }}>{row.referral_code}</td>
+                          <td style={cell}>{row.order_count}</td>
+                          <td style={cell}>{usd(row.revenue_cents)}</td>
+                          <td style={{ ...cell, color: "#3DB8AF" }}>{usd(row.commission_cents)}</td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+            )}
+
+            {/* Recent orders */}
+            <div>
+              <h3 style={{ fontSize: "0.75rem", color: "var(--ink-muted)", textTransform: "uppercase", letterSpacing: "0.07em", marginBottom: "0.75rem" }}>
+                Recent Orders
+              </h3>
+              {sales.recentOrders.length === 0 ? (
+                <p style={{ color: "var(--ink-muted)", fontSize: "0.85rem" }}>No orders yet.</p>
+              ) : (
+                <div style={{ overflowX: "auto" }}>
+                  <table style={{ width: "100%", borderCollapse: "collapse", background: "var(--surface-elevated)", borderRadius: "10px", overflow: "hidden" }}>
+                    <thead>
+                      <tr>
+                        {["Date", "Email", "Amount", "Referral", "Status"].map(h => (
+                          <th key={h} style={hcell}>{h}</th>
+                        ))}
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {sales.recentOrders.map((o) => (
+                        <tr key={o.id}>
+                          <td style={cell}>{fmtDate(o.created_at)}</td>
+                          <td style={cell}>{o.customer_email || "—"}</td>
+                          <td style={{ ...cell, fontWeight: 600 }}>{usd(o.amount_cents)}</td>
+                          <td style={{ ...cell, fontFamily: "monospace", color: o.referral_code ? "var(--psyche-cyan)" : "var(--ink-muted)" }}>
+                            {o.referral_code || "—"}
+                          </td>
+                          <td style={cell}>{o.status}</td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
+              )}
+            </div>
+          </>
+        ) : (
+          <p style={{ color: "var(--ink-muted)", fontSize: "0.85rem" }}>Failed to load sales data. Run Setup DB first.</p>
+        )}
+      </section>
+
+      {/* Budget & Expenses */}
+      <section>
+        <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: "1rem" }}>
+          <h2 style={{ fontSize: "0.8rem", fontWeight: 600, color: "var(--ink-muted)", textTransform: "uppercase", letterSpacing: "0.08em", margin: 0 }}>
+            Budget & Expenses
+          </h2>
+          <button
+            onClick={() => setAddingBudget((v) => !v)}
+            style={{ fontSize: "0.78rem", color: "var(--psyche-cyan)", background: "none", border: "none", cursor: "pointer", padding: 0 }}
+          >
+            {addingBudget ? "Cancel" : "+ Add Item"}
+          </button>
+        </div>
+
+        {/* Budget summary cards */}
+        {budget && (
+          <div style={{ display: "flex", flexWrap: "wrap", gap: "1rem", marginBottom: "1.25rem" }}>
+            <KPICard label="Revenue Target" value={usd(revenueTarget)} />
+            <KPICard label="Actual Income" value={usd(budget.totals.income_cents)} highlight />
+            <KPICard label="Expenses" value={usd(budget.totals.expense_cents)} />
+            <KPICard
+              label="Net (Income – Expenses)"
+              value={netRevenue !== null ? usd(netRevenue) : "—"}
+              highlight={netRevenue !== null && netRevenue >= 0}
+            />
+            {revenueTarget > 0 && (
+              <KPICard
+                label="Goal Progress"
+                value={`${Math.round((budget.totals.income_cents / revenueTarget) * 100)}%`}
+              />
+            )}
+          </div>
+        )}
+
+        {/* Add budget item form */}
+        {addingBudget && (
+          <div style={{ background: "var(--surface-elevated)", border: "1px solid var(--line-medium)", borderRadius: "10px", padding: "1.25rem", marginBottom: "1.25rem", display: "flex", flexWrap: "wrap", gap: "0.75rem", alignItems: "flex-end" }}>
+            <select
+              value={budgetForm.type}
+              onChange={(e) => setBudgetForm((f) => ({ ...f, type: e.target.value }))}
+              style={{ background: "var(--surface-page)", border: "1px solid var(--line-medium)", borderRadius: "6px", color: "var(--ink)", padding: "0.4rem 0.6rem", fontSize: "0.82rem" }}
+            >
+              <option value="expense">Expense</option>
+              <option value="income">Income</option>
+              <option value="revenue_target">Revenue Target</option>
+            </select>
+            <input
+              placeholder="Category (e.g. Marketing)"
+              value={budgetForm.category}
+              onChange={(e) => setBudgetForm((f) => ({ ...f, category: e.target.value }))}
+              style={{ flex: "1 1 140px", background: "var(--surface-page)", border: "1px solid var(--line-medium)", borderRadius: "6px", color: "var(--ink)", padding: "0.4rem 0.6rem", fontSize: "0.82rem" }}
+            />
+            <input
+              placeholder="Description"
+              value={budgetForm.description}
+              onChange={(e) => setBudgetForm((f) => ({ ...f, description: e.target.value }))}
+              style={{ flex: "2 1 200px", background: "var(--surface-page)", border: "1px solid var(--line-medium)", borderRadius: "6px", color: "var(--ink)", padding: "0.4rem 0.6rem", fontSize: "0.82rem" }}
+            />
+            <input
+              type="number" placeholder="Amount ($)" step="0.01" min="0"
+              value={budgetForm.amount}
+              onChange={(e) => setBudgetForm((f) => ({ ...f, amount: e.target.value }))}
+              style={{ width: "110px", background: "var(--surface-page)", border: "1px solid var(--line-medium)", borderRadius: "6px", color: "var(--ink)", padding: "0.4rem 0.6rem", fontSize: "0.82rem" }}
+            />
+            <input
+              placeholder="Notes (optional)"
+              value={budgetForm.notes}
+              onChange={(e) => setBudgetForm((f) => ({ ...f, notes: e.target.value }))}
+              style={{ flex: "1 1 140px", background: "var(--surface-page)", border: "1px solid var(--line-medium)", borderRadius: "6px", color: "var(--ink)", padding: "0.4rem 0.6rem", fontSize: "0.82rem" }}
+            />
+            <button
+              onClick={saveBudgetItem}
+              disabled={budgetSaving || !budgetForm.category || !budgetForm.description || !budgetForm.amount}
+              style={{ background: "rgba(61,184,175,0.15)", border: "1px solid #3DB8AF", borderRadius: "6px", color: "#3DB8AF", padding: "0.4rem 1rem", cursor: "pointer", fontSize: "0.82rem", fontFamily: "inherit", whiteSpace: "nowrap" }}
+            >
+              {budgetSaving ? "Saving…" : "Save"}
+            </button>
+          </div>
+        )}
+
+        {/* Budget table */}
+        {budgetLoading ? (
+          <div style={{ color: "var(--ink-muted)", fontSize: "0.85rem" }}>Loading…</div>
+        ) : budget && budget.items.length === 0 ? (
+          <p style={{ color: "var(--ink-muted)", fontSize: "0.85rem" }}>No budget items yet. Add your first item above.</p>
+        ) : budget ? (
+          <div style={{ overflowX: "auto" }}>
+            <table style={{ width: "100%", borderCollapse: "collapse", background: "var(--surface-elevated)", borderRadius: "10px", overflow: "hidden" }}>
+              <thead>
+                <tr>
+                  {["Type", "Category", "Description", "Amount", "Notes", ""].map((h, i) => (
+                    <th key={i} style={hcell}>{h}</th>
+                  ))}
+                </tr>
+              </thead>
+              <tbody>
+                {budget.items.map((item) => (
+                  <tr key={item.id}>
+                    <td style={cell}>
+                      <span style={{
+                        fontSize: "0.7rem", padding: "0.15rem 0.5rem", borderRadius: "4px", fontWeight: 600,
+                        background: item.type === "income" ? "rgba(61,184,175,0.12)" : item.type === "expense" ? "rgba(220,80,80,0.12)" : "rgba(255,165,0,0.12)",
+                        color: item.type === "income" ? "#3DB8AF" : item.type === "expense" ? "#dc5050" : "#FFB347",
+                      }}>
+                        {item.type === "revenue_target" ? "Target" : item.type.charAt(0).toUpperCase() + item.type.slice(1)}
+                      </span>
+                    </td>
+                    <td style={cell}>{item.category}</td>
+                    <td style={cell}>{item.description}</td>
+                    <td style={{ ...cell, fontWeight: 600 }}>{usd(item.amount_cents)}</td>
+                    <td style={{ ...cell, color: "var(--ink-muted)" }}>{item.notes || "—"}</td>
+                    <td style={cell}>
+                      <button
+                        onClick={() => deleteBudgetItem(item.id)}
+                        style={{ background: "none", border: "none", color: "var(--ink-muted)", cursor: "pointer", fontSize: "0.8rem", padding: "0.1rem 0.3rem" }}
+                        title="Delete"
+                      >
+                        ✕
+                      </button>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        ) : null}
+      </section>
+    </div>
+  );
+}
+
+// ── Main Admin Page ───────────────────────────────────────────────────
+
 export default function AdminPage() {
   const [authenticated, setAuthenticated] = useState(false);
+  const [role, setRole] = useState<AdminRole | null>(null);
   const [password, setPassword] = useState<string>(() => readSavedPassword().value);
   const [rememberMe, setRememberMe] = useState<boolean>(() => readSavedPassword().remembered);
   const [loginError, setLoginError] = useState("");
   const [loginLoading, setLoginLoading] = useState(false);
 
-  const [activeTab, setActiveTab] = useState<TableName>("leads");
+  const [activeTab, setActiveTab] = useState<TableName | "dashboard">("dashboard");
   const [rows, setRows] = useState<Record<string, unknown>[]>([]);
   const [count, setCount] = useState(0);
   const [search, setSearch] = useState("");
   const [loading, setLoading] = useState(false);
   const [dbSetupStatus, setDbSetupStatus] = useState<string | null>(null);
 
-  // Check if already authenticated on mount
+  // Affiliate inline editing
+  const [affiliateEdits, setAffiliateEdits] = useState<Record<number, { status?: string; commissionPct?: string; notes?: string }>>({});
+  const [affiliateSaving, setAffiliateSaving] = useState<number | null>(null);
+
   useEffect(() => {
-    fetch("/api/admin/data?table=leads")
-      .then((r) => {
-        if (r.ok) setAuthenticated(true);
+    fetch("/api/admin/auth")
+      .then(async (r) => {
+        if (r.ok) {
+          const data = await r.json();
+          setRole(data.role);
+          setAuthenticated(true);
+        }
       })
       .catch(() => {});
   }, []);
@@ -54,21 +464,17 @@ export default function AdminPage() {
     e.preventDefault();
     setLoginLoading(true);
     setLoginError("");
-
     const res = await fetch("/api/admin/auth", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ password }),
     });
-
     if (res.ok) {
+      const data = await res.json();
+      setRole(data.role);
       setAuthenticated(true);
-      // Save or clear password based on remember me
-      if (rememberMe) {
-        localStorage.setItem("ww-admin-pw", password);
-      } else {
-        localStorage.removeItem("ww-admin-pw");
-      }
+      if (rememberMe) localStorage.setItem("ww-admin-pw", password);
+      else localStorage.removeItem("ww-admin-pw");
       setPassword("");
     } else {
       setLoginError("Invalid password");
@@ -79,6 +485,7 @@ export default function AdminPage() {
   const handleLogout = async () => {
     await fetch("/api/admin/auth", { method: "DELETE" });
     setAuthenticated(false);
+    setRole(null);
     setRows([]);
   };
 
@@ -101,51 +508,45 @@ export default function AdminPage() {
     setLoading(false);
   }, []);
 
-  // Fetch data when tab or search changes (canonical fetch-on-deps pattern; rule over-flags this)
   useEffect(() => {
-    if (authenticated) {
-      // eslint-disable-next-line react-hooks/set-state-in-effect
-      fetchData(activeTab, search);
-    }
+    if (authenticated && activeTab !== "dashboard") fetchData(activeTab as TableName, search);
   }, [authenticated, activeTab, search, fetchData]);
 
   const handleDbSetup = async () => {
-    setDbSetupStatus("Setting up...");
+    setDbSetupStatus("Setting up…");
     try {
       const res = await fetch("/api/admin/db-setup", { method: "POST" });
       const data = await res.json();
-      if (res.ok) {
-        setDbSetupStatus(`✅ ${data.message}`);
-      } else {
-        setDbSetupStatus(`❌ ${data.error}`);
-      }
+      setDbSetupStatus(res.ok ? `✅ ${data.message}` : `❌ ${data.error}`);
     } catch {
       setDbSetupStatus("❌ Failed to connect");
     }
   };
 
   const exportCSV = () => {
-    if (rows.length === 0) return;
-    const tab = TABS.find((t) => t.key === activeTab);
-    if (!tab) return;
-
+    if (rows.length === 0 || activeTab === "dashboard") return;
+    const tab = ALL_TABS.find((t) => t.key === activeTab)!;
     const header = tab.columns.join(",");
     const csvRows = rows.map((row) =>
-      tab.columns
-        .map((col) => {
-          const val = String(row[col] ?? "").replace(/"/g, '""');
-          return `"${val}"`;
-        })
-        .join(",")
+      tab.columns.map((col) => `"${String(row[col] ?? "").replace(/"/g, '""')}"`).join(",")
     );
-    const csv = [header, ...csvRows].join("\n");
-    const blob = new Blob([csv], { type: "text/csv" });
-    const url = URL.createObjectURL(blob);
+    const blob = new Blob([[header, ...csvRows].join("\n")], { type: "text/csv" });
     const a = document.createElement("a");
-    a.href = url;
+    a.href = URL.createObjectURL(blob);
     a.download = `${activeTab}_${new Date().toISOString().slice(0, 10)}.csv`;
     a.click();
-    URL.revokeObjectURL(url);
+  };
+
+  const saveAffiliateEdits = async (id: number) => {
+    setAffiliateSaving(id);
+    const updates = affiliateEdits[id] ?? {};
+    await fetch("/api/admin/affiliates", {
+      method: "PATCH",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ id, ...updates }),
+    });
+    setAffiliateSaving(null);
+    fetchData("affiliates", search);
   };
 
   // ── Login Screen ──
@@ -153,30 +554,21 @@ export default function AdminPage() {
     return (
       <div className="admin-login">
         <div className="admin-login-card">
-          <div className="admin-login-logo" style={{ fontFamily: "var(--font-display)" }}>
-            Wellness Weekend
-          </div>
+          <div className="admin-login-logo" style={{ fontFamily: "var(--font-display)" }}>Wellness Weekend</div>
           <h1 className="admin-login-title">Admin Dashboard</h1>
           <form onSubmit={handleLogin} className="admin-login-form">
             <input
-              type="password"
-              value={password}
+              type="password" value={password}
               onChange={(e) => setPassword(e.target.value)}
-              placeholder="Enter admin password"
-              className="admin-input"
-              autoFocus
+              placeholder="Enter password" className="admin-input" autoFocus
             />
             <label className="admin-remember">
-              <input
-                type="checkbox"
-                checked={rememberMe}
-                onChange={(e) => setRememberMe(e.target.checked)}
-              />
+              <input type="checkbox" checked={rememberMe} onChange={(e) => setRememberMe(e.target.checked)} />
               Remember password
             </label>
             {loginError && <p className="admin-error">{loginError}</p>}
             <button type="submit" className="admin-login-btn" disabled={loginLoading}>
-              {loginLoading ? "Signing in..." : "Sign In"}
+              {loginLoading ? "Signing in…" : "Sign In"}
             </button>
           </form>
         </div>
@@ -184,36 +576,39 @@ export default function AdminPage() {
     );
   }
 
-  // ── Dashboard ──
-  const activeTabConfig = TABS.find((t) => t.key === activeTab)!;
+  const activeTabConfig = ALL_TABS.find((t) => t.key === activeTab);
+  const canSetupDb = role === "owner" || role === "chris";
+  const canSeeDashboard = role === "owner" || role === "alice";
+  const roleLabel = role === "owner" ? "Owner" : role === "alice" ? "Alice" : role === "chris" ? "Chris" : "Staff";
 
   return (
     <div className="admin-dashboard">
-      {/* Header */}
       <header className="admin-header">
         <div>
-          <h1 className="admin-brand" style={{ fontFamily: "var(--font-display)" }}>
-            Wellness Weekend
-          </h1>
-          <span className="admin-badge">Admin</span>
+          <h1 className="admin-brand" style={{ fontFamily: "var(--font-display)" }}>Wellness Weekend</h1>
+          <span className="admin-badge">{roleLabel}</span>
         </div>
         <div className="admin-header-actions">
-          <button onClick={handleDbSetup} className="admin-setup-btn">
-            Setup DB
-          </button>
-          <button onClick={handleLogout} className="admin-logout-btn">
-            Sign Out
-          </button>
+          {canSetupDb && (
+            <button onClick={handleDbSetup} className="admin-setup-btn">Setup DB</button>
+          )}
+          <button onClick={handleLogout} className="admin-logout-btn">Sign Out</button>
         </div>
       </header>
 
-      {dbSetupStatus && (
-        <div className="admin-status-bar">{dbSetupStatus}</div>
-      )}
+      {dbSetupStatus && <div className="admin-status-bar">{dbSetupStatus}</div>}
 
       {/* Tabs */}
       <div className="admin-tabs">
-        {TABS.map((tab) => (
+        {canSeeDashboard && (
+          <button
+            className={`admin-tab${activeTab === "dashboard" ? " active" : ""}`}
+            onClick={() => { setActiveTab("dashboard"); setSearch(""); }}
+          >
+            Dashboard
+          </button>
+        )}
+        {ALL_TABS.map((tab) => (
           <button
             key={tab.key}
             className={`admin-tab${activeTab === tab.key ? " active" : ""}`}
@@ -224,76 +619,117 @@ export default function AdminPage() {
         ))}
       </div>
 
-      {/* Toolbar */}
-      <div className="admin-toolbar">
-        <div className="admin-toolbar-left">
-          <span className="admin-count">{count} records</span>
-          <input
-            type="text"
-            value={search}
-            onChange={(e) => setSearch(e.target.value)}
-            placeholder="Search by email..."
-            className="admin-search"
-          />
-        </div>
-        <div className="admin-toolbar-right">
-          <button onClick={() => fetchData(activeTab, search)} className="admin-refresh-btn">
-            Refresh
-          </button>
-          <button onClick={exportCSV} className="admin-export-btn" disabled={rows.length === 0}>
-            Export CSV
-          </button>
-        </div>
-      </div>
+      {/* Dashboard view */}
+      {activeTab === "dashboard" && canSeeDashboard && <DashboardTab />}
 
-      {/* Table */}
-      <div className="admin-table-wrap">
-        {loading ? (
-          <div className="admin-loading">Loading...</div>
-        ) : rows.length === 0 ? (
-          <div className="admin-empty">No records found</div>
-        ) : (
-          <table className="admin-table">
-            <thead>
-              <tr>
-                {activeTabConfig.columns.map((col) => (
-                  <th key={col}>{col.replace(/_/g, " ")}</th>
-                ))}
-              </tr>
-            </thead>
-            <tbody>
-              {rows.map((row, i) => (
-                <tr key={i}>
-                  {activeTabConfig.columns.map((col) => (
-                    <td key={col}>
-                      {col === "created_at"
-                        ? (() => {
-                            const raw = String(row[col] ?? "");
-                            if (!raw) return "—";
-                            // Ensure timezone info: if no Z or +/- offset, append Z (UTC)
-                            const isoStr = raw.includes("Z") || raw.includes("+") || /\d{2}:\d{2}$/.test(raw) === false
-                              ? raw.replace(" ", "T") + (raw.includes("Z") || raw.includes("+") ? "" : "Z")
-                              : raw.replace(" ", "T");
-                            const d = new Date(isoStr);
-                            return isNaN(d.getTime())
-                              ? raw
-                              : d.toLocaleDateString("en-US", {
-                                  month: "short",
-                                  day: "numeric",
-                                  year: "numeric",
-                                  hour: "2-digit",
-                                  minute: "2-digit",
-                                });
-                          })()
-                        : String(row[col] ?? "—")}
-                    </td>
-                  ))}
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        )}
-      </div>
+      {/* Data table view */}
+      {activeTab !== "dashboard" && (
+        <>
+          {/* Toolbar */}
+          <div className="admin-toolbar">
+            <div className="admin-toolbar-left">
+              <span className="admin-count">{count} records</span>
+              <input
+                type="text" value={search}
+                onChange={(e) => setSearch(e.target.value)}
+                placeholder="Search by email…" className="admin-search"
+              />
+            </div>
+            <div className="admin-toolbar-right">
+              <button onClick={() => fetchData(activeTab as TableName, search)} className="admin-refresh-btn">Refresh</button>
+              <button onClick={exportCSV} className="admin-export-btn" disabled={rows.length === 0}>Export CSV</button>
+            </div>
+          </div>
+
+          {activeTab === "affiliates" && (
+            <div style={{ padding: "0.75rem 1.5rem", background: "rgba(61,184,175,0.05)", borderBottom: "1px solid var(--line-subtle)", fontSize: "0.8rem", color: "var(--ink-muted)" }}>
+              Edit Status, Commission %, or Notes inline then click <strong style={{ color: "var(--ink)" }}>Save</strong> to approve or adjust a partner.
+            </div>
+          )}
+
+          {/* Table */}
+          <div className="admin-table-wrap">
+            {loading ? (
+              <div className="admin-loading">Loading…</div>
+            ) : rows.length === 0 ? (
+              <div className="admin-empty">No records found</div>
+            ) : activeTabConfig ? (
+              <table className="admin-table">
+                <thead>
+                  <tr>
+                    {activeTabConfig.columns.map((col) => <th key={col}>{col.replace(/_/g, " ")}</th>)}
+                    {activeTab === "affiliates" && <th>Save</th>}
+                  </tr>
+                </thead>
+                <tbody>
+                  {rows.map((row, i) => {
+                    const rowId = Number(row.id);
+                    return (
+                      <tr key={i}>
+                        {activeTabConfig.columns.map((col) => {
+                          const val = row[col];
+                          if (activeTab === "affiliates" && col === "status") {
+                            return (
+                              <td key={col}>
+                                <select
+                                  defaultValue={String(val ?? "pending")}
+                                  onChange={(e) => setAffiliateEdits((a) => ({ ...a, [rowId]: { ...a[rowId], status: e.target.value } }))}
+                                  style={{ background: "var(--surface-elevated)", border: "1px solid var(--line-medium)", borderRadius: "6px", color: "var(--ink)", padding: "0.2rem 0.4rem", fontSize: "0.8rem" }}
+                                >
+                                  <option value="pending">pending</option>
+                                  <option value="active">active</option>
+                                  <option value="inactive">inactive</option>
+                                </select>
+                              </td>
+                            );
+                          }
+                          if (activeTab === "affiliates" && col === "commission_pct") {
+                            return (
+                              <td key={col}>
+                                <input
+                                  type="number" defaultValue={String(val ?? 10)} min={0} max={100}
+                                  onChange={(e) => setAffiliateEdits((a) => ({ ...a, [rowId]: { ...a[rowId], commissionPct: e.target.value } }))}
+                                  style={{ width: "55px", background: "var(--surface-elevated)", border: "1px solid var(--line-medium)", borderRadius: "6px", color: "var(--ink)", padding: "0.2rem 0.4rem", fontSize: "0.8rem" }}
+                                />
+                                <span style={{ marginLeft: "2px", fontSize: "0.75rem", color: "var(--ink-muted)" }}>%</span>
+                              </td>
+                            );
+                          }
+                          if (activeTab === "affiliates" && col === "notes") {
+                            return (
+                              <td key={col}>
+                                <input
+                                  type="text" defaultValue={String(val ?? "")} placeholder="Internal notes"
+                                  onChange={(e) => setAffiliateEdits((a) => ({ ...a, [rowId]: { ...a[rowId], notes: e.target.value } }))}
+                                  style={{ width: "130px", background: "var(--surface-elevated)", border: "1px solid var(--line-medium)", borderRadius: "6px", color: "var(--ink)", padding: "0.2rem 0.4rem", fontSize: "0.8rem" }}
+                                />
+                              </td>
+                            );
+                          }
+                          return (
+                            <td key={col}>{col === "created_at" ? fmtDate(val) : String(val ?? "—")}</td>
+                          );
+                        })}
+                        {activeTab === "affiliates" && (
+                          <td>
+                            <button
+                              onClick={() => saveAffiliateEdits(rowId)}
+                              disabled={affiliateSaving === rowId}
+                              style={{ background: "rgba(61,184,175,0.15)", border: "1px solid #3DB8AF", borderRadius: "6px", color: "#3DB8AF", padding: "0.2rem 0.7rem", cursor: "pointer", fontSize: "0.8rem", fontFamily: "inherit" }}
+                            >
+                              {affiliateSaving === rowId ? "…" : "Save"}
+                            </button>
+                          </td>
+                        )}
+                      </tr>
+                    );
+                  })}
+                </tbody>
+              </table>
+            ) : null}
+          </div>
+        </>
+      )}
     </div>
   );
 }

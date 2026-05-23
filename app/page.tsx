@@ -99,33 +99,6 @@ export default function Home() {
         </div>
       </section>
 
-      {/* ═══ ABOUT / VISION ═══ */}
-      <section id="about" className="section about">
-        <div className="about-grid">
-          <Reveal>
-            <div className="about-headline">
-              <p className="section-label">Our Vision</p>
-              <h2 className="section-title about-title">
-                Where earth meets sky.
-              </h2>
-              <p className="about-stats">
-                4th annual · 200+ seekers · 75+ practitioners · 3 days under the midnight sun.
-              </p>
-            </div>
-          </Reveal>
-          <Reveal>
-            <p className="about-desc">
-              Wellness Weekend is a transformational gathering where seekers, healers, and
-              free spirits come together in Alaska&apos;s breathtaking wilderness for sacred
-              plant medicine ceremonies, sound healing, and deep shamanic work. Our festival
-              falls on the powerful 8/8 Lion&apos;s Gate Portal, a time of heightened cosmic
-              energy and spiritual awakening. For three days, guided by ceremonial shamans
-              under the midnight sun, we dissolve boundaries and remember who we truly are.
-            </p>
-          </Reveal>
-        </div>
-      </section>
-
       {/* ═══ SCHEDULE ═══ */}
       <Schedule />
 

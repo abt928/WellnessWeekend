@@ -11,38 +11,13 @@ import Gallery from "@/components/Gallery";
 import FloatingActions from "@/components/FloatingActions";
 import ConversionNudges from "@/components/ConversionNudges";
 import {
-  FlameIcon,
-  LeafIcon,
-  CommunityIcon,
   SoundWaveIcon,
   PlaneIcon,
 } from "@/components/Icons";
 
-/* ── static data ── */
 const partners = [
   { name: "Sound Space", role: "Sound Healing Partner", Icon: SoundWaveIcon },
-  { name: "Alaska Fly Dog", role: "Adventure Partner", Icon: PlaneIcon },
-];
-
-const pillars = [
-  {
-    img: "/images/sound-healing.png",
-    Icon: FlameIcon,
-    title: "Transformation",
-    desc: "The 8/8 Lion\u2019s Gate Activation Ceremony, sacred drumming circles led by White Eagle Medicine Woman, plant medicine work, and deep shamanic journeys that shatter boundaries and ignite rebirth.",
-  },
-  {
-    img: "/images/earth-medicine.png",
-    Icon: LeafIcon,
-    title: "Integration",
-    desc: "Sound healing, breathwork, yoga, bodywork, and earth medicine: practices that help you anchor and embody the shifts. Take the transformation home with you.",
-  },
-  {
-    img: "/images/movement.png",
-    Icon: CommunityIcon,
-    title: "Community",
-    desc: "Ecstatic dance, communal meals, campfire circles, and shared ceremony. A tribe of 200+ seekers holding space for each other under the midnight sun.",
-  },
+  { name: "Alaska Fly Dog", role: "Massage · Adventures in Wellness", Icon: PlaneIcon },
 ];
 
 export default function Home() {
@@ -112,9 +87,6 @@ export default function Home() {
           <h1 className="hero-title">
             Wellness <em>Weekend</em>
           </h1>
-          <div className="hero-horse" aria-hidden="true">
-            <Image src="/images/fire-horse.png" alt="" fill style={{ objectFit: "contain" }} />
-          </div>
           <p className="hero-subtitle">
             A Healing Arts Gathering Under the Midnight Sun
           </p>
@@ -161,16 +133,28 @@ export default function Home() {
         </div>
       </section>
 
+      {/* ═══ SCHEDULE ═══ */}
+      <Schedule />
+
       {/* ═══ 8/8 LION'S GATE PORTAL ═══ */}
-      <section id="portal" className="section lionsgate">
-        <Reveal>
-          <p className="section-label">August 8, 2026</p>
-          <h2 className="section-title">The 8/8 Lion&apos;s Gate Portal.</h2>
-          <p className="lionsgate-portal-date">8 · 8</p>
-        </Reveal>
-        <div className="lionsgate-grid">
+      <section id="portal" className="section lionsgate portal-animated">
+        {/* Aurora ribbons + fire horse — purely decorative background */}
+        <div className="portal-aurora-bg" aria-hidden="true">
+          <div className="aurora-band aurora-band-1" />
+          <div className="aurora-band aurora-band-2" />
+          <div className="aurora-band aurora-band-3" />
+          <div className="aurora-band aurora-band-4" />
+          <div className="portal-fire-horse">🐎</div>
+        </div>
+
+        <div className="portal-fg">
           <Reveal>
-            <div className="lionsgate-text">
+            <p className="section-label">August 8, 2026</p>
+            <h2 className="section-title">The 8/8 Lion&apos;s Gate Portal.</h2>
+            <p className="lionsgate-portal-date">8 · 8</p>
+          </Reveal>
+          <Reveal>
+            <div className="lionsgate-text lionsgate-text-solo">
               <p>
                 Every year on August 8th, Earth aligns with the Sun and Sirius — the
                 brightest star in our sky, revered by ancient Egyptians as the Spiritual Sun.
@@ -196,71 +180,25 @@ export default function Home() {
             </div>
           </Reveal>
           <Reveal>
-            <div className="lionsgate-poster">
-              <Image
-                src="/images/fire-horse.png"
-                alt="Wellness Weekend 2026 — Fire Horse, 8/8 Lion's Gate"
-                fill
-                style={{ objectFit: "contain" }}
-              />
+            <div className="lionsgate-pillars">
+              <div className="lionsgate-pillar">
+                <div className="lionsgate-pillar-icon">✦</div>
+                <h3>Sirius Rising</h3>
+                <p>The brightest star in the night sky, aligned with the Sun each 8/8. Ancient civilizations built their temples to its return — a star long held as the portal to accelerated spiritual evolution.</p>
+              </div>
+              <div className="lionsgate-pillar">
+                <div className="lionsgate-pillar-icon">∞</div>
+                <h3>The Infinite 8</h3>
+                <p>In numerology, 8 is the number of abundance, power, and the eternal cycle. Doubled on 8/8, this energy amplifies — a day when what you call in, answers.</p>
+              </div>
+              <div className="lionsgate-pillar">
+                <div className="lionsgate-pillar-icon">🔥</div>
+                <h3>Sacred Activation</h3>
+                <p>Our entire Saturday is a ceremony arc built on the portal: dawn sound bath, Ayni ceremony, cacao, and the Lionsgate Drumming Ceremony at nightfall under the Alaskan sky.</p>
+              </div>
             </div>
           </Reveal>
         </div>
-        <Reveal>
-          <div className="lionsgate-pillars">
-            <div className="lionsgate-pillar">
-              <div className="lionsgate-pillar-icon">✦</div>
-              <h3>Sirius Rising</h3>
-              <p>The brightest star in the night sky, aligned with the Sun each 8/8. Ancient civilizations built their temples to its return — a star long held as the portal to accelerated spiritual evolution.</p>
-            </div>
-            <div className="lionsgate-pillar">
-              <div className="lionsgate-pillar-icon">∞</div>
-              <h3>The Infinite 8</h3>
-              <p>In numerology, 8 is the number of abundance, power, and the eternal cycle. Doubled on 8/8, this energy amplifies — a day when what you call in, answers.</p>
-            </div>
-            <div className="lionsgate-pillar">
-              <div className="lionsgate-pillar-icon">🔥</div>
-              <h3>Sacred Activation</h3>
-              <p>Our entire Saturday is a ceremony arc built on the portal: dawn sound bath, Ayni ceremony, cacao, and the Lionsgate Drumming Ceremony at nightfall under the Alaskan sky.</p>
-            </div>
-          </div>
-        </Reveal>
-      </section>
-
-      {/* ═══ SCHEDULE ═══ */}
-      <Schedule />
-
-      {/* ═══ THREE PILLARS ═══ */}
-      <section id="experience" className="section experience">
-        <Reveal>
-          <p className="section-label">The Experience</p>
-          <h2 className="section-title">
-            Three pillars.
-          </h2>
-          <p className="section-desc">
-            Every offering at Wellness Weekend is woven through three guiding principles:
-            the pillars that shape every ceremony, workshop, and moment of connection.
-          </p>
-        </Reveal>
-        <Reveal>
-          <div className="pillars">
-            {pillars.map((p) => (
-              <div className="pillar" key={p.title}>
-                <div className="pillar-img">
-                  <Image src={p.img} alt={p.title} fill style={{ objectFit: "cover" }} />
-                </div>
-                <div className="pillar-overlay" />
-                <div className="pillar-content">
-                  <div className="pillar-icon">
-                    <p.Icon size={36} color="white" />
-                  </div>
-                  <h3 className="pillar-title">{p.title}</h3>
-                  <p className="pillar-desc">{p.desc}</p>
-                </div>
-              </div>
-            ))}
-          </div>
-        </Reveal>
       </section>
 
       {/* ═══ TICKETS STORE ═══ */}

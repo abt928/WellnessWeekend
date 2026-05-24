@@ -189,8 +189,9 @@ async function saveOrderToDB(
     if (squareOrderId) {
       try {
         const client = getSquareClient();
-        const orderRes = await client.orders.retrieve({ orderId: squareOrderId });
-        const order = orderRes.order;
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        const orderRes = await (client as any).orders.get({ orderId: squareOrderId });
+        const order = orderRes?.order;
 
         // Extract referral code from referenceId (format: "ref:CODE")
         if (order?.referenceId?.startsWith("ref:")) {

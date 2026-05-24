@@ -189,7 +189,7 @@ async function saveOrderToDB(
     if (squareOrderId) {
       try {
         const client = getSquareClient();
-        const orderRes = await client.orders.get(squareOrderId);
+        const orderRes = await client.orders.retrieve({ orderId: squareOrderId });
         const order = orderRes.order;
 
         // Extract referral code from referenceId (format: "ref:CODE")

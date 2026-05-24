@@ -1498,6 +1498,300 @@ textarea:focus-visible {
   text-transform: uppercase;
 }
 
+/* ========== LION'S GATE PORTAL ========== */
+
+@keyframes auroraWave {
+  0%   { transform: translateX(-120%) skewX(-12deg); opacity: 0; }
+  15%  { opacity: 1; }
+  85%  { opacity: 0.7; }
+  100% { transform: translateX(160%) skewX(-12deg); opacity: 0; }
+}
+
+@keyframes horseBreath {
+  0%, 100% {
+    opacity: 0.13;
+    transform: scaleX(-1) translateY(0px) scale(1);
+    filter: brightness(0) invert(1)
+      drop-shadow(0 0 18px #ff6600)
+      drop-shadow(0 0 40px #ff3300)
+      drop-shadow(0 0 80px #cc1100);
+  }
+  50% {
+    opacity: 0.22;
+    transform: scaleX(-1) translateY(-10px) scale(1.03);
+    filter: brightness(0) invert(1)
+      drop-shadow(0 0 28px #ff9900)
+      drop-shadow(0 0 60px #ff5500)
+      drop-shadow(0 0 110px #ff2200);
+  }
+}
+
+.portal-section {
+  position: relative;
+  background: #050810;
+  min-height: 80vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  padding: 8rem 2rem;
+}
+
+.portal-aurora {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  mix-blend-mode: screen;
+}
+
+.aurora-band {
+  position: absolute;
+  left: 0; right: 0;
+  height: 140px;
+  border-radius: 50%;
+  filter: blur(40px);
+  animation: auroraWave linear infinite;
+  will-change: transform, opacity;
+}
+.aurora-band-1 {
+  top: 10%;
+  background: linear-gradient(90deg, transparent, #0d4f3c, #16a085, #0d4f3c, transparent);
+  animation-duration: 14s;
+  animation-delay: 0s;
+  height: 100px;
+}
+.aurora-band-2 {
+  top: 22%;
+  background: linear-gradient(90deg, transparent, #2d0a4e, #8b5fbf, #4e1670, transparent);
+  animation-duration: 18s;
+  animation-delay: -5s;
+  height: 160px;
+  filter: blur(50px);
+}
+.aurora-band-3 {
+  top: 8%;
+  background: linear-gradient(90deg, transparent, #0a3d62, #3db8af, #0a3d62, transparent);
+  animation-duration: 22s;
+  animation-delay: -9s;
+  height: 80px;
+  filter: blur(35px);
+}
+.aurora-band-4 {
+  top: 30%;
+  background: linear-gradient(90deg, transparent, #1a0a2e, #d4639f, #1a0a2e, transparent);
+  animation-duration: 16s;
+  animation-delay: -3s;
+  height: 120px;
+  filter: blur(55px);
+}
+
+.portal-fire-horse {
+  position: absolute;
+  font-size: clamp(180px, 28vw, 340px);
+  line-height: 1;
+  right: 4%;
+  bottom: 6%;
+  filter: brightness(0) invert(1)
+    drop-shadow(0 0 18px #ff6600)
+    drop-shadow(0 0 40px #ff3300)
+    drop-shadow(0 0 80px #cc1100);
+  opacity: 0.15;
+  animation: horseBreath 4.5s ease-in-out infinite;
+  transform: scaleX(-1);
+  pointer-events: none;
+  user-select: none;
+}
+
+.portal-content {
+  position: relative;
+  z-index: 2;
+  max-width: 640px;
+  text-align: left;
+}
+
+.portal-label {
+  color: #f0c040 !important;
+  letter-spacing: 0.15em;
+}
+
+.portal-title {
+  font-family: var(--font-display);
+  font-size: clamp(2.4rem, 6vw, 4.5rem);
+  font-weight: 300;
+  color: #fff;
+  letter-spacing: 0.02em;
+  margin-bottom: 1.5rem;
+  line-height: 1.1;
+}
+
+.portal-desc {
+  font-family: var(--font-body);
+  font-size: 1rem;
+  color: rgba(255,255,255,0.72);
+  line-height: 1.9;
+  max-width: 52ch;
+  margin-bottom: 2.5rem;
+}
+
+.portal-cta {
+  display: inline-block;
+  padding: 0.85rem 2rem;
+  border: 1px solid rgba(240,192,64,0.5);
+  border-radius: 40px;
+  color: #f0c040;
+  font-size: 0.82rem;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  text-decoration: none;
+  transition: all 0.3s;
+}
+.portal-cta:hover {
+  background: rgba(240,192,64,0.1);
+  border-color: #f0c040;
+}
+
+/* ========== LABYRINTH GARDEN ========== */
+
+@keyframes labyrinthPulse {
+  0%, 100% { opacity: 0.06; transform: scale(1); }
+  50%       { opacity: 0.11; transform: scale(1.015); }
+}
+
+.labyrinth-section {
+  position: relative;
+  background: #0b0616;
+  min-height: 70vh;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  align-items: center;
+  gap: 0;
+  overflow: hidden;
+  padding: 7rem 0;
+}
+
+@media (max-width: 768px) {
+  .labyrinth-section {
+    grid-template-columns: 1fr;
+    padding: 5rem 0 4rem;
+  }
+}
+
+.labyrinth-spiral-bg {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  padding-left: 5%;
+  pointer-events: none;
+}
+
+.labyrinth-ring {
+  position: absolute;
+  border-radius: 50%;
+  border: 1px solid #8b5fbf;
+  left: 50px;
+  top: 50%;
+  transform: translateY(-50%);
+  animation: labyrinthPulse 6s ease-in-out infinite;
+}
+.labyrinth-ring-1 { width: 80px;  height: 80px;  margin-left: -40px;  animation-delay: 0s; }
+.labyrinth-ring-2 { width: 160px; height: 160px; margin-left: -80px;  animation-delay: 0.4s; }
+.labyrinth-ring-3 { width: 260px; height: 260px; margin-left: -130px; animation-delay: 0.8s; }
+.labyrinth-ring-4 { width: 380px; height: 380px; margin-left: -190px; animation-delay: 1.2s; }
+.labyrinth-ring-5 { width: 510px; height: 510px; margin-left: -255px; animation-delay: 1.6s; }
+.labyrinth-ring-6 { width: 660px; height: 660px; margin-left: -330px; animation-delay: 2.0s; border-color: rgba(139,95,191,0.4); }
+
+.labyrinth-center-dot {
+  position: absolute;
+  width: 10px; height: 10px;
+  border-radius: 50%;
+  background: #8b5fbf;
+  left: 50px; top: 50%;
+  transform: translate(-50%, -50%);
+  box-shadow: 0 0 12px #8b5fbf, 0 0 30px rgba(139,95,191,0.5);
+  animation: labyrinthPulse 3s ease-in-out infinite;
+}
+
+.labyrinth-content {
+  position: relative;
+  z-index: 2;
+  grid-column: 2;
+  padding: 0 3rem 0 2rem;
+}
+
+@media (max-width: 768px) {
+  .labyrinth-content {
+    grid-column: 1;
+    padding: 3rem 1.5rem 2rem;
+  }
+}
+
+.labyrinth-label {
+  color: #b48ed9 !important;
+}
+
+.labyrinth-title {
+  font-family: var(--font-display);
+  font-size: clamp(2rem, 5vw, 3.5rem);
+  font-weight: 300;
+  color: #fff;
+  letter-spacing: 0.02em;
+  margin-bottom: 1.25rem;
+  line-height: 1.15;
+}
+
+.labyrinth-desc {
+  font-family: var(--font-body);
+  font-size: 0.97rem;
+  color: rgba(255,255,255,0.68);
+  line-height: 1.9;
+  max-width: 48ch;
+  margin-bottom: 2.5rem;
+}
+
+.labyrinth-offerings {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.labyrinth-offering-card {
+  display: grid;
+  grid-template-columns: 64px 1fr;
+  gap: 0.25rem 1rem;
+  align-items: start;
+  padding: 1rem 1.25rem;
+  border: 1px solid rgba(139,95,191,0.2);
+  border-radius: 12px;
+  background: rgba(139,95,191,0.05);
+  transition: border-color 0.3s, background 0.3s;
+}
+.labyrinth-offering-card:hover {
+  border-color: rgba(139,95,191,0.4);
+  background: rgba(139,95,191,0.1);
+}
+
+.labyrinth-offering-time {
+  font-size: 0.68rem;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: #b48ed9;
+  grid-row: 1 / 3;
+  align-self: center;
+}
+.labyrinth-offering-name {
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: #fff;
+}
+.labyrinth-offering-desc {
+  font-size: 0.78rem;
+  color: rgba(255,255,255,0.52);
+  line-height: 1.5;
+}
+
 /* Store tab icon spacing */
 .store-tab { display: inline-flex; align-items: center; gap: 0.4rem; }
 .store-tab svg { flex-shrink: 0; }

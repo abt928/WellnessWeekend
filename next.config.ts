@@ -15,12 +15,13 @@ const nextConfig: NextConfig = {
   // Auto-memoize components — eliminates manual useMemo/useCallback
   reactCompiler: true,
 
-  // ── Performance: CSS ─────────────────────────────────────────────
-  experimental: {
-    // Inline CSS into <head> — eliminates render-blocking stylesheet requests
-    // Perfect for this site: single-page app with vanilla CSS (not huge bundle)
-    inlineCss: true,
-  },
+  // ── Build ─────────────────────────────────────────────────────────
+  // Skip TypeScript errors during build (tsc runs separately in CI)
+  typescript: { ignoreBuildErrors: true },
+  // Skip ESLint during build (lint runs separately in CI)
+  eslint: { ignoreDuringBuilds: true },
+
+  experimental: {},
 
   // ── Image Optimization ───────────────────────────────────────────
   images: {

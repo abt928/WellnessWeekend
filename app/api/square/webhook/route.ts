@@ -1,5 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { WebhooksHelper } from "square";
+import { getSquareClient } from "@/lib/square";
+import { neon } from "@neondatabase/serverless";
 
 export const dynamic = "force-dynamic";
 
@@ -159,6 +161,85 @@ async function fireGA4Purchase(value: number, currency: string) {
   }
 }
 
+// ─── Save order to DB + record referral ─────────────────────────────
+
+interface LineItemSummary {
+  name: string;
+  category: string;
+  quantity: number;
+  priceCents: number;
+}
+
+async function saveOrderToDB(
+  squarePaymentId: string,
+  squareOrderId: string | undefined,
+  amountCents: number,
+  currency: string,
+  customerEmail: string | undefined,
+) {
+  const dbUrl = process.env.DATABASE_URL;
+  if (!dbUrl) return { referralCode: null };
+
+  try {
+    const sql = neon(dbUrl);
+    let referralCode: string | null = null;
+    let lineItems: LineItemSummary[] = [];
+
+    // Fetch the Square order to get referenceId (referral code) and line items
+    if (squareOrderId) {
+      try {
+        const client = getSquareClient();
+        const orderRes = await client.orders.get(squareOrderId);
+        const order = orderRes.order;
+
+        // Extract referral code from referenceId (format: "ref:CODE")
+        if (order?.referenceId?.startsWith("ref:")) {
+          referralCode = order.referenceId.slice(4);
+        }
+
+        // Summarize line items
+        if (order?.lineItems) {
+          lineItems = order.lineItems.map((li) => ({
+            name: li.name || "Unknown",
+            category: li.catalogObjectId ? "item" : "custom",
+            quantity: Number(li.quantity || 1),
+            priceCents: Number(li.totalMoney?.amount || 0),
+          }));
+        }
+      } catch (e) {
+        console.error("[Webhook] Failed to fetch Square order:", e);
+      }
+    }
+
+    // Upsert the order record
+    await sql`
+      INSERT INTO orders (square_payment_id, square_order_id, amount_cents, currency, customer_email, referral_code, line_items, status)
+      VALUES (${squarePaymentId}, ${squareOrderId ?? null}, ${amountCents}, ${currency}, ${customerEmail ?? null}, ${referralCode}, ${JSON.stringify(lineItems)}, 'completed')
+      ON CONFLICT (square_payment_id) DO NOTHING
+    `;
+
+    // Record referral commission if applicable
+    if (referralCode) {
+      const affiliateRows = await sql`
+        SELECT commission_pct FROM affiliates WHERE code = ${referralCode} AND status = 'active'
+      `;
+      if (affiliateRows.length > 0) {
+        const commissionPct = affiliateRows[0].commission_pct as number;
+        const commissionCents = Math.round(amountCents * commissionPct / 100);
+        await sql`
+          INSERT INTO referral_events (affiliate_code, event_type, order_id, order_amount_cents, commission_cents, email)
+          VALUES (${referralCode}, 'purchase', ${squareOrderId ?? null}, ${amountCents}, ${commissionCents}, ${customerEmail ?? null})
+        `;
+      }
+    }
+
+    return { referralCode };
+  } catch (e) {
+    console.error("[Webhook] DB save error:", e);
+    return { referralCode: null };
+  }
+}
+
 // ─── Route Handler ───────────────────────────────────────────────────
 
 export async function POST(req: NextRequest) {
@@ -207,8 +288,9 @@ export async function POST(req: NextRequest) {
       email || "(no email)"
     );
 
-    // Fire conversion events to all 3 platforms
+    // Save to DB and fire conversion events in parallel
     await Promise.allSettled([
+      saveOrderToDB(payment.id!, payment.order_id, amountCents, currency, email),
       fireTikTokPurchase(value, currency, email),
       fireMetaPurchase(value, currency, email),
       fireGA4Purchase(value, currency),

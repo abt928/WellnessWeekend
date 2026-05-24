@@ -18,7 +18,6 @@ export async function POST(req: NextRequest) {
   try {
     const sql = neon(url);
 
-    // Create all tables if they don't exist (using TIMESTAMPTZ for proper timezone handling)
     await sql`
       CREATE TABLE IF NOT EXISTS vendors (
         id SERIAL PRIMARY KEY,
@@ -65,13 +64,11 @@ export async function POST(req: NextRequest) {
       )
     `;
 
-    // Alter existing columns from TIMESTAMP to TIMESTAMPTZ if they exist
     await sql`ALTER TABLE vendors ALTER COLUMN created_at TYPE TIMESTAMPTZ USING created_at AT TIME ZONE 'UTC'`;
     await sql`ALTER TABLE volunteers ALTER COLUMN created_at TYPE TIMESTAMPTZ USING created_at AT TIME ZONE 'UTC'`;
     await sql`ALTER TABLE newsletter ALTER COLUMN created_at TYPE TIMESTAMPTZ USING created_at AT TIME ZONE 'UTC'`;
     await sql`ALTER TABLE leads ALTER COLUMN created_at TYPE TIMESTAMPTZ USING created_at AT TIME ZONE 'UTC'`;
 
-    // Sponsors table
     await sql`
       CREATE TABLE IF NOT EXISTS sponsors (
         id SERIAL PRIMARY KEY,
@@ -88,7 +85,6 @@ export async function POST(req: NextRequest) {
       )
     `;
 
-    // Instructor waitlist table
     await sql`
       CREATE TABLE IF NOT EXISTS instructor_waitlist (
         id SERIAL PRIMARY KEY,
@@ -105,7 +101,6 @@ export async function POST(req: NextRequest) {
       )
     `;
 
-    // Affiliates table
     await sql`
       CREATE TABLE IF NOT EXISTS affiliates (
         id SERIAL PRIMARY KEY,
@@ -123,7 +118,6 @@ export async function POST(req: NextRequest) {
       )
     `;
 
-    // Referral events table
     await sql`
       CREATE TABLE IF NOT EXISTS referral_events (
         id SERIAL PRIMARY KEY,
@@ -137,9 +131,36 @@ export async function POST(req: NextRequest) {
       )
     `;
 
+    await sql`
+      CREATE TABLE IF NOT EXISTS orders (
+        id SERIAL PRIMARY KEY,
+        square_order_id VARCHAR(100) UNIQUE,
+        square_payment_id VARCHAR(100) UNIQUE,
+        amount_cents INTEGER NOT NULL,
+        currency VARCHAR(10) NOT NULL DEFAULT 'USD',
+        customer_email VARCHAR(255),
+        referral_code VARCHAR(20),
+        line_items TEXT,
+        status VARCHAR(20) NOT NULL DEFAULT 'completed',
+        created_at TIMESTAMPTZ DEFAULT NOW() NOT NULL
+      )
+    `;
+
+    await sql`
+      CREATE TABLE IF NOT EXISTS budget_items (
+        id SERIAL PRIMARY KEY,
+        type VARCHAR(20) NOT NULL,
+        category VARCHAR(100) NOT NULL,
+        description VARCHAR(500) NOT NULL,
+        amount_cents INTEGER NOT NULL,
+        notes TEXT,
+        created_at TIMESTAMPTZ DEFAULT NOW() NOT NULL
+      )
+    `;
+
     return NextResponse.json({
       success: true,
-      tables: ["vendors", "volunteers", "newsletter", "leads", "sponsors", "instructor_waitlist", "affiliates", "referral_events"],
+      tables: ["vendors", "volunteers", "newsletter", "leads", "sponsors", "instructor_waitlist", "affiliates", "referral_events", "orders", "budget_items"],
       message: "All tables verified / created.",
     });
   } catch (e) {

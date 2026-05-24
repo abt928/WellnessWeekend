@@ -32,8 +32,10 @@ export default function Navigation() {
 
       {/* Desktop nav links */}
       <ul className="nav-links">
-        <li><a href="#portal">8/8 Portal</a></li>
         <li><a href="#schedule">Schedule</a></li>
+        <li><a href="#portal">Portal</a></li>
+        <li><a href="#labyrinth">Labyrinth</a></li>
+        <li><a href="#alaska">The Land</a></li>
         <li><a href="#store">Tickets</a></li>
         <li><a href="#faq">FAQ</a></li>
       </ul>
@@ -70,9 +72,9 @@ export default function Navigation() {
               </button>
             </div>
             <ul className="mobile-menu-links">
-              <li><a href="#portal" onClick={closeMenu}>8/8 Portal</a></li>
               <li><a href="#schedule" onClick={closeMenu}>Schedule</a></li>
-              <li><a href="#experience" onClick={closeMenu}>Experience</a></li>
+              <li><a href="#portal" onClick={closeMenu}>Portal</a></li>
+              <li><a href="#labyrinth" onClick={closeMenu}>Labyrinth</a></li>
               <li><a href="#store" onClick={closeMenu}>Tickets</a></li>
               <li><a href="#gallery" onClick={closeMenu}>Gallery</a></li>
               <li><a href="#alaska" onClick={closeMenu}>The Land</a></li>

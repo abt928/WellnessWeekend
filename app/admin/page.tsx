@@ -129,6 +129,97 @@ function KPICard({ label, value, sub, highlight }: { label: string; value: strin
   );
 }
 
+// ── Revenue Chart ─────────────────────────────────────────────────────
+
+function RevenueChart({ data }: { data: DailyRevenue[] }) {
+  // Generate every calendar day in the last 30 days (local time)
+  const days: string[] = [];
+  const base = new Date();
+  for (let i = 29; i >= 0; i--) {
+    const d = new Date(base.getFullYear(), base.getMonth(), base.getDate() - i);
+    days.push(d.toISOString().slice(0, 10));
+  }
+
+  const byDay = new Map(data.map((d) => [d.day, d]));
+  const maxCents = Math.max(...data.map((d) => d.revenue_cents), 1);
+
+  const W = 700, H = 160, PL = 56, PB = 28, PT = 12;
+  const chartW = W - PL - 8;
+  const chartH = H - PB - PT;
+  const bw = chartW / days.length;
+  const gap = 2;
+  const gridColor = "rgba(255,255,255,0.06)";
+  const mutedText = "rgba(255,255,255,0.35)";
+  const labelEvery = Math.ceil(days.length / 6);
+
+  return (
+    <div style={{ background: "var(--surface-elevated)", border: "1px solid var(--line-medium)", borderRadius: "12px", padding: "1rem 1.25rem" }}>
+      <h3 style={{ fontSize: "0.75rem", color: "var(--ink-muted)", textTransform: "uppercase", letterSpacing: "0.07em", margin: "0 0 0.75rem" }}>
+        Daily Revenue · Last 30 Days
+      </h3>
+      <svg viewBox={`0 0 ${W} ${H}`} style={{ width: "100%", height: "auto", display: "block" }} aria-label="Daily revenue chart">
+        {/* Y-axis gridlines + labels */}
+        {([0, 0.25, 0.5, 0.75, 1] as const).map((t) => {
+          const y = PT + chartH * (1 - t);
+          const dollars = Math.round((maxCents * t) / 100);
+          const label = t === 0 ? "$0" : dollars >= 1000 ? `$${(dollars / 1000).toFixed(1)}k` : `$${dollars}`;
+          return (
+            <g key={t}>
+              <line x1={PL} x2={W - 8} y1={y} y2={y} stroke={gridColor} strokeWidth="1" />
+              <text x={PL - 6} y={y + 4} textAnchor="end" fontSize="9" fill={mutedText}>{label}</text>
+            </g>
+          );
+        })}
+
+        {/* Bars */}
+        {days.map((day, i) => {
+          const row = byDay.get(day);
+          const cents = row?.revenue_cents ?? 0;
+          const orders = row?.orders ?? 0;
+          const barH = cents > 0 ? Math.max((cents / maxCents) * chartH, 3) : 0;
+          const x = PL + i * bw + gap / 2;
+          const w = bw - gap;
+          const y = PT + chartH - barH;
+          const showLabel = i % labelEvery === 0 || i === days.length - 1;
+          const [yr, mo, dy] = day.split("-").map(Number);
+          const dateLabel = new Date(yr, mo - 1, dy).toLocaleDateString("en-US", { month: "short", day: "numeric" });
+          const tooltip = cents > 0
+            ? `${dateLabel}: $${(cents / 100).toLocaleString("en-US", { minimumFractionDigits: 2 })} · ${orders} order${orders === 1 ? "" : "s"}`
+            : `${dateLabel}: No orders`;
+
+          return (
+            <g key={day}>
+              <rect
+                x={x}
+                y={cents > 0 ? y : PT + chartH - 1}
+                width={Math.max(w, 1)}
+                height={cents > 0 ? barH : 1}
+                fill={cents > 0 ? "#3DB8AF" : "rgba(61,184,175,0.12)"}
+                rx="2"
+                opacity={cents > 0 ? 0.85 : 0.5}
+              >
+                <title>{tooltip}</title>
+              </rect>
+              {showLabel && (
+                <text x={x + w / 2} y={H - 4} textAnchor="middle" fontSize="8.5" fill={mutedText}>
+                  {dateLabel}
+                </text>
+              )}
+            </g>
+          );
+        })}
+
+        {/* Empty state */}
+        {data.length === 0 && (
+          <text x={W / 2} y={H / 2 - 4} textAnchor="middle" dominantBaseline="middle" fontSize="12" fill={mutedText}>
+            No orders yet — chart will populate automatically
+          </text>
+        )}
+      </svg>
+    </div>
+  );
+}
+
 // ── Dashboard Tab ─────────────────────────────────────────────────────
 
 function DashboardTab() {
@@ -224,6 +315,8 @@ function DashboardTab() {
               <KPICard label="Affiliate Orders" value={String(sales.kpi.affiliateOrders)} sub={`${usd(sales.kpi.affiliateRevenueCents)} revenue`} />
               <KPICard label="Commissions Owed" value={usd(sales.kpi.totalCommissionCents)} />
             </div>
+
+            <RevenueChart data={sales.dailyRevenue} />
 
             {/* Affiliate leaderboard */}
             {sales.leaderboard.length > 0 && (

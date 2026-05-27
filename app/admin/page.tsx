@@ -118,7 +118,7 @@ function KPICard({ label, value, sub, highlight }: { label: string; value: strin
       background: "var(--surface-elevated)", border: "1px solid var(--line-medium)",
       borderRadius: "12px", padding: "1.25rem 1.5rem", minWidth: "160px",
     }}>
-      <div style={{ fontSize: "1.6rem", fontWeight: 700, color: highlight ? "#3DB8AF" : "var(--ink)", fontFamily: "var(--font-display)" }}>
+      <div style={{ fontSize: "1.6rem", fontWeight: 700, color: highlight ? "#2a9d8f" : "var(--ink)", fontFamily: "var(--font-display)" }}>
         {value}
       </div>
       <div style={{ fontSize: "0.72rem", color: "var(--ink-muted)", textTransform: "uppercase", letterSpacing: "0.07em", marginTop: "0.3rem" }}>
@@ -148,8 +148,8 @@ function RevenueChart({ data }: { data: DailyRevenue[] }) {
   const chartH = H - PB - PT;
   const bw = chartW / days.length;
   const gap = 2;
-  const gridColor = "rgba(255,255,255,0.06)";
-  const mutedText = "rgba(255,255,255,0.35)";
+  const gridColor = "rgba(0,0,0,0.07)";
+  const mutedText = "rgba(0,0,0,0.38)";
   const labelEvery = Math.ceil(days.length / 6);
 
   return (
@@ -194,7 +194,7 @@ function RevenueChart({ data }: { data: DailyRevenue[] }) {
                 y={cents > 0 ? y : PT + chartH - 1}
                 width={Math.max(w, 1)}
                 height={cents > 0 ? barH : 1}
-                fill={cents > 0 ? "#3DB8AF" : "rgba(61,184,175,0.12)"}
+                fill={cents > 0 ? "#2a9d8f" : "rgba(42,157,143,0.12)"}
                 rx="2"
                 opacity={cents > 0 ? 0.85 : 0.5}
               >

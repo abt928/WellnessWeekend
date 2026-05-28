@@ -1611,6 +1611,15 @@ textarea:focus-visible {
   letter-spacing: 0.06em;
   text-transform: uppercase;
 }
+.partner-logo-text {
+  font-family: var(--font-display);
+  font-size: clamp(1.1rem, 2.5vw, 1.5rem);
+  font-weight: 400;
+  letter-spacing: 0.06em;
+  color: var(--forest);
+  text-align: center;
+  line-height: 1.2;
+}
 
 /* ========== LION'S GATE PORTAL ========== */
 
@@ -2780,18 +2789,18 @@ textarea:focus-visible {
 /* ════════════════════════════════════════════════════════════════ */
 
 :root {
-  --surface-page:     oklch(13% 0.030 290);
-  --surface-elevated: oklch(18% 0.035 290);
-  --surface-raised:   oklch(23% 0.040 290);
-  --ink:              #F0EBE0;
-  --ink-muted:        rgba(240, 235, 224, 0.90);
-  --ink-faint:        rgba(240, 235, 224, 0.75);
-  --line-subtle:      rgba(240, 235, 224, 0.10);
-  --line-medium:      rgba(240, 235, 224, 0.18);
-  /* All green text variables become white on dark canvas */
-  --forest:           #F0EBE0;
-  --sage:             rgba(240, 235, 224, 0.75);
-  --charcoal:         #F0EBE0;
+  --surface-page:     #F7F3EC;
+  --surface-elevated: #FEFCF8;
+  --surface-raised:   #FFFFFF;
+  --ink:              #2C2C2A;
+  --ink-muted:        rgba(44, 44, 42, 0.65);
+  --ink-faint:        rgba(44, 44, 42, 0.42);
+  --line-subtle:      rgba(44, 44, 42, 0.07);
+  --line-medium:      rgba(44, 44, 42, 0.13);
+  /* Restore original brand tokens */
+  --forest:           #243028;
+  --sage:             #6B7F60;
+  --charcoal:         #333533;
 }
 
 body {
@@ -2861,7 +2870,7 @@ body {
 }
 .track-pill.active {
   background: var(--pill-color, var(--ink)); color: white; border-color: var(--pill-color, var(--ink));
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.12);
 }
 .schedule-day-btn {
   border-color: var(--line-medium); color: var(--ink-muted);
@@ -2880,7 +2889,7 @@ body {
 }
 .family-day-card:hover {
   background: var(--surface-raised);
-  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.3);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.08);
 }
 .family-day-time {
   font-size: 0.7rem; letter-spacing: 0.16em; text-transform: uppercase;
@@ -2914,7 +2923,7 @@ body {
 .practitioner-card:hover {
   background: var(--surface-raised);
   border-color: var(--line-medium);
-  box-shadow: 0 18px 50px rgba(0, 0, 0, 0.4);
+  box-shadow: 0 18px 50px rgba(0, 0, 0, 0.08);
 }
 
 .involve-title { color: var(--ink); }
@@ -3009,7 +3018,7 @@ body {
   background: var(--surface-elevated);
   border: 1px solid var(--line-medium);
   color: var(--ink);
-  box-shadow: 0 -8px 30px rgba(0, 0, 0, 0.4);
+  box-shadow: 0 -8px 30px rgba(0, 0, 0, 0.10);
 }
 .cart-overlay { background: rgba(0, 0, 0, 0.6); }
 .cart-drawer { background: var(--surface-elevated); color: var(--ink); }
@@ -3057,10 +3066,10 @@ body {
   height: 1.1rem;
   margin-left: 0.4rem;
   padding: 0;
-  border: 1px solid rgba(240, 235, 224, 0.3);
+  border: 1px solid rgba(44, 44, 42, 0.22);
   border-radius: 50%;
   background: transparent;
-  color: rgba(240, 235, 224, 0.55);
+  color: rgba(44, 44, 42, 0.45);
   font-size: 0.65rem;
   font-weight: 600;
   font-family: var(--font-body);
@@ -3094,7 +3103,7 @@ body {
   letter-spacing: 0;
   text-transform: none;
   font-weight: 400;
-  box-shadow: 0 14px 40px rgba(0, 0, 0, 0.4);
+  box-shadow: 0 14px 40px rgba(0, 0, 0, 0.10);
   white-space: normal;
   text-wrap: pretty;
 }

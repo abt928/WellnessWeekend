@@ -9,6 +9,7 @@ import Store from "@/components/Store";
 import Gallery from "@/components/Gallery";
 import FloatingActions from "@/components/FloatingActions";
 import ConversionNudges from "@/components/ConversionNudges";
+import PartnerCard from "@/components/PartnerCard";
 
 /* ── static data ── */
 const partners = [
@@ -236,18 +237,7 @@ export default function Home() {
         <Reveal>
           <div className="partner-grid">
             {partners.map((p) => (
-              <div className="partner-card partner-card-logo" key={p.name}>
-                <div className="partner-logo-img-wrap">
-                  <Image
-                    src={p.logo}
-                    alt={p.name}
-                    width={p.logoWidth}
-                    height={p.logoHeight}
-                    style={{ objectFit: "contain", width: "100%", height: "100%" }}
-                  />
-                </div>
-                <div className="partner-role">{p.role}</div>
-              </div>
+              <PartnerCard key={p.name} {...p} />
             ))}
           </div>
         </Reveal>

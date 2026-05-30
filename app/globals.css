@@ -3048,8 +3048,8 @@ body {
 .lead-capture-title { color: var(--ink); }
 .lead-capture-desc { color: var(--ink-muted); }
 
-/* About-grid stat-line should pop slightly on dark */
-.about-stats { color: var(--gold-light); }
+/* About-grid stat-line */
+.about-stats { color: var(--sage); }
 
 /* Modals stay light — they're focused task surfaces. No override needed. */
 

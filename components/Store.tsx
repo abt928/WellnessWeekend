@@ -62,6 +62,11 @@ export default function Store() {
   const [cart, setCart] = useState<CartEntry[]>(readInitialCart);
   const [cartOpen, setCartOpen] = useState(false);
   const [checkingOut, setCheckingOut] = useState(false);
+  const [pendingRedemption, setPendingRedemption] = useState<{
+    id: number;
+    rewardType: string;
+    discountCents: number;
+  } | null>(null);
 
   const [error, setError] = useState<string | null>(null);
 
@@ -130,6 +135,25 @@ export default function Store() {
     window.addEventListener("open-cart", handler);
     return () => window.removeEventListener("open-cart", handler);
   }, []);
+
+  // Check for pending member redemption whenever cart opens
+  useEffect(() => {
+    if (!cartOpen) return;
+    fetch("/api/members/redeem")
+      .then((r) => (r.ok ? r.json() : null))
+      .then((data) => {
+        if (data?.pending) {
+          setPendingRedemption({
+            id: data.id,
+            rewardType: data.rewardType,
+            discountCents: data.discountCents,
+          });
+        } else {
+          setPendingRedemption(null);
+        }
+      })
+      .catch(() => setPendingRedemption(null));
+  }, [cartOpen]);
 
   // Cart drawer a11y: focus trap + escape-to-close
   const cartDrawerRef = useRef<HTMLDivElement>(null);
@@ -218,6 +242,14 @@ export default function Store() {
       timestamp: Date.now(),
     }));
 
+    // Read referral code from localStorage
+    let referralCode: string | undefined;
+    try {
+      referralCode = localStorage.getItem("ww-ref") || undefined;
+    } catch {
+      // ignore
+    }
+
     try {
       const res = await fetch("/api/square/checkout", {
         method: "POST",
@@ -229,6 +261,8 @@ export default function Store() {
             name: c.name,
           })),
           returnUrl: window.location.origin,
+          ...(referralCode ? { referralCode } : {}),
+          ...(pendingRedemption ? { redemptionId: pendingRedemption.id } : {}),
         }),
       });
       const data = await res.json();
@@ -385,6 +419,28 @@ export default function Store() {
                       {formatPrice(cartTotal)}
                     </span>
                   </div>
+                  {pendingRedemption && pendingRedemption.discountCents > 0 && (
+                    <div style={{
+                      display: "flex", justifyContent: "space-between", alignItems: "center",
+                      padding: "0.6rem 0.75rem", marginBottom: "0.75rem",
+                      background: "rgba(139,95,191,0.08)", borderRadius: "8px",
+                      border: "1px solid rgba(139,95,191,0.2)",
+                      fontSize: "0.875rem", color: "var(--aurora)",
+                    }}>
+                      <span>Points discount applied</span>
+                      <span style={{ fontWeight: 600 }}>-{formatPrice(pendingRedemption.discountCents)}</span>
+                    </div>
+                  )}
+                  {pendingRedemption && pendingRedemption.discountCents === 0 && (
+                    <div style={{
+                      padding: "0.6rem 0.75rem", marginBottom: "0.75rem",
+                      background: "rgba(139,95,191,0.08)", borderRadius: "8px",
+                      border: "1px solid rgba(139,95,191,0.2)",
+                      fontSize: "0.875rem", color: "var(--aurora)", textAlign: "center",
+                    }}>
+                      {pendingRedemption.rewardType === "day-pass" ? "Day Pass" : "Weekend Pass"} redemption pending — fulfilled after checkout
+                    </div>
+                  )}
                   <button
                     className="cart-checkout-btn"
                     onClick={handleCheckout}

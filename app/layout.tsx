@@ -4,6 +4,7 @@ import Script from "next/script";
 import { Analytics } from "@vercel/analytics/next";
 import { SpeedInsights } from "@vercel/speed-insights/next";
 import ClarityTracker from "@/components/ClarityTracker";
+import RefCapture from "@/components/RefCapture";
 import "./globals.css";
 
 const spectral = Spectral({
@@ -103,6 +104,7 @@ export default function RootLayout({
     >
       <body>
         {children}
+        <RefCapture />
         <ClarityTracker />
 
         {/* Schema.org JSON-LD for Meta Pixel Automatic Microdata (Event & Ticketing) */}

@@ -2439,6 +2439,47 @@ textarea:focus-visible {
   font-style: italic;
 }
 
+.admin-detail-panel {
+  margin: 0 1.5rem 1.5rem;
+  background: #ffffff;
+  border: 1px solid #dddad5;
+  border-radius: 12px;
+  overflow: hidden;
+}
+.admin-detail-header {
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 0.85rem 1.25rem;
+  background: #f4f3f0;
+  border-bottom: 1px solid #e2e0db;
+}
+.admin-detail-title {
+  font-weight: 600; font-size: 0.9rem; color: #2c2c2a;
+}
+.admin-detail-close {
+  background: none; border: none; cursor: pointer;
+  font-size: 0.75rem; color: #9d9d9a; padding: 0.2rem 0.5rem;
+  border-radius: 4px;
+}
+.admin-detail-close:hover { background: rgba(0,0,0,0.05); color: #3a3a37; }
+.admin-detail-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+  gap: 0; padding: 0;
+}
+.admin-detail-field {
+  padding: 0.9rem 1.25rem;
+  border-bottom: 1px solid #eeece8;
+  border-right: 1px solid #eeece8;
+}
+.admin-detail-label {
+  font-size: 0.68rem; letter-spacing: 0.1em; text-transform: uppercase;
+  color: #9d9d9a; font-weight: 600; margin-bottom: 0.3rem;
+}
+.admin-detail-value {
+  font-size: 0.875rem; color: #2c2c2a; line-height: 1.55;
+  white-space: pre-wrap; word-break: break-word;
+}
+
 /* ========== MOBILE NAVIGATION (base styles) ========== */
 .nav-hamburger {
   display: none;

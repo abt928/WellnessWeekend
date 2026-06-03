@@ -20,7 +20,7 @@ const ALL_TABS: TabConfig[] = [
   { key: "newsletter",          label: "Newsletter",   columns: ["id","email","created_at"] },
   { key: "sponsors",            label: "Sponsors",     columns: ["id","name","email","company","budget_range","interests","goals","created_at"] },
   { key: "vendors",             label: "Vendors",      columns: ["id","name","email","business","category","description","created_at"] },
-  { key: "volunteers",          label: "Volunteers",   columns: ["id","name","email","phone","interest","availability","created_at"] },
+  { key: "volunteers",          label: "Volunteers",   columns: ["id","name","email","phone","interest","experience","availability","created_at"] },
   { key: "instructor_waitlist", label: "Instructors",  columns: ["id","name","email","phone","modality","years_teaching","interested_in_2026","interested_in_2027","offering","created_at"] },
   { key: "affiliates",          label: "Affiliates",   columns: ["id","name","email","code","company","commission_pct","status","notes","created_at"] },
   { key: "referral_events",     label: "Referrals",    columns: ["id","affiliate_code","event_type","order_id","order_amount_cents","commission_cents","created_at"] },
@@ -762,6 +762,7 @@ export default function AdminPage() {
   const [search, setSearch] = useState("");
   const [loading, setLoading] = useState(false);
   const [dbSetupStatus, setDbSetupStatus] = useState<string | null>(null);
+  const [selectedRow, setSelectedRow] = useState<Record<string, unknown> | null>(null);
 
   // Affiliate inline editing
   const [affiliateEdits, setAffiliateEdits] = useState<Record<number, { status?: string; commissionPct?: string; notes?: string }>>({});
@@ -924,7 +925,7 @@ export default function AdminPage() {
         {canSeeDashboard && (
           <button
             className={`admin-tab${activeTab === "dashboard" ? " active" : ""}`}
-            onClick={() => { setActiveTab("dashboard"); setSearch(""); }}
+            onClick={() => { setActiveTab("dashboard"); setSearch(""); setSelectedRow(null); }}
           >
             Dashboard
           </button>
@@ -933,20 +934,20 @@ export default function AdminPage() {
           <button
             key={tab.key}
             className={`admin-tab${activeTab === tab.key ? " active" : ""}`}
-            onClick={() => { setActiveTab(tab.key); setSearch(""); }}
+            onClick={() => { setActiveTab(tab.key); setSearch(""); setSelectedRow(null); }}
           >
             {tab.label}
           </button>
         ))}
         <button
           className={`admin-tab${activeTab === "guestlist" ? " active" : ""}`}
-          onClick={() => { setActiveTab("guestlist"); setSearch(""); }}
+          onClick={() => { setActiveTab("guestlist"); setSearch(""); setSelectedRow(null); }}
         >
           Guest List
         </button>
         <button
           className={`admin-tab${activeTab === "addons" ? " active" : ""}`}
-          onClick={() => { setActiveTab("addons"); setSearch(""); }}
+          onClick={() => { setActiveTab("addons"); setSearch(""); setSelectedRow(null); }}
         >
           Add-Ons
         </button>
@@ -1003,13 +1004,18 @@ export default function AdminPage() {
                 <tbody>
                   {rows.map((row, i) => {
                     const rowId = Number(row.id);
+                    const isSelected = selectedRow === row;
                     return (
-                      <tr key={i}>
+                      <tr
+                        key={i}
+                        onClick={() => setSelectedRow(isSelected ? null : row)}
+                        style={{ cursor: "pointer", background: isSelected ? "rgba(139,95,191,0.07)" : undefined }}
+                      >
                         {activeTabConfig.columns.map((col) => {
                           const val = row[col];
                           if (activeTab === "affiliates" && col === "status") {
                             return (
-                              <td key={col}>
+                              <td key={col} onClick={(e) => e.stopPropagation()}>
                                 <select
                                   defaultValue={String(val ?? "pending")}
                                   onChange={(e) => setAffiliateEdits((a) => ({ ...a, [rowId]: { ...a[rowId], status: e.target.value } }))}
@@ -1024,7 +1030,7 @@ export default function AdminPage() {
                           }
                           if (activeTab === "affiliates" && col === "commission_pct") {
                             return (
-                              <td key={col}>
+                              <td key={col} onClick={(e) => e.stopPropagation()}>
                                 <input
                                   type="number" defaultValue={String(val ?? 10)} min={0} max={100}
                                   onChange={(e) => setAffiliateEdits((a) => ({ ...a, [rowId]: { ...a[rowId], commissionPct: e.target.value } }))}
@@ -1036,7 +1042,7 @@ export default function AdminPage() {
                           }
                           if (activeTab === "affiliates" && col === "notes") {
                             return (
-                              <td key={col}>
+                              <td key={col} onClick={(e) => e.stopPropagation()}>
                                 <input
                                   type="text" defaultValue={String(val ?? "")} placeholder="Internal notes"
                                   onChange={(e) => setAffiliateEdits((a) => ({ ...a, [rowId]: { ...a[rowId], notes: e.target.value } }))}
@@ -1050,7 +1056,7 @@ export default function AdminPage() {
                           );
                         })}
                         {activeTab === "affiliates" && (
-                          <td>
+                          <td onClick={(e) => e.stopPropagation()}>
                             <button
                               onClick={() => saveAffiliateEdits(rowId)}
                               disabled={affiliateSaving === rowId}
@@ -1067,6 +1073,35 @@ export default function AdminPage() {
               </table>
             ) : null}
           </div>
+
+          {/* Row detail panel */}
+          {selectedRow && activeTabConfig && (
+            <div className="admin-detail-panel">
+              <div className="admin-detail-header">
+                <span className="admin-detail-title">
+                  {String(selectedRow.name ?? selectedRow.email ?? `Record #${selectedRow.id}`)}
+                </span>
+                <button className="admin-detail-close" onClick={() => setSelectedRow(null)}>✕ Close</button>
+              </div>
+              <div className="admin-detail-grid">
+                {activeTabConfig.columns.filter(col => col !== "id" && col !== "created_at").map((col) => {
+                  const val = selectedRow[col];
+                  const display = col === "created_at" ? fmtDate(val) : String(val ?? "—");
+                  if (!display || display === "—") return null;
+                  return (
+                    <div key={col} className="admin-detail-field">
+                      <div className="admin-detail-label">{col.replace(/_/g, " ")}</div>
+                      <div className="admin-detail-value">{display}</div>
+                    </div>
+                  );
+                })}
+                <div className="admin-detail-field">
+                  <div className="admin-detail-label">submitted</div>
+                  <div className="admin-detail-value">{fmtDate(selectedRow.created_at)}</div>
+                </div>
+              </div>
+            </div>
+          )}
         </>
       )}
     </div>

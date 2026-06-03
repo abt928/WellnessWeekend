@@ -232,6 +232,8 @@ function DashboardTab() {
   const [addingBudget, setAddingBudget] = useState(false);
   const [budgetForm, setBudgetForm] = useState({ type: "expense", category: "", description: "", amount: "", notes: "" });
   const [budgetSaving, setBudgetSaving] = useState(false);
+  const [syncing, setSyncing] = useState(false);
+  const [syncStatus, setSyncStatus] = useState<string | null>(null);
 
   const fetchSales = useCallback(async () => {
     setSalesLoading(true);
@@ -242,6 +244,25 @@ function DashboardTab() {
       setSalesLoading(false);
     }
   }, []);
+
+  const syncOrders = async () => {
+    setSyncing(true);
+    setSyncStatus(null);
+    try {
+      const res = await fetch("/api/admin/sync-orders", { method: "POST" });
+      const data = await res.json();
+      if (res.ok) {
+        setSyncStatus(`Synced ${data.synced} new order${data.synced !== 1 ? "s" : ""} (${data.skipped} already up to date)`);
+        fetchSales();
+      } else {
+        setSyncStatus(`Error: ${data.error}`);
+      }
+    } catch {
+      setSyncStatus("Sync failed — check console");
+    } finally {
+      setSyncing(false);
+    }
+  };
 
   const fetchBudget = useCallback(async () => {
     setBudgetLoading(true);
@@ -302,9 +323,15 @@ function DashboardTab() {
           <h2 style={{ fontSize: "0.8rem", fontWeight: 600, color: "var(--ink-muted)", textTransform: "uppercase", letterSpacing: "0.08em", margin: 0 }}>
             Live Sales Ledger
           </h2>
-          <button onClick={fetchSales} style={{ fontSize: "0.78rem", color: "var(--psyche-cyan)", background: "none", border: "none", cursor: "pointer", padding: 0 }}>
-            Refresh
-          </button>
+          <div style={{ display: "flex", alignItems: "center", gap: "1rem" }}>
+            {syncStatus && <span style={{ fontSize: "0.75rem", color: syncing ? "var(--ink-muted)" : syncStatus.startsWith("Error") ? "#c0392b" : "#2a9d8f" }}>{syncStatus}</span>}
+            <button onClick={syncOrders} disabled={syncing} style={{ fontSize: "0.78rem", color: "#2a9d8f", background: "none", border: "1px solid rgba(42,157,143,0.3)", borderRadius: "6px", cursor: syncing ? "default" : "pointer", padding: "0.25rem 0.75rem", opacity: syncing ? 0.6 : 1 }}>
+              {syncing ? "Syncing…" : "Sync from Square"}
+            </button>
+            <button onClick={fetchSales} style={{ fontSize: "0.78rem", color: "var(--ink-muted)", background: "none", border: "none", cursor: "pointer", padding: 0 }}>
+              Refresh
+            </button>
+          </div>
         </div>
         {salesLoading ? (
           <div style={{ color: "var(--ink-muted)", fontSize: "0.85rem" }}>Loading…</div>
@@ -602,14 +629,18 @@ function GuestListTab() {
         {filtered.length === 0 ? (
           <div className="admin-empty">No guests match your search</div>
         ) : (
-          <table className="admin-table">
+          <table className="admin-table sheet-table">
             <thead>
-              <tr>{headers.map((h) => <th key={h}>{h}</th>)}</tr>
+              <tr>{headers.map((h, i) => <th key={i}>{h}</th>)}</tr>
             </thead>
             <tbody>
               {filtered.map((row, i) => (
                 <tr key={i}>
-                  {headers.map((h) => <td key={h}>{row[h] || "—"}</td>)}
+                  {headers.map((h, j) => (
+                    <td key={j} title={row[h] || ""}>
+                      <span className="cell-truncate">{row[h] || "—"}</span>
+                    </td>
+                  ))}
                 </tr>
               ))}
             </tbody>
@@ -693,14 +724,18 @@ function AddonsTab() {
         {filtered.length === 0 ? (
           <div className="admin-empty">No rows match your search</div>
         ) : (
-          <table className="admin-table">
+          <table className="admin-table sheet-table">
             <thead>
-              <tr>{headers.map((h) => <th key={h}>{h}</th>)}</tr>
+              <tr>{headers.map((h, i) => <th key={i}>{h}</th>)}</tr>
             </thead>
             <tbody>
               {filtered.map((row, i) => (
                 <tr key={i}>
-                  {headers.map((h) => <td key={h}>{row[h] || "—"}</td>)}
+                  {headers.map((h, j) => (
+                    <td key={j} title={row[h] || ""}>
+                      <span className="cell-truncate">{row[h] || "—"}</span>
+                    </td>
+                  ))}
                 </tr>
               ))}
             </tbody>

@@ -25,11 +25,25 @@ function parseCSV(text: string): { headers: string[]; rows: Record<string, strin
     return cols;
   };
 
-  const headers = parseRow(lines[0]);
+  const rawHeaders = parseRow(lines[0]);
+
+  // Deduplicate and remove blank headers
+  const seen = new Map<string, number>();
+  const headers: string[] = [];
+  const headerIndices: number[] = [];
+  rawHeaders.forEach((h, i) => {
+    const key = h.trim();
+    if (!key) return; // skip blank columns
+    const count = (seen.get(key) ?? 0) + 1;
+    seen.set(key, count);
+    headers.push(count === 1 ? key : `${key} ${count}`);
+    headerIndices.push(i);
+  });
+
   const rows = lines.slice(1).map((line) => {
     const vals = parseRow(line);
     const obj: Record<string, string> = {};
-    headers.forEach((h, i) => { obj[h] = vals[i] ?? ""; });
+    headers.forEach((h, pos) => { obj[h] = (vals[headerIndices[pos]] ?? "").trim(); });
     return obj;
   });
 

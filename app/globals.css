@@ -2426,6 +2426,14 @@ textarea:focus-visible {
 }
 .admin-table tr:hover td { background: rgba(139,95,191,0.03); }
 
+.admin-table.sheet-table { table-layout: fixed; }
+.admin-table.sheet-table th { width: 160px; min-width: 80px; max-width: 220px; }
+.admin-table.sheet-table td { padding: 0.65rem 1rem; }
+.cell-truncate {
+  display: block; max-width: 200px;
+  overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+}
+
 .admin-loading, .admin-empty {
   text-align: center; padding: 3rem; color: #b0aead;
   font-style: italic;

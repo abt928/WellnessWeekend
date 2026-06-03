@@ -96,10 +96,10 @@ const days: ScheduleBlock[] = [
   },
 ];
 
-const familyDay: { event: string; detail?: string; venue: Venue; limited?: boolean }[] = [
-  { event: "Paddleboard for Kids",                                        venue: "lake",    limited: true },
-  { event: "Arts & Crafts",             detail: "Needlefelting",         venue: "outdoor"                },
-  { event: "Crystal Scavenger Hunt",                                      venue: "labyrinth"              },
+const FAMILY_DAY_ACTIVITIES = [
+  "Paddleboard for Kids (limited spots)",
+  "Arts & Crafts · Needlefelting",
+  "Crystal Scavenger Hunt",
 ];
 
 const DAY_KEYS = ["friday", "saturday", "sunday"] as const;
@@ -212,20 +212,25 @@ export default function Schedule() {
             <LeafIcon size={22} color="#7C9070" /> Sunday Family Day
           </h3>
           <p className="family-day-subtitle">Wellness for All Ages · All Proceeds to Nonprofits</p>
-          <div className="family-day-grid">
-            {familyDay.map((e, i) => (
-              <div className="family-day-card" key={i}>
-                <div className="family-day-name">
-                  <span className="schedule-track-icon">{venueMeta[e.venue].icon}</span>
-                  {e.event}
-                  {e.limited && (
-                    <a href="#store" className="schedule-limited">Limited · Book ahead</a>
-                  )}
-                </div>
-                {e.detail && <div className="family-day-detail">{e.detail}</div>}
-              </div>
+          <p className="family-day-mission">
+            The next generation of healers, leaders, and earth stewards is already here. Sunday Family Day
+            is our commitment to making wellness education accessible to children and families — planting
+            seeds of breath, body awareness, and connection to the natural world that will carry forward
+            long after the festival ends.
+          </p>
+          <p className="family-day-mission" style={{ marginTop: "0.75rem" }}>
+            Activities this year include{" "}
+            {FAMILY_DAY_ACTIVITIES.map((a, i) => (
+              <span key={i}>
+                <strong>{a}</strong>
+                {i < FAMILY_DAY_ACTIVITIES.length - 2 ? ", " : i === FAMILY_DAY_ACTIVITIES.length - 2 ? ", and " : ""}
+              </span>
             ))}
-          </div>
+            {" "}— with more to be announced as we get closer to August.
+          </p>
+          <p className="family-day-subtitle" style={{ marginTop: "1rem", opacity: 0.7 }}>
+            All Family Day proceeds support youth wellness nonprofits in the Matanuska-Susitna Valley.
+          </p>
         </div>
       )}
     </section>

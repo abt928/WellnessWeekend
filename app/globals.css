@@ -827,7 +827,11 @@ textarea:focus-visible {
 .family-day-title { font-size: 1.3rem; text-align: center; color: var(--forest); margin-bottom: 0.25rem; }
 .family-day-subtitle {
   text-align: center; font-size: 0.8rem; color: var(--sage);
-  letter-spacing: 0.06em; margin-bottom: 1.5rem;
+  letter-spacing: 0.06em; margin-bottom: 1rem;
+}
+.family-day-mission {
+  font-size: 0.97rem; color: var(--ink-muted); line-height: 1.75;
+  max-width: 58ch; margin: 0 auto; text-align: center;
 }
 .family-day-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 1rem; }
 .family-day-card {

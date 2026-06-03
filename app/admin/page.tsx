@@ -558,6 +558,7 @@ function GuestListTab() {
   const [error, setError] = useState<string | null>(null);
   const [needsSetup, setNeedsSetup] = useState(false);
   const [search, setSearch] = useState("");
+  const [selectedGuest, setSelectedGuest] = useState<Record<string, string> | null>(null);
 
   useEffect(() => {
     fetch("/api/admin/guestlist")
@@ -570,6 +571,45 @@ function GuestListTab() {
       .catch(() => setError("Failed to load guest list"))
       .finally(() => setLoading(false));
   }, []);
+
+  // ── Column detection helpers ──────────────────────────────────────────
+
+  const nameCol = headers.find(h => /^(full.?name|name|first.?name|attendee|buyer|customer)/i.test(h)) ?? headers[0];
+  const emailCol = headers.find(h => /email/i.test(h));
+  const phoneCol = headers.find(h => /phone|mobile/i.test(h));
+
+  const getPassType = (row: Record<string, string>): string | null => {
+    // Check columns whose name suggests a ticket/pass/product field
+    const passCol = headers.find(h => /pass.?type|ticket.?type|product.?name|item.?name|ticket|product/i.test(h));
+    if (passCol && row[passCol]) return row[passCol];
+    // Scan all values for known pass names
+    for (const h of headers) {
+      const v = row[h];
+      if (v && /(day pass|earth pass|sanctuary pass|weekend pass)/i.test(v)) return v;
+    }
+    return null;
+  };
+
+  const getAddons = (row: Record<string, string>): { label: string; value: string }[] => {
+    const addonCols = headers.filter(h =>
+      /add.?on|aerial|paddleboard|massage|sauna|workshop|upgrade/i.test(h)
+    );
+    return addonCols
+      .filter(h => {
+        const v = row[h];
+        return v && v !== "—" && v !== "0" && !/^(no|false|n\/a|none)$/i.test(v);
+      })
+      .map(h => ({ label: h, value: row[h] }));
+  };
+
+  const isReturning = (row: Record<string, string>): boolean => {
+    const col = headers.find(h => /return|previous|past|prior|repeat/i.test(h));
+    if (!col) return false;
+    const v = row[col]?.toLowerCase().trim();
+    return v === "yes" || v === "true" || v === "1" || v === "returning" || v === "y";
+  };
+
+  // ── Data helpers ───────────────────────────────────────────────────────
 
   const filtered = search
     ? rows.filter((row) => Object.values(row).some((v) => v.toLowerCase().includes(search.toLowerCase())))
@@ -586,6 +626,15 @@ function GuestListTab() {
     a.href = URL.createObjectURL(blob);
     a.download = `guest-list-${new Date().toISOString().slice(0, 10)}.csv`;
     a.click();
+  };
+
+  // ── Pass type badge colour ─────────────────────────────────────────────
+
+  const passColor = (pass: string) => {
+    if (/sanctuary/i.test(pass)) return { bg: "rgba(139,95,191,0.12)", color: "#8B5FBF" };
+    if (/earth/i.test(pass))     return { bg: "rgba(124,144,112,0.15)", color: "#5a7050" };
+    if (/day/i.test(pass))       return { bg: "rgba(61,184,175,0.12)", color: "#2a9d8f" };
+    return { bg: "rgba(0,0,0,0.06)", color: "#555" };
   };
 
   if (loading) return <div className="admin-loading">Loading guest list…</div>;
@@ -618,13 +667,14 @@ function GuestListTab() {
           <input
             type="text" value={search}
             onChange={(e) => setSearch(e.target.value)}
-            placeholder="Search name, email, status…" className="admin-search"
+            placeholder="Search name, email, pass type…" className="admin-search"
           />
         </div>
         <div className="admin-toolbar-right">
           <button onClick={exportCSV} className="admin-export-btn" disabled={rows.length === 0}>Export CSV</button>
         </div>
       </div>
+
       <div className="admin-table-wrap">
         {filtered.length === 0 ? (
           <div className="admin-empty">No guests match your search</div>
@@ -634,19 +684,117 @@ function GuestListTab() {
               <tr>{headers.map((h, i) => <th key={i}>{h}</th>)}</tr>
             </thead>
             <tbody>
-              {filtered.map((row, i) => (
-                <tr key={i}>
-                  {headers.map((h, j) => (
-                    <td key={j} title={row[h] || ""}>
-                      <span className="cell-truncate">{row[h] || "—"}</span>
-                    </td>
-                  ))}
-                </tr>
-              ))}
+              {filtered.map((row, i) => {
+                const returning = isReturning(row);
+                const pass = getPassType(row);
+                const isSelected = selectedGuest === row;
+                return (
+                  <tr
+                    key={i}
+                    onClick={() => setSelectedGuest(isSelected ? null : row)}
+                    style={{ cursor: "pointer", background: isSelected ? "rgba(139,95,191,0.07)" : undefined }}
+                  >
+                    {headers.map((h, j) => {
+                      const isNameCol = h === nameCol;
+                      const isPassCol = pass !== null && (
+                        headers.find(hh => /pass.?type|ticket.?type|product|item.?name|ticket/i.test(hh)) === h
+                      );
+                      return (
+                        <td key={j} title={row[h] || ""}>
+                          <span className="cell-truncate" style={{ display: "flex", alignItems: "center", gap: "0.35rem" }}>
+                            {isNameCol && returning && (
+                              <span title="Returning attendee" style={{ color: "#c9983f", fontSize: "0.85rem", flexShrink: 0 }}>★</span>
+                            )}
+                            {isPassCol && pass ? (
+                              <span style={{ fontSize: "0.72rem", fontWeight: 600, padding: "0.15rem 0.5rem", borderRadius: "20px", whiteSpace: "nowrap", ...passColor(pass) }}>
+                                {pass}
+                              </span>
+                            ) : (
+                              row[h] || "—"
+                            )}
+                          </span>
+                        </td>
+                      );
+                    })}
+                  </tr>
+                );
+              })}
             </tbody>
           </table>
         )}
       </div>
+
+      {/* Guest detail panel */}
+      {selectedGuest && (
+        <div className="admin-detail-panel" style={{ margin: "0 1.5rem 1.5rem" }}>
+          <div className="admin-detail-header">
+            <div style={{ display: "flex", alignItems: "center", gap: "0.75rem", flexWrap: "wrap" }}>
+              <span className="admin-detail-title">
+                {isReturning(selectedGuest) && <span title="Returning attendee" style={{ color: "#c9983f", marginRight: "0.4rem" }}>★</span>}
+                {selectedGuest[nameCol] || "Guest"}
+              </span>
+              {getPassType(selectedGuest) && (() => {
+                const pass = getPassType(selectedGuest)!;
+                const c = passColor(pass);
+                return (
+                  <span style={{ fontSize: "0.75rem", fontWeight: 700, padding: "0.2rem 0.75rem", borderRadius: "20px", ...c }}>
+                    {pass}
+                  </span>
+                );
+              })()}
+              {isReturning(selectedGuest) && (
+                <span style={{ fontSize: "0.72rem", fontWeight: 600, padding: "0.2rem 0.6rem", borderRadius: "20px", background: "rgba(201,152,63,0.12)", color: "#c9983f" }}>
+                  ★ Returning Attendee
+                </span>
+              )}
+            </div>
+            <button className="admin-detail-close" onClick={() => setSelectedGuest(null)}>✕ Close</button>
+          </div>
+
+          {/* Contact + key info */}
+          <div style={{ padding: "1rem 1.25rem", borderBottom: "1px solid #eeece8", display: "flex", flexWrap: "wrap", gap: "1.5rem" }}>
+            {emailCol && selectedGuest[emailCol] && (
+              <div>
+                <div className="admin-detail-label">Email</div>
+                <a href={`mailto:${selectedGuest[emailCol]}`} style={{ fontSize: "0.875rem", color: "#3DB8AF" }}>{selectedGuest[emailCol]}</a>
+              </div>
+            )}
+            {phoneCol && selectedGuest[phoneCol] && (
+              <div>
+                <div className="admin-detail-label">Phone</div>
+                <div style={{ fontSize: "0.875rem", color: "var(--ink)" }}>{selectedGuest[phoneCol]}</div>
+              </div>
+            )}
+          </div>
+
+          {/* Add-ons */}
+          {getAddons(selectedGuest).length > 0 && (
+            <div style={{ padding: "0.9rem 1.25rem", borderBottom: "1px solid #eeece8" }}>
+              <div className="admin-detail-label" style={{ marginBottom: "0.5rem" }}>Add-ons Booked</div>
+              <div style={{ display: "flex", flexWrap: "wrap", gap: "0.5rem" }}>
+                {getAddons(selectedGuest).map(({ label, value }) => (
+                  <span key={label} style={{ fontSize: "0.78rem", padding: "0.2rem 0.65rem", borderRadius: "20px", background: "rgba(232,149,106,0.12)", color: "#c0622a", fontWeight: 600 }}>
+                    {label}{value !== "yes" && value !== "1" && value !== "true" ? `: ${value}` : ""}
+                  </span>
+                ))}
+              </div>
+            </div>
+          )}
+
+          {/* All fields */}
+          <div className="admin-detail-grid">
+            {headers
+              .filter(h => h !== nameCol && h !== emailCol && h !== phoneCol)
+              .filter(h => selectedGuest[h] && selectedGuest[h] !== "—")
+              .map(h => (
+                <div key={h} className="admin-detail-field">
+                  <div className="admin-detail-label">{h}</div>
+                  <div className="admin-detail-value">{selectedGuest[h]}</div>
+                </div>
+              ))}
+          </div>
+        </div>
+      )}
     </>
   );
 }

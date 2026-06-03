@@ -7,7 +7,7 @@ type TableName =
   | "leads" | "newsletter" | "vendors" | "volunteers"
   | "sponsors" | "instructor_waitlist" | "affiliates" | "referral_events";
 
-type ActiveTab = TableName | "dashboard" | "guestlist";
+type ActiveTab = TableName | "dashboard" | "guestlist" | "addons";
 
 interface TabConfig {
   key: TableName;
@@ -620,6 +620,97 @@ function GuestListTab() {
   );
 }
 
+// ── Add-Ons Sheet Tab ─────────────────────────────────────────────────
+
+function AddonsTab() {
+  const [headers, setHeaders] = useState<string[]>([]);
+  const [rows, setRows] = useState<Record<string, string>[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+  const [needsSetup, setNeedsSetup] = useState(false);
+  const [search, setSearch] = useState("");
+
+  useEffect(() => {
+    fetch("/api/admin/addons")
+      .then(async (r) => {
+        const d = await r.json();
+        if (d.needsSetup) setNeedsSetup(true);
+        else if (d.error) setError(d.error);
+        else { setHeaders(d.headers || []); setRows(d.rows || []); }
+      })
+      .catch(() => setError("Failed to load add-ons sheet"))
+      .finally(() => setLoading(false));
+  }, []);
+
+  const filtered = search
+    ? rows.filter((row) => Object.values(row).some((v) => v.toLowerCase().includes(search.toLowerCase())))
+    : rows;
+
+  const exportCSV = () => {
+    if (rows.length === 0) return;
+    const csv = [
+      headers.join(","),
+      ...rows.map((row) => headers.map((h) => `"${(row[h] ?? "").replace(/"/g, '""')}"`).join(",")),
+    ].join("\n");
+    const blob = new Blob([csv], { type: "text/csv" });
+    const a = document.createElement("a");
+    a.href = URL.createObjectURL(blob);
+    a.download = `add-ons-${new Date().toISOString().slice(0, 10)}.csv`;
+    a.click();
+  };
+
+  if (loading) return <div className="admin-loading">Loading add-ons…</div>;
+
+  if (needsSetup) return (
+    <div style={{ padding: "3rem 2rem", maxWidth: "560px" }}>
+      <p style={{ fontWeight: 600, fontSize: "1rem", marginBottom: "1rem", color: "var(--ink)" }}>
+        Add-Ons Sheet Not Connected
+      </p>
+      <p style={{ color: "var(--ink-muted)", fontSize: "0.875rem", marginBottom: "1.5rem", lineHeight: 1.7 }}>
+        Add your Google Sheet&apos;s published CSV URL as <code style={{ background: "rgba(0,0,0,0.06)", padding: "0.1em 0.4em", borderRadius: "4px" }}>ADDONS_SHEET_URL</code> in Vercel environment variables.
+      </p>
+    </div>
+  );
+
+  if (error) return <div className="admin-empty" style={{ color: "#c0392b" }}>{error}</div>;
+
+  return (
+    <>
+      <div className="admin-toolbar">
+        <div className="admin-toolbar-left">
+          <span className="admin-count">{filtered.length} of {rows.length} rows</span>
+          <input
+            type="text" value={search}
+            onChange={(e) => setSearch(e.target.value)}
+            placeholder="Search…" className="admin-search"
+          />
+        </div>
+        <div className="admin-toolbar-right">
+          <button onClick={exportCSV} className="admin-export-btn" disabled={rows.length === 0}>Export CSV</button>
+        </div>
+      </div>
+      <div className="admin-table-wrap">
+        {filtered.length === 0 ? (
+          <div className="admin-empty">No rows match your search</div>
+        ) : (
+          <table className="admin-table">
+            <thead>
+              <tr>{headers.map((h) => <th key={h}>{h}</th>)}</tr>
+            </thead>
+            <tbody>
+              {filtered.map((row, i) => (
+                <tr key={i}>
+                  {headers.map((h) => <td key={h}>{row[h] || "—"}</td>)}
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        )}
+      </div>
+    </>
+  );
+}
+
 // ── Main Admin Page ───────────────────────────────────────────────────
 
 export default function AdminPage() {
@@ -702,7 +793,7 @@ export default function AdminPage() {
   }, []);
 
   useEffect(() => {
-    if (authenticated && activeTab !== "dashboard" && activeTab !== "guestlist") {
+    if (authenticated && activeTab !== "dashboard" && activeTab !== "guestlist" && activeTab !== "addons") {
       fetchData(activeTab as TableName, search);
     }
   }, [authenticated, activeTab, search, fetchData]);
@@ -719,7 +810,7 @@ export default function AdminPage() {
   };
 
   const exportCSV = () => {
-    if (rows.length === 0 || activeTab === "dashboard" || activeTab === "guestlist") return;
+    if (rows.length === 0 || activeTab === "dashboard" || activeTab === "guestlist" || activeTab === "addons") return;
     const tab = ALL_TABS.find((t) => t.key === activeTab)!;
     const header = tab.columns.join(",");
     const csvRows = rows.map((row) =>
@@ -818,6 +909,12 @@ export default function AdminPage() {
         >
           Guest List
         </button>
+        <button
+          className={`admin-tab${activeTab === "addons" ? " active" : ""}`}
+          onClick={() => { setActiveTab("addons"); setSearch(""); }}
+        >
+          Add-Ons
+        </button>
       </div>
 
       {/* Dashboard view */}
@@ -826,8 +923,11 @@ export default function AdminPage() {
       {/* Guest List view */}
       {activeTab === "guestlist" && <GuestListTab />}
 
+      {/* Add-Ons view */}
+      {activeTab === "addons" && <AddonsTab />}
+
       {/* Data table view */}
-      {activeTab !== "dashboard" && activeTab !== "guestlist" && (
+      {activeTab !== "dashboard" && activeTab !== "guestlist" && activeTab !== "addons" && (
         <>
           {/* Toolbar */}
           <div className="admin-toolbar">

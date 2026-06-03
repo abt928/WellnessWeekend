@@ -7,6 +7,8 @@ type TableName =
   | "leads" | "newsletter" | "vendors" | "volunteers"
   | "sponsors" | "instructor_waitlist" | "affiliates" | "referral_events";
 
+type ActiveTab = TableName | "dashboard" | "guestlist";
+
 interface TabConfig {
   key: TableName;
   label: string;
@@ -520,6 +522,104 @@ function DashboardTab() {
   );
 }
 
+// ── Guest List Tab ────────────────────────────────────────────────────
+
+function GuestListTab() {
+  const [headers, setHeaders] = useState<string[]>([]);
+  const [rows, setRows] = useState<Record<string, string>[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+  const [needsSetup, setNeedsSetup] = useState(false);
+  const [search, setSearch] = useState("");
+
+  useEffect(() => {
+    fetch("/api/admin/guestlist")
+      .then(async (r) => {
+        const d = await r.json();
+        if (d.needsSetup) setNeedsSetup(true);
+        else if (d.error) setError(d.error);
+        else { setHeaders(d.headers || []); setRows(d.rows || []); }
+      })
+      .catch(() => setError("Failed to load guest list"))
+      .finally(() => setLoading(false));
+  }, []);
+
+  const filtered = search
+    ? rows.filter((row) => Object.values(row).some((v) => v.toLowerCase().includes(search.toLowerCase())))
+    : rows;
+
+  const exportCSV = () => {
+    if (rows.length === 0) return;
+    const csv = [
+      headers.join(","),
+      ...rows.map((row) => headers.map((h) => `"${(row[h] ?? "").replace(/"/g, '""')}"`).join(",")),
+    ].join("\n");
+    const blob = new Blob([csv], { type: "text/csv" });
+    const a = document.createElement("a");
+    a.href = URL.createObjectURL(blob);
+    a.download = `guest-list-${new Date().toISOString().slice(0, 10)}.csv`;
+    a.click();
+  };
+
+  if (loading) return <div className="admin-loading">Loading guest list…</div>;
+
+  if (needsSetup) return (
+    <div style={{ padding: "3rem 2rem", maxWidth: "560px" }}>
+      <p style={{ fontWeight: 600, fontSize: "1rem", marginBottom: "1rem", color: "var(--ink)" }}>
+        Guest List Not Connected
+      </p>
+      <p style={{ color: "var(--ink-muted)", fontSize: "0.875rem", marginBottom: "1.5rem", lineHeight: 1.7 }}>
+        Connect your Google Sheet by publishing it as CSV and adding the URL as a Vercel environment variable.
+      </p>
+      <ol style={{ color: "var(--ink-muted)", fontSize: "0.85rem", lineHeight: 2.2, paddingLeft: "1.25rem" }}>
+        <li>Open your Google Sheet → <strong>File → Share → Publish to web</strong></li>
+        <li>Set format to <strong>Comma-separated values (.csv)</strong> → click <strong>Publish</strong></li>
+        <li>Copy the URL it gives you</li>
+        <li>In Vercel: <strong>Settings → Environment Variables</strong> → add key <code style={{ background: "rgba(0,0,0,0.06)", padding: "0.1em 0.4em", borderRadius: "4px" }}>GUESTLIST_SHEET_URL</code> → paste the URL</li>
+        <li>Redeploy (or wait for next deploy) — the tab will populate automatically</li>
+      </ol>
+    </div>
+  );
+
+  if (error) return <div className="admin-empty" style={{ color: "#c0392b" }}>{error}</div>;
+
+  return (
+    <>
+      <div className="admin-toolbar">
+        <div className="admin-toolbar-left">
+          <span className="admin-count">{filtered.length} of {rows.length} guests</span>
+          <input
+            type="text" value={search}
+            onChange={(e) => setSearch(e.target.value)}
+            placeholder="Search name, email, status…" className="admin-search"
+          />
+        </div>
+        <div className="admin-toolbar-right">
+          <button onClick={exportCSV} className="admin-export-btn" disabled={rows.length === 0}>Export CSV</button>
+        </div>
+      </div>
+      <div className="admin-table-wrap">
+        {filtered.length === 0 ? (
+          <div className="admin-empty">No guests match your search</div>
+        ) : (
+          <table className="admin-table">
+            <thead>
+              <tr>{headers.map((h) => <th key={h}>{h}</th>)}</tr>
+            </thead>
+            <tbody>
+              {filtered.map((row, i) => (
+                <tr key={i}>
+                  {headers.map((h) => <td key={h}>{row[h] || "—"}</td>)}
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        )}
+      </div>
+    </>
+  );
+}
+
 // ── Main Admin Page ───────────────────────────────────────────────────
 
 export default function AdminPage() {
@@ -530,7 +630,7 @@ export default function AdminPage() {
   const [loginError, setLoginError] = useState("");
   const [loginLoading, setLoginLoading] = useState(false);
 
-  const [activeTab, setActiveTab] = useState<TableName | "dashboard">("dashboard");
+  const [activeTab, setActiveTab] = useState<ActiveTab>("dashboard");
   const [rows, setRows] = useState<Record<string, unknown>[]>([]);
   const [count, setCount] = useState(0);
   const [search, setSearch] = useState("");
@@ -602,7 +702,9 @@ export default function AdminPage() {
   }, []);
 
   useEffect(() => {
-    if (authenticated && activeTab !== "dashboard") fetchData(activeTab as TableName, search);
+    if (authenticated && activeTab !== "dashboard" && activeTab !== "guestlist") {
+      fetchData(activeTab as TableName, search);
+    }
   }, [authenticated, activeTab, search, fetchData]);
 
   const handleDbSetup = async () => {
@@ -617,7 +719,7 @@ export default function AdminPage() {
   };
 
   const exportCSV = () => {
-    if (rows.length === 0 || activeTab === "dashboard") return;
+    if (rows.length === 0 || activeTab === "dashboard" || activeTab === "guestlist") return;
     const tab = ALL_TABS.find((t) => t.key === activeTab)!;
     const header = tab.columns.join(",");
     const csvRows = rows.map((row) =>
@@ -710,13 +812,22 @@ export default function AdminPage() {
             {tab.label}
           </button>
         ))}
+        <button
+          className={`admin-tab${activeTab === "guestlist" ? " active" : ""}`}
+          onClick={() => { setActiveTab("guestlist"); setSearch(""); }}
+        >
+          Guest List
+        </button>
       </div>
 
       {/* Dashboard view */}
       {activeTab === "dashboard" && canSeeDashboard && <DashboardTab />}
 
+      {/* Guest List view */}
+      {activeTab === "guestlist" && <GuestListTab />}
+
       {/* Data table view */}
-      {activeTab !== "dashboard" && (
+      {activeTab !== "dashboard" && activeTab !== "guestlist" && (
         <>
           {/* Toolbar */}
           <div className="admin-toolbar">

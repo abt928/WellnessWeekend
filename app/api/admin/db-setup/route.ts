@@ -158,10 +158,49 @@ export async function POST(req: NextRequest) {
       )
     `;
 
+    await sql`
+      CREATE TABLE IF NOT EXISTS members (
+        id SERIAL PRIMARY KEY,
+        name VARCHAR(255) NOT NULL,
+        email VARCHAR(255) NOT NULL UNIQUE,
+        code VARCHAR(20) NOT NULL UNIQUE,
+        password_hash TEXT NOT NULL,
+        points_balance INTEGER NOT NULL DEFAULT 0,
+        created_at TIMESTAMPTZ DEFAULT NOW() NOT NULL
+      )
+    `;
+
+    await sql`
+      CREATE TABLE IF NOT EXISTS member_referrals (
+        id SERIAL PRIMARY KEY,
+        referrer_code VARCHAR(20) NOT NULL,
+        referee_email VARCHAR(255) NOT NULL,
+        points_earned INTEGER NOT NULL DEFAULT 50,
+        created_at TIMESTAMPTZ DEFAULT NOW() NOT NULL
+      )
+    `;
+
+    await sql`
+      CREATE TABLE IF NOT EXISTS member_redemptions (
+        id SERIAL PRIMARY KEY,
+        member_code VARCHAR(20) NOT NULL,
+        reward_type VARCHAR(20) NOT NULL,
+        points_cost INTEGER NOT NULL,
+        discount_cents INTEGER NOT NULL DEFAULT 0,
+        status VARCHAR(20) NOT NULL DEFAULT 'pending',
+        created_at TIMESTAMPTZ DEFAULT NOW() NOT NULL,
+        used_at TIMESTAMPTZ
+      )
+    `;
+
     return NextResponse.json({
       success: true,
-      tables: ["vendors", "volunteers", "newsletter", "leads", "sponsors", "instructor_waitlist", "affiliates", "referral_events", "orders", "budget_items"],
-      message: "All tables verified / created.",
+      tables: [
+        "vendors", "volunteers", "newsletter", "leads", "sponsors",
+        "instructor_waitlist", "affiliates", "referral_events", "orders",
+        "budget_items", "members", "member_referrals", "member_redemptions",
+      ],
+      message: "All 13 tables verified / created.",
     });
   } catch (e) {
     console.error("DB setup error:", e);

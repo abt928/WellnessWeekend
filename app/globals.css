@@ -685,6 +685,93 @@ textarea:focus-visible {
   background: rgba(78,205,196,0.08);
 }
 
+/* ========== PLAN YOUR TRIP ========== */
+.trip-section {
+  background: var(--surface-page);
+  padding-bottom: clamp(3rem, 6vw, 5rem);
+}
+.trip-photo {
+  position: relative;
+  height: clamp(280px, 42vw, 480px);
+  overflow: hidden;
+  margin-bottom: clamp(2.5rem, 4vw, 4rem);
+}
+.trip-photo-overlay {
+  position: absolute; inset: 0;
+  background:
+    linear-gradient(180deg, rgba(20,28,22,0.05) 0%, rgba(20,28,22,0.55) 100%),
+    linear-gradient(90deg, rgba(20,28,22,0.45) 0%, transparent 60%);
+}
+.trip-photo-text {
+  position: absolute;
+  bottom: clamp(1.75rem, 4vw, 3rem);
+  left: clamp(1.5rem, 5vw, 5rem);
+  z-index: 2;
+}
+.trip-photo-heading {
+  font-family: var(--font-display);
+  font-size: clamp(2.2rem, 5vw, 3.8rem);
+  font-weight: 700;
+  color: #ffffff;
+  letter-spacing: -0.02em;
+  line-height: 1;
+  margin: 0.5rem 0 0;
+  text-shadow: 0 2px 20px rgba(0,0,0,0.35);
+}
+.trip-cards {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 1.25rem;
+  max-width: 1100px;
+  margin: 0 auto;
+  padding: 0 clamp(1.5rem, 5vw, 5rem);
+}
+.trip-card {
+  background: var(--surface-elevated);
+  border: 1px solid var(--line-subtle);
+  border-radius: 16px;
+  padding: 1.6rem 1.5rem;
+}
+.trip-card-icon {
+  display: flex;
+  align-items: center;
+  margin-bottom: 0.9rem;
+}
+.trip-card-title {
+  font-size: 0.95rem;
+  font-weight: 700;
+  color: var(--forest);
+  margin-bottom: 0.55rem;
+  font-family: var(--font-display);
+}
+.trip-card-body {
+  font-size: 0.875rem;
+  color: var(--ink-muted);
+  line-height: 1.75;
+  font-family: var(--font-body);
+}
+.land-ack {
+  max-width: 600px;
+  margin: clamp(2rem, 4vw, 3.5rem) auto 0;
+  padding: clamp(1.5rem, 3vw, 2rem) clamp(1.5rem, 5vw, 5rem) 0;
+  text-align: center;
+  border-top: 1px solid var(--line-subtle);
+}
+.land-ack-text {
+  font-size: 0.9rem;
+  color: var(--ink-muted);
+  line-height: 1.85;
+  font-style: italic;
+  font-family: var(--font-body);
+}
+@media (max-width: 900px) {
+  .trip-cards { grid-template-columns: repeat(2, 1fr); }
+}
+@media (max-width: 560px) {
+  .trip-cards { grid-template-columns: 1fr; }
+  .trip-photo-text { left: 1.25rem; }
+}
+
 /* ========== PRACTITIONERS ========== */
 .practitioners { background: var(--warm-white); }
 .practitioner-grid {

@@ -10,6 +10,7 @@ import Gallery from "@/components/Gallery";
 import FloatingActions from "@/components/FloatingActions";
 import ConversionNudges from "@/components/ConversionNudges";
 import PartnerCard from "@/components/PartnerCard";
+import { PlaneIcon, MapPinIcon, LeafIcon, MoonIcon } from "@/components/Icons";
 
 /* ── static data ── */
 const partners = [
@@ -227,34 +228,62 @@ export default function Home() {
       {/* ═══ GALLERY ═══ */}
       <Gallery />
 
-      {/* ═══ THE LAND ═══ */}
-      <section id="alaska" className="alaska">
-        <div className="alaska-bg">
-          <Image src="/images/alaska.png" alt="Matanuska Valley — Dena'ina ancestral homeland" fill style={{ objectFit: "cover" }} />
+      {/* ═══ PLAN YOUR TRIP ═══ */}
+      <section id="alaska" className="trip-section">
+
+        {/* Photo banner */}
+        <div className="trip-photo">
+          <Image src="/images/alaska.png" alt="Matanuska Valley, Alaska" fill style={{ objectFit: "cover", objectPosition: "center 35%" }} priority={false} />
+          <div className="trip-photo-overlay" />
+          <div className="trip-photo-text">
+            <Reveal>
+              <p className="section-label" style={{ color: "rgba(255,255,255,0.75)", textAlign: "left" }}>Sutton, Alaska · Aug 7–9</p>
+              <h2 className="trip-photo-heading">Plan Your Trip</h2>
+            </Reveal>
+          </div>
         </div>
-        <div className="alaska-overlay" />
-        <div className="alaska-content">
+
+        {/* Trip planning cards */}
+        <div className="trip-cards">
           <Reveal>
-            <p className="section-label alaska-label">The Land</p>
-            <h2 className="section-title alaska-title">
-              Dena&apos;ina Land.
-            </h2>
-            <p className="alaska-text">
-              We gather on the traditional homeland of the Dena&apos;ina Athabascan
-              people — a living nation whose relationship with this valley, these
-              rivers, and these mountains stretches back thousands of years.
-              Sutton sits in the Matanuska watershed, land that has sustained
-              Indigenous life through every season. We hold this place with
-              reverence. The healing that happens here belongs, in part, to
-              the land itself.
-            </p>
+            <div className="trip-card">
+              <span className="trip-card-icon"><PlaneIcon size={20} color="var(--sage)" /></span>
+              <h3 className="trip-card-title">Getting Here</h3>
+              <p className="trip-card-body">Fly into Ted Stevens Anchorage International Airport (ANC), then follow the Glenn Highway northeast to Sutton in the Matanuska-Susitna Valley — one of Alaska&apos;s most breathtaking drives.</p>
+            </div>
+          </Reveal>
+          <Reveal>
+            <div className="trip-card">
+              <span className="trip-card-icon"><MoonIcon size={20} color="var(--sage)" /></span>
+              <h3 className="trip-card-title">August in Alaska</h3>
+              <p className="trip-card-body">Days stretch to nearly 19 hours of light around August 8. Temperatures run 55–70°F with cool mornings and evenings. Layers are essential — Alaskan weather is generous and unpredictable.</p>
+            </div>
+          </Reveal>
+          <Reveal>
+            <div className="trip-card">
+              <span className="trip-card-icon"><MapPinIcon size={20} color="var(--sage)" /></span>
+              <h3 className="trip-card-title">Camping On-Site</h3>
+              <p className="trip-card-body">On-site camping is included with your pass. Bring a cold-weather sleeping bag and a tent that can handle rain. Hotels and cabins in Palmer and Wasilla are 30–40 minutes away if you prefer a bed.</p>
+            </div>
+          </Reveal>
+          <Reveal>
+            <div className="trip-card">
+              <span className="trip-card-icon"><LeafIcon size={20} color="var(--sage)" /></span>
+              <h3 className="trip-card-title">What to Pack</h3>
+              <p className="trip-card-body">Rain jacket, sturdy waterproof footwear, sun protection (the midnight sun is real), and something warm for ceremony under the stars. Leave space in your bag for what you&apos;ll carry home.</p>
+            </div>
           </Reveal>
         </div>
-        <div className="alaska-tags-band">
-          {["Denaʼina Territory","Midnight Sun","Matanuska Valley","Glacier Rivers","Chugach Mountains","Boreal Forest","Aurora Borealis","Living Watershed"].map((t) => (
-            <span className="alaska-tag" key={t}>{t}</span>
-          ))}
+
+        {/* Land acknowledgment */}
+        <div className="land-ack">
+          <p className="land-ack-text">
+            We gather on the unceded ancestral homeland of the Dena&apos;ina Athabascan people,
+            whose relationship with this valley, these rivers, and these mountains stretches
+            back thousands of years and continues today. We are grateful to be guests on this land.
+          </p>
         </div>
+
       </section>
 
       {/* ═══ FAQ ═══ */}

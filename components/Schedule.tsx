@@ -2,6 +2,7 @@
 import { useState, type ReactNode } from "react";
 import { LeafIcon, FlameIcon, SoundWaveIcon, MoonIcon, CupIcon } from "@/components/Icons";
 import EventGloss from "@/components/EventGloss";
+import BioTrigger from "@/components/BioTrigger";
 
 type Venue = "main-stage" | "lake" | "tea-lounge" | "labyrinth" | "outdoor";
 
@@ -26,6 +27,7 @@ interface ScheduleEvent {
   location?: string;
   gloss?: string;
   limited?: boolean;
+  hosts?: string[];
 }
 
 interface ScheduleBlock {
@@ -41,17 +43,78 @@ const days: ScheduleBlock[] = [
     heading: <><MoonIcon size={20} color="var(--aurora-light)" /> Arrival + Grounding</>,
     theme: "Land, Arrival, Intention",
     events: [
-      { time: "9:00 AM",  event: "Gates Open",                  detail: "Vendor & staff setup",                               venue: "outdoor"                                  },
-      { time: "12:00 PM", event: "Guest Check-In",                                                                             venue: "outdoor"                                  },
-      { time: "1:00 PM",  event: "Opening Ceremony",            detail: "Land Acknowledgement · Dance Alchemy with Ashleigh", venue: "main-stage", location: "Main Stage"       },
-      { time: "2:00 PM",  event: "Paddleboard Yoga",                                                                           venue: "lake",       location: "Lakeside",        limited: true },
-      { time: "2:00 PM",  event: "Sauna · Arts & Crafts · Live Painter", detail: "Open all afternoon — drop in anytime",      venue: "outdoor"                                  },
-      { time: "3:00 PM",  event: "Guided Meditation",           detail: "with Dixie",                                         venue: "labyrinth",  location: "Labyrinth Garden" },
-      { time: "3:00 PM",  event: "Aerial Silk — Hooping",                                                                     venue: "outdoor",                                 limited: true },
-      { time: "4:00 PM",  event: "Yin Yoga & Sound Savasana",   detail: "with Mary",                                          venue: "tea-lounge", location: "Tea Lounge"       },
-      { time: "5:00 PM",  event: "Keys to Kreation",            detail: "with J Brave · 2 hours",                             venue: "main-stage", location: "Main Stage"       },
-      { time: "8:30 PM",  event: "Cacao Ceremony · Heart Activation", detail: "with AZ",                                      venue: "main-stage", location: "Main Stage"       },
-      { time: "9:00 PM",  event: "Ecstatic Dance",              detail: "Zwami · Flowscape",                                  venue: "main-stage", location: "Main Stage"       },
+      {
+        time: "9:00 AM",
+        event: "Gates Open",
+        detail: "Vendor & staff setup",
+        venue: "outdoor",
+      },
+      {
+        time: "12:00 PM",
+        event: "Guest Check-In",
+        venue: "outdoor",
+      },
+      {
+        time: "1:00 PM",
+        event: "Opening Ceremony",
+        detail: "Land Acknowledgement · Dance Alchemy with Ashleigh — the movement medicine your soul has been craving",
+        venue: "main-stage", location: "Main Stage",
+        hosts: ["ashleigh"],
+      },
+      {
+        time: "2:00 PM",
+        event: "Paddleboard Yoga",
+        detail: "All levels, beginner flow — you might get wet!",
+        venue: "lake", location: "Lakeside",
+        limited: true,
+      },
+      {
+        time: "2:00 PM",
+        event: "Sauna · Arts & Crafts · Live Painter",
+        detail: "Open all afternoon — drop in anytime",
+        venue: "outdoor",
+      },
+      {
+        time: "3:00 PM",
+        event: "Guided Meditation",
+        detail: "Guided bilateral movement for a relaxing grounding session",
+        venue: "labyrinth", location: "Labyrinth Garden",
+        hosts: ["dixie"],
+      },
+      {
+        time: "3:00 PM",
+        event: "Intro Aerial",
+        detail: "Beginner flow · 6 people max",
+        venue: "outdoor",
+        limited: true,
+        hosts: ["alice"],
+      },
+      {
+        time: "4:00 PM",
+        event: "Yin Yoga & Sound Savasana",
+        detail: "Restorative poses with sound savasana",
+        venue: "tea-lounge", location: "Tea Lounge",
+        hosts: ["mary"],
+      },
+      {
+        time: "5:00 PM",
+        event: "Keys to Kreation",
+        detail: "Unlock your infinite potential of creative expression · 2 hours",
+        venue: "main-stage", location: "Main Stage",
+        hosts: ["j-brave"],
+      },
+      {
+        time: "8:30 PM",
+        event: "Cacao Ceremony · Heart Activation",
+        venue: "main-stage", location: "Main Stage",
+        hosts: ["az"],
+      },
+      {
+        time: "9:00 PM",
+        event: "Ecstatic Dance",
+        venue: "main-stage", location: "Main Stage",
+        hosts: ["zwami", "flowscape"],
+      },
     ],
   },
   {
@@ -59,22 +122,112 @@ const days: ScheduleBlock[] = [
     heading: <><FlameIcon size={20} color="var(--coral)" /> Activation + Transformation</>,
     theme: "Expansion, Ceremony, Expression",
     events: [
-      { time: "7:00 AM",  event: "Peace Pixy",                  detail: "Live music at the lake",                             venue: "lake",       location: "Lakeside"         },
-      { time: "8:00 AM",  event: "Lionsgate Activation + Floating Sound Bath",                                                 venue: "lake",       location: "Lake / Aerial",   gloss: LIONSGATE_GLOSS },
-      { time: "9:00 AM",  event: "Yoga for Health",             detail: "with Logan Forehand",                                venue: "main-stage", location: "Main Stage"       },
-      { time: "10:00 AM", event: "Quantum Light Activation",    detail: "with Shawn",                                         venue: "labyrinth",  location: "Labyrinth Garden" },
-      { time: "10:00 AM", event: "Aerial Silk",                 detail: "with Alice",                                         venue: "outdoor",                                 limited: true },
-      { time: "11:00 AM", event: "Ayni Despacho Ceremony",                                                                    venue: "main-stage", location: "Lodge",           gloss: AYNI_GLOSS },
-      { time: "11:00 AM", event: "Feel Good Flow",              detail: "with Jenni",                                         venue: "outdoor"                                  },
-      { time: "12:00 PM", event: "Laugh Your Way to Wellness",  detail: "with Alex",                                          venue: "outdoor"                                  },
-      { time: "1:00 PM",  event: "Authentic Relating Practice", detail: "with AZ",                                            venue: "main-stage", location: "Main Stage"       },
-      { time: "2:00 PM",  event: "Paddleboard Yoga",            detail: "with Alice",                                         venue: "lake",       location: "Lakeside",        limited: true },
-      { time: "2:00 PM",  event: "Aerial Silk — Hooping",                                                                     venue: "outdoor",                                 limited: true },
-      { time: "3:00 PM",  event: "Miracle of Mind",             detail: "with Logan · Beginner-friendly meditation",          venue: "labyrinth",  location: "Labyrinth Garden" },
-      { time: "4:00 PM",  event: "Roots for Recovery",          detail: "with Jon · Yin yoga, MFR props & Tibetan bowl sound bath", venue: "tea-lounge", location: "Tea Lounge" },
-      { time: "7:00 PM",  event: "Cacao Ceremony",                                                                             venue: "main-stage", location: "Main Stage"       },
-      { time: "8:00 PM",  event: "Lionsgate Drumming Ceremony", detail: "with White Eagle Medicine Woman",                     venue: "main-stage", location: "Main Stage",      gloss: LIONSGATE_GLOSS },
-      { time: "9:30 PM",  event: "Ecstatic Dance + Music Activation", detail: "J Brave · Zwami",                               venue: "main-stage", location: "Main Stage"       },
+      {
+        time: "7:00 AM",
+        event: "Floating Sound Bath",
+        detail: "Handpan music and ambient sound bath on the lake",
+        venue: "lake", location: "Lakeside",
+        hosts: ["peace-pixy"],
+      },
+      {
+        time: "8:00 AM",
+        event: "Lionsgate Activation + Floating Sound Bath",
+        venue: "lake", location: "Lake / Aerial",
+        gloss: LIONSGATE_GLOSS,
+      },
+      {
+        time: "9:00 AM",
+        event: "Yoga for Health",
+        detail: "Yoga with sound, breath and asanas",
+        venue: "main-stage", location: "Main Stage",
+        hosts: ["logan-forehand"],
+      },
+      {
+        time: "10:00 AM",
+        event: "Quantum Light Activation",
+        detail: "Activate your healing with phototherapy",
+        venue: "labyrinth", location: "Labyrinth Garden",
+        hosts: ["shawn"],
+      },
+      {
+        time: "10:00 AM",
+        event: "Intro Aerial",
+        detail: "Floating in silks · 6 people max",
+        venue: "outdoor",
+        limited: true,
+        hosts: ["alice"],
+      },
+      {
+        time: "11:00 AM",
+        event: "Ayni Despacho Ceremony",
+        venue: "main-stage", location: "Lodge",
+        gloss: AYNI_GLOSS,
+      },
+      {
+        time: "11:00 AM",
+        event: "Feel Good Flow",
+        venue: "outdoor",
+        hosts: ["jenni"],
+      },
+      {
+        time: "12:00 PM",
+        event: "Laugh Your Way to Wellness",
+        venue: "outdoor",
+        hosts: ["alex"],
+      },
+      {
+        time: "1:00 PM",
+        event: "Authentic Relating Practice",
+        venue: "main-stage", location: "Main Stage",
+        hosts: ["az"],
+      },
+      {
+        time: "2:00 PM",
+        event: "Paddleboard Yoga",
+        venue: "lake", location: "Lakeside",
+        limited: true,
+        hosts: ["alice"],
+      },
+      {
+        time: "2:00 PM",
+        event: "Intro Aerial — Hooping",
+        venue: "outdoor",
+        limited: true,
+        hosts: ["alice"],
+      },
+      {
+        time: "3:00 PM",
+        event: "Miracle of Mind",
+        detail: "Beginner-friendly guided meditation and discussion",
+        venue: "labyrinth", location: "Labyrinth Garden",
+        hosts: ["logan-forehand"],
+      },
+      {
+        time: "4:00 PM",
+        event: "Roots for Recovery",
+        detail: "Yin yoga, MFR props & Tibetan bowl sound bath",
+        venue: "tea-lounge", location: "Tea Lounge",
+        hosts: ["jon"],
+      },
+      {
+        time: "7:00 PM",
+        event: "Cacao Ceremony",
+        venue: "main-stage", location: "Main Stage",
+      },
+      {
+        time: "8:00 PM",
+        event: "Lionsgate Drumming Ceremony",
+        detail: "Bring your drum for a community drum circle with the sacred Grandmother Drum",
+        venue: "main-stage", location: "Main Stage",
+        gloss: LIONSGATE_GLOSS,
+        hosts: ["white-eagle"],
+      },
+      {
+        time: "9:30 PM",
+        event: "Ecstatic Dance + Music Activation",
+        venue: "main-stage", location: "Main Stage",
+        hosts: ["j-brave", "zwami"],
+      },
     ],
   },
   {
@@ -82,16 +235,69 @@ const days: ScheduleBlock[] = [
     heading: <><LeafIcon size={20} color="#7C9070" /> Integration + Community</>,
     theme: "Soft Landing, Heart Opening",
     events: [
-      { time: "9:00 AM",  event: "Sound Journey with Peace Pixy",                                                              venue: "labyrinth",  location: "Labyrinth Garden" },
-      { time: "10:00 AM", event: "Earth Awareness Practice",    detail: "with Gail",                                           venue: "outdoor",    location: "Outdoor Space"    },
-      { time: "10:30 AM", event: "Intro Aerial for Kids",       detail: "with Alice",                                          venue: "outdoor",                                 limited: true },
-      { time: "11:11 AM", event: "Message from the Bees — Ecstatic Dance",                                                     venue: "labyrinth",  location: "Labyrinth Garden" },
-      { time: "1:00 PM",  event: "Kuf Knotz + Christine Elise", detail: "Live music",                                          venue: "main-stage", location: "Main Stage"       },
-      { time: "1:30 PM",  event: "Yogassage",                   detail: "with Sarah",                                          venue: "outdoor"                                  },
-      { time: "3:15 PM",  event: "J Brave",                     detail: "45 minutes",                                          venue: "main-stage", location: "Main Stage"       },
-      { time: "4:00 PM",  event: "Tea Lounge",                                                                                  venue: "tea-lounge", location: "Tea Lounge"       },
-      { time: "5:00 PM",  event: "Closing Ceremony",                                                                            venue: "main-stage", location: "Main Stage"       },
-      { time: "7:00 PM",  event: "Ecstatic Dance with Flowscape", detail: "Cacao bar open · Check out by 10 PM",               venue: "main-stage", location: "Main Stage"       },
+      {
+        time: "9:00 AM",
+        event: "Sound Journey",
+        detail: "Handpan music and ambient sound bath in the labyrinth garden",
+        venue: "labyrinth", location: "Labyrinth Garden",
+        hosts: ["peace-pixy"],
+      },
+      {
+        time: "10:00 AM",
+        event: "Earth Awareness Practice",
+        venue: "outdoor", location: "Outdoor Space",
+        hosts: ["gail"],
+      },
+      {
+        time: "10:30 AM",
+        event: "Intro Aerial for Kids",
+        venue: "outdoor",
+        limited: true,
+        hosts: ["alice"],
+      },
+      {
+        time: "11:11 AM",
+        event: "Message from the Bees — Ecstatic Dance",
+        venue: "labyrinth", location: "Labyrinth Garden",
+      },
+      {
+        time: "1:00 PM",
+        event: "Kuf Knotz + Christine Elise",
+        detail: "Live music",
+        venue: "main-stage", location: "Main Stage",
+        hosts: ["kuf-knotz", "christine-elise"],
+      },
+      {
+        time: "1:30 PM",
+        event: "Yogassage",
+        venue: "outdoor",
+        hosts: ["sarah"],
+      },
+      {
+        time: "3:15 PM",
+        event: "J Brave",
+        detail: "45 minutes",
+        venue: "main-stage", location: "Main Stage",
+        hosts: ["j-brave"],
+      },
+      {
+        time: "4:00 PM",
+        event: "Tarot + Tea Party",
+        detail: "Tea Lounge welcomes divinators to share and activate this space",
+        venue: "tea-lounge", location: "Tea Lounge",
+      },
+      {
+        time: "5:00 PM",
+        event: "Closing Ceremony",
+        venue: "main-stage", location: "Main Stage",
+      },
+      {
+        time: "7:00 PM",
+        event: "Ecstatic Dance with Flowscape",
+        detail: "Cacao bar open · Check out by 10 PM",
+        venue: "main-stage", location: "Main Stage",
+        hosts: ["flowscape"],
+      },
     ],
   },
 ];
@@ -196,6 +402,13 @@ export default function Schedule() {
               )}
             </div>
             {e.detail && <div className="schedule-detail">{e.detail}</div>}
+            {e.hosts && e.hosts.length > 0 && (
+              <div className="schedule-hosts">
+                {e.hosts.map((slug) => (
+                  <BioTrigger key={slug} slug={slug} />
+                ))}
+              </div>
+            )}
           </div>
         ))}
         {filteredEvents.length === 0 && (

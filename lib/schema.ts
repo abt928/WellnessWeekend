@@ -114,3 +114,32 @@ export const budgetItems = pgTable("budget_items", {
   notes: text("notes"),
   createdAt: timestamp("created_at", { withTimezone: true }).defaultNow().notNull(),
 });
+
+export const members = pgTable("members", {
+  id: serial("id").primaryKey(),
+  name: varchar("name", { length: 255 }).notNull(),
+  email: varchar("email", { length: 255 }).notNull().unique(),
+  code: varchar("code", { length: 20 }).notNull().unique(),
+  passwordHash: text("password_hash").notNull(),
+  pointsBalance: integer("points_balance").notNull().default(0),
+  createdAt: timestamp("created_at", { withTimezone: true }).defaultNow().notNull(),
+});
+
+export const memberReferrals = pgTable("member_referrals", {
+  id: serial("id").primaryKey(),
+  referrerCode: varchar("referrer_code", { length: 20 }).notNull(),
+  refereeEmail: varchar("referee_email", { length: 255 }).notNull(),
+  pointsEarned: integer("points_earned").notNull().default(50),
+  createdAt: timestamp("created_at", { withTimezone: true }).defaultNow().notNull(),
+});
+
+export const memberRedemptions = pgTable("member_redemptions", {
+  id: serial("id").primaryKey(),
+  memberCode: varchar("member_code", { length: 20 }).notNull(),
+  rewardType: varchar("reward_type", { length: 20 }).notNull(),
+  pointsCost: integer("points_cost").notNull(),
+  discountCents: integer("discount_cents").notNull().default(0),
+  status: varchar("status", { length: 20 }).notNull().default("pending"),
+  createdAt: timestamp("created_at", { withTimezone: true }).defaultNow().notNull(),
+  usedAt: timestamp("used_at", { withTimezone: true }),
+});

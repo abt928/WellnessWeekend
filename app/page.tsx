@@ -9,6 +9,8 @@ import Store from "@/components/Store";
 import Gallery from "@/components/Gallery";
 import FloatingActions from "@/components/FloatingActions";
 import ConversionNudges from "@/components/ConversionNudges";
+import PartnerCard from "@/components/PartnerCard";
+import { PlaneIcon, MapPinIcon, LeafIcon, MoonIcon } from "@/components/Icons";
 
 /* ── static data ── */
 const partners = [
@@ -114,6 +116,47 @@ export default function Home() {
       {/* ═══ SCHEDULE ═══ */}
       <Schedule />
 
+      {/* ═══ TICKETS STORE ═══ */}
+      <Store />
+
+      {/* ═══ ABOUT / PREVIOUS YEARS ═══ */}
+      <section className="about section">
+        <div className="about-grid">
+          <div className="about-headline">
+            <Reveal>
+              <p className="section-label">Our Story</p>
+              <h2 className="about-title">
+                Four years of gathering on this land.
+              </h2>
+              <p className="about-stats">
+                Est. 2023<br />
+                4th Annual<br />
+                Sutton, Alaska<br />
+                3 Days of Ceremony
+              </p>
+            </Reveal>
+          </div>
+          <div className="about-desc">
+            <Reveal>
+              <p>
+                What began with a small circle of healers in the summer of 2023
+                has become one of Alaska&apos;s most quietly powerful gatherings.
+                Each year the community returns — different faces, deepening
+                roots. Teachers who came as students. First-timers who drove
+                through the night to make it. Families who camp together every
+                August.
+              </p>
+              <p style={{ marginTop: "1.25rem" }}>
+                Not a festival. A gathering. A living thread of ceremony,
+                sound, and shared presence. The land holds the memory of every
+                circle we&apos;ve sat in, every fire we&apos;ve lit, every
+                healing that has happened here.
+              </p>
+            </Reveal>
+          </div>
+        </div>
+      </section>
+
       {/* ═══ LION'S GATE PORTAL ═══ */}
       <section id="portal" className="portal-section" aria-label="Lion's Gate Portal">
         {/* Aurora bands */}
@@ -132,12 +175,12 @@ export default function Home() {
             <p className="section-label portal-label">August 8 · 8:08 AM</p>
             <h2 className="portal-title">Lion&apos;s Gate Portal</h2>
             <p className="portal-desc">
-              Each year our gathering coincides with the 8/8 Lion&apos;s Gate — when
-              Sirius rises in perfect alignment with the sun and the pyramids of Giza,
-              flooding Earth with a surge of high-frequency light. This cosmic doorway
-              amplifies intention, accelerates healing, and opens channels of
-              spiritual awakening. We mark the exact moment with a ceremony
-              at sunrise, led by White Eagle Medicine Woman, under the Alaskan sky.
+              August 8th. 8:08 AM. The sun is already high — Alaska doesn&apos;t
+              do dawn quietly in summer. Each year on this morning we step
+              outside together, hold ceremony on the land, and meet the day
+              with full presence. No building, no walls. Just mountain air,
+              open sky, and the earth beneath bare feet. Led by White Eagle
+              Medicine Woman.
             </p>
             <a href="#store" className="portal-cta">Claim Your Place in the Circle</a>
           </Reveal>
@@ -161,11 +204,7 @@ export default function Home() {
             <p className="section-label labyrinth-label">Sacred Ground</p>
             <h2 className="labyrinth-title">The Labyrinth Garden</h2>
             <p className="labyrinth-desc">
-              Nestled at the edge of the boreal forest, our living labyrinth is
-              woven from wildflowers, stones, and old-growth roots. Unlike a maze,
-              the labyrinth has one path — a walking meditation that carries you
-              inward to your center and back out transformed. Step in with a question.
-              Walk with breath. Emerge with clarity.
+              One path in. One path out. Walk it in silence — the land does the rest.
             </p>
           </Reveal>
           <Reveal>
@@ -186,38 +225,65 @@ export default function Home() {
         </div>
       </section>
 
-      {/* ═══ TICKETS STORE ═══ */}
-      <Store />
-
       {/* ═══ GALLERY ═══ */}
       <Gallery />
 
-      {/* ═══ ALASKA / THE LAND ═══ */}
-      <section id="alaska" className="alaska">
-        <div className="alaska-bg">
-          <Image src="/images/alaska.png" alt="Vast Alaskan wilderness" fill style={{ objectFit: "cover" }} />
+      {/* ═══ PLAN YOUR TRIP ═══ */}
+      <section id="alaska" className="trip-section">
+
+        {/* Photo banner */}
+        <div className="trip-photo">
+          <Image src="/images/alaska.png" alt="Matanuska Valley, Alaska" fill style={{ objectFit: "cover", objectPosition: "center 35%" }} priority={false} />
+          <div className="trip-photo-overlay" />
+          <div className="trip-photo-text">
+            <Reveal>
+              <p className="section-label" style={{ color: "rgba(255,255,255,0.75)", textAlign: "left" }}>Sutton, Alaska · Aug 7–9</p>
+              <h2 className="trip-photo-heading">Plan Your Trip</h2>
+            </Reveal>
+          </div>
         </div>
-        <div className="alaska-overlay" />
-        <div className="alaska-content">
+
+        {/* Trip planning cards */}
+        <div className="trip-cards">
           <Reveal>
-            <p className="section-label alaska-label">The Land</p>
-            <h2 className="section-title alaska-title">
-              A once-in-a-lifetime destination.
-            </h2>
-            <p className="alaska-text">
-              Nestled in the Matanuska Valley at the foot of the Chugach Mountains,
-              our gathering grounds offer glacier-fed rivers, ancient boreal forests,
-              and endless wildflower meadows. In August, Alaska&apos;s legendary midnight
-              sun bathes the land in golden light nearly around the clock, creating a
-              dreamlike atmosphere where time dissolves and healing deepens.
-            </p>
+            <div className="trip-card">
+              <span className="trip-card-icon"><PlaneIcon size={20} color="var(--sage)" /></span>
+              <h3 className="trip-card-title">Getting Here</h3>
+              <p className="trip-card-body">Fly into Ted Stevens Anchorage International Airport (ANC), then follow the Glenn Highway northeast to Sutton in the Matanuska-Susitna Valley — one of Alaska&apos;s most breathtaking drives.</p>
+            </div>
+          </Reveal>
+          <Reveal>
+            <div className="trip-card">
+              <span className="trip-card-icon"><MoonIcon size={20} color="var(--sage)" /></span>
+              <h3 className="trip-card-title">August in Alaska</h3>
+              <p className="trip-card-body">Days stretch to nearly 19 hours of light around August 8. Temperatures run 55–70°F with cool mornings and evenings. Layers are essential — Alaskan weather is generous and unpredictable.</p>
+            </div>
+          </Reveal>
+          <Reveal>
+            <div className="trip-card">
+              <span className="trip-card-icon"><MapPinIcon size={20} color="var(--sage)" /></span>
+              <h3 className="trip-card-title">Camping On-Site</h3>
+              <p className="trip-card-body">On-site camping is included with your pass. Bring a cold-weather sleeping bag and a tent that can handle rain. Hotels and cabins in Palmer and Wasilla are 30–40 minutes away if you prefer a bed.</p>
+            </div>
+          </Reveal>
+          <Reveal>
+            <div className="trip-card">
+              <span className="trip-card-icon"><LeafIcon size={20} color="var(--sage)" /></span>
+              <h3 className="trip-card-title">What to Pack</h3>
+              <p className="trip-card-body">Rain jacket, sturdy waterproof footwear, sun protection (the midnight sun is real), and something warm for ceremony under the stars. Leave space in your bag for what you&apos;ll carry home.</p>
+            </div>
           </Reveal>
         </div>
-        <div className="alaska-tags-band">
-          {["Midnight Sun","Aurora Borealis","Glacier Rivers","Wildflower Meadows","Mountain Vistas","Boreal Forest","Wildlife","Pristine Air"].map((t) => (
-            <span className="alaska-tag" key={t}>{t}</span>
-          ))}
+
+        {/* Land acknowledgment */}
+        <div className="land-ack">
+          <p className="land-ack-text">
+            We gather on the unceded ancestral homeland of the Dena&apos;ina Athabascan people,
+            whose relationship with this valley, these rivers, and these mountains stretches
+            back thousands of years and continues today. We are grateful to be guests on this land.
+          </p>
         </div>
+
       </section>
 
       {/* ═══ FAQ ═══ */}
@@ -236,18 +302,7 @@ export default function Home() {
         <Reveal>
           <div className="partner-grid">
             {partners.map((p) => (
-              <div className="partner-card partner-card-logo" key={p.name}>
-                <div className="partner-logo-img-wrap">
-                  <Image
-                    src={p.logo}
-                    alt={p.name}
-                    width={p.logoWidth}
-                    height={p.logoHeight}
-                    style={{ objectFit: "contain", width: "100%", height: "100%" }}
-                  />
-                </div>
-                <div className="partner-role">{p.role}</div>
-              </div>
+              <PartnerCard key={p.name} {...p} />
             ))}
           </div>
         </Reveal>

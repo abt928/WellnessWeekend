@@ -30,6 +30,14 @@ const faqs = [
     q: "Will there be cell service?",
     a: "Cell service is very limited in Sutton. We encourage this as part of the digital detox experience. WiFi is available at the registration tent for emergencies.",
   },
+  {
+    q: "Is the festival pet friendly?",
+    a: "No pets are allowed on the property or at the festival. Violations will result in your ticket being voided. Service animals are the only accepted accommodation and must be prearranged with us in advance.",
+  },
+  {
+    q: "Is there RV camping?",
+    a: "Yes, we have a very limited number of RV spaces. You must contact us in advance and provide the size of your rig so we can confirm availability and placement.",
+  },
 ];
 
 export default function FAQ() {

@@ -1,5 +1,6 @@
 "use client";
 import { useState, useEffect, useId, useRef, FormEvent } from "react";
+import Link from "next/link";
 import { trackFormSubmit } from "@/lib/tracking";
 import { useFocusTrap } from "@/lib/useFocusTrap";
 import { MeditateIcon, StorefrontIcon, HandsIcon, DiamondIcon, CloseIcon, SparklesIcon } from "@/components/Icons";
@@ -224,9 +225,9 @@ export default function GetInvolved() {
             <li>Access to all ceremonies</li>
             <li>Listing on festival website</li>
           </ul>
-          <button className="involve-btn" onClick={() => openForm("vendor")}>
+          <Link href="/vendors" className="involve-btn" style={{ display: "block", textAlign: "center" }}>
             Apply as Vendor
-          </button>
+          </Link>
         </div>
 
         {/* Sponsor */}

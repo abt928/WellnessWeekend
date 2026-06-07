@@ -64,7 +64,6 @@ export async function POST(req: NextRequest) {
     priceCents: number;
   };
 
-  // Basic validation
   if (!vendorName || !contactName || !email || !phone || !category || !description || !spaceType || !electricity || !printedName) {
     return NextResponse.json({ error: "Missing required fields" }, { status: 400 });
   }
@@ -76,7 +75,7 @@ export async function POST(req: NextRequest) {
 
     const daysStr = Array.isArray(selectedDays) ? selectedDays.join(", ") : "";
 
-    const [row] = await sql`
+    const rows = await sql`
       INSERT INTO vendor_agreements (
         vendor_name, business_name, contact_name, email, phone, website,
         category, description, space_type, selected_days, electricity,
@@ -89,23 +88,23 @@ export async function POST(req: NextRequest) {
       RETURNING id
     `;
 
-    const agreementId = row.id as number;
+    const agreementId = (rows[0]?.id ?? 0) as number;
     const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || "https://wellnessweekendak.com";
 
     // Sponsor spaces — no payment needed
     if (priceCents === 0) {
-      await sql`
-        UPDATE vendor_agreements SET payment_status = 'confirmed' WHERE id = ${agreementId}
-      `;
+      await sql`UPDATE vendor_agreements SET payment_status = 'confirmed' WHERE id = ${agreementId}`;
       return NextResponse.json({ redirectUrl: `${baseUrl}/vendors/confirmed` });
     }
 
-    // Paid spaces — create Square checkout link
+    // Paid spaces — create Square checkout link with a custom ad-hoc line item
     const client = getSquareClient();
     const locationId = getLocationId();
     const spaceLabel = SPACE_LABELS[spaceType] ?? "Vendor Space";
 
-    const response = await client.checkout.paymentLinks.create({
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const squareClient = client as any;
+    const response = await squareClient.checkout.paymentLinks.create({
       idempotencyKey: randomUUID(),
       order: {
         locationId,
@@ -127,7 +126,7 @@ export async function POST(req: NextRequest) {
       },
     });
 
-    const checkoutUrl = response.paymentLink?.url;
+    const checkoutUrl = response.paymentLink?.url as string | undefined;
     if (!checkoutUrl) {
       throw new Error("Square did not return a checkout URL");
     }

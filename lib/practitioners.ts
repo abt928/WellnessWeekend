@@ -13,9 +13,9 @@ export const practitioners: Practitioner[] = [
   {
     slug: "avalon-starling",
     name: "Avalon Starling",
-    role: "Festival Director & Aerial Artist",
+    role: "Master Sound Healer & Festival Director",
     offering: "Lionsgate Activation · Floating Sound Bath",
-    bio: "Avalon Starling is the founder and director of Wellness Weekend and a certified aerial silk artist. Her Lionsgate Activation on the morning of August 8th offers participants the experience of floating in an aerial silk hammock or paddleboard on the lake — a ceremony of embodied presence, breath, and light held under the Alaskan sky.",
+    bio: "Avalon Starling is a master sound healer and the founder and director of Wellness Weekend. Her Lionsgate Activation on the morning of August 8th invites participants to float in an aerial silk hammock or on the lake by paddleboard — a ceremony of sound, embodied presence, and light held under the Alaskan sky.",
   },
   {
     slug: "ashleigh",
@@ -138,10 +138,10 @@ export const practitioners: Practitioner[] = [
   },
   {
     slug: "gail",
-    name: "Gail",
-    role: "Naturalist & Earth-Based Educator",
+    name: "Gail Jackson",
+    role: "Founder of CreativeRhythms · Earth-Based Educator",
     offering: "Earth Awareness Practice",
-    bio: "Gail is a naturalist and earth-based wellness educator whose Earth Awareness Practice guides participants into sensory relationship with the living landscape. Her sessions draw on indigenous ecology, nature therapy, and the simple, radical act of paying attention to the world outside your phone.",
+    bio: "Gail Jackson is the owner of CreativeRhythms and an earth-based wellness educator whose Earth Awareness Practice guides participants into deep sensory relationship with the living landscape. Her sessions draw on indigenous ecology, nature therapy, and the simple, radical act of paying attention to the world around you.",
   },
   {
     slug: "sarah",

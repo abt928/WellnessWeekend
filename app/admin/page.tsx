@@ -7,7 +7,7 @@ type TableName =
   | "leads" | "newsletter" | "vendors" | "volunteers"
   | "sponsors" | "instructor_waitlist" | "affiliates" | "referral_events";
 
-type ActiveTab = TableName | "dashboard" | "guestlist" | "addons";
+type ActiveTab = TableName | "dashboard" | "guestlist" | "addons" | "vendor_agreements";
 
 interface TabConfig {
   key: TableName;
@@ -894,6 +894,147 @@ function AddonsTab() {
   );
 }
 
+// ── Vendor Agreements Tab ─────────────────────────────────────────────
+
+interface VendorAgreement {
+  id: number;
+  vendor_name: string;
+  business_name: string | null;
+  contact_name: string;
+  email: string;
+  phone: string;
+  category: string;
+  space_type: string;
+  selected_days: string | null;
+  electricity: string;
+  price_cents: number;
+  payment_status: string;
+  printed_name: string;
+  sig_date: string;
+  created_at: string;
+}
+
+const SPACE_LABELS: Record<string, string> = {
+  "1day-10x10":  "1 Day 10×10",
+  "3day-10x10":  "3 Days 10×10",
+  "3day-10x20":  "3 Days 10×20",
+  "sponsor":     "Sponsor",
+};
+
+function VendorAgreementsTab() {
+  const [agreements, setAgreements] = useState<VendorAgreement[]>([]);
+  const [loading, setLoading]       = useState(true);
+  const [error, setError]           = useState<string | null>(null);
+  const [selected, setSelected]     = useState<VendorAgreement | null>(null);
+
+  useEffect(() => {
+    fetch("/api/admin/vendor-agreements")
+      .then(async (r) => {
+        const d = await r.json();
+        if (d.error) setError(d.error);
+        else setAgreements(d.rows ?? []);
+      })
+      .catch(() => setError("Failed to load vendor agreements"))
+      .finally(() => setLoading(false));
+  }, []);
+
+  const statusStyle = (s: string): React.CSSProperties => ({
+    fontSize: "0.7rem", padding: "0.2rem 0.55rem", borderRadius: "10px", fontWeight: 700,
+    background: s === "confirmed" ? "rgba(61,184,175,0.15)" : s === "pending" ? "rgba(201,152,63,0.15)" : "rgba(200,200,200,0.15)",
+    color: s === "confirmed" ? "#3DB8AF" : s === "pending" ? "#C9983F" : "#888",
+  });
+
+  const cell: React.CSSProperties  = { padding: "0.55rem 0.75rem", fontSize: "0.82rem", borderBottom: "1px solid rgba(0,0,0,0.05)", verticalAlign: "top" };
+  const hcell: React.CSSProperties = { padding: "0.5rem 0.75rem", fontSize: "0.72rem", fontWeight: 700, textTransform: "uppercase", letterSpacing: "0.06em", color: "var(--ink-muted)", background: "rgba(0,0,0,0.03)", textAlign: "left" };
+
+  if (loading) return <div style={{ padding: "2rem", color: "var(--ink-muted)" }}>Loading…</div>;
+  if (error)   return <div style={{ padding: "2rem", color: "#dc5050" }}>{error}</div>;
+
+  return (
+    <div style={{ padding: "1.5rem" }}>
+      <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "1rem" }}>
+        <span style={{ fontSize: "0.85rem", color: "var(--ink-muted)" }}>{agreements.length} agreement{agreements.length !== 1 ? "s" : ""}</span>
+        <span style={{ fontSize: "0.8rem", color: "var(--ink-muted)" }}>
+          Paid: {agreements.filter(a => a.payment_status === "confirmed").length} &nbsp;·&nbsp;
+          Pending: {agreements.filter(a => a.payment_status === "pending").length}
+        </span>
+      </div>
+
+      {agreements.length === 0 ? (
+        <p style={{ color: "var(--ink-muted)", fontSize: "0.9rem" }}>No vendor agreements submitted yet.</p>
+      ) : (
+        <div style={{ overflowX: "auto" }}>
+          <table style={{ width: "100%", borderCollapse: "collapse", background: "var(--surface-elevated)", borderRadius: "10px", overflow: "hidden" }}>
+            <thead>
+              <tr>
+                {["Vendor", "Contact", "Email", "Space", "Days", "Electricity", "Amount", "Status", "Signed", "Submitted"].map(h => (
+                  <th key={h} style={hcell}>{h}</th>
+                ))}
+              </tr>
+            </thead>
+            <tbody>
+              {agreements.map((a) => (
+                <tr
+                  key={a.id}
+                  onClick={() => setSelected(selected?.id === a.id ? null : a)}
+                  style={{ cursor: "pointer", background: selected?.id === a.id ? "rgba(61,184,175,0.06)" : "transparent" }}
+                >
+                  <td style={cell}>
+                    <div style={{ fontWeight: 600 }}>{a.vendor_name}</div>
+                    {a.business_name && a.business_name !== a.vendor_name && (
+                      <div style={{ fontSize: "0.75rem", color: "var(--ink-muted)" }}>{a.business_name}</div>
+                    )}
+                  </td>
+                  <td style={cell}>{a.contact_name}</td>
+                  <td style={cell}>{a.email}</td>
+                  <td style={cell}>{SPACE_LABELS[a.space_type] ?? a.space_type}</td>
+                  <td style={{ ...cell, fontSize: "0.75rem", color: "var(--ink-muted)" }}>{a.selected_days || "All 3"}</td>
+                  <td style={cell}>{a.electricity === "yes" ? "Yes" : "No"}</td>
+                  <td style={{ ...cell, fontWeight: 600 }}>{a.price_cents === 0 ? "Free" : `$${(a.price_cents / 100).toFixed(0)}`}</td>
+                  <td style={cell}><span style={statusStyle(a.payment_status)}>{a.payment_status}</span></td>
+                  <td style={{ ...cell, fontSize: "0.75rem" }}>{a.printed_name}<br /><span style={{ color: "var(--ink-muted)" }}>{a.sig_date}</span></td>
+                  <td style={{ ...cell, fontSize: "0.75rem", color: "var(--ink-muted)" }}>{new Date(a.created_at).toLocaleDateString()}</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      )}
+
+      {/* Detail panel */}
+      {selected && (
+        <div className="admin-detail-panel" style={{ marginTop: "1.5rem" }}>
+          <div className="admin-detail-header">
+            <span className="admin-detail-title">{selected.vendor_name}</span>
+            <button className="admin-detail-close" onClick={() => setSelected(null)}>✕</button>
+          </div>
+          <div className="admin-detail-grid">
+            {[
+              ["Contact",     selected.contact_name],
+              ["Email",       selected.email],
+              ["Phone",       selected.phone],
+              ["Category",    selected.category],
+              ["Space",       SPACE_LABELS[selected.space_type] ?? selected.space_type],
+              ["Days",        selected.selected_days || "All 3 days"],
+              ["Electricity", selected.electricity === "yes" ? "Yes" : "No"],
+              ["Amount",      selected.price_cents === 0 ? "Complimentary" : `$${(selected.price_cents / 100).toFixed(0)}`],
+              ["Payment",     selected.payment_status],
+              ["Signed by",   selected.printed_name],
+              ["Signed on",   selected.sig_date],
+              ["Submitted",   new Date(selected.created_at).toLocaleString()],
+            ].map(([label, value]) => (
+              <div key={label} className="admin-detail-field">
+                <div className="admin-detail-label">{label}</div>
+                <div className="admin-detail-value">{value}</div>
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
+    </div>
+  );
+}
+
 // ── Main Admin Page ───────────────────────────────────────────────────
 
 export default function AdminPage() {
@@ -1099,6 +1240,12 @@ export default function AdminPage() {
         >
           Add-Ons
         </button>
+        <button
+          className={`admin-tab${activeTab === "vendor_agreements" ? " active" : ""}`}
+          onClick={() => { setActiveTab("vendor_agreements"); setSearch(""); setSelectedRow(null); }}
+        >
+          Agreements
+        </button>
       </div>
 
       {/* Dashboard view */}
@@ -1110,8 +1257,11 @@ export default function AdminPage() {
       {/* Add-Ons view */}
       {activeTab === "addons" && <AddonsTab />}
 
+      {/* Vendor Agreements view */}
+      {activeTab === "vendor_agreements" && <VendorAgreementsTab />}
+
       {/* Data table view */}
-      {activeTab !== "dashboard" && activeTab !== "guestlist" && activeTab !== "addons" && (
+      {activeTab !== "dashboard" && activeTab !== "guestlist" && activeTab !== "addons" && activeTab !== "vendor_agreements" && (
         <>
           {/* Toolbar */}
           <div className="admin-toolbar">

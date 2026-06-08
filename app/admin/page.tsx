@@ -960,8 +960,11 @@ function VendorAgreementsTab() {
   const [loading, setLoading]       = useState(true);
   const [error, setError]           = useState<string | null>(null);
   const [selected, setSelected]     = useState<VendorAgreement | null>(null);
+  const [saving, setSaving]         = useState(false);
+  const [deleteConfirm, setDeleteConfirm] = useState<number | null>(null);
 
-  useEffect(() => {
+  const load = useCallback(() => {
+    setLoading(true);
     fetch("/api/admin/vendor-agreements")
       .then(async (r) => {
         const d = await r.json();
@@ -971,6 +974,33 @@ function VendorAgreementsTab() {
       .catch(() => setError("Failed to load vendor agreements"))
       .finally(() => setLoading(false));
   }, []);
+
+  useEffect(() => { load(); }, [load]);
+
+  const updateStatus = async (id: number, payment_status: string) => {
+    setSaving(true);
+    await fetch("/api/admin/vendor-agreements", {
+      method: "PATCH",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ id, payment_status }),
+    });
+    setSaving(false);
+    load();
+    setSelected((prev) => prev?.id === id ? { ...prev, payment_status } : prev);
+  };
+
+  const deleteAgreement = async (id: number) => {
+    setSaving(true);
+    await fetch("/api/admin/vendor-agreements", {
+      method: "DELETE",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ id }),
+    });
+    setSaving(false);
+    setDeleteConfirm(null);
+    setSelected(null);
+    load();
+  };
 
   const statusStyle = (s: string): React.CSSProperties => ({
     fontSize: "0.7rem", padding: "0.2rem 0.55rem", borderRadius: "10px", fontWeight: 700,
@@ -989,7 +1019,7 @@ function VendorAgreementsTab() {
       <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "1rem" }}>
         <span style={{ fontSize: "0.85rem", color: "var(--ink-muted)" }}>{agreements.length} agreement{agreements.length !== 1 ? "s" : ""}</span>
         <span style={{ fontSize: "0.8rem", color: "var(--ink-muted)" }}>
-          Paid: {agreements.filter(a => a.payment_status === "confirmed").length} &nbsp;·&nbsp;
+          Confirmed: {agreements.filter(a => a.payment_status === "confirmed").length} &nbsp;·&nbsp;
           Pending: {agreements.filter(a => a.payment_status === "pending").length}
         </span>
       </div>
@@ -1001,7 +1031,7 @@ function VendorAgreementsTab() {
           <table style={{ width: "100%", borderCollapse: "collapse", background: "var(--surface-elevated)", borderRadius: "10px", overflow: "hidden" }}>
             <thead>
               <tr>
-                {["Vendor", "Contact", "Email", "Space", "Days", "Electricity", "Amount", "Status", "Signed", "Submitted"].map(h => (
+                {["Vendor", "Contact", "Email", "Space", "Days", "Elec", "Amount", "Status", "Signed", "Submitted"].map(h => (
                   <th key={h} style={hcell}>{h}</th>
                 ))}
               </tr>
@@ -1040,7 +1070,7 @@ function VendorAgreementsTab() {
         <div className="admin-detail-panel" style={{ marginTop: "1.5rem" }}>
           <div className="admin-detail-header">
             <span className="admin-detail-title">{selected.vendor_name}</span>
-            <button className="admin-detail-close" onClick={() => setSelected(null)}>✕</button>
+            <button className="admin-detail-close" onClick={() => { setSelected(null); setDeleteConfirm(null); }}>✕</button>
           </div>
           <div className="admin-detail-grid">
             {[
@@ -1052,7 +1082,6 @@ function VendorAgreementsTab() {
               ["Days",        selected.selected_days || "All 3 days"],
               ["Electricity", selected.electricity === "yes" ? "Yes" : "No"],
               ["Amount",      selected.price_cents === 0 ? "Complimentary" : `$${(selected.price_cents / 100).toFixed(0)}`],
-              ["Payment",     selected.payment_status],
               ["Signed by",   selected.printed_name],
               ["Signed on",   selected.sig_date],
               ["Submitted",   new Date(selected.created_at).toLocaleString()],
@@ -1062,6 +1091,64 @@ function VendorAgreementsTab() {
                 <div className="admin-detail-value">{value}</div>
               </div>
             ))}
+          </div>
+
+          {/* Status + delete actions */}
+          <div style={{ padding: "1rem 1.25rem", borderTop: "1px solid var(--line-subtle)", display: "flex", flexWrap: "wrap", gap: "0.75rem", alignItems: "center" }}>
+            <span style={{ fontSize: "0.78rem", color: "var(--ink-muted)", marginRight: "0.25rem" }}>Status:</span>
+            {["pending", "confirmed", "cancelled"].map((s) => (
+              <button
+                key={s}
+                disabled={saving || selected.payment_status === s}
+                onClick={() => updateStatus(selected.id, s)}
+                style={{
+                  fontSize: "0.78rem", padding: "0.3rem 0.9rem", borderRadius: "8px", fontFamily: "inherit",
+                  cursor: saving || selected.payment_status === s ? "default" : "pointer",
+                  fontWeight: selected.payment_status === s ? 700 : 400,
+                  border: selected.payment_status === s ? "2px solid" : "1px solid rgba(0,0,0,0.15)",
+                  background: selected.payment_status === s
+                    ? (s === "confirmed" ? "rgba(61,184,175,0.15)" : s === "pending" ? "rgba(201,152,63,0.15)" : "rgba(200,200,200,0.15)")
+                    : "transparent",
+                  color: selected.payment_status === s
+                    ? (s === "confirmed" ? "#3DB8AF" : s === "pending" ? "#C9983F" : "#888")
+                    : "var(--ink-muted)",
+                  borderColor: selected.payment_status === s
+                    ? (s === "confirmed" ? "#3DB8AF" : s === "pending" ? "#C9983F" : "#bbb")
+                    : "rgba(0,0,0,0.15)",
+                  opacity: saving ? 0.6 : 1,
+                }}
+              >
+                {saving && selected.payment_status !== s ? "…" : s.charAt(0).toUpperCase() + s.slice(1)}
+              </button>
+            ))}
+
+            <div style={{ marginLeft: "auto" }}>
+              {deleteConfirm === selected.id ? (
+                <span style={{ display: "flex", gap: "0.5rem", alignItems: "center" }}>
+                  <span style={{ fontSize: "0.78rem", color: "#dc5050" }}>Delete this record?</span>
+                  <button
+                    onClick={() => deleteAgreement(selected.id)}
+                    disabled={saving}
+                    style={{ fontSize: "0.78rem", padding: "0.3rem 0.8rem", borderRadius: "6px", background: "#dc5050", color: "#fff", border: "none", cursor: "pointer", fontFamily: "inherit" }}
+                  >
+                    {saving ? "…" : "Yes, delete"}
+                  </button>
+                  <button
+                    onClick={() => setDeleteConfirm(null)}
+                    style={{ fontSize: "0.78rem", padding: "0.3rem 0.8rem", borderRadius: "6px", background: "transparent", color: "var(--ink-muted)", border: "1px solid var(--line-medium)", cursor: "pointer", fontFamily: "inherit" }}
+                  >
+                    Cancel
+                  </button>
+                </span>
+              ) : (
+                <button
+                  onClick={() => setDeleteConfirm(selected.id)}
+                  style={{ fontSize: "0.78rem", color: "#dc5050", background: "none", border: "none", cursor: "pointer", padding: 0, fontFamily: "inherit" }}
+                >
+                  Delete record
+                </button>
+              )}
+            </div>
           </div>
         </div>
       )}

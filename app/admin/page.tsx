@@ -35,6 +35,8 @@ interface SalesKPI {
   affiliateOrders: number;
   affiliateRevenueCents: number;
   totalCommissionCents: number;
+  vendorCount: number;
+  vendorRevenueCents: number;
 }
 
 interface LeaderboardRow {
@@ -53,8 +55,11 @@ interface RecentOrder {
   currency: string;
   customer_email: string | null;
   referral_code: string | null;
+  line_items: string | null;
   status: string;
   created_at: string;
+  source?: string;
+  description?: string | null;
 }
 
 interface DailyRevenue {
@@ -339,8 +344,9 @@ function DashboardTab() {
           <>
             <div style={{ display: "flex", flexWrap: "wrap", gap: "1rem", marginBottom: "1.5rem" }}>
               <KPICard label="Total Revenue" value={usd(sales.kpi.totalRevenueCents)} highlight />
-              <KPICard label="Orders" value={String(sales.kpi.totalOrders)} />
+              <KPICard label="Total Orders" value={String(sales.kpi.totalOrders)} />
               <KPICard label="Avg Order" value={usd(sales.kpi.avgOrderCents)} />
+              <KPICard label="Vendor Agreements" value={String(sales.kpi.vendorCount)} sub={`${usd(sales.kpi.vendorRevenueCents)} revenue`} />
               <KPICard label="Affiliate Orders" value={String(sales.kpi.affiliateOrders)} sub={`${usd(sales.kpi.affiliateRevenueCents)} revenue`} />
               <KPICard label="Commissions Owed" value={usd(sales.kpi.totalCommissionCents)} />
             </div>
@@ -381,32 +387,60 @@ function DashboardTab() {
             {/* Recent orders */}
             <div>
               <h3 style={{ fontSize: "0.75rem", color: "var(--ink-muted)", textTransform: "uppercase", letterSpacing: "0.07em", marginBottom: "0.75rem" }}>
-                Recent Orders
+                Recent Transactions
               </h3>
               {sales.recentOrders.length === 0 ? (
-                <p style={{ color: "var(--ink-muted)", fontSize: "0.85rem" }}>No orders yet.</p>
+                <p style={{ color: "var(--ink-muted)", fontSize: "0.85rem" }}>No transactions yet. Click &ldquo;Sync from Square&rdquo; above to pull ticket sales.</p>
               ) : (
                 <div style={{ overflowX: "auto" }}>
                   <table style={{ width: "100%", borderCollapse: "collapse", background: "var(--surface-elevated)", borderRadius: "10px", overflow: "hidden" }}>
                     <thead>
                       <tr>
-                        {["Date", "Email", "Amount", "Referral", "Status"].map(h => (
+                        {["Date", "Source", "Email / Description", "Items / Add-ons", "Amount", "Status"].map(h => (
                           <th key={h} style={hcell}>{h}</th>
                         ))}
                       </tr>
                     </thead>
                     <tbody>
-                      {sales.recentOrders.map((o) => (
-                        <tr key={o.id}>
-                          <td style={cell}>{fmtDate(o.created_at)}</td>
-                          <td style={cell}>{o.customer_email || "—"}</td>
-                          <td style={{ ...cell, fontWeight: 600 }}>{usd(o.amount_cents)}</td>
-                          <td style={{ ...cell, fontFamily: "monospace", color: o.referral_code ? "var(--psyche-cyan)" : "var(--ink-muted)" }}>
-                            {o.referral_code || "—"}
-                          </td>
-                          <td style={cell}>{o.status}</td>
-                        </tr>
-                      ))}
+                      {sales.recentOrders.map((o, i) => {
+                        let lineItems: { name: string; quantity: number; priceCents: number }[] = [];
+                        try { if (o.line_items) lineItems = JSON.parse(o.line_items); } catch { /* ignore */ }
+                        const isVendor = o.source === "vendor";
+                        return (
+                          <tr key={`${o.source}-${o.id}-${i}`}>
+                            <td style={cell}>{fmtDate(o.created_at)}</td>
+                            <td style={cell}>
+                              <span style={{
+                                fontSize: "0.7rem", padding: "0.15rem 0.5rem", borderRadius: "4px", fontWeight: 600,
+                                background: isVendor ? "rgba(139,95,191,0.12)" : "rgba(42,157,143,0.12)",
+                                color: isVendor ? "#8B5FBF" : "#2a9d8f",
+                              }}>
+                                {isVendor ? "Vendor" : "Ticket"}
+                              </span>
+                            </td>
+                            <td style={cell}>
+                              <div>{o.customer_email || "—"}</div>
+                              {o.description && <div style={{ fontSize: "0.75rem", color: "var(--ink-muted)" }}>{o.description}</div>}
+                              {o.referral_code && <div style={{ fontSize: "0.72rem", fontFamily: "monospace", color: "var(--psyche-cyan)" }}>{o.referral_code}</div>}
+                            </td>
+                            <td style={cell}>
+                              {lineItems.length > 0 ? (
+                                <div style={{ display: "flex", flexDirection: "column", gap: "0.15rem" }}>
+                                  {lineItems.map((li, j) => (
+                                    <div key={j} style={{ fontSize: "0.78rem" }}>
+                                      {li.quantity > 1 && <span style={{ color: "var(--ink-muted)", marginRight: "0.3rem" }}>{li.quantity}×</span>}
+                                      {li.name}
+                                      {li.priceCents > 0 && <span style={{ color: "var(--ink-muted)", marginLeft: "0.3rem" }}>{usd(li.priceCents)}</span>}
+                                    </div>
+                                  ))}
+                                </div>
+                              ) : "—"}
+                            </td>
+                            <td style={{ ...cell, fontWeight: 600 }}>{usd(o.amount_cents)}</td>
+                            <td style={cell}>{o.status}</td>
+                          </tr>
+                        );
+                      })}
                     </tbody>
                   </table>
                 </div>

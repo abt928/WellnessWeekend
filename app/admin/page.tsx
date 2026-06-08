@@ -1054,7 +1054,7 @@ export default function AdminPage() {
   const [selectedRow, setSelectedRow] = useState<Record<string, unknown> | null>(null);
 
   // Affiliate inline editing
-  const [affiliateEdits, setAffiliateEdits] = useState<Record<number, { status?: string; commissionPct?: string; notes?: string }>>({});
+  const [affiliateEdits, setAffiliateEdits] = useState<Record<number, { status?: string; commissionPct?: string; notes?: string; code?: string }>>({});
   const [affiliateSaving, setAffiliateSaving] = useState<number | null>(null);
 
   useEffect(() => {
@@ -1118,7 +1118,7 @@ export default function AdminPage() {
   }, []);
 
   useEffect(() => {
-    if (authenticated && activeTab !== "dashboard" && activeTab !== "guestlist" && activeTab !== "addons") {
+    if (authenticated && activeTab !== "dashboard" && activeTab !== "guestlist" && activeTab !== "addons" && activeTab !== "vendor_agreements") {
       fetchData(activeTab as TableName, search);
     }
   }, [authenticated, activeTab, search, fetchData]);
@@ -1281,7 +1281,7 @@ export default function AdminPage() {
 
           {activeTab === "affiliates" && (
             <div style={{ padding: "0.75rem 1.5rem", background: "rgba(61,184,175,0.05)", borderBottom: "1px solid var(--line-subtle)", fontSize: "0.8rem", color: "var(--ink-muted)" }}>
-              Edit Status, Commission %, or Notes inline then click <strong style={{ color: "var(--ink)" }}>Save</strong> to approve or adjust a partner.
+              Edit Code, Status, Commission %, or Notes inline then click <strong style={{ color: "var(--ink)" }}>Save</strong> to approve or adjust a partner.
             </div>
           )}
 
@@ -1335,6 +1335,17 @@ export default function AdminPage() {
                                   style={{ width: "55px", background: "var(--surface-elevated)", border: "1px solid var(--line-medium)", borderRadius: "6px", color: "var(--ink)", padding: "0.2rem 0.4rem", fontSize: "0.8rem" }}
                                 />
                                 <span style={{ marginLeft: "2px", fontSize: "0.75rem", color: "var(--ink-muted)" }}>%</span>
+                              </td>
+                            );
+                          }
+                          if (activeTab === "affiliates" && col === "code") {
+                            return (
+                              <td key={col} onClick={(e) => e.stopPropagation()}>
+                                <input
+                                  type="text" defaultValue={String(val ?? "")} placeholder="AFFILIATE CODE"
+                                  onChange={(e) => setAffiliateEdits((a) => ({ ...a, [rowId]: { ...a[rowId], code: e.target.value.toUpperCase() } }))}
+                                  style={{ width: "110px", background: "var(--surface-elevated)", border: "1px solid var(--line-medium)", borderRadius: "6px", color: "var(--ink)", padding: "0.2rem 0.4rem", fontSize: "0.8rem", textTransform: "uppercase", fontFamily: "monospace" }}
+                                />
                               </td>
                             );
                           }

@@ -11,13 +11,14 @@ export async function PATCH(req: NextRequest) {
   }
 
   try {
-    const { id, status, commissionPct, notes } = await req.json();
+    const { id, status, commissionPct, notes, code } = await req.json();
     if (!id) return NextResponse.json({ error: "id required" }, { status: 400 });
 
     const updates: Partial<typeof affiliates.$inferInsert> = {};
     if (status !== undefined) updates.status = status;
     if (commissionPct !== undefined) updates.commissionPct = Number(commissionPct);
     if (notes !== undefined) updates.notes = notes;
+    if (code !== undefined) updates.code = String(code).toUpperCase().trim();
 
     if (Object.keys(updates).length === 0) {
       return NextResponse.json({ error: "Nothing to update" }, { status: 400 });

@@ -17,8 +17,8 @@ export async function GET(req: NextRequest) {
   try {
     const sql = neon(dbUrl);
 
-    // KPI – Square orders (synced)
-    const kpiOrders = await sql`
+    // KPI totals — ticket orders only (vendor revenue lives in Agreements tab)
+    const kpiRows = await sql`
       SELECT
         COUNT(*)::int                        AS total_orders,
         COALESCE(SUM(amount_cents), 0)::int  AS total_revenue_cents,
@@ -29,27 +29,11 @@ export async function GET(req: NextRequest) {
       WHERE status = 'completed'
     `;
 
-    // KPI – Vendor agreements (paid; price_cents > 0)
-    const kpiVendors = await sql`
-      SELECT
-        COUNT(*)::int                          AS vendor_count,
-        COALESCE(SUM(price_cents), 0)::int     AS vendor_revenue_cents
-      FROM vendor_agreements
-      WHERE price_cents > 0
-    `;
-
-    // Total commissions owed
-    const commRow = await sql`
+    const commRows = await sql`
       SELECT COALESCE(SUM(commission_cents), 0)::int AS total_commission_cents
       FROM referral_events
       WHERE event_type = 'purchase'
     `;
-
-    const o = kpiOrders[0] ?? {};
-    const v = kpiVendors[0] ?? {};
-    const totalOrders = (Number(o.total_orders) || 0) + (Number(v.vendor_count) || 0);
-    const totalRevenueCents = (Number(o.total_revenue_cents) || 0) + (Number(v.vendor_revenue_cents) || 0);
-    const avgOrderCents = totalOrders > 0 ? Math.round(totalRevenueCents / totalOrders) : 0;
 
     // Affiliate leaderboard (top 10)
     const leaderboard = await sql`
@@ -69,54 +53,19 @@ export async function GET(req: NextRequest) {
       LIMIT 10
     `;
 
-    // Recent Square orders (with line items for add-on visibility)
-    const recentSquare = await sql`
+    // Recent 50 orders with line items for add-on visibility
+    const recentOrders = await sql`
       SELECT
-        id,
-        square_payment_id,
-        square_order_id,
-        amount_cents,
-        currency,
-        customer_email,
-        referral_code,
-        line_items,
-        status,
-        created_at,
-        'order' AS source,
-        NULL::text AS description
+        id, square_payment_id, square_order_id, amount_cents, currency,
+        customer_name, customer_email, referral_code, line_items, status, created_at
       FROM orders
+      WHERE status = 'completed'
       ORDER BY created_at DESC
-      LIMIT 30
+      LIMIT 50
     `;
 
-    // Recent vendor agreement payments
-    const recentVendors = await sql`
-      SELECT
-        id,
-        NULL::text AS square_payment_id,
-        NULL::text AS square_order_id,
-        price_cents AS amount_cents,
-        'USD' AS currency,
-        email AS customer_email,
-        NULL::text AS referral_code,
-        NULL::text AS line_items,
-        payment_status AS status,
-        created_at,
-        'vendor' AS source,
-        (vendor_name || ' — ' || space_type) AS description
-      FROM vendor_agreements
-      WHERE price_cents > 0
-      ORDER BY created_at DESC
-      LIMIT 30
-    `;
-
-    // Merge and sort by created_at, keep newest 50
-    const allRecent = [...recentSquare, ...recentVendors]
-      .sort((a, b) => new Date(String(b.created_at)).getTime() - new Date(String(a.created_at)).getTime())
-      .slice(0, 50);
-
-    // Daily revenue for the last 30 days – combine both sources
-    const dailyOrders = await sql`
+    // Daily revenue for the last 30 days
+    const dailyRevenue = await sql`
       SELECT
         DATE(created_at AT TIME ZONE 'America/Anchorage')::text AS day,
         COUNT(*)::int AS orders,
@@ -125,46 +74,22 @@ export async function GET(req: NextRequest) {
       WHERE status = 'completed'
         AND created_at >= NOW() - INTERVAL '30 days'
       GROUP BY day
+      ORDER BY day ASC
     `;
 
-    const dailyVendors = await sql`
-      SELECT
-        DATE(created_at AT TIME ZONE 'America/Anchorage')::text AS day,
-        COUNT(*)::int AS orders,
-        SUM(price_cents)::int AS revenue_cents
-      FROM vendor_agreements
-      WHERE price_cents > 0
-        AND created_at >= NOW() - INTERVAL '30 days'
-      GROUP BY day
-    `;
-
-    // Merge daily maps
-    const dayMap = new Map<string, { orders: number; revenue_cents: number }>();
-    for (const r of [...dailyOrders, ...dailyVendors]) {
-      const day = String(r.day);
-      const existing = dayMap.get(day) ?? { orders: 0, revenue_cents: 0 };
-      dayMap.set(day, {
-        orders: existing.orders + (Number(r.orders) || 0),
-        revenue_cents: existing.revenue_cents + (Number(r.revenue_cents) || 0),
-      });
-    }
-    const dailyRevenue = Array.from(dayMap.entries())
-      .map(([day, d]) => ({ day, orders: d.orders, revenue_cents: d.revenue_cents }))
-      .sort((a, b) => a.day.localeCompare(b.day));
+    const kpi = kpiRows[0] ?? {};
 
     return NextResponse.json({
       kpi: {
-        totalOrders,
-        totalRevenueCents,
-        avgOrderCents,
-        affiliateOrders: Number(o.affiliate_orders) || 0,
-        affiliateRevenueCents: Number(o.affiliate_revenue_cents) || 0,
-        totalCommissionCents: Number(commRow[0]?.total_commission_cents) || 0,
-        vendorCount: Number(v.vendor_count) || 0,
-        vendorRevenueCents: Number(v.vendor_revenue_cents) || 0,
+        totalOrders:          Number(kpi.total_orders) || 0,
+        totalRevenueCents:    Number(kpi.total_revenue_cents) || 0,
+        avgOrderCents:        Number(kpi.avg_order_cents) || 0,
+        affiliateOrders:      Number(kpi.affiliate_orders) || 0,
+        affiliateRevenueCents:Number(kpi.affiliate_revenue_cents) || 0,
+        totalCommissionCents: Number(commRows[0]?.total_commission_cents) || 0,
       },
       leaderboard,
-      recentOrders: allRecent,
+      recentOrders,
       dailyRevenue,
     });
   } catch (e) {

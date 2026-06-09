@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { isAdminAuthenticated } from "@/app/api/admin/auth/route";
-import { getSquareClient } from "@/lib/square";
+import { getSquareClient, getLocationId } from "@/lib/square";
 import { neon } from "@neondatabase/serverless";
 
 export const dynamic = "force-dynamic";
@@ -21,101 +21,116 @@ export async function POST(req: NextRequest) {
 
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const client = getSquareClient() as any;
+    const locationId = getLocationId();
 
-    const beginTime = new Date(Date.now() - 365 * 24 * 60 * 60 * 1000).toISOString();
     let cursor: string | undefined;
     let synced = 0;
     let skipped = 0;
 
+    // Use Orders Search — more comprehensive than Payments List for ticket sales
     do {
-      const res = await client.payments.list({
-        beginTime,
-        sortOrder: "DESC",
-        limit: 100,
+      const searchRes = await client.orders.search({
+        locationIds: [locationId],
+        query: {
+          filter: {
+            stateFilter: { states: ["COMPLETED"] },
+            dateTimeFilter: {
+              createdAt: {
+                startAt: new Date(Date.now() - 365 * 24 * 60 * 60 * 1000).toISOString(),
+              },
+            },
+          },
+          sort: { sortField: "CREATED_AT", sortOrder: "DESC" },
+        },
+        limit: 500,
         ...(cursor ? { cursor } : {}),
       });
 
-      const payments: any[] = res?.payments ?? [];
-      cursor = res?.cursor;
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      const orders: any[] = searchRes?.orders ?? [];
+      cursor = searchRes?.cursor;
 
-      for (const payment of payments) {
-        if (payment.status !== "COMPLETED") continue;
+      for (const order of orders) {
+        // Skip orders with no payment
+        const tenders = order.tenders ?? [];
+        if (tenders.length === 0) continue;
 
-        const squarePaymentId = payment.id;
-        const squareOrderId = payment.orderId;
-        const amountCents = Number(payment.amountMoney?.amount ?? 0);
-        const currency = payment.amountMoney?.currency ?? "USD";
-        const customerEmail = payment.buyerEmailAddress ?? null;
-        const createdAt = payment.createdAt ?? new Date().toISOString();
+        const squareOrderId   = order.id;
+        const squarePaymentId = tenders[0]?.id ?? squareOrderId;
+        const amountCents     = Number(order.totalMoney?.amount ?? 0);
+        const currency        = order.totalMoney?.currency ?? "USD";
+        const createdAt       = order.createdAt ?? new Date().toISOString();
 
+        // Referral code from order reference ID
         let referralCode: string | null = null;
-        let lineItems: any[] = [];
-        let customerName: string | null = null;
-
-        if (squareOrderId) {
-          try {
-            const orderRes = await client.orders.get({ orderId: squareOrderId });
-            const order = orderRes?.order;
-
-            if (order?.referenceId?.startsWith("ref:")) {
-              referralCode = order.referenceId.slice(4);
-            }
-
-            if (order?.lineItems) {
-              lineItems = order.lineItems.map((li: any) => ({
-                name: li.name || "Unknown",
-                quantity: Number(li.quantity || 1),
-                priceCents: Number(li.totalMoney?.amount || 0),
-              }));
-            }
-
-            // Try to get customer name from fulfillment recipient
-            const fulfillment = order?.fulfillments?.[0];
-            const recipient =
-              fulfillment?.pickupDetails?.recipient ??
-              fulfillment?.shipmentDetails?.recipient ??
-              fulfillment?.deliveryDetails?.recipient;
-            if (recipient?.displayName) {
-              customerName = recipient.displayName;
-            }
-
-            // Fall back to Square customer directory
-            if (!customerName && order?.customerId) {
-              try {
-                const custRes = await client.customers.get({ customerId: order.customerId });
-                const c = custRes?.customer;
-                if (c) {
-                  customerName = [c.givenName, c.familyName].filter(Boolean).join(" ") || c.emailAddress || null;
-                }
-              } catch { /* customer lookup failed */ }
-            }
-          } catch {
-            // order detail fetch failed — save payment without extra details
-          }
+        if (order.referenceId?.startsWith("ref:")) {
+          referralCode = order.referenceId.slice(4);
         }
 
-        // Fall back to email prefix as display name
+        // Line items
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        const lineItems = (order.lineItems ?? []).map((li: any) => ({
+          name:       li.name || "Unknown",
+          quantity:   Number(li.quantity || 1),
+          priceCents: Number(li.totalMoney?.amount || 0),
+        }));
+
+        // Customer email — from fulfillment recipient or customer ID lookup
+        let customerEmail: string | null = null;
+        let customerName:  string | null = null;
+
+        const fulfillment = order.fulfillments?.[0];
+        const recipient   =
+          fulfillment?.pickupDetails?.recipient ??
+          fulfillment?.shipmentDetails?.recipient ??
+          fulfillment?.deliveryDetails?.recipient;
+
+        if (recipient?.emailAddress) customerEmail = recipient.emailAddress;
+        if (recipient?.displayName)  customerName  = recipient.displayName;
+
+        // Payment-level email (tender buyer email)
+        if (!customerEmail && tenders[0]?.paymentId) {
+          try {
+            const payRes = await client.payments.get({ paymentId: tenders[0].paymentId });
+            customerEmail = payRes?.payment?.buyerEmailAddress ?? null;
+          } catch { /* ignore */ }
+        }
+
+        // Customer directory lookup for name
+        if (!customerName && order.customerId) {
+          try {
+            const custRes = await client.customers.get({ customerId: order.customerId });
+            const c = custRes?.customer;
+            if (c) {
+              customerName = [c.givenName, c.familyName].filter(Boolean).join(" ") || null;
+              if (!customerEmail) customerEmail = c.emailAddress ?? null;
+            }
+          } catch { /* ignore */ }
+        }
+
+        // Derive name from email if still missing
         if (!customerName && customerEmail) {
           customerName = customerEmail.split("@")[0].replace(/[._-]/g, " ");
         }
 
-        const inserted = await sql`
+        const result = await sql`
           INSERT INTO orders (
             square_payment_id, square_order_id, amount_cents, currency,
             customer_email, customer_name, referral_code, line_items, status, created_at
           )
           VALUES (
-            ${squarePaymentId}, ${squareOrderId ?? null}, ${amountCents}, ${currency},
-            ${customerEmail}, ${customerName}, ${referralCode}, ${JSON.stringify(lineItems)},
-            'completed', ${createdAt}
+            ${squarePaymentId}, ${squareOrderId}, ${amountCents}, ${currency},
+            ${customerEmail}, ${customerName}, ${referralCode},
+            ${JSON.stringify(lineItems)}, 'completed', ${createdAt}
           )
           ON CONFLICT (square_payment_id) DO UPDATE
-            SET customer_name = EXCLUDED.customer_name,
+            SET customer_name = COALESCE(orders.customer_name, EXCLUDED.customer_name),
+                customer_email= COALESCE(orders.customer_email, EXCLUDED.customer_email),
                 line_items    = EXCLUDED.line_items
           RETURNING id
         `;
 
-        if (inserted.length > 0) synced++;
+        if (result.length > 0) synced++;
         else skipped++;
       }
     } while (cursor);

@@ -27,7 +27,7 @@ export default function VendorConfirmed() {
               Next steps
             </p>
             <ul style={{ listStyle: "none", lineHeight: 2, fontSize: "0.95rem" }}>
-              <li>✓ Email your certificate of insurance to <a href="mailto:hello@wellnessweekendak.com" style={{ color: "var(--sage)" }}>hello@wellnessweekendak.com</a></li>
+              <li>✓ Email your certificate of insurance to <a href="mailto:support@thesoundspace.us" style={{ color: "var(--sage)" }}>support@thesoundspace.us</a></li>
               <li>✓ Watch your inbox for space assignment details</li>
               <li>✓ Plan your setup for August 7 starting at 9:00 AM</li>
             </ul>

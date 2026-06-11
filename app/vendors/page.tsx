@@ -56,7 +56,7 @@ Sound Healing Products LLC shall not be liable for any failure to perform obliga
 12. GOVERNING LAW
 This agreement is governed by the laws of the State of Alaska. Any disputes shall be resolved in the courts of the Matanuska-Susitna Borough, Alaska.
 
-Questions? Contact us at hello@wellnessweekendak.com or (907) 600-4390.`;
+Questions? Contact us at support@thesoundspace.us or (907) 600-4390.`;
 
 export default function VendorAgreementPage() {
   // Form fields
@@ -422,7 +422,7 @@ export default function VendorAgreementPage() {
               <legend className="vendor-legend">4. Business License &amp; Insurance</legend>
               <p className="vendor-field-hint">
                 All vendors are required to carry general liability insurance ($1M minimum). Upload a copy here, or email it to{" "}
-                <a href="mailto:hello@wellnessweekendak.com" className="vendor-inline-link">hello@wellnessweekendak.com</a>{" "}
+                <a href="mailto:support@thesoundspace.us" className="vendor-inline-link">support@thesoundspace.us</a>{" "}
                 before the event. A copy must be on file before your space can be activated.
               </p>
               <div className="vendor-field">

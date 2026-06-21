@@ -1,7 +1,6 @@
 import Image from "next/image";
 import Navigation from "@/components/Navigation";
 import CountdownTimer from "@/components/CountdownTimer";
-import HeroSlideshow from "@/components/HeroSlideshow";
 import Reveal from "@/components/Reveal";
 import Schedule from "@/components/Schedule";
 import FAQ from "@/components/FAQ";
@@ -91,7 +90,6 @@ export default function Home() {
 
       {/* ═══ HERO ═══ */}
       <section className="hero">
-        <HeroSlideshow />
         <div className="hero-overlay" />
         <span className="hero-fire-horse-ghost" aria-hidden="true">🐎</span>
         <div className="hero-content">
@@ -106,7 +104,6 @@ export default function Home() {
           <a href="#store" className="hero-cta">
             Get Your Tickets
           </a>
-          <p className="hero-pricing-hint">Day passes from $44 · Full weekend from $222</p>
           <CountdownTimer />
         </div>
         <div className="scroll-indicator">

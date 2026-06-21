@@ -148,6 +148,25 @@ export default function Store() {
     return () => window.removeEventListener("open-cart", handler);
   }, []);
 
+  // Listen for add-to-cart events from Packages component
+  useEffect(() => {
+    const handler = (e: Event) => {
+      const { variationId, name, variantName, price } = (e as CustomEvent).detail;
+      setCart((prev) => {
+        const existing = prev.find((c) => c.variationId === variationId);
+        if (existing) {
+          if (existing.quantity >= MAX_QTY_PER_ITEM) return prev;
+          return prev.map((c) =>
+            c.variationId === variationId ? { ...c, quantity: c.quantity + 1 } : c
+          );
+        }
+        return [...prev, { variationId, name, variantName, price, quantity: 1 }];
+      });
+    };
+    window.addEventListener("ww-add-to-cart", handler);
+    return () => window.removeEventListener("ww-add-to-cart", handler);
+  }, []);
+
   // Check for pending member redemption whenever cart opens
   useEffect(() => {
     if (!cartOpen) return;

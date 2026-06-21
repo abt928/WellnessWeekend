@@ -6,7 +6,7 @@ import Schedule from "@/components/Schedule";
 import FAQ from "@/components/FAQ";
 import GetInvolved from "@/components/GetInvolved";
 import Store from "@/components/Store";
-import Gallery from "@/components/Gallery";
+import Packages from "@/components/Packages";
 import FloatingActions from "@/components/FloatingActions";
 import ConversionNudges from "@/components/ConversionNudges";
 import PartnerCard from "@/components/PartnerCard";
@@ -91,9 +91,6 @@ export default function Home() {
 
       {/* ═══ HERO ═══ */}
       <section className="hero">
-        <div className="hero-bg">
-          <Image src="/images/hero.png" alt="Alaska wilderness under the aurora" fill priority style={{ objectFit: "cover" }} />
-        </div>
         <div className="hero-overlay" />
         <span className="hero-fire-horse-ghost" aria-hidden="true">🐎</span>
         <div className="hero-content">
@@ -108,7 +105,6 @@ export default function Home() {
           <a href="#store" className="hero-cta">
             Get Your Tickets
           </a>
-          <p className="hero-pricing-hint">Day passes from $44 · Full weekend from $222</p>
           <CountdownTimer />
         </div>
         <div className="scroll-indicator">
@@ -136,6 +132,9 @@ export default function Home() {
 
       {/* ═══ SCHEDULE ═══ */}
       <Schedule />
+
+      {/* ═══ PACKAGES ═══ */}
+      <Packages />
 
       {/* ═══ TICKETS STORE ═══ */}
       <Store />
@@ -177,9 +176,6 @@ export default function Home() {
           </div>
         </div>
       </section>
-
-      {/* ═══ GALLERY ═══ */}
-      <Gallery />
 
       {/* ═══ PLAN YOUR TRIP ═══ */}
       <section id="alaska" className="trip-section">

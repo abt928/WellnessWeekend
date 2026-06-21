@@ -1,29 +1,33 @@
 "use client";
 import { useState, type ReactNode } from "react";
-import { LeafIcon, FlameIcon, SoundWaveIcon, MoonIcon, CupIcon } from "@/components/Icons";
+import { LeafIcon, FlameIcon, WaterDropIcon, WindIcon, MoonIcon } from "@/components/Icons";
 import EventGloss from "@/components/EventGloss";
 import BioTrigger from "@/components/BioTrigger";
 
-type Venue = "main-stage" | "lake" | "tea-lounge" | "labyrinth" | "outdoor";
+type Element = "fire" | "water" | "air" | "earth";
 
 const LIONSGATE_GLOSS =
-  "Our gathering falls on August 8th — a day held in many traditions as a moment of heightened energy and intentional outdoor ceremony under the Alaskan sky.";
+  "Our gathering falls on August 8th — the Lion's Gate Portal. A day of heightened energy and intentional outdoor ceremony. We step outside together at 8:08 AM to meet the day with full presence — mountain air, open sky, and the earth beneath bare feet. Led by White Eagle Medicine Woman.";
 const AYNI_GLOSS =
   "An Andean ceremony of reciprocity. A small bundle of seeds, flowers, and offerings is built and given back to the mountain spirits.";
+const CONTRAST_GLOSS =
+  "Alternating cold water immersion and heat activates circulation, reduces inflammation, and powerfully grounds the nervous system. 30-minute facilitated sessions with limited spots — book ahead.";
+const LABYRINTH_GLOSS =
+  "One path in. One path out. The labyrinth garden is open throughout the weekend for silent walking, integration, and personal reflection between ceremonies.";
 
-const venueMeta: Record<Venue, { icon: ReactNode; label: string; color: string }> = {
-  "main-stage": { icon: <FlameIcon    size={14} color="#E8956A" />, label: "Main Stage",         color: "#E8956A" },
-  "lake":       { icon: <SoundWaveIcon size={14} color="#3DB8AF" />, label: "Lakeside",           color: "#3DB8AF" },
-  "tea-lounge": { icon: <CupIcon      size={14} color="#D4639F" />, label: "Tea Lounge",          color: "#D4639F" },
-  "labyrinth":  { icon: <MoonIcon     size={14} color="#8B5FBF" />, label: "Labyrinth Garden",    color: "#8B5FBF" },
-  "outdoor":    { icon: <LeafIcon     size={14} color="#7C9070" />, label: "Nature & Activities", color: "#7C9070" },
+const elementMeta: Record<Element, { icon: ReactNode; label: string; color: string; desc: string }> = {
+  fire:  { icon: <FlameIcon      size={14} color="#FF6B35" />, label: "Fire",  color: "#FF6B35", desc: "Main Stage · Ceremony" },
+  water: { icon: <WaterDropIcon  size={14} color="#3DB8AF" />, label: "Water", color: "#3DB8AF", desc: "Lakeside · Immersion" },
+  air:   { icon: <WindIcon       size={14} color="#9B7FD4" />, label: "Air",   color: "#9B7FD4", desc: "Aerial · Movement" },
+  earth: { icon: <LeafIcon       size={14} color="#5E8A6A" />, label: "Earth", color: "#5E8A6A", desc: "Garden · Nature" },
 };
 
 interface ScheduleEvent {
   time: string;
   event: string;
   detail?: string;
-  venue: Venue;
+  element: Element;
+  secondElement?: Element;
   location?: string;
   gloss?: string;
   limited?: boolean;
@@ -47,28 +51,29 @@ const days: ScheduleBlock[] = [
         time: "1:00 PM",
         event: "Opening Ceremony",
         detail: "Land Acknowledgement · Dance Alchemy with Ashleigh — the movement medicine your soul has been craving",
-        venue: "main-stage", location: "Main Stage",
+        element: "fire", location: "Main Stage",
         hosts: ["ashleigh"],
       },
       {
         time: "2:00 PM",
         event: "Paddleboard Yoga",
         detail: "All levels, beginner flow — you might get wet!",
-        venue: "lake", location: "Lakeside",
+        element: "water", location: "Lakeside",
         limited: true,
       },
       {
         time: "3:00 PM",
         event: "Guided Meditation",
         detail: "Guided bilateral movement for a relaxing grounding session",
-        venue: "labyrinth", location: "Labyrinth Garden",
+        element: "earth", location: "Labyrinth Garden",
+        gloss: LABYRINTH_GLOSS,
         hosts: ["dixie"],
       },
       {
         time: "3:00 PM",
         event: "Intro Aerial",
-        detail: "Beginner flow · 6 people max",
-        venue: "outdoor",
+        detail: "Beginner silks flow · 6 people max",
+        element: "air",
         limited: true,
         hosts: ["alice"],
       },
@@ -76,47 +81,58 @@ const days: ScheduleBlock[] = [
         time: "4:00 PM",
         event: "Yin Yoga & Sound Savasana",
         detail: "Restorative poses with sound savasana",
-        venue: "tea-lounge", location: "Tea Lounge",
+        element: "earth", location: "Tea Lounge",
         hosts: ["mary"],
       },
       {
         time: "5:00 PM",
         event: "Keys to Kreation",
         detail: "Unlock your infinite potential of creative expression",
-        venue: "main-stage", location: "Main Stage",
+        element: "fire", location: "Main Stage",
         hosts: ["j-brave"],
+      },
+      {
+        time: "6:00 PM",
+        event: "Contrast Therapy",
+        detail: "30 min · Cold plunge + heat cycling to activate circulation, reduce inflammation, and ground your nervous system",
+        element: "water", secondElement: "fire",
+        location: "Lakeside",
+        gloss: CONTRAST_GLOSS,
+        limited: true,
+        hosts: ["ashleigh"],
       },
       {
         time: "8:30 PM",
         event: "Cacao Ceremony · Heart Activation",
-        venue: "main-stage", location: "Main Stage",
+        element: "fire", location: "Main Stage",
         hosts: ["az"],
       },
       {
         time: "9:00 PM",
         event: "Ecstatic Dance",
-        venue: "main-stage", location: "Main Stage",
+        element: "fire", location: "Main Stage",
         hosts: ["flowscape"],
       },
     ],
   },
   {
     label: "Saturday · Aug 8",
-    heading: <><FlameIcon size={20} color="var(--coral)" /> Activation + Transformation</>,
-    theme: "Expansion, Ceremony, Expression",
+    heading: <><FlameIcon size={20} color="#FF6B35" /> Activation + Transformation</>,
+    theme: "Lion's Gate · Expansion · Ceremony",
     events: [
       {
         time: "7:00 AM",
         event: "Floating Sound Bath",
         detail: "Handpan music and ambient sound bath on the lake",
-        venue: "lake", location: "Lakeside",
+        element: "water", location: "Lakeside",
         hosts: ["peace-pixy"],
       },
       {
         time: "8:00 AM",
         event: "Lionsgate Activation + Floating Sound Bath",
-        detail: "Float in an aerial silk hammock or on the lake on a paddleboard",
-        venue: "lake", location: "Lake / Aerial",
+        detail: "Float in an aerial silk hammock or on the lake on a paddleboard — ceremony at 8:08 AM",
+        element: "water", secondElement: "air",
+        location: "Lake · Aerial",
         gloss: LIONSGATE_GLOSS,
         hosts: ["avalon-starling"],
       },
@@ -124,58 +140,64 @@ const days: ScheduleBlock[] = [
         time: "9:00 AM",
         event: "Yoga for Health",
         detail: "Yoga with sound, breath and asanas",
-        venue: "main-stage", location: "Main Stage",
+        element: "fire", location: "Main Stage",
         hosts: ["logan-forehand"],
       },
       {
         time: "10:00 AM",
         event: "Quantum Light Activation",
         detail: "Activate your healing with phototherapy",
-        venue: "labyrinth", location: "Labyrinth Garden",
+        element: "earth", location: "Labyrinth Garden",
+        gloss: LABYRINTH_GLOSS,
         hosts: ["shawn"],
       },
       {
         time: "10:00 AM",
         event: "Intro Aerial",
         detail: "Floating in silks · 6 people max",
-        venue: "outdoor",
+        element: "air",
         limited: true,
         hosts: ["alice"],
       },
       {
         time: "11:00 AM",
         event: "Ayni Despacho Ceremony",
-        venue: "main-stage", location: "Lodge",
+        element: "fire", location: "Lodge",
         gloss: AYNI_GLOSS,
       },
       {
         time: "11:00 AM",
         event: "Feel Good Flow",
-        venue: "outdoor",
+        element: "air",
         hosts: ["jenni"],
       },
       {
-        time: "12:00 PM",
-        event: "TBA",
-        venue: "outdoor",
+        time: "12:30 PM",
+        event: "Contrast Therapy",
+        detail: "30 min · Cold plunge + heat cycling — ground and reset at the midpoint of your day",
+        element: "water", secondElement: "fire",
+        location: "Lakeside",
+        gloss: CONTRAST_GLOSS,
+        limited: true,
+        hosts: ["ashleigh"],
       },
       {
         time: "1:00 PM",
         event: "Authentic Relating Practice",
-        venue: "main-stage", location: "Main Stage",
+        element: "fire", location: "Main Stage",
         hosts: ["az"],
       },
       {
         time: "2:00 PM",
         event: "Paddleboard Yoga",
-        venue: "lake", location: "Lakeside",
+        element: "water", location: "Lakeside",
         limited: true,
         hosts: ["alice"],
       },
       {
         time: "2:00 PM",
         event: "Intro Aerial",
-        venue: "outdoor",
+        element: "air",
         limited: true,
         hosts: ["alice"],
       },
@@ -183,97 +205,118 @@ const days: ScheduleBlock[] = [
         time: "3:00 PM",
         event: "Miracle of Mind",
         detail: "Beginner-friendly guided meditation and discussion",
-        venue: "labyrinth", location: "Labyrinth Garden",
+        element: "earth", location: "Labyrinth Garden",
         hosts: ["logan-forehand"],
       },
       {
         time: "4:00 PM",
         event: "Roots for Recovery",
         detail: "Yin yoga with long holds, MFR props, ending in a Tibetan bowl and gong sound bath",
-        venue: "tea-lounge", location: "Tea Lounge",
+        element: "earth", location: "Tea Lounge",
         hosts: ["jon"],
+      },
+      {
+        time: "5:30 PM",
+        event: "Contrast Therapy",
+        detail: "30 min · Final session of the day — prepare your body for an evening of ceremony",
+        element: "water", secondElement: "fire",
+        location: "Lakeside",
+        gloss: CONTRAST_GLOSS,
+        limited: true,
+        hosts: ["ashleigh"],
       },
       {
         time: "7:00 PM",
         event: "Cacao Ceremony",
-        venue: "main-stage", location: "Main Stage",
+        element: "fire", location: "Main Stage",
       },
       {
         time: "8:00 PM",
         event: "Lionsgate Drumming Ceremony",
         detail: "Bring your drum for a community drum circle with the sacred Grandmother Drum",
-        venue: "main-stage", location: "Main Stage",
+        element: "fire", location: "Main Stage",
         gloss: LIONSGATE_GLOSS,
         hosts: ["white-eagle"],
       },
       {
         time: "9:30 PM",
         event: "Ecstatic Dance",
-        venue: "main-stage", location: "Main Stage",
+        element: "fire", location: "Main Stage",
         hosts: ["j-brave"],
       },
     ],
   },
   {
     label: "Sunday · Aug 9",
-    heading: <><LeafIcon size={20} color="#7C9070" /> Integration + Community</>,
-    theme: "Soft Landing, Heart Opening",
+    heading: <><LeafIcon size={20} color="#5E8A6A" /> Integration + Community</>,
+    theme: "Soft Landing · Heart Opening",
     events: [
       {
         time: "9:00 AM",
         event: "Sound Journey",
         detail: "Handpan music and ambient sound bath in the labyrinth garden",
-        venue: "labyrinth", location: "Labyrinth Garden",
+        element: "earth", location: "Labyrinth Garden",
+        gloss: LABYRINTH_GLOSS,
         hosts: ["peace-pixy"],
       },
       {
         time: "10:00 AM",
         event: "Earth Awareness Practice",
-        venue: "outdoor", location: "Outdoor Space",
+        element: "earth", location: "Outdoor Space",
         hosts: ["gail"],
       },
       {
         time: "10:30 AM",
         event: "Intro Aerial for Kids",
-        venue: "outdoor",
+        element: "air",
         limited: true,
         hosts: ["alice"],
       },
       {
         time: "11:11 AM",
         event: "Message from the Bees — Ecstatic Dance",
-        venue: "labyrinth", location: "Labyrinth Garden",
+        element: "earth", location: "Labyrinth Garden",
+      },
+      {
+        time: "11:30 AM",
+        event: "Contrast Therapy",
+        detail: "30 min · Sunday morning reset — invigorate and integrate before the day unfolds",
+        element: "water", secondElement: "fire",
+        location: "Lakeside",
+        gloss: CONTRAST_GLOSS,
+        limited: true,
+        hosts: ["ashleigh"],
       },
       {
         time: "1:00 PM",
         event: "Kuf Knotz + Christine Elise",
         detail: "Live music",
-        venue: "main-stage", location: "Main Stage",
+        element: "fire", location: "Main Stage",
         hosts: ["kuf-knotz", "christine-elise"],
       },
       {
         time: "1:30 PM",
         event: "Yogassage",
-        venue: "outdoor",
+        element: "earth",
         hosts: ["sarah"],
       },
       {
         time: "3:15 PM",
         event: "J Brave",
         detail: "45 minutes",
-        venue: "main-stage", location: "Main Stage",
+        element: "fire", location: "Main Stage",
         hosts: ["j-brave"],
       },
       {
         time: "4:00 PM",
         event: "Tarot + Tea Party",
         detail: "Tea Lounge welcomes divinators to share and activate this space",
-        venue: "tea-lounge", location: "Tea Lounge",
+        element: "earth", location: "Tea Lounge",
       },
       {
         time: "5:00 PM",
         event: "Closing Ceremony",
-        venue: "main-stage", location: "Main Stage",
+        element: "fire", location: "Main Stage",
       },
     ],
   },
@@ -296,11 +339,11 @@ function readInitialDay(): number {
 
 export default function Schedule() {
   const [active, setActiveState] = useState<number>(readInitialDay);
-  const [venueFilter, setVenueFilter] = useState<Venue | null>(null);
+  const [elementFilter, setElementFilter] = useState<Element | null>(null);
 
   const setActive = (i: number) => {
     setActiveState(i);
-    setVenueFilter(null);
+    setElementFilter(null);
     if (typeof window === "undefined") return;
     const url = new URL(window.location.href);
     if (i === 0) url.searchParams.delete("day");
@@ -309,31 +352,43 @@ export default function Schedule() {
   };
 
   const currentDay = days[active];
-  const filteredEvents = venueFilter
-    ? currentDay.events.filter((e) => e.venue === venueFilter)
+  const filteredEvents = elementFilter
+    ? currentDay.events.filter((e) => e.element === elementFilter || e.secondElement === elementFilter)
     : currentDay.events;
 
   return (
     <section id="schedule" className="section schedule">
-      <p className="section-label">The Journey</p>
+      <p className="section-label">Three Days · Four Elements</p>
       <h2 className="section-title">
-        Friday · Saturday · Sunday
+        The Journey
       </h2>
+      <p className="section-desc">
+        From fire ceremonies to lakeside immersion, aerial arts to earth medicine — filter by element to find your path through the weekend.
+      </p>
 
-      {/* Venue Filter Pills */}
+      {/* Element Legend */}
+      <div style={{ display: "flex", justifyContent: "center", gap: "1.5rem", marginBottom: "1.25rem", flexWrap: "wrap" }}>
+        {(Object.entries(elementMeta) as [Element, typeof elementMeta["fire"]][]).map(([key, meta]) => (
+          <span key={key} style={{ fontSize: "0.75rem", color: meta.color, letterSpacing: "0.06em", display: "flex", alignItems: "center", gap: "0.3rem", opacity: 0.85 }}>
+            {meta.icon} {meta.desc}
+          </span>
+        ))}
+      </div>
+
+      {/* Element Filter Pills */}
       <div className="track-filters">
         <button
-          className={`track-pill${venueFilter === null ? " active" : ""}`}
-          onClick={() => setVenueFilter(null)}
+          className={`track-pill${elementFilter === null ? " active" : ""}`}
+          onClick={() => setElementFilter(null)}
         >
           All
         </button>
-        {(Object.entries(venueMeta) as [Venue, typeof venueMeta["main-stage"]][]).map(([key, meta]) => (
+        {(Object.entries(elementMeta) as [Element, typeof elementMeta["fire"]][]).map(([key, meta]) => (
           <button
             key={key}
-            className={`track-pill${venueFilter === key ? " active" : ""}`}
+            className={`track-pill${elementFilter === key ? " active" : ""}`}
             style={{ "--pill-color": meta.color } as React.CSSProperties}
-            onClick={() => setVenueFilter(venueFilter === key ? null : key)}
+            onClick={() => setElementFilter(elementFilter === key ? null : key)}
           >
             {meta.icon} {meta.label}
           </button>
@@ -360,19 +415,24 @@ export default function Schedule() {
       </div>
 
       {/* Timeline */}
-      <div className="schedule-timeline" key={`${active}-${venueFilter ?? "all"}`}>
+      <div className="schedule-timeline" key={`${active}-${elementFilter ?? "all"}`}>
         {filteredEvents.map((e, i) => (
           <div
             className="schedule-item"
             key={i}
-            style={{ "--dot-color": venueMeta[e.venue].color } as React.CSSProperties}
+            style={{ "--dot-color": elementMeta[e.element].color } as React.CSSProperties}
           >
             <div className="schedule-time">
               {e.time}
               {e.location && <span className="schedule-location"> · {e.location}</span>}
             </div>
             <div className="schedule-event">
-              <span className="schedule-track-icon">{venueMeta[e.venue].icon}</span>
+              <span className="schedule-track-icon">{elementMeta[e.element].icon}</span>
+              {e.secondElement && (
+                <span className="schedule-track-icon" style={{ marginLeft: "-2px" }}>
+                  {elementMeta[e.secondElement].icon}
+                </span>
+              )}
               {e.gloss ? <EventGloss term={e.event} gloss={e.gloss} /> : e.event}
               {e.limited && (
                 <a href="#store" className="schedule-limited">Limited · Book ahead</a>
@@ -390,7 +450,7 @@ export default function Schedule() {
         ))}
         {filteredEvents.length === 0 && (
           <div className="schedule-empty">
-            No {venueMeta[venueFilter!].label} events on this day
+            No {elementMeta[elementFilter!].label} events on this day
           </div>
         )}
       </div>
@@ -399,7 +459,7 @@ export default function Schedule() {
       {active === 2 && (
         <div className="family-day">
           <h3 className="family-day-title" style={{ display: "flex", alignItems: "center", gap: "0.5rem", justifyContent: "center" }}>
-            <LeafIcon size={22} color="#7C9070" /> Sunday Family Day
+            <LeafIcon size={22} color="#5E8A6A" /> Sunday Family Day
           </h3>
           <p className="family-day-subtitle">Wellness for All Ages · All Proceeds to Nonprofits</p>
           <p className="family-day-mission">

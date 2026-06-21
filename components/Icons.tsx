@@ -146,6 +146,24 @@ export function ShirtIcon({ size = defaults.size, color = defaults.color, classN
   );
 }
 
+export function WaterDropIcon({ size = defaults.size, color = defaults.color, className }: IconProps) {
+  return (
+    <svg width={size} height={size} viewBox="0 0 24 24" fill="none" className={className} xmlns="http://www.w3.org/2000/svg">
+      <path d="M12 2C12 2 5 10.5 5 15A7 7 0 0019 15C19 10.5 12 2 12 2Z" stroke={color} strokeWidth="1.5" strokeLinejoin="round" fill={color} fillOpacity="0.12" />
+    </svg>
+  );
+}
+
+export function WindIcon({ size = defaults.size, color = defaults.color, className }: IconProps) {
+  return (
+    <svg width={size} height={size} viewBox="0 0 24 24" fill="none" className={className} xmlns="http://www.w3.org/2000/svg">
+      <path d="M3 8H14C15.66 8 17 6.66 17 5C17 3.34 15.66 2 14 2C12.34 2 11 3.34 11 5" stroke={color} strokeWidth="1.5" strokeLinecap="round" />
+      <path d="M3 12H19C20.66 12 22 13.34 22 15C22 16.66 20.66 18 19 18C17.34 18 16 16.66 16 15" stroke={color} strokeWidth="1.5" strokeLinecap="round" />
+      <path d="M3 16H12C13.1 16 14 16.9 14 18C14 19.1 13.1 20 12 20C10.9 20 10 19.1 10 18" stroke={color} strokeWidth="1.5" strokeLinecap="round" />
+    </svg>
+  );
+}
+
 /* ── Misc ── */
 
 export function SparklesIcon({ size = defaults.size, color = defaults.color, className }: IconProps) {

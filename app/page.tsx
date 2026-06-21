@@ -28,6 +28,13 @@ const partners = [
     logoWidth: 120,
     logoHeight: 120,
   },
+  {
+    name: "Flow Massage",
+    role: "Licensed Massage Therapy",
+    logo: "/logos/flow-massage.png",
+    logoWidth: 200,
+    logoHeight: 100,
+  },
 ];
 
 export default function Home() {
@@ -88,8 +95,9 @@ export default function Home() {
           <Image src="/images/hero.png" alt="Alaska wilderness under the aurora" fill priority style={{ objectFit: "cover" }} />
         </div>
         <div className="hero-overlay" />
+        <span className="hero-fire-horse-ghost" aria-hidden="true">🐎</span>
         <div className="hero-content">
-          <span className="hero-badge">4th Annual Gathering</span>
+          <span className="hero-badge">4th Annual Gathering · Lion's Gate</span>
           <h1 className="hero-title">
             Wellness <em>Weekend</em>
           </h1>
@@ -112,6 +120,19 @@ export default function Home() {
           </div>
         </div>
       </section>
+
+      {/* ═══ MIDNIGHT SUN SALE ═══ */}
+      <div className="midnightsun-banner" role="complementary" aria-label="Midnight Sun Sale">
+        <div className="midnightsun-inner">
+          <span className="midnightsun-sun" aria-hidden="true">☀</span>
+          <span className="midnightsun-title">Midnight Sun Sale</span>
+          <span className="midnightsun-desc">
+            Use code <span className="midnightsun-code">MIDNIGHTSUN</span> for 50% off your 2nd ticket
+            <span className="midnightsun-ends"> · Active through July 7</span>
+          </span>
+          <a href="#store" className="midnightsun-cta">Claim Now →</a>
+        </div>
+      </div>
 
       {/* ═══ SCHEDULE ═══ */}
       <Schedule />
@@ -154,74 +175,6 @@ export default function Home() {
               </p>
             </Reveal>
           </div>
-        </div>
-      </section>
-
-      {/* ═══ LION'S GATE PORTAL ═══ */}
-      <section id="portal" className="portal-section" aria-label="Lion's Gate Portal">
-        {/* Aurora bands */}
-        <div className="portal-aurora" aria-hidden="true">
-          <div className="aurora-band aurora-band-1" />
-          <div className="aurora-band aurora-band-2" />
-          <div className="aurora-band aurora-band-3" />
-          <div className="aurora-band aurora-band-4" />
-        </div>
-
-        {/* Ghost fire horse */}
-        <div className="portal-fire-horse" aria-hidden="true">🐎</div>
-
-        <div className="portal-content">
-          <Reveal>
-            <p className="section-label portal-label">August 8 · 8:08 AM</p>
-            <h2 className="portal-title">Lion&apos;s Gate Portal</h2>
-            <p className="portal-desc">
-              August 8th. 8:08 AM. The sun is already high — Alaska doesn&apos;t
-              do dawn quietly in summer. Each year on this morning we step
-              outside together, hold ceremony on the land, and meet the day
-              with full presence. No building, no walls. Just mountain air,
-              open sky, and the earth beneath bare feet. Led by White Eagle
-              Medicine Woman.
-            </p>
-            <a href="#store" className="portal-cta">Claim Your Place in the Circle</a>
-          </Reveal>
-        </div>
-      </section>
-
-      {/* ═══ LABYRINTH GARDEN ═══ */}
-      <section id="labyrinth" className="labyrinth-section" aria-label="Labyrinth Garden">
-        <div className="labyrinth-spiral-bg" aria-hidden="true">
-          <div className="labyrinth-ring labyrinth-ring-1" />
-          <div className="labyrinth-ring labyrinth-ring-2" />
-          <div className="labyrinth-ring labyrinth-ring-3" />
-          <div className="labyrinth-ring labyrinth-ring-4" />
-          <div className="labyrinth-ring labyrinth-ring-5" />
-          <div className="labyrinth-ring labyrinth-ring-6" />
-          <div className="labyrinth-center-dot" />
-        </div>
-
-        <div className="labyrinth-content">
-          <Reveal>
-            <p className="section-label labyrinth-label">Sacred Ground</p>
-            <h2 className="labyrinth-title">The Labyrinth Garden</h2>
-            <p className="labyrinth-desc">
-              One path in. One path out. Walk it in silence — the land does the rest.
-            </p>
-          </Reveal>
-          <Reveal>
-            <div className="labyrinth-offerings">
-              {[
-                { time: "Dawn", offering: "Silent Walking Meditation", desc: "Guided entry at sunrise with breathwork activation" },
-                { time: "Midday", offering: "Integration Walks", desc: "Open access between ceremonies for personal reflection" },
-                { time: "Dusk", offering: "Closing Circle", desc: "Gratitude ceremony and group spiral walk at sunset" },
-              ].map((o) => (
-                <div className="labyrinth-offering-card" key={o.time}>
-                  <div className="labyrinth-offering-time">{o.time}</div>
-                  <div className="labyrinth-offering-name">{o.offering}</div>
-                  <div className="labyrinth-offering-desc">{o.desc}</div>
-                </div>
-              ))}
-            </div>
-          </Reveal>
         </div>
       </section>
 

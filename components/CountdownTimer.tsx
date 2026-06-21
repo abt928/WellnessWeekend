@@ -21,15 +21,15 @@ export default function CountdownTimer() {
     return () => clearInterval(id);
   }, []);
 
-  if (!diff) return <p className="countdown-line" aria-hidden="true">&nbsp;</p>;
+  if (!diff) return <div className="countdown-line" aria-hidden="true" style={{ visibility: "hidden" }}>&nbsp;</div>;
 
   return (
-    <p className="countdown-line">
+    <div className="countdown-line" role="timer" aria-label={`${diff.days} days and ${diff.hours} hours until the event`}>
       <span className="countdown-line-num">{diff.days}</span>
       <span className="countdown-line-label">days</span>
       <span className="countdown-line-sep">·</span>
       <span className="countdown-line-num">{diff.hours}</span>
-      <span className="countdown-line-label">hours from now</span>
-    </p>
+      <span className="countdown-line-label">hours away</span>
+    </div>
   );
 }

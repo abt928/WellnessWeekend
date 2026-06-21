@@ -229,13 +229,25 @@ textarea:focus-visible {
 }
 .hero-cta { animation: heroRise 0.8s cubic-bezier(0.16, 1, 0.3, 1) 0.5s backwards; }
 .countdown-line { opacity: 0; animation: heroRise 0.8s cubic-bezier(0.16, 1, 0.3, 1) 0.65s forwards; }
-/* Hero fire horse */
+/* Ghost fire horse — lowkey ceremony anchor, lives in hero corner */
+.hero-fire-horse-ghost {
+  position: absolute;
+  bottom: 8%;
+  right: 4%;
+  font-size: clamp(64px, 11vw, 130px);
+  opacity: 0.055;
+  filter: sepia(1) saturate(4) hue-rotate(12deg);
+  animation: horseBreath 7s ease-in-out infinite;
+  pointer-events: none;
+  z-index: 1;
+  user-select: none;
+}
 @media (prefers-reduced-motion: reduce) {
   .hero-badge, .hero-title, .hero-subtitle, .hero-content > p, .hero-cta, .countdown-line {
     opacity: 1;
     animation: none;
   }
-  .aurora-band, .portal-fire-horse { animation: none; }
+  .aurora-band, .portal-fire-horse, .hero-fire-horse-ghost { animation: none; }
 }
 .hero-title {
   font-size: var(--type-h1); line-height: 0.95;
@@ -251,26 +263,33 @@ textarea:focus-visible {
   margin-bottom: 2.5rem;
 }
 
-/* Countdown — single line, demoted below CTA, mins+ resolution */
+/* Countdown — fire-orange dark pill */
 .countdown-line {
   font-family: var(--font-body);
   font-size: 0.78rem;
-  letter-spacing: 0.16em;
+  letter-spacing: 0.12em;
   text-transform: uppercase;
-  color: rgba(255,255,255,0.55);
+  color: rgba(255, 210, 175, 0.85);
   margin-top: 1.75rem;
   display: inline-flex;
-  align-items: baseline;
+  align-items: center;
   gap: 0.4rem;
+  background: rgba(10, 4, 0, 0.75);
+  border: 1px solid rgba(255, 107, 53, 0.38);
+  border-radius: 100px;
+  padding: 0.55rem 1.5rem;
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
 }
 .countdown-line-num {
-  color: var(--gold-light);
-  font-weight: 600;
-  font-size: 0.92rem;
-  letter-spacing: 0.04em;
+  color: #FF6B35;
+  font-weight: 700;
+  font-size: 1.1rem;
+  letter-spacing: 0.02em;
+  text-shadow: 0 0 18px rgba(255, 107, 53, 0.5);
 }
-.countdown-line-label { letter-spacing: 0.14em; }
-.countdown-line-sep { color: rgba(255,255,255,0.3); margin: 0 0.2rem; }
+.countdown-line-label { letter-spacing: 0.12em; color: rgba(255, 210, 175, 0.75); }
+.countdown-line-sep { color: rgba(255, 107, 53, 0.4); margin: 0 0.25rem; }
 
 /* Legacy countdown (no longer rendered, kept for graceful fallback if cached) */
 .countdown { display: flex; gap: 1.5rem; justify-content: center; margin-bottom: 2.5rem; }
@@ -796,6 +815,77 @@ textarea:focus-visible {
 }
 .practitioner-name { font-size: 1.1rem; font-weight: 500; color: var(--forest); margin-bottom: 0.25rem; }
 .practitioner-role { font-size: 0.8rem; color: var(--sage); letter-spacing: 0.04em; }
+
+/* ========== MIDNIGHT SUN SALE BANNER ========== */
+.midnightsun-banner {
+  background: #0A0300;
+  border-bottom: 1px solid rgba(255, 107, 53, 0.22);
+  padding: 0.75rem 1.5rem;
+  text-align: center;
+}
+.midnightsun-inner {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.6rem 1.1rem;
+  max-width: 900px;
+  margin: 0 auto;
+  flex-wrap: wrap;
+}
+.midnightsun-sun {
+  font-size: 1.2rem;
+  animation: sunPulse 3.5s ease-in-out infinite;
+  display: inline-block;
+}
+@keyframes sunPulse {
+  0%, 100% { filter: drop-shadow(0 0 3px rgba(255,107,53,0.6)); }
+  50%       { filter: drop-shadow(0 0 10px rgba(255,153,53,0.9)); }
+}
+.midnightsun-title {
+  color: #FF7A40;
+  font-family: var(--font-display);
+  font-size: 0.97rem;
+  font-weight: 600;
+  letter-spacing: 0.02em;
+}
+.midnightsun-desc {
+  color: rgba(255, 215, 185, 0.82);
+  font-size: 0.875rem;
+}
+.midnightsun-code {
+  display: inline-block;
+  background: rgba(255, 107, 53, 0.12);
+  border: 1px solid rgba(255, 107, 53, 0.32);
+  color: #FF8C55;
+  padding: 0.05rem 0.45rem;
+  border-radius: 4px;
+  font-family: monospace;
+  letter-spacing: 0.1em;
+  font-size: 0.82rem;
+}
+.midnightsun-ends {
+  color: rgba(255, 185, 140, 0.6);
+  font-size: 0.8rem;
+}
+.midnightsun-cta {
+  background: #FF6B35;
+  color: #fff;
+  padding: 0.35rem 1rem;
+  border-radius: 20px;
+  font-weight: 600;
+  font-size: 0.82rem;
+  text-decoration: none;
+  white-space: nowrap;
+  transition: background 0.2s, transform 0.15s;
+}
+.midnightsun-cta:hover {
+  background: #E55A25;
+  transform: scale(1.03);
+}
+@media (max-width: 600px) {
+  .midnightsun-inner { gap: 0.4rem 0.75rem; }
+  .midnightsun-title { width: 100%; }
+}
 
 /* ========== SCHEDULE ========== */
 .schedule { background: var(--cream); }

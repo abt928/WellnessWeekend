@@ -191,21 +191,21 @@ textarea:focus-visible {
 .hero-bg {
   position: absolute; inset: 0; z-index: 0;
 }
-.hero-bg img { width: 100%; height: 100%; object-fit: cover; filter: hue-rotate(15deg) saturate(1.1); }
+.hero-bg img { width: 100%; height: 100%; object-fit: cover; filter: saturate(1.25) brightness(0.88); }
 .hero-overlay {
   position: absolute; inset: 0; z-index: 1;
   background: linear-gradient(
-    180deg,
-    rgba(91,62,150,0.2) 0%,
-    rgba(26,18,50,0.45) 40%,
-    rgba(26,18,50,0.85) 100%
+    170deg,
+    rgba(6, 2, 0, 0.10) 0%,
+    rgba(50, 18, 4, 0.52) 48%,
+    rgba(6, 2, 0, 0.92) 100%
   );
 }
-/* Hero static glow — radial accent without an animated pulse */
+/* Hero warm radial glow — campfire breath, ceremony light */
 .hero::after {
   content: ''; position: absolute; inset: 0; z-index: 1;
-  background: radial-gradient(circle at 20% 30%, rgba(139,95,191,0.06) 0%, transparent 50%),
-              radial-gradient(circle at 80% 70%, rgba(78,205,196,0.04) 0%, transparent 50%);
+  background: radial-gradient(ellipse at 65% 15%, rgba(255, 140, 60, 0.10) 0%, transparent 55%),
+              radial-gradient(ellipse at 25% 75%, rgba(255, 90, 30, 0.07) 0%, transparent 50%);
   pointer-events: none;
 }
 .hero-content {
@@ -331,7 +331,7 @@ textarea:focus-visible {
 .hero-pricing-hint {
   margin-top: 0.75rem;
   font-size: 0.85rem;
-  color: rgba(255, 255, 255, 0.7);
+  color: rgba(255, 205, 165, 0.82);
   letter-spacing: 0.04em;
   animation: heroRise 0.8s cubic-bezier(0.16, 1, 0.3, 1) 0.6s backwards;
 }
@@ -388,6 +388,16 @@ textarea:focus-visible {
 .about {
   background: var(--warm-white);
   padding: clamp(5rem, 10vw, 9rem) clamp(1.5rem, 5vw, 5rem);
+  position: relative;
+  overflow: hidden;
+}
+.about::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: url('/images/earth-medicine.png') center / cover no-repeat;
+  opacity: 0.055;
+  pointer-events: none;
 }
 .about-grid {
   display: grid;
@@ -396,6 +406,8 @@ textarea:focus-visible {
   align-items: start;
   max-width: 1400px;
   margin: 0 auto;
+  position: relative;
+  z-index: 1;
 }
 .about-headline { position: relative; }
 .about .section-label { text-align: left; margin-bottom: 1.5rem; }
@@ -818,8 +830,9 @@ textarea:focus-visible {
 
 /* ========== MIDNIGHT SUN SALE BANNER ========== */
 .midnightsun-banner {
-  background: #0A0300;
-  border-bottom: 1px solid rgba(255, 107, 53, 0.22);
+  background: linear-gradient(135deg, #180900 0%, #120600 50%, #1c0a00 100%);
+  border-top: 1px solid rgba(255, 107, 53, 0.18);
+  border-bottom: 1px solid rgba(255, 107, 53, 0.25);
   padding: 0.75rem 1.5rem;
   text-align: center;
 }
@@ -3341,14 +3354,18 @@ body {
   box-shadow: 0 8px 22px rgba(201, 152, 63, 0.5);
 }
 
-/* Hero CTA: drop the multi-color animated gradient, commit to aurora solid */
+/* Hero CTA: fire orange — matches countdown energy */
 .hero-cta {
-  background: var(--aurora);
+  background: #FF6B35;
   background-size: auto;
   animation: none;
   position: relative;
+  box-shadow: 0 8px 28px rgba(255, 107, 53, 0.38);
 }
-.hero-cta:hover { background: var(--aurora-light); }
+.hero-cta:hover {
+  background: #E85A25;
+  box-shadow: 0 14px 42px rgba(255, 107, 53, 0.52);
+}
 /* Aurora underline draws in on hover — one-shot, deliberate */
 .hero-cta::after {
   content: '';

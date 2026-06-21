@@ -69,6 +69,16 @@ export default function Store() {
   } | null>(null);
 
   const [error, setError] = useState<string | null>(null);
+  const [promoInput, setPromoInput] = useState("");
+  const [promoLoading, setPromoLoading] = useState(false);
+  const [promoResult, setPromoResult] = useState<{
+    valid: boolean;
+    code?: string;
+    label?: string;
+    discountCents?: number;
+    discountDisplay?: string;
+    message?: string;
+  } | null>(null);
 
   const setActiveTab = useCallback((key: string) => {
     setActiveTabState(key);
@@ -127,6 +137,8 @@ export default function Store() {
   // Cart hydration is the lazy initializer above (readInitialCart). Persist on changes:
   useEffect(() => {
     localStorage.setItem("ww-cart", JSON.stringify(cart));
+    // Clear promo result if cart changes so stale discount doesn't carry over
+    setPromoResult(null);
   }, [cart]);
 
   // Listen for external cart open requests (from FloatingActions FAB)
@@ -205,6 +217,26 @@ export default function Store() {
     );
   }, []);
 
+  const applyPromo = useCallback(async () => {
+    if (!promoInput.trim()) return;
+    setPromoLoading(true);
+    try {
+      const res = await fetch("/api/promo", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          code: promoInput.trim(),
+          cart: cart.map((c) => ({ variationId: c.variationId, name: c.name, price: c.price, quantity: c.quantity })),
+        }),
+      });
+      setPromoResult(await res.json());
+    } catch {
+      setPromoResult({ valid: false, message: "Something went wrong." });
+    } finally {
+      setPromoLoading(false);
+    }
+  }, [promoInput, cart]);
+
   const cartTotal = cart.reduce((sum, c) => sum + c.price * c.quantity, 0);
   const cartCount = cart.reduce((sum, c) => sum + c.quantity, 0);
 
@@ -263,6 +295,7 @@ export default function Store() {
           returnUrl: window.location.origin,
           ...(referralCode ? { referralCode } : {}),
           ...(pendingRedemption ? { redemptionId: pendingRedemption.id } : {}),
+          ...(promoResult?.valid && promoResult.discountCents ? { promoCents: promoResult.discountCents } : {}),
         }),
       });
       const data = await res.json();
@@ -413,10 +446,62 @@ export default function Store() {
                   ))}
                 </div>
                 <div className="cart-footer">
+                  {/* Promo code input */}
+                  <div style={{ display: "flex", gap: "0.5rem", marginBottom: "0.75rem" }}>
+                    <input
+                      type="text"
+                      value={promoInput}
+                      onChange={(e) => {
+                        setPromoInput(e.target.value.toUpperCase());
+                        if (promoResult) setPromoResult(null);
+                      }}
+                      onKeyDown={(e) => { if (e.key === "Enter") applyPromo(); }}
+                      placeholder="Promo code"
+                      aria-label="Promo code"
+                      style={{
+                        flex: 1, padding: "0.5rem 0.75rem", borderRadius: "8px",
+                        border: "1px solid rgba(107,127,96,0.3)",
+                        background: "var(--surface-elevated, #FEFCF8)",
+                        fontFamily: "var(--font-body)", fontSize: "0.875rem",
+                        color: "var(--charcoal)", letterSpacing: "0.05em",
+                      }}
+                    />
+                    <button
+                      onClick={applyPromo}
+                      disabled={promoLoading || !promoInput.trim()}
+                      style={{
+                        padding: "0.5rem 1rem", borderRadius: "8px",
+                        background: "var(--sage)", color: "white",
+                        border: "none", cursor: "pointer",
+                        fontSize: "0.875rem", fontWeight: 600,
+                        opacity: promoLoading || !promoInput.trim() ? 0.6 : 1,
+                        whiteSpace: "nowrap",
+                      }}
+                    >
+                      {promoLoading ? "..." : "Apply"}
+                    </button>
+                  </div>
+                  {promoResult && (
+                    <div style={{
+                      padding: "0.6rem 0.75rem", marginBottom: "0.75rem",
+                      background: promoResult.valid ? "rgba(107,127,96,0.08)" : "rgba(220,80,80,0.08)",
+                      borderRadius: "8px",
+                      border: `1px solid ${promoResult.valid ? "rgba(107,127,96,0.25)" : "rgba(220,80,80,0.25)"}`,
+                      fontSize: "0.875rem",
+                      color: promoResult.valid ? "var(--forest)" : "#cc4444",
+                    }}>
+                      {promoResult.valid ? (
+                        <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+                          <span>{promoResult.label}</span>
+                          <span style={{ fontWeight: 600 }}>-{promoResult.discountDisplay}</span>
+                        </div>
+                      ) : promoResult.message}
+                    </div>
+                  )}
                   <div className="cart-total">
                     <span>Total</span>
                     <span style={{ fontFamily: "var(--font-display)", fontSize: "1.3rem" }}>
-                      {formatPrice(cartTotal)}
+                      {formatPrice(cartTotal - (promoResult?.valid ? (promoResult.discountCents ?? 0) : 0) - (pendingRedemption?.discountCents ?? 0))}
                     </span>
                   </div>
                   {pendingRedemption && pendingRedemption.discountCents > 0 && (

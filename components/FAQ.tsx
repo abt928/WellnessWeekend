@@ -4,7 +4,7 @@ import { useState } from "react";
 const faqs = [
   {
     q: "What should I bring?",
-    a: "Layers of warm clothing, a sleeping bag (for Seedling campers), yoga mat, water bottle, journal, sunscreen, insect repellent, and an open heart. We'll send a detailed packing list upon registration.",
+    a: "Layers of warm clothing, a cold-weather sleeping bag (rated for 40°F or below), your own towel, a tent that can handle rain, yoga mat, water bottle, journal, sunscreen, and insect repellent. We'll send a full packing list closer to the event.",
   },
   {
     q: "What's the weather like in August?",
@@ -33,6 +33,10 @@ const faqs = [
   {
     q: "Is the festival pet friendly?",
     a: "No pets are allowed on the property or at the festival. Violations will result in your ticket being voided. Service animals are the only accepted accommodation and must be prearranged with us in advance.",
+  },
+  {
+    q: "Are there showers on-site?",
+    a: "Yes, showers are available on-site. Please bring your own towel.",
   },
   {
     q: "Is there RV camping?",

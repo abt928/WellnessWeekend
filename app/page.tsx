@@ -1,12 +1,12 @@
 import Image from "next/image";
 import Navigation from "@/components/Navigation";
 import CountdownTimer from "@/components/CountdownTimer";
+import HeroSlideshow from "@/components/HeroSlideshow";
 import Reveal from "@/components/Reveal";
 import Schedule from "@/components/Schedule";
 import FAQ from "@/components/FAQ";
 import GetInvolved from "@/components/GetInvolved";
 import Store from "@/components/Store";
-import Gallery from "@/components/Gallery";
 import FloatingActions from "@/components/FloatingActions";
 import ConversionNudges from "@/components/ConversionNudges";
 import PartnerCard from "@/components/PartnerCard";
@@ -91,9 +91,7 @@ export default function Home() {
 
       {/* ═══ HERO ═══ */}
       <section className="hero">
-        <div className="hero-bg">
-          <Image src="/images/hero.png" alt="Alaska wilderness under the aurora" fill priority style={{ objectFit: "cover" }} />
-        </div>
+        <HeroSlideshow />
         <div className="hero-overlay" />
         <span className="hero-fire-horse-ghost" aria-hidden="true">🐎</span>
         <div className="hero-content">
@@ -177,9 +175,6 @@ export default function Home() {
           </div>
         </div>
       </section>
-
-      {/* ═══ GALLERY ═══ */}
-      <Gallery />
 
       {/* ═══ PLAN YOUR TRIP ═══ */}
       <section id="alaska" className="trip-section">

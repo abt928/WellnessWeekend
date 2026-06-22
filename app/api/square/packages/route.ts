@@ -27,7 +27,7 @@ export async function GET() {
     for await (const obj of categories) {
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
       const cat = obj as any;
-      if (cat.categoryData?.name?.toLowerCase() === "packages") {
+      if (cat.categoryData?.name?.toLowerCase().includes("package")) {
         packagesCategoryId = cat.id;
         break;
       }

@@ -3,11 +3,18 @@
 import { useState, useEffect, useCallback } from "react";
 import type { AdminRole } from "@/app/api/admin/auth/route";
 
+// ── Types ─────────────────────────────────────────────────────────────
+
 type TableName =
   | "leads" | "newsletter" | "vendors" | "volunteers"
   | "sponsors" | "instructor_waitlist" | "affiliates" | "referral_events";
 
-type ActiveTab = TableName | "dashboard" | "guestlist" | "addons" | "vendor_agreements";
+type ActiveTab =
+  | "overview" | "loyalty" | "marketing" | "budget"
+  | "guestlist" | "addons" | "vendor_agreements"
+  | "vendors" | "volunteers" | "instructor_waitlist" | "sponsors";
+
+type MarketingSubTab = "newsletter" | "leads" | "affiliates" | "referral_events";
 
 interface TabConfig {
   key: TableName;
@@ -15,63 +22,19 @@ interface TabConfig {
   columns: string[];
 }
 
-const ALL_TABS: TabConfig[] = [
-  { key: "leads",               label: "Leads",        columns: ["id","name","email","phone","message","source","created_at"] },
-  { key: "newsletter",          label: "Newsletter",   columns: ["id","email","created_at"] },
-  { key: "sponsors",            label: "Sponsors",     columns: ["id","name","email","company","budget_range","interests","goals","created_at"] },
+const MARKETING_TABS: TabConfig[] = [
+  { key: "newsletter",      label: "Newsletter",  columns: ["id","email","created_at"] },
+  { key: "leads",           label: "Leads",       columns: ["id","name","email","phone","message","source","created_at"] },
+  { key: "affiliates",      label: "Affiliates",  columns: ["id","name","email","code","company","commission_pct","status","notes","created_at"] },
+  { key: "referral_events", label: "Referrals",   columns: ["id","affiliate_code","event_type","order_id","order_amount_cents","commission_cents","created_at"] },
+];
+
+const OPS_TABS: TabConfig[] = [
   { key: "vendors",             label: "Vendors",      columns: ["id","name","email","business","category","description","created_at"] },
   { key: "volunteers",          label: "Volunteers",   columns: ["id","name","email","phone","interest","experience","availability","created_at"] },
   { key: "instructor_waitlist", label: "Instructors",  columns: ["id","name","email","phone","modality","years_teaching","interested_in_2026","interested_in_2027","offering","created_at"] },
-  { key: "affiliates",          label: "Affiliates",   columns: ["id","name","email","code","company","commission_pct","status","notes","created_at"] },
-  { key: "referral_events",     label: "Referrals",    columns: ["id","affiliate_code","event_type","order_id","order_amount_cents","commission_cents","created_at"] },
+  { key: "sponsors",            label: "Sponsors",     columns: ["id","name","email","company","budget_range","interests","goals","created_at"] },
 ];
-
-// ── Sales / Dashboard types ──────────────────────────────────────────
-
-interface SalesKPI {
-  totalOrders: number;
-  totalRevenueCents: number;
-  avgOrderCents: number;
-  affiliateOrders: number;
-  affiliateRevenueCents: number;
-  totalCommissionCents: number;
-}
-
-interface LeaderboardRow {
-  referral_code: string;
-  affiliate_name: string | null;
-  affiliate_company: string | null;
-  order_count: number;
-  revenue_cents: number;
-  commission_cents: number;
-}
-
-interface RecentOrder {
-  id: number;
-  square_payment_id: string | null;
-  amount_cents: number;
-  currency: string;
-  customer_email: string | null;
-  referral_code: string | null;
-  line_items: string | null;
-  status: string;
-  created_at: string;
-  source?: string;
-  description?: string | null;
-}
-
-interface DailyRevenue {
-  day: string;
-  orders: number;
-  revenue_cents: number;
-}
-
-interface SalesData {
-  kpi: SalesKPI;
-  leaderboard: LeaderboardRow[];
-  recentOrders: RecentOrder[];
-  dailyRevenue: DailyRevenue[];
-}
 
 interface BudgetItem {
   id: number;
@@ -87,6 +50,33 @@ interface BudgetTotals {
   revenue_target_cents: number;
   expense_cents: number;
   income_cents: number;
+}
+
+interface LoyaltyTotals {
+  total_members: number;
+  new_this_month: number;
+  total_points: number;
+  members_with_points: number;
+  total_redemptions: number;
+  total_points_redeemed: number;
+}
+
+interface MemberRow {
+  id: number;
+  name: string | null;
+  email: string;
+  points_balance: number;
+  referral_code: string | null;
+  created_at: string;
+}
+
+interface RedemptionRow {
+  id: number;
+  points_used: number;
+  reward: string | null;
+  redeemed_at: string;
+  member_name: string | null;
+  member_email: string;
 }
 
 // ── Helpers ──────────────────────────────────────────────────────────
@@ -115,18 +105,36 @@ function usd(cents: number) {
   return `$${(cents / 100).toLocaleString("en-US", { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
 }
 
-// ── KPI Card ─────────────────────────────────────────────────────────
+function daysUntil(target: Date): number {
+  const now = new Date();
+  const ms = target.getTime() - now.getTime();
+  return Math.max(0, Math.ceil(ms / (1000 * 60 * 60 * 24)));
+}
 
-function KPICard({ label, value, sub, highlight }: { label: string; value: string; sub?: string; highlight?: boolean }) {
+// ── Shared Style Atoms ────────────────────────────────────────────────
+
+const cell: React.CSSProperties = {
+  padding: "0.6rem 0.75rem", borderBottom: "1px solid var(--line-subtle)",
+  fontSize: "0.82rem", color: "var(--ink)", verticalAlign: "middle",
+};
+const hcell: React.CSSProperties = {
+  ...cell, color: "var(--ink-muted)", fontSize: "0.7rem",
+  textTransform: "uppercase", letterSpacing: "0.06em", fontWeight: 600,
+  background: "var(--surface-elevated)",
+};
+
+// ── Stat Card ─────────────────────────────────────────────────────────
+
+function StatCard({ label, value, sub, accent }: { label: string; value: string | number; sub?: string; accent?: string }) {
   return (
     <div style={{
       background: "var(--surface-elevated)", border: "1px solid var(--line-medium)",
-      borderRadius: "12px", padding: "1.25rem 1.5rem", minWidth: "160px",
+      borderRadius: "12px", padding: "1.25rem 1.5rem", minWidth: "150px", flex: "1 1 150px",
     }}>
-      <div style={{ fontSize: "1.6rem", fontWeight: 700, color: highlight ? "#2a9d8f" : "var(--ink)", fontFamily: "var(--font-display)" }}>
+      <div style={{ fontSize: "1.7rem", fontWeight: 700, color: accent ?? "var(--ink)", fontFamily: "var(--font-display)", lineHeight: 1.1 }}>
         {value}
       </div>
-      <div style={{ fontSize: "0.72rem", color: "var(--ink-muted)", textTransform: "uppercase", letterSpacing: "0.07em", marginTop: "0.3rem" }}>
+      <div style={{ fontSize: "0.7rem", color: "var(--ink-muted)", textTransform: "uppercase", letterSpacing: "0.07em", marginTop: "0.35rem" }}>
         {label}
       </div>
       {sub && <div style={{ fontSize: "0.75rem", color: "var(--ink-muted)", marginTop: "0.2rem" }}>{sub}</div>}
@@ -134,138 +142,316 @@ function KPICard({ label, value, sub, highlight }: { label: string; value: strin
   );
 }
 
-// ── Revenue Chart ─────────────────────────────────────────────────────
+// ── Overview Tab ──────────────────────────────────────────────────────
 
-function RevenueChart({ data }: { data: DailyRevenue[] }) {
-  // Generate every calendar day in the last 30 days (local time)
-  const days: string[] = [];
-  const base = new Date();
-  for (let i = 29; i >= 0; i--) {
-    const d = new Date(base.getFullYear(), base.getMonth(), base.getDate() - i);
-    days.push(d.toISOString().slice(0, 10));
-  }
+function OverviewTab() {
+  const [budget, setBudget] = useState<{ items: BudgetItem[]; totals: BudgetTotals } | null>(null);
+  const [loyalty, setLoyalty] = useState<{ totals: LoyaltyTotals } | null>(null);
+  const [communityData, setCommunityData] = useState<{
+    leads: number; newsletter: number; affiliates: number;
+  } | null>(null);
+  const [loading, setLoading] = useState(true);
 
-  const byDay = new Map(data.map((d) => [d.day, d]));
-  const maxCents = Math.max(...data.map((d) => d.revenue_cents), 1);
+  useEffect(() => {
+    const fetchAll = async () => {
+      setLoading(true);
+      try {
+        const [budgetRes, loyaltyRes, leadsRes, newsletterRes, affiliatesRes] = await Promise.all([
+          fetch("/api/admin/budget"),
+          fetch("/api/admin/members"),
+          fetch("/api/admin/data?table=leads"),
+          fetch("/api/admin/data?table=newsletter"),
+          fetch("/api/admin/data?table=affiliates"),
+        ]);
+        if (budgetRes.ok) setBudget(await budgetRes.json());
+        if (loyaltyRes.ok) {
+          const d = await loyaltyRes.json();
+          setLoyalty({ totals: d.totals });
+        }
+        const [leadsData, newsletterData, affiliatesData] = await Promise.all([
+          leadsRes.ok ? leadsRes.json() : null,
+          newsletterRes.ok ? newsletterRes.json() : null,
+          affiliatesRes.ok ? affiliatesRes.json() : null,
+        ]);
+        setCommunityData({
+          leads: leadsData?.count ?? 0,
+          newsletter: newsletterData?.count ?? 0,
+          affiliates: affiliatesData?.count ?? 0,
+        });
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetchAll();
+  }, []);
 
-  const W = 700, H = 160, PL = 56, PB = 28, PT = 12;
-  const chartW = W - PL - 8;
-  const chartH = H - PB - PT;
-  const bw = chartW / days.length;
-  const gap = 2;
-  const gridColor = "rgba(0,0,0,0.07)";
-  const mutedText = "rgba(0,0,0,0.38)";
-  const labelEvery = Math.ceil(days.length / 6);
+  const eventDate = new Date("2026-08-07T00:00:00");
+  const days = daysUntil(eventDate);
+  const netRevenue = budget ? budget.totals.income_cents - budget.totals.expense_cents : null;
+  const revenueTarget = budget?.totals.revenue_target_cents ?? 0;
+  const goalPct = revenueTarget > 0 && budget ? Math.round((budget.totals.income_cents / revenueTarget) * 100) : null;
+
+  const section = (title: string, children: React.ReactNode) => (
+    <section style={{ marginBottom: "2rem" }}>
+      <h2 style={{ fontSize: "0.72rem", fontWeight: 700, color: "var(--ink-muted)", textTransform: "uppercase", letterSpacing: "0.09em", margin: "0 0 1rem" }}>
+        {title}
+      </h2>
+      {children}
+    </section>
+  );
+
+  if (loading) return <div className="admin-loading">Loading…</div>;
 
   return (
-    <div style={{ background: "var(--surface-elevated)", border: "1px solid var(--line-medium)", borderRadius: "12px", padding: "1rem 1.25rem" }}>
-      <h3 style={{ fontSize: "0.75rem", color: "var(--ink-muted)", textTransform: "uppercase", letterSpacing: "0.07em", margin: "0 0 0.75rem" }}>
-        Daily Revenue · Last 30 Days
-      </h3>
-      <svg viewBox={`0 0 ${W} ${H}`} style={{ width: "100%", height: "auto", display: "block" }} aria-label="Daily revenue chart">
-        {/* Y-axis gridlines + labels */}
-        {([0, 0.25, 0.5, 0.75, 1] as const).map((t) => {
-          const y = PT + chartH * (1 - t);
-          const dollars = Math.round((maxCents * t) / 100);
-          const label = t === 0 ? "$0" : dollars >= 1000 ? `$${(dollars / 1000).toFixed(1)}k` : `$${dollars}`;
-          return (
-            <g key={t}>
-              <line x1={PL} x2={W - 8} y1={y} y2={y} stroke={gridColor} strokeWidth="1" />
-              <text x={PL - 6} y={y + 4} textAnchor="end" fontSize="9" fill={mutedText}>{label}</text>
-            </g>
-          );
-        })}
+    <div style={{ padding: "1.75rem 2rem" }}>
 
-        {/* Bars */}
-        {days.map((day, i) => {
-          const row = byDay.get(day);
-          const cents = row?.revenue_cents ?? 0;
-          const orders = row?.orders ?? 0;
-          const barH = cents > 0 ? Math.max((cents / maxCents) * chartH, 3) : 0;
-          const x = PL + i * bw + gap / 2;
-          const w = bw - gap;
-          const y = PT + chartH - barH;
-          const showLabel = i % labelEvery === 0 || i === days.length - 1;
-          const [yr, mo, dy] = day.split("-").map(Number);
-          const dateLabel = new Date(yr, mo - 1, dy).toLocaleDateString("en-US", { month: "short", day: "numeric" });
-          const tooltip = cents > 0
-            ? `${dateLabel}: $${(cents / 100).toLocaleString("en-US", { minimumFractionDigits: 2 })} · ${orders} order${orders === 1 ? "" : "s"}`
-            : `${dateLabel}: No orders`;
+      {/* Countdown hero */}
+      <div style={{
+        background: "linear-gradient(135deg, #0a0820 0%, #1a0d3a 100%)",
+        borderRadius: "16px", padding: "2rem 2.5rem", marginBottom: "2rem",
+        display: "flex", alignItems: "center", gap: "2rem", flexWrap: "wrap",
+      }}>
+        <div>
+          <div style={{ fontSize: "4rem", fontWeight: 800, color: "#D4AF3C", fontFamily: "var(--font-display)", lineHeight: 1 }}>
+            {days}
+          </div>
+          <div style={{ fontSize: "0.8rem", color: "rgba(255,255,255,0.5)", textTransform: "uppercase", letterSpacing: "0.1em", marginTop: "0.25rem" }}>
+            Days Until Wellness Weekend
+          </div>
+        </div>
+        <div style={{ color: "rgba(255,255,255,0.7)", fontSize: "0.9rem" }}>
+          <div style={{ fontFamily: "var(--font-display)", fontSize: "1.1rem", color: "#fff", marginBottom: "0.25rem" }}>
+            August 7–9, 2026
+          </div>
+          Warrior Lodge · Sutton, Alaska<br />
+          <span style={{ color: "rgba(255,255,255,0.45)", fontSize: "0.8rem" }}>4th Annual Healing Arts Festival</span>
+        </div>
+      </div>
 
-          return (
-            <g key={day}>
-              <rect
-                x={x}
-                y={cents > 0 ? y : PT + chartH - 1}
-                width={Math.max(w, 1)}
-                height={cents > 0 ? barH : 1}
-                fill={cents > 0 ? "#2a9d8f" : "rgba(42,157,143,0.12)"}
-                rx="2"
-                opacity={cents > 0 ? 0.85 : 0.5}
-              >
-                <title>{tooltip}</title>
-              </rect>
-              {showLabel && (
-                <text x={x + w / 2} y={H - 4} textAnchor="middle" fontSize="8.5" fill={mutedText}>
-                  {dateLabel}
-                </text>
-              )}
-            </g>
-          );
-        })}
+      {/* Community snapshot */}
+      {section("Community", (
+        <div style={{ display: "flex", flexWrap: "wrap", gap: "1rem" }}>
+          <StatCard label="Circle Members" value={loyalty?.totals.total_members ?? "—"} accent="#8B5FBF" />
+          <StatCard label="New This Month" value={loyalty?.totals.new_this_month ?? "—"} />
+          <StatCard label="Newsletter Subscribers" value={communityData?.newsletter ?? "—"} accent="#2a9d8f" />
+          <StatCard label="Leads" value={communityData?.leads ?? "—"} />
+          <StatCard label="Affiliate Partners" value={communityData?.affiliates ?? "—"} />
+        </div>
+      ))}
 
-        {/* Empty state */}
-        {data.length === 0 && (
-          <text x={W / 2} y={H / 2 - 4} textAnchor="middle" dominantBaseline="middle" fontSize="12" fill={mutedText}>
-            No orders yet — chart will populate automatically
-          </text>
-        )}
-      </svg>
+      {/* Budget snapshot */}
+      {section("Budget Snapshot", (
+        <div style={{ display: "flex", flexWrap: "wrap", gap: "1rem" }}>
+          <StatCard label="Revenue Target" value={budget ? usd(revenueTarget) : "—"} />
+          <StatCard label="Actual Income" value={budget ? usd(budget.totals.income_cents) : "—"} accent="#2a9d8f" />
+          <StatCard label="Expenses" value={budget ? usd(budget.totals.expense_cents) : "—"} />
+          <StatCard
+            label="Net"
+            value={netRevenue !== null ? usd(netRevenue) : "—"}
+            accent={netRevenue !== null ? (netRevenue >= 0 ? "#2a9d8f" : "#dc5050") : undefined}
+          />
+          {goalPct !== null && (
+            <StatCard label="Goal Progress" value={`${goalPct}%`} accent={goalPct >= 100 ? "#D4AF3C" : undefined} />
+          )}
+        </div>
+      ))}
+
+      {/* Loyalty snapshot */}
+      {section("Loyalty Snapshot", (
+        <div style={{ display: "flex", flexWrap: "wrap", gap: "1rem" }}>
+          <StatCard label="Points Distributed" value={(loyalty?.totals.total_points ?? 0).toLocaleString()} accent="#D4AF3C" />
+          <StatCard label="Members with Points" value={loyalty?.totals.members_with_points ?? "—"} />
+          <StatCard label="Total Redemptions" value={loyalty?.totals.total_redemptions ?? "—"} />
+          <StatCard label="Points Redeemed" value={(loyalty?.totals.total_points_redeemed ?? 0).toLocaleString()} />
+        </div>
+      ))}
+
     </div>
   );
 }
 
-// ── Dashboard Tab ─────────────────────────────────────────────────────
+// ── Loyalty Tab ───────────────────────────────────────────────────────
 
-function DashboardTab() {
-  const [sales, setSales] = useState<SalesData | null>(null);
+function LoyaltyTab() {
+  const [data, setData] = useState<{
+    totals: LoyaltyTotals;
+    recentSignups: MemberRow[];
+    topMembers: MemberRow[];
+    recentRedemptions: RedemptionRow[];
+  } | null>(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+  const [view, setView] = useState<"signups" | "top" | "redemptions">("signups");
+
+  const load = useCallback(async () => {
+    setLoading(true);
+    try {
+      const res = await fetch("/api/admin/members");
+      if (res.ok) setData(await res.json());
+      else setError("Failed to load loyalty data");
+    } catch {
+      setError("Network error");
+    } finally {
+      setLoading(false);
+    }
+  }, []);
+
+  useEffect(() => { load(); }, [load]);
+
+  if (loading) return <div className="admin-loading">Loading loyalty data…</div>;
+  if (error) return <div className="admin-empty" style={{ color: "#dc5050" }}>{error}</div>;
+  if (!data) return null;
+
+  const { totals, recentSignups, topMembers, recentRedemptions } = data;
+
+  const subTabStyle = (active: boolean): React.CSSProperties => ({
+    padding: "0.4rem 1rem", borderRadius: "8px", border: "none", cursor: "pointer",
+    fontSize: "0.8rem", fontFamily: "inherit", fontWeight: active ? 600 : 400,
+    background: active ? "rgba(139,95,191,0.15)" : "transparent",
+    color: active ? "#8B5FBF" : "var(--ink-muted)",
+  });
+
+  return (
+    <div style={{ padding: "1.5rem 2rem" }}>
+
+      {/* Stats row */}
+      <div style={{ display: "flex", flexWrap: "wrap", gap: "1rem", marginBottom: "2rem" }}>
+        <StatCard label="Total Members" value={totals.total_members} accent="#8B5FBF" />
+        <StatCard label="New This Month" value={totals.new_this_month} />
+        <StatCard label="Points Distributed" value={totals.total_points.toLocaleString()} accent="#D4AF3C" sub="1 pt per $1 spent" />
+        <StatCard label="Members with Points" value={totals.members_with_points} />
+        <StatCard label="Redemptions" value={totals.total_redemptions} />
+        <StatCard label="Points Redeemed" value={totals.total_points_redeemed.toLocaleString()} />
+      </div>
+
+      {/* Rewards tiers callout */}
+      <div style={{
+        background: "linear-gradient(135deg, rgba(212,175,60,0.08) 0%, rgba(139,95,191,0.08) 100%)",
+        border: "1px solid rgba(212,175,60,0.25)", borderRadius: "12px",
+        padding: "1rem 1.5rem", marginBottom: "2rem",
+        display: "flex", flexWrap: "wrap", gap: "1.5rem", alignItems: "center",
+      }}>
+        <span style={{ fontSize: "0.75rem", color: "var(--ink-muted)", textTransform: "uppercase", letterSpacing: "0.08em" }}>Reward Tiers</span>
+        {[
+          { pts: "100 pts", reward: "$10 off add-ons or merch" },
+          { pts: "500 pts", reward: "Free day pass" },
+          { pts: "1,000 pts", reward: "Free weekend pass" },
+        ].map(({ pts, reward }) => (
+          <div key={pts} style={{ display: "flex", gap: "0.4rem", alignItems: "baseline" }}>
+            <span style={{ fontWeight: 700, color: "#D4AF3C", fontSize: "0.85rem" }}>{pts}</span>
+            <span style={{ fontSize: "0.8rem", color: "var(--ink-muted)" }}>→ {reward}</span>
+          </div>
+        ))}
+        <div style={{ marginLeft: "auto", fontSize: "0.75rem", color: "var(--ink-muted)" }}>
+          +50 bonus pts per referral
+        </div>
+      </div>
+
+      {/* Sub-view switcher */}
+      <div style={{ display: "flex", gap: "0.5rem", marginBottom: "1rem" }}>
+        <button style={subTabStyle(view === "signups")} onClick={() => setView("signups")}>Recent Sign-ups</button>
+        <button style={subTabStyle(view === "top")} onClick={() => setView("top")}>Top Members</button>
+        <button style={subTabStyle(view === "redemptions")} onClick={() => setView("redemptions")}>Redemptions</button>
+        <button onClick={load} style={{ marginLeft: "auto", fontSize: "0.78rem", color: "var(--ink-muted)", background: "none", border: "none", cursor: "pointer" }}>Refresh</button>
+      </div>
+
+      {/* Tables */}
+      {view === "signups" && (
+        <div style={{ overflowX: "auto" }}>
+          {recentSignups.length === 0 ? (
+            <div className="admin-empty">No members yet — sign-ups will appear here</div>
+          ) : (
+            <table style={{ width: "100%", borderCollapse: "collapse", background: "var(--surface-elevated)", borderRadius: "10px", overflow: "hidden" }}>
+              <thead>
+                <tr>
+                  {["Name", "Email", "Points", "Referral Code", "Joined"].map(h => <th key={h} style={hcell}>{h}</th>)}
+                </tr>
+              </thead>
+              <tbody>
+                {recentSignups.map(m => (
+                  <tr key={m.id}>
+                    <td style={cell}>{m.name || "—"}</td>
+                    <td style={cell}>{m.email}</td>
+                    <td style={{ ...cell, fontWeight: 600, color: m.points_balance > 0 ? "#D4AF3C" : "var(--ink-muted)" }}>
+                      {m.points_balance.toLocaleString()}
+                    </td>
+                    <td style={{ ...cell, fontFamily: "monospace", fontSize: "0.78rem", color: "var(--psyche-cyan)" }}>
+                      {m.referral_code || "—"}
+                    </td>
+                    <td style={{ ...cell, color: "var(--ink-muted)" }}>{fmtDate(m.created_at)}</td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          )}
+        </div>
+      )}
+
+      {view === "top" && (
+        <div style={{ overflowX: "auto" }}>
+          {topMembers.length === 0 ? (
+            <div className="admin-empty">No members have earned points yet</div>
+          ) : (
+            <table style={{ width: "100%", borderCollapse: "collapse", background: "var(--surface-elevated)", borderRadius: "10px", overflow: "hidden" }}>
+              <thead>
+                <tr>
+                  {["#", "Name", "Email", "Points", "Joined"].map(h => <th key={h} style={hcell}>{h}</th>)}
+                </tr>
+              </thead>
+              <tbody>
+                {topMembers.map((m, i) => (
+                  <tr key={m.id}>
+                    <td style={{ ...cell, color: "#D4AF3C", fontWeight: 700 }}>{i + 1}</td>
+                    <td style={{ ...cell, fontWeight: 600 }}>{m.name || "—"}</td>
+                    <td style={cell}>{m.email}</td>
+                    <td style={{ ...cell, fontWeight: 700, color: "#D4AF3C" }}>{m.points_balance.toLocaleString()}</td>
+                    <td style={{ ...cell, color: "var(--ink-muted)" }}>{fmtDate(m.created_at)}</td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          )}
+        </div>
+      )}
+
+      {view === "redemptions" && (
+        <div style={{ overflowX: "auto" }}>
+          {recentRedemptions.length === 0 ? (
+            <div className="admin-empty">No redemptions yet</div>
+          ) : (
+            <table style={{ width: "100%", borderCollapse: "collapse", background: "var(--surface-elevated)", borderRadius: "10px", overflow: "hidden" }}>
+              <thead>
+                <tr>
+                  {["Member", "Email", "Points Used", "Reward", "Date"].map(h => <th key={h} style={hcell}>{h}</th>)}
+                </tr>
+              </thead>
+              <tbody>
+                {recentRedemptions.map(r => (
+                  <tr key={r.id}>
+                    <td style={cell}>{r.member_name || "—"}</td>
+                    <td style={cell}>{r.member_email}</td>
+                    <td style={{ ...cell, fontWeight: 600, color: "#dc5050" }}>-{r.points_used.toLocaleString()}</td>
+                    <td style={cell}>{r.reward || "—"}</td>
+                    <td style={{ ...cell, color: "var(--ink-muted)" }}>{fmtDate(r.redeemed_at)}</td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          )}
+        </div>
+      )}
+    </div>
+  );
+}
+
+// ── Budget Tab ────────────────────────────────────────────────────────
+
+function BudgetTab() {
   const [budget, setBudget] = useState<{ items: BudgetItem[]; totals: BudgetTotals } | null>(null);
-  const [salesLoading, setSalesLoading] = useState(true);
   const [budgetLoading, setBudgetLoading] = useState(true);
   const [addingBudget, setAddingBudget] = useState(false);
   const [budgetForm, setBudgetForm] = useState({ type: "expense", category: "", description: "", amount: "", notes: "" });
   const [budgetSaving, setBudgetSaving] = useState(false);
-  const [syncing, setSyncing] = useState(false);
-  const [syncStatus, setSyncStatus] = useState<string | null>(null);
-
-  const fetchSales = useCallback(async () => {
-    setSalesLoading(true);
-    try {
-      const res = await fetch("/api/admin/sales");
-      if (res.ok) setSales(await res.json());
-    } finally {
-      setSalesLoading(false);
-    }
-  }, []);
-
-  const syncOrders = async () => {
-    setSyncing(true);
-    setSyncStatus(null);
-    try {
-      const res = await fetch("/api/admin/sync-orders", { method: "POST" });
-      const data = await res.json();
-      if (res.ok) {
-        setSyncStatus(`Synced ${data.synced} new order${data.synced !== 1 ? "s" : ""} (${data.skipped} already up to date)`);
-        fetchSales();
-      } else {
-        setSyncStatus(`Error: ${data.error}`);
-      }
-    } catch {
-      setSyncStatus("Sync failed — check console");
-    } finally {
-      setSyncing(false);
-    }
-  };
 
   const fetchBudget = useCallback(async () => {
     setBudgetLoading(true);
@@ -277,10 +463,7 @@ function DashboardTab() {
     }
   }, []);
 
-  useEffect(() => {
-    fetchSales();
-    fetchBudget();
-  }, [fetchSales, fetchBudget]);
+  useEffect(() => { fetchBudget(); }, [fetchBudget]);
 
   const saveBudgetItem = async () => {
     setBudgetSaving(true);
@@ -305,143 +488,31 @@ function DashboardTab() {
     fetchBudget();
   };
 
-  const cell = {
-    padding: "0.6rem 0.75rem", borderBottom: "1px solid var(--line-subtle)",
-    fontSize: "0.82rem", color: "var(--ink)", verticalAlign: "middle" as const,
-  };
-  const hcell = {
-    ...cell, color: "var(--ink-muted)", fontSize: "0.7rem",
-    textTransform: "uppercase" as const, letterSpacing: "0.06em", fontWeight: 600, background: "var(--surface-elevated)",
-  };
-
   const netRevenue = budget ? (budget.totals.income_cents - budget.totals.expense_cents) : null;
   const revenueTarget = budget?.totals.revenue_target_cents ?? 0;
 
   return (
     <div style={{ padding: "1.5rem 2rem", display: "flex", flexDirection: "column", gap: "2rem" }}>
-
-      {/* Sales KPIs */}
-      <section>
-        <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: "1rem" }}>
-          <h2 style={{ fontSize: "0.8rem", fontWeight: 600, color: "var(--ink-muted)", textTransform: "uppercase", letterSpacing: "0.08em", margin: 0 }}>
-            Live Sales Ledger
-          </h2>
-          <div style={{ display: "flex", alignItems: "center", gap: "1rem" }}>
-            {syncStatus && <span style={{ fontSize: "0.75rem", color: syncing ? "var(--ink-muted)" : syncStatus.startsWith("Error") ? "#c0392b" : "#2a9d8f" }}>{syncStatus}</span>}
-            <button onClick={syncOrders} disabled={syncing} style={{ fontSize: "0.78rem", color: "#2a9d8f", background: "none", border: "1px solid rgba(42,157,143,0.3)", borderRadius: "6px", cursor: syncing ? "default" : "pointer", padding: "0.25rem 0.75rem", opacity: syncing ? 0.6 : 1 }}>
-              {syncing ? "Syncing…" : "Sync from Square"}
-            </button>
-            <button onClick={fetchSales} style={{ fontSize: "0.78rem", color: "var(--ink-muted)", background: "none", border: "none", cursor: "pointer", padding: 0 }}>
-              Refresh
-            </button>
-          </div>
-        </div>
-        {salesLoading ? (
-          <div style={{ color: "var(--ink-muted)", fontSize: "0.85rem" }}>Loading…</div>
-        ) : sales ? (
-          <>
-            <div style={{ display: "flex", flexWrap: "wrap", gap: "1rem", marginBottom: "1.5rem" }}>
-              <KPICard label="Ticket Revenue" value={usd(sales.kpi.totalRevenueCents)} highlight />
-              <KPICard label="Tickets Sold" value={String(sales.kpi.totalOrders)} />
-              <KPICard label="Avg Order" value={usd(sales.kpi.avgOrderCents)} />
-              <KPICard label="Affiliate Orders" value={String(sales.kpi.affiliateOrders)} sub={`${usd(sales.kpi.affiliateRevenueCents)} revenue`} />
-              <KPICard label="Commissions Owed" value={usd(sales.kpi.totalCommissionCents)} />
-            </div>
-
-            <RevenueChart data={sales.dailyRevenue} />
-
-            {/* Affiliate leaderboard */}
-            {sales.leaderboard.length > 0 && (
-              <div style={{ marginBottom: "1.5rem" }}>
-                <h3 style={{ fontSize: "0.75rem", color: "var(--ink-muted)", textTransform: "uppercase", letterSpacing: "0.07em", marginBottom: "0.75rem" }}>
-                  Partner Leaderboard
-                </h3>
-                <div style={{ overflowX: "auto" }}>
-                  <table style={{ width: "100%", borderCollapse: "collapse", background: "var(--surface-elevated)", borderRadius: "10px", overflow: "hidden" }}>
-                    <thead>
-                      <tr>
-                        {["Partner", "Code", "Orders", "Revenue", "Commission"].map(h => (
-                          <th key={h} style={hcell}>{h}</th>
-                        ))}
-                      </tr>
-                    </thead>
-                    <tbody>
-                      {sales.leaderboard.map((row) => (
-                        <tr key={row.referral_code}>
-                          <td style={cell}>{row.affiliate_name || row.affiliate_company || "—"}</td>
-                          <td style={{ ...cell, fontFamily: "monospace", color: "var(--psyche-cyan)" }}>{row.referral_code}</td>
-                          <td style={cell}>{row.order_count}</td>
-                          <td style={cell}>{usd(row.revenue_cents)}</td>
-                          <td style={{ ...cell, color: "#3DB8AF" }}>{usd(row.commission_cents)}</td>
-                        </tr>
-                      ))}
-                    </tbody>
-                  </table>
-                </div>
-              </div>
-            )}
-
-            {/* Recent orders */}
-            <div>
-              <h3 style={{ fontSize: "0.75rem", color: "var(--ink-muted)", textTransform: "uppercase", letterSpacing: "0.07em", marginBottom: "0.75rem" }}>
-                Recent Ticket Orders
-              </h3>
-              {sales.recentOrders.length === 0 ? (
-                <p style={{ color: "var(--ink-muted)", fontSize: "0.85rem" }}>
-                  No orders synced yet — click <strong>Sync from Square</strong> above to pull your ticket sales.
-                </p>
-              ) : (
-                <div style={{ overflowX: "auto" }}>
-                  <table style={{ width: "100%", borderCollapse: "collapse", background: "var(--surface-elevated)", borderRadius: "10px", overflow: "hidden" }}>
-                    <thead>
-                      <tr>
-                        {["Date", "Name", "Email", "Items / Add-ons", "Amount", "Referral"].map(h => (
-                          <th key={h} style={hcell}>{h}</th>
-                        ))}
-                      </tr>
-                    </thead>
-                    <tbody>
-                      {sales.recentOrders.map((o, i) => {
-                        let lineItems: { name: string; quantity: number; priceCents: number }[] = [];
-                        try { if (o.line_items) lineItems = JSON.parse(o.line_items); } catch { /* ignore */ }
-                        return (
-                          <tr key={`order-${o.id}-${i}`}>
-                            <td style={cell}>{fmtDate(o.created_at)}</td>
-                            <td style={{ ...cell, fontWeight: 600 }}>{(o as any).customer_name || "—"}</td>
-                            <td style={cell}>{o.customer_email || "—"}</td>
-                            <td style={cell}>
-                              {lineItems.length > 0 ? (
-                                <div style={{ display: "flex", flexDirection: "column", gap: "0.15rem" }}>
-                                  {lineItems.map((li, j) => (
-                                    <div key={j} style={{ fontSize: "0.78rem" }}>
-                                      {li.quantity > 1 && <span style={{ color: "var(--ink-muted)", marginRight: "0.3rem" }}>{li.quantity}×</span>}
-                                      {li.name}
-                                      {li.priceCents > 0 && <span style={{ color: "var(--ink-muted)", marginLeft: "0.3rem" }}>{usd(li.priceCents)}</span>}
-                                    </div>
-                                  ))}
-                                </div>
-                              ) : "—"}
-                            </td>
-                            <td style={{ ...cell, fontWeight: 600 }}>{usd(o.amount_cents)}</td>
-                            <td style={{ ...cell, fontFamily: "monospace", fontSize: "0.78rem", color: o.referral_code ? "var(--psyche-cyan)" : "var(--ink-muted)" }}>
-                              {o.referral_code || "—"}
-                            </td>
-                          </tr>
-                        );
-                      })}
-                    </tbody>
-                  </table>
-                </div>
-              )}
-            </div>
-          </>
-        ) : (
-          <p style={{ color: "var(--ink-muted)", fontSize: "0.85rem" }}>Failed to load sales data. Run Setup DB first.</p>
+      {/* Summary cards */}
+      <div style={{ display: "flex", flexWrap: "wrap", gap: "1rem" }}>
+        <StatCard label="Revenue Target" value={budget ? usd(revenueTarget) : "—"} />
+        <StatCard label="Actual Income" value={budget ? usd(budget.totals.income_cents) : "—"} accent="#2a9d8f" />
+        <StatCard label="Expenses" value={budget ? usd(budget.totals.expense_cents) : "—"} />
+        <StatCard
+          label="Net (Income – Expenses)"
+          value={netRevenue !== null ? usd(netRevenue) : "—"}
+          accent={netRevenue !== null ? (netRevenue >= 0 ? "#2a9d8f" : "#dc5050") : undefined}
+        />
+        {revenueTarget > 0 && budget && (
+          <StatCard
+            label="Goal Progress"
+            value={`${Math.round((budget.totals.income_cents / revenueTarget) * 100)}%`}
+          />
         )}
-      </section>
+      </div>
 
-      {/* Budget & Expenses */}
-      <section>
+      {/* Add item */}
+      <div>
         <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: "1rem" }}>
           <h2 style={{ fontSize: "0.8rem", fontWeight: 600, color: "var(--ink-muted)", textTransform: "uppercase", letterSpacing: "0.08em", margin: 0 }}>
             Budget & Expenses
@@ -454,27 +525,6 @@ function DashboardTab() {
           </button>
         </div>
 
-        {/* Budget summary cards */}
-        {budget && (
-          <div style={{ display: "flex", flexWrap: "wrap", gap: "1rem", marginBottom: "1.25rem" }}>
-            <KPICard label="Revenue Target" value={usd(revenueTarget)} />
-            <KPICard label="Actual Income" value={usd(budget.totals.income_cents)} highlight />
-            <KPICard label="Expenses" value={usd(budget.totals.expense_cents)} />
-            <KPICard
-              label="Net (Income – Expenses)"
-              value={netRevenue !== null ? usd(netRevenue) : "—"}
-              highlight={netRevenue !== null && netRevenue >= 0}
-            />
-            {revenueTarget > 0 && (
-              <KPICard
-                label="Goal Progress"
-                value={`${Math.round((budget.totals.income_cents / revenueTarget) * 100)}%`}
-              />
-            )}
-          </div>
-        )}
-
-        {/* Add budget item form */}
         {addingBudget && (
           <div style={{ background: "var(--surface-elevated)", border: "1px solid var(--line-medium)", borderRadius: "10px", padding: "1.25rem", marginBottom: "1.25rem", display: "flex", flexWrap: "wrap", gap: "0.75rem", alignItems: "flex-end" }}>
             <select
@@ -520,7 +570,6 @@ function DashboardTab() {
           </div>
         )}
 
-        {/* Budget table */}
         {budgetLoading ? (
           <div style={{ color: "var(--ink-muted)", fontSize: "0.85rem" }}>Loading…</div>
         ) : budget && budget.items.length === 0 ? (
@@ -566,7 +615,238 @@ function DashboardTab() {
             </table>
           </div>
         ) : null}
-      </section>
+      </div>
+    </div>
+  );
+}
+
+// ── Marketing Tab ─────────────────────────────────────────────────────
+
+function MarketingTab() {
+  const [subTab, setSubTab] = useState<MarketingSubTab>("newsletter");
+  const [rows, setRows] = useState<Record<string, unknown>[]>([]);
+  const [count, setCount] = useState(0);
+  const [loading, setLoading] = useState(false);
+  const [search, setSearch] = useState("");
+  const [affiliateEdits, setAffiliateEdits] = useState<Record<number, { status?: string; commissionPct?: string; notes?: string; code?: string }>>({});
+  const [affiliateSaving, setAffiliateSaving] = useState<number | null>(null);
+  const [selectedRow, setSelectedRow] = useState<Record<string, unknown> | null>(null);
+
+  const currentTabConfig = [...MARKETING_TABS].find(t => t.key === subTab)!;
+
+  const fetchData = useCallback(async (table: string, searchQuery?: string) => {
+    setLoading(true);
+    try {
+      const params = new URLSearchParams({ table });
+      if (searchQuery) params.set("search", searchQuery);
+      const res = await fetch(`/api/admin/data?${params}`);
+      if (res.ok) {
+        const data = await res.json();
+        setRows(data.rows || []);
+        setCount(data.count || 0);
+      }
+    } catch {
+      setRows([]);
+    }
+    setLoading(false);
+  }, []);
+
+  useEffect(() => {
+    setSearch("");
+    setSelectedRow(null);
+    fetchData(subTab);
+  }, [subTab, fetchData]);
+
+  useEffect(() => {
+    const t = setTimeout(() => fetchData(subTab, search), 300);
+    return () => clearTimeout(t);
+  }, [search, subTab, fetchData]);
+
+  const saveAffiliateEdits = async (id: number) => {
+    setAffiliateSaving(id);
+    const updates = affiliateEdits[id] ?? {};
+    await fetch("/api/admin/affiliates", {
+      method: "PATCH",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ id, ...updates }),
+    });
+    setAffiliateSaving(null);
+    fetchData("affiliates", search);
+  };
+
+  const exportCSV = () => {
+    if (rows.length === 0) return;
+    const cols = currentTabConfig.columns;
+    const csv = [cols.join(","), ...rows.map(row => cols.map(c => `"${String(row[c] ?? "").replace(/"/g, '""')}"`).join(","))].join("\n");
+    const blob = new Blob([csv], { type: "text/csv" });
+    const a = document.createElement("a");
+    a.href = URL.createObjectURL(blob);
+    a.download = `${subTab}_${new Date().toISOString().slice(0, 10)}.csv`;
+    a.click();
+  };
+
+  const subTabStyle = (key: string): React.CSSProperties => ({
+    padding: "0.35rem 0.9rem", borderRadius: "8px", border: "none", cursor: "pointer",
+    fontSize: "0.8rem", fontFamily: "inherit", fontWeight: subTab === key ? 600 : 400,
+    background: subTab === key ? "rgba(61,184,175,0.12)" : "transparent",
+    color: subTab === key ? "#2a9d8f" : "var(--ink-muted)",
+  });
+
+  return (
+    <div>
+      {/* Sub-tab bar */}
+      <div style={{ display: "flex", gap: "0.25rem", padding: "0.75rem 1.5rem", borderBottom: "1px solid var(--line-subtle)", background: "var(--surface-elevated)" }}>
+        {MARKETING_TABS.map(t => (
+          <button key={t.key} style={subTabStyle(t.key)} onClick={() => setSubTab(t.key as MarketingSubTab)}>
+            {t.label}
+          </button>
+        ))}
+      </div>
+
+      {subTab === "affiliates" && (
+        <div style={{ padding: "0.75rem 1.5rem", background: "rgba(61,184,175,0.05)", borderBottom: "1px solid var(--line-subtle)", fontSize: "0.8rem", color: "var(--ink-muted)" }}>
+          Edit Code, Status, Commission %, or Notes inline then click <strong style={{ color: "var(--ink)" }}>Save</strong>.
+        </div>
+      )}
+
+      {/* Toolbar */}
+      <div className="admin-toolbar">
+        <div className="admin-toolbar-left">
+          <span className="admin-count">{count} records</span>
+          <input
+            type="text" value={search}
+            onChange={(e) => setSearch(e.target.value)}
+            placeholder="Search by email…" className="admin-search"
+          />
+        </div>
+        <div className="admin-toolbar-right">
+          <button onClick={() => fetchData(subTab, search)} className="admin-refresh-btn">Refresh</button>
+          <button onClick={exportCSV} className="admin-export-btn" disabled={rows.length === 0}>Export CSV</button>
+        </div>
+      </div>
+
+      <div className="admin-table-wrap">
+        {loading ? (
+          <div className="admin-loading">Loading…</div>
+        ) : rows.length === 0 ? (
+          <div className="admin-empty">No records found</div>
+        ) : (
+          <table className="admin-table">
+            <thead>
+              <tr>
+                {currentTabConfig.columns.map(col => <th key={col}>{col.replace(/_/g, " ")}</th>)}
+                {subTab === "affiliates" && <th>Save</th>}
+              </tr>
+            </thead>
+            <tbody>
+              {rows.map((row, i) => {
+                const rowId = Number(row.id);
+                const isSelected = selectedRow === row;
+                return (
+                  <tr
+                    key={i}
+                    onClick={() => setSelectedRow(isSelected ? null : row)}
+                    style={{ cursor: "pointer", background: isSelected ? "rgba(139,95,191,0.07)" : undefined }}
+                  >
+                    {currentTabConfig.columns.map(col => {
+                      const val = row[col];
+                      if (subTab === "affiliates" && col === "status") {
+                        return (
+                          <td key={col} onClick={e => e.stopPropagation()}>
+                            <select
+                              defaultValue={String(val ?? "pending")}
+                              onChange={e => setAffiliateEdits(a => ({ ...a, [rowId]: { ...a[rowId], status: e.target.value } }))}
+                              style={{ background: "var(--surface-elevated)", border: "1px solid var(--line-medium)", borderRadius: "6px", color: "var(--ink)", padding: "0.2rem 0.4rem", fontSize: "0.8rem" }}
+                            >
+                              <option value="pending">pending</option>
+                              <option value="active">active</option>
+                              <option value="inactive">inactive</option>
+                            </select>
+                          </td>
+                        );
+                      }
+                      if (subTab === "affiliates" && col === "commission_pct") {
+                        return (
+                          <td key={col} onClick={e => e.stopPropagation()}>
+                            <input
+                              type="number" defaultValue={String(val ?? 10)} min={0} max={100}
+                              onChange={e => setAffiliateEdits(a => ({ ...a, [rowId]: { ...a[rowId], commissionPct: e.target.value } }))}
+                              style={{ width: "55px", background: "var(--surface-elevated)", border: "1px solid var(--line-medium)", borderRadius: "6px", color: "var(--ink)", padding: "0.2rem 0.4rem", fontSize: "0.8rem" }}
+                            />
+                            <span style={{ marginLeft: "2px", fontSize: "0.75rem", color: "var(--ink-muted)" }}>%</span>
+                          </td>
+                        );
+                      }
+                      if (subTab === "affiliates" && col === "code") {
+                        return (
+                          <td key={col} onClick={e => e.stopPropagation()}>
+                            <input
+                              type="text" defaultValue={String(val ?? "")} placeholder="AFFILIATE CODE"
+                              onChange={e => setAffiliateEdits(a => ({ ...a, [rowId]: { ...a[rowId], code: e.target.value.toUpperCase() } }))}
+                              style={{ width: "110px", background: "var(--surface-elevated)", border: "1px solid var(--line-medium)", borderRadius: "6px", color: "var(--ink)", padding: "0.2rem 0.4rem", fontSize: "0.8rem", textTransform: "uppercase", fontFamily: "monospace" }}
+                            />
+                          </td>
+                        );
+                      }
+                      if (subTab === "affiliates" && col === "notes") {
+                        return (
+                          <td key={col} onClick={e => e.stopPropagation()}>
+                            <input
+                              type="text" defaultValue={String(val ?? "")} placeholder="Internal notes"
+                              onChange={e => setAffiliateEdits(a => ({ ...a, [rowId]: { ...a[rowId], notes: e.target.value } }))}
+                              style={{ width: "130px", background: "var(--surface-elevated)", border: "1px solid var(--line-medium)", borderRadius: "6px", color: "var(--ink)", padding: "0.2rem 0.4rem", fontSize: "0.8rem" }}
+                            />
+                          </td>
+                        );
+                      }
+                      return <td key={col}>{col === "created_at" ? fmtDate(val) : String(val ?? "—")}</td>;
+                    })}
+                    {subTab === "affiliates" && (
+                      <td onClick={e => e.stopPropagation()}>
+                        <button
+                          onClick={() => saveAffiliateEdits(rowId)}
+                          disabled={affiliateSaving === rowId}
+                          style={{ background: "rgba(61,184,175,0.15)", border: "1px solid #3DB8AF", borderRadius: "6px", color: "#3DB8AF", padding: "0.2rem 0.7rem", cursor: "pointer", fontSize: "0.8rem", fontFamily: "inherit" }}
+                        >
+                          {affiliateSaving === rowId ? "…" : "Save"}
+                        </button>
+                      </td>
+                    )}
+                  </tr>
+                );
+              })}
+            </tbody>
+          </table>
+        )}
+      </div>
+
+      {selectedRow && (
+        <div className="admin-detail-panel">
+          <div className="admin-detail-header">
+            <span className="admin-detail-title">
+              {String(selectedRow.name ?? selectedRow.email ?? `Record #${selectedRow.id}`)}
+            </span>
+            <button className="admin-detail-close" onClick={() => setSelectedRow(null)}>✕ Close</button>
+          </div>
+          <div className="admin-detail-grid">
+            {currentTabConfig.columns.filter(col => col !== "id" && col !== "created_at").map(col => {
+              const val = selectedRow[col];
+              const display = String(val ?? "—");
+              if (!display || display === "—") return null;
+              return (
+                <div key={col} className="admin-detail-field">
+                  <div className="admin-detail-label">{col.replace(/_/g, " ")}</div>
+                  <div className="admin-detail-value">{display}</div>
+                </div>
+              );
+            })}
+            <div className="admin-detail-field">
+              <div className="admin-detail-label">submitted</div>
+              <div className="admin-detail-value">{fmtDate(selectedRow.created_at)}</div>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
@@ -613,10 +893,7 @@ function GuestListTab() {
       /add.?on|aerial|paddleboard|massage|sauna|workshop|upgrade/i.test(h)
     );
     return addonCols
-      .filter(h => {
-        const v = row[h];
-        return v && v !== "—" && v !== "0" && !/^(no|false|n\/a|none)$/i.test(v);
-      })
+      .filter(h => { const v = row[h]; return v && v !== "—" && v !== "0" && !/^(no|false|n\/a|none)$/i.test(v); })
       .map(h => ({ label: h, value: row[h] }));
   };
 
@@ -628,15 +905,12 @@ function GuestListTab() {
   };
 
   const filtered = search
-    ? rows.filter((row) => Object.values(row).some((v) => v.toLowerCase().includes(search.toLowerCase())))
+    ? rows.filter(row => Object.values(row).some(v => v.toLowerCase().includes(search.toLowerCase())))
     : rows;
 
   const exportCSV = () => {
     if (rows.length === 0) return;
-    const csv = [
-      headers.join(","),
-      ...rows.map((row) => headers.map((h) => `"${(row[h] ?? "").replace(/"/g, '""')}"`).join(",")),
-    ].join("\n");
+    const csv = [headers.join(","), ...rows.map(row => headers.map(h => `"${(row[h] ?? "").replace(/"/g, '""')}"`).join(","))].join("\n");
     const blob = new Blob([csv], { type: "text/csv" });
     const a = document.createElement("a");
     a.href = URL.createObjectURL(blob);
@@ -801,7 +1075,7 @@ function GuestListTab() {
   );
 }
 
-// ── Add-Ons Sheet Tab ─────────────────────────────────────────────────
+// ── Add-Ons Tab ───────────────────────────────────────────────────────
 
 function AddonsTab() {
   const [headers, setHeaders] = useState<string[]>([]);
@@ -824,15 +1098,12 @@ function AddonsTab() {
   }, []);
 
   const filtered = search
-    ? rows.filter((row) => Object.values(row).some((v) => v.toLowerCase().includes(search.toLowerCase())))
+    ? rows.filter(row => Object.values(row).some(v => v.toLowerCase().includes(search.toLowerCase())))
     : rows;
 
   const exportCSV = () => {
     if (rows.length === 0) return;
-    const csv = [
-      headers.join(","),
-      ...rows.map((row) => headers.map((h) => `"${(row[h] ?? "").replace(/"/g, '""')}"`).join(",")),
-    ].join("\n");
+    const csv = [headers.join(","), ...rows.map(row => headers.map(h => `"${(row[h] ?? "").replace(/"/g, '""')}"`).join(","))].join("\n");
     const blob = new Blob([csv], { type: "text/csv" });
     const a = document.createElement("a");
     a.href = URL.createObjectURL(blob);
@@ -882,9 +1153,7 @@ function AddonsTab() {
               {filtered.map((row, i) => (
                 <tr key={i}>
                   {headers.map((h, j) => (
-                    <td key={j} title={row[h] || ""}>
-                      <span className="cell-truncate">{row[h] || "—"}</span>
-                    </td>
+                    <td key={j} title={row[h] || ""}><span className="cell-truncate">{row[h] || "—"}</span></td>
                   ))}
                 </tr>
               ))}
@@ -954,7 +1223,7 @@ function VendorAgreementsTab() {
     });
     setSaving(false);
     load();
-    setSelected((prev) => prev?.id === id ? { ...prev, payment_status } : prev);
+    setSelected(prev => prev?.id === id ? { ...prev, payment_status } : prev);
   };
 
   const deleteAgreement = async (id: number) => {
@@ -976,8 +1245,8 @@ function VendorAgreementsTab() {
     color: s === "confirmed" ? "#3DB8AF" : s === "pending" ? "#C9983F" : "#888",
   });
 
-  const cell: React.CSSProperties  = { padding: "0.55rem 0.75rem", fontSize: "0.82rem", borderBottom: "1px solid rgba(0,0,0,0.05)", verticalAlign: "top" };
-  const hcell: React.CSSProperties = { padding: "0.5rem 0.75rem", fontSize: "0.72rem", fontWeight: 700, textTransform: "uppercase", letterSpacing: "0.06em", color: "var(--ink-muted)", background: "rgba(0,0,0,0.03)", textAlign: "left" };
+  const vcell: React.CSSProperties  = { padding: "0.55rem 0.75rem", fontSize: "0.82rem", borderBottom: "1px solid rgba(0,0,0,0.05)", verticalAlign: "top" };
+  const vhcell: React.CSSProperties = { padding: "0.5rem 0.75rem", fontSize: "0.72rem", fontWeight: 700, textTransform: "uppercase", letterSpacing: "0.06em", color: "var(--ink-muted)", background: "rgba(0,0,0,0.03)", textAlign: "left" };
 
   if (loading) return <div style={{ padding: "2rem", color: "var(--ink-muted)" }}>Loading…</div>;
   if (error)   return <div style={{ padding: "2rem", color: "#dc5050" }}>{error}</div>;
@@ -1000,32 +1269,32 @@ function VendorAgreementsTab() {
             <thead>
               <tr>
                 {["Vendor", "Contact", "Email", "Space", "Days", "Elec", "Amount", "Status", "Signed", "Submitted"].map(h => (
-                  <th key={h} style={hcell}>{h}</th>
+                  <th key={h} style={vhcell}>{h}</th>
                 ))}
               </tr>
             </thead>
             <tbody>
-              {agreements.map((a) => (
+              {agreements.map(a => (
                 <tr
                   key={a.id}
                   onClick={() => setSelected(selected?.id === a.id ? null : a)}
                   style={{ cursor: "pointer", background: selected?.id === a.id ? "rgba(61,184,175,0.06)" : "transparent" }}
                 >
-                  <td style={cell}>
+                  <td style={vcell}>
                     <div style={{ fontWeight: 600 }}>{a.vendor_name}</div>
                     {a.business_name && a.business_name !== a.vendor_name && (
                       <div style={{ fontSize: "0.75rem", color: "var(--ink-muted)" }}>{a.business_name}</div>
                     )}
                   </td>
-                  <td style={cell}>{a.contact_name}</td>
-                  <td style={cell}>{a.email}</td>
-                  <td style={cell}>{SPACE_LABELS[a.space_type] ?? a.space_type}</td>
-                  <td style={{ ...cell, fontSize: "0.75rem", color: "var(--ink-muted)" }}>{a.selected_days || "All 3"}</td>
-                  <td style={cell}>{a.electricity === "yes" ? "Yes" : "No"}</td>
-                  <td style={{ ...cell, fontWeight: 600 }}>{a.price_cents === 0 ? "Free" : `$${(a.price_cents / 100).toFixed(0)}`}</td>
-                  <td style={cell}><span style={statusStyle(a.payment_status)}>{a.payment_status}</span></td>
-                  <td style={{ ...cell, fontSize: "0.75rem" }}>{a.printed_name}<br /><span style={{ color: "var(--ink-muted)" }}>{a.sig_date}</span></td>
-                  <td style={{ ...cell, fontSize: "0.75rem", color: "var(--ink-muted)" }}>{new Date(a.created_at).toLocaleDateString()}</td>
+                  <td style={vcell}>{a.contact_name}</td>
+                  <td style={vcell}>{a.email}</td>
+                  <td style={vcell}>{SPACE_LABELS[a.space_type] ?? a.space_type}</td>
+                  <td style={{ ...vcell, fontSize: "0.75rem", color: "var(--ink-muted)" }}>{a.selected_days || "All 3"}</td>
+                  <td style={vcell}>{a.electricity === "yes" ? "Yes" : "No"}</td>
+                  <td style={{ ...vcell, fontWeight: 600 }}>{a.price_cents === 0 ? "Free" : `$${(a.price_cents / 100).toFixed(0)}`}</td>
+                  <td style={vcell}><span style={statusStyle(a.payment_status)}>{a.payment_status}</span></td>
+                  <td style={{ ...vcell, fontSize: "0.75rem" }}>{a.printed_name}<br /><span style={{ color: "var(--ink-muted)" }}>{a.sig_date}</span></td>
+                  <td style={{ ...vcell, fontSize: "0.75rem", color: "var(--ink-muted)" }}>{new Date(a.created_at).toLocaleDateString()}</td>
                 </tr>
               ))}
             </tbody>
@@ -1033,7 +1302,6 @@ function VendorAgreementsTab() {
         </div>
       )}
 
-      {/* Detail panel */}
       {selected && (
         <div className="admin-detail-panel" style={{ marginTop: "1.5rem" }}>
           <div className="admin-detail-header">
@@ -1060,11 +1328,9 @@ function VendorAgreementsTab() {
               </div>
             ))}
           </div>
-
-          {/* Status + delete actions */}
           <div style={{ padding: "1rem 1.25rem", borderTop: "1px solid var(--line-subtle)", display: "flex", flexWrap: "wrap", gap: "0.75rem", alignItems: "center" }}>
             <span style={{ fontSize: "0.78rem", color: "var(--ink-muted)", marginRight: "0.25rem" }}>Status:</span>
-            {["pending", "confirmed", "cancelled"].map((s) => (
+            {["pending", "confirmed", "cancelled"].map(s => (
               <button
                 key={s}
                 disabled={saving || selected.payment_status === s}
@@ -1089,7 +1355,6 @@ function VendorAgreementsTab() {
                 {saving && selected.payment_status !== s ? "…" : s.charAt(0).toUpperCase() + s.slice(1)}
               </button>
             ))}
-
             <div style={{ marginLeft: "auto" }}>
               {deleteConfirm === selected.id ? (
                 <span style={{ display: "flex", gap: "0.5rem", alignItems: "center" }}>
@@ -1124,6 +1389,127 @@ function VendorAgreementsTab() {
   );
 }
 
+// ── Generic Data Table ────────────────────────────────────────────────
+
+function DataTab({ tableKey, columns }: { tableKey: TableName; columns: string[] }) {
+  const [rows, setRows] = useState<Record<string, unknown>[]>([]);
+  const [count, setCount] = useState(0);
+  const [loading, setLoading] = useState(false);
+  const [search, setSearch] = useState("");
+  const [selectedRow, setSelectedRow] = useState<Record<string, unknown> | null>(null);
+
+  const fetchData = useCallback(async (searchQuery?: string) => {
+    setLoading(true);
+    try {
+      const params = new URLSearchParams({ table: tableKey });
+      if (searchQuery) params.set("search", searchQuery);
+      const res = await fetch(`/api/admin/data?${params}`);
+      if (res.ok) {
+        const data = await res.json();
+        setRows(data.rows || []);
+        setCount(data.count || 0);
+      }
+    } catch {
+      setRows([]);
+    }
+    setLoading(false);
+  }, [tableKey]);
+
+  useEffect(() => { fetchData(); }, [fetchData]);
+
+  useEffect(() => {
+    const t = setTimeout(() => fetchData(search), 300);
+    return () => clearTimeout(t);
+  }, [search, fetchData]);
+
+  const exportCSV = () => {
+    if (rows.length === 0) return;
+    const csv = [columns.join(","), ...rows.map(row => columns.map(c => `"${String(row[c] ?? "").replace(/"/g, '""')}"`).join(","))].join("\n");
+    const blob = new Blob([csv], { type: "text/csv" });
+    const a = document.createElement("a");
+    a.href = URL.createObjectURL(blob);
+    a.download = `${tableKey}_${new Date().toISOString().slice(0, 10)}.csv`;
+    a.click();
+  };
+
+  return (
+    <>
+      <div className="admin-toolbar">
+        <div className="admin-toolbar-left">
+          <span className="admin-count">{count} records</span>
+          <input
+            type="text" value={search}
+            onChange={e => setSearch(e.target.value)}
+            placeholder="Search by email…" className="admin-search"
+          />
+        </div>
+        <div className="admin-toolbar-right">
+          <button onClick={() => fetchData(search)} className="admin-refresh-btn">Refresh</button>
+          <button onClick={exportCSV} className="admin-export-btn" disabled={rows.length === 0}>Export CSV</button>
+        </div>
+      </div>
+
+      <div className="admin-table-wrap">
+        {loading ? (
+          <div className="admin-loading">Loading…</div>
+        ) : rows.length === 0 ? (
+          <div className="admin-empty">No records found</div>
+        ) : (
+          <table className="admin-table">
+            <thead>
+              <tr>{columns.map(col => <th key={col}>{col.replace(/_/g, " ")}</th>)}</tr>
+            </thead>
+            <tbody>
+              {rows.map((row, i) => {
+                const isSelected = selectedRow === row;
+                return (
+                  <tr
+                    key={i}
+                    onClick={() => setSelectedRow(isSelected ? null : row)}
+                    style={{ cursor: "pointer", background: isSelected ? "rgba(139,95,191,0.07)" : undefined }}
+                  >
+                    {columns.map(col => (
+                      <td key={col}>{col === "created_at" ? fmtDate(row[col]) : String(row[col] ?? "—")}</td>
+                    ))}
+                  </tr>
+                );
+              })}
+            </tbody>
+          </table>
+        )}
+      </div>
+
+      {selectedRow && (
+        <div className="admin-detail-panel">
+          <div className="admin-detail-header">
+            <span className="admin-detail-title">
+              {String(selectedRow.name ?? selectedRow.email ?? `Record #${selectedRow.id}`)}
+            </span>
+            <button className="admin-detail-close" onClick={() => setSelectedRow(null)}>✕ Close</button>
+          </div>
+          <div className="admin-detail-grid">
+            {columns.filter(col => col !== "id" && col !== "created_at").map(col => {
+              const val = selectedRow[col];
+              const display = String(val ?? "—");
+              if (!display || display === "—") return null;
+              return (
+                <div key={col} className="admin-detail-field">
+                  <div className="admin-detail-label">{col.replace(/_/g, " ")}</div>
+                  <div className="admin-detail-value">{display}</div>
+                </div>
+              );
+            })}
+            <div className="admin-detail-field">
+              <div className="admin-detail-label">submitted</div>
+              <div className="admin-detail-value">{fmtDate(selectedRow.created_at)}</div>
+            </div>
+          </div>
+        </div>
+      )}
+    </>
+  );
+}
+
 // ── Main Admin Page ───────────────────────────────────────────────────
 
 export default function AdminPage() {
@@ -1133,18 +1519,8 @@ export default function AdminPage() {
   const [rememberMe, setRememberMe] = useState<boolean>(() => readSavedPassword().remembered);
   const [loginError, setLoginError] = useState("");
   const [loginLoading, setLoginLoading] = useState(false);
-
-  const [activeTab, setActiveTab] = useState<ActiveTab>("dashboard");
-  const [rows, setRows] = useState<Record<string, unknown>[]>([]);
-  const [count, setCount] = useState(0);
-  const [search, setSearch] = useState("");
-  const [loading, setLoading] = useState(false);
+  const [activeTab, setActiveTab] = useState<ActiveTab>("overview");
   const [dbSetupStatus, setDbSetupStatus] = useState<string | null>(null);
-  const [selectedRow, setSelectedRow] = useState<Record<string, unknown> | null>(null);
-
-  // Affiliate inline editing
-  const [affiliateEdits, setAffiliateEdits] = useState<Record<number, { status?: string; commissionPct?: string; notes?: string; code?: string }>>({});
-  const [affiliateSaving, setAffiliateSaving] = useState<number | null>(null);
 
   useEffect(() => {
     fetch("/api/admin/auth")
@@ -1184,33 +1560,7 @@ export default function AdminPage() {
     await fetch("/api/admin/auth", { method: "DELETE" });
     setAuthenticated(false);
     setRole(null);
-    setRows([]);
   };
-
-  const fetchData = useCallback(async (table: TableName, searchQuery?: string) => {
-    setLoading(true);
-    try {
-      const params = new URLSearchParams({ table });
-      if (searchQuery) params.set("search", searchQuery);
-      const res = await fetch(`/api/admin/data?${params}`);
-      if (res.ok) {
-        const data = await res.json();
-        setRows(data.rows || []);
-        setCount(data.count || 0);
-      } else if (res.status === 401) {
-        setAuthenticated(false);
-      }
-    } catch {
-      setRows([]);
-    }
-    setLoading(false);
-  }, []);
-
-  useEffect(() => {
-    if (authenticated && activeTab !== "dashboard" && activeTab !== "guestlist" && activeTab !== "addons" && activeTab !== "vendor_agreements") {
-      fetchData(activeTab as TableName, search);
-    }
-  }, [authenticated, activeTab, search, fetchData]);
 
   const handleDbSetup = async () => {
     setDbSetupStatus("Setting up…");
@@ -1223,32 +1573,6 @@ export default function AdminPage() {
     }
   };
 
-  const exportCSV = () => {
-    if (rows.length === 0 || activeTab === "dashboard" || activeTab === "guestlist" || activeTab === "addons") return;
-    const tab = ALL_TABS.find((t) => t.key === activeTab)!;
-    const header = tab.columns.join(",");
-    const csvRows = rows.map((row) =>
-      tab.columns.map((col) => `"${String(row[col] ?? "").replace(/"/g, '""')}"`).join(",")
-    );
-    const blob = new Blob([[header, ...csvRows].join("\n")], { type: "text/csv" });
-    const a = document.createElement("a");
-    a.href = URL.createObjectURL(blob);
-    a.download = `${activeTab}_${new Date().toISOString().slice(0, 10)}.csv`;
-    a.click();
-  };
-
-  const saveAffiliateEdits = async (id: number) => {
-    setAffiliateSaving(id);
-    const updates = affiliateEdits[id] ?? {};
-    await fetch("/api/admin/affiliates", {
-      method: "PATCH",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ id, ...updates }),
-    });
-    setAffiliateSaving(null);
-    fetchData("affiliates", search);
-  };
-
   // ── Login Screen ──
   if (!authenticated) {
     return (
@@ -1259,11 +1583,11 @@ export default function AdminPage() {
           <form onSubmit={handleLogin} className="admin-login-form">
             <input
               type="password" value={password}
-              onChange={(e) => setPassword(e.target.value)}
+              onChange={e => setPassword(e.target.value)}
               placeholder="Enter password" className="admin-input" autoFocus
             />
             <label className="admin-remember">
-              <input type="checkbox" checked={rememberMe} onChange={(e) => setRememberMe(e.target.checked)} />
+              <input type="checkbox" checked={rememberMe} onChange={e => setRememberMe(e.target.checked)} />
               Remember password
             </label>
             {loginError && <p className="admin-error">{loginError}</p>}
@@ -1276,10 +1600,22 @@ export default function AdminPage() {
     );
   }
 
-  const activeTabConfig = ALL_TABS.find((t) => t.key === activeTab);
   const canSetupDb = role === "owner" || role === "chris";
-  const canSeeDashboard = role === "owner" || role === "alice";
+  const canSeeFinancials = role === "owner" || role === "alice";
   const roleLabel = role === "owner" ? "Owner" : role === "alice" ? "Alice" : role === "chris" ? "Chris" : "Staff";
+
+  const tab = (key: ActiveTab, label: string, restricted?: boolean) => {
+    if (restricted && !canSeeFinancials) return null;
+    return (
+      <button
+        key={key}
+        className={`admin-tab${activeTab === key ? " active" : ""}`}
+        onClick={() => setActiveTab(key)}
+      >
+        {label}
+      </button>
+    );
+  };
 
   return (
     <div className="admin-dashboard">
@@ -1298,210 +1634,39 @@ export default function AdminPage() {
 
       {dbSetupStatus && <div className="admin-status-bar">{dbSetupStatus}</div>}
 
-      {/* Tabs */}
+      {/* Tabs — grouped with visual separators */}
       <div className="admin-tabs">
-        {canSeeDashboard && (
-          <button
-            className={`admin-tab${activeTab === "dashboard" ? " active" : ""}`}
-            onClick={() => { setActiveTab("dashboard"); setSearch(""); setSelectedRow(null); }}
-          >
-            Dashboard
-          </button>
-        )}
-        {ALL_TABS.map((tab) => (
-          <button
-            key={tab.key}
-            className={`admin-tab${activeTab === tab.key ? " active" : ""}`}
-            onClick={() => { setActiveTab(tab.key); setSearch(""); setSelectedRow(null); }}
-          >
-            {tab.label}
-          </button>
-        ))}
-        <button
-          className={`admin-tab${activeTab === "guestlist" ? " active" : ""}`}
-          onClick={() => { setActiveTab("guestlist"); setSearch(""); setSelectedRow(null); }}
-        >
-          Guest List
-        </button>
-        <button
-          className={`admin-tab${activeTab === "addons" ? " active" : ""}`}
-          onClick={() => { setActiveTab("addons"); setSearch(""); setSelectedRow(null); }}
-        >
-          Add-Ons
-        </button>
-        <button
-          className={`admin-tab${activeTab === "vendor_agreements" ? " active" : ""}`}
-          onClick={() => { setActiveTab("vendor_agreements"); setSearch(""); setSelectedRow(null); }}
-        >
-          Agreements
-        </button>
+        {tab("overview", "Overview")}
+        {tab("loyalty", "Loyalty")}
+        {tab("marketing", "Marketing")}
+        {tab("budget", "Budget", true)}
+
+        <span className="admin-tab-sep" />
+
+        {tab("guestlist", "Guest List")}
+        {tab("addons", "Add-Ons")}
+        {tab("vendor_agreements", "Agreements")}
+
+        <span className="admin-tab-sep" />
+
+        {tab("vendors", "Vendors")}
+        {tab("volunteers", "Volunteers")}
+        {tab("instructor_waitlist", "Instructors")}
+        {tab("sponsors", "Sponsors")}
       </div>
 
-      {/* Dashboard view */}
-      {activeTab === "dashboard" && canSeeDashboard && <DashboardTab />}
-
-      {/* Guest List view */}
-      {activeTab === "guestlist" && <GuestListTab />}
-
-      {/* Add-Ons view */}
-      {activeTab === "addons" && <AddonsTab />}
-
-      {/* Vendor Agreements view */}
-      {activeTab === "vendor_agreements" && <VendorAgreementsTab />}
-
-      {/* Data table view */}
-      {activeTab !== "dashboard" && activeTab !== "guestlist" && activeTab !== "addons" && activeTab !== "vendor_agreements" && (
-        <>
-          {/* Toolbar */}
-          <div className="admin-toolbar">
-            <div className="admin-toolbar-left">
-              <span className="admin-count">{count} records</span>
-              <input
-                type="text" value={search}
-                onChange={(e) => setSearch(e.target.value)}
-                placeholder="Search by email…" className="admin-search"
-              />
-            </div>
-            <div className="admin-toolbar-right">
-              <button onClick={() => fetchData(activeTab as TableName, search)} className="admin-refresh-btn">Refresh</button>
-              <button onClick={exportCSV} className="admin-export-btn" disabled={rows.length === 0}>Export CSV</button>
-            </div>
-          </div>
-
-          {activeTab === "affiliates" && (
-            <div style={{ padding: "0.75rem 1.5rem", background: "rgba(61,184,175,0.05)", borderBottom: "1px solid var(--line-subtle)", fontSize: "0.8rem", color: "var(--ink-muted)" }}>
-              Edit Code, Status, Commission %, or Notes inline then click <strong style={{ color: "var(--ink)" }}>Save</strong> to approve or adjust a partner.
-            </div>
-          )}
-
-          {/* Table */}
-          <div className="admin-table-wrap">
-            {loading ? (
-              <div className="admin-loading">Loading…</div>
-            ) : rows.length === 0 ? (
-              <div className="admin-empty">No records found</div>
-            ) : activeTabConfig ? (
-              <table className="admin-table">
-                <thead>
-                  <tr>
-                    {activeTabConfig.columns.map((col) => <th key={col}>{col.replace(/_/g, " ")}</th>)}
-                    {activeTab === "affiliates" && <th>Save</th>}
-                  </tr>
-                </thead>
-                <tbody>
-                  {rows.map((row, i) => {
-                    const rowId = Number(row.id);
-                    const isSelected = selectedRow === row;
-                    return (
-                      <tr
-                        key={i}
-                        onClick={() => setSelectedRow(isSelected ? null : row)}
-                        style={{ cursor: "pointer", background: isSelected ? "rgba(139,95,191,0.07)" : undefined }}
-                      >
-                        {activeTabConfig.columns.map((col) => {
-                          const val = row[col];
-                          if (activeTab === "affiliates" && col === "status") {
-                            return (
-                              <td key={col} onClick={(e) => e.stopPropagation()}>
-                                <select
-                                  defaultValue={String(val ?? "pending")}
-                                  onChange={(e) => setAffiliateEdits((a) => ({ ...a, [rowId]: { ...a[rowId], status: e.target.value } }))}
-                                  style={{ background: "var(--surface-elevated)", border: "1px solid var(--line-medium)", borderRadius: "6px", color: "var(--ink)", padding: "0.2rem 0.4rem", fontSize: "0.8rem" }}
-                                >
-                                  <option value="pending">pending</option>
-                                  <option value="active">active</option>
-                                  <option value="inactive">inactive</option>
-                                </select>
-                              </td>
-                            );
-                          }
-                          if (activeTab === "affiliates" && col === "commission_pct") {
-                            return (
-                              <td key={col} onClick={(e) => e.stopPropagation()}>
-                                <input
-                                  type="number" defaultValue={String(val ?? 10)} min={0} max={100}
-                                  onChange={(e) => setAffiliateEdits((a) => ({ ...a, [rowId]: { ...a[rowId], commissionPct: e.target.value } }))}
-                                  style={{ width: "55px", background: "var(--surface-elevated)", border: "1px solid var(--line-medium)", borderRadius: "6px", color: "var(--ink)", padding: "0.2rem 0.4rem", fontSize: "0.8rem" }}
-                                />
-                                <span style={{ marginLeft: "2px", fontSize: "0.75rem", color: "var(--ink-muted)" }}>%</span>
-                              </td>
-                            );
-                          }
-                          if (activeTab === "affiliates" && col === "code") {
-                            return (
-                              <td key={col} onClick={(e) => e.stopPropagation()}>
-                                <input
-                                  type="text" defaultValue={String(val ?? "")} placeholder="AFFILIATE CODE"
-                                  onChange={(e) => setAffiliateEdits((a) => ({ ...a, [rowId]: { ...a[rowId], code: e.target.value.toUpperCase() } }))}
-                                  style={{ width: "110px", background: "var(--surface-elevated)", border: "1px solid var(--line-medium)", borderRadius: "6px", color: "var(--ink)", padding: "0.2rem 0.4rem", fontSize: "0.8rem", textTransform: "uppercase", fontFamily: "monospace" }}
-                                />
-                              </td>
-                            );
-                          }
-                          if (activeTab === "affiliates" && col === "notes") {
-                            return (
-                              <td key={col} onClick={(e) => e.stopPropagation()}>
-                                <input
-                                  type="text" defaultValue={String(val ?? "")} placeholder="Internal notes"
-                                  onChange={(e) => setAffiliateEdits((a) => ({ ...a, [rowId]: { ...a[rowId], notes: e.target.value } }))}
-                                  style={{ width: "130px", background: "var(--surface-elevated)", border: "1px solid var(--line-medium)", borderRadius: "6px", color: "var(--ink)", padding: "0.2rem 0.4rem", fontSize: "0.8rem" }}
-                                />
-                              </td>
-                            );
-                          }
-                          return (
-                            <td key={col}>{col === "created_at" ? fmtDate(val) : String(val ?? "—")}</td>
-                          );
-                        })}
-                        {activeTab === "affiliates" && (
-                          <td onClick={(e) => e.stopPropagation()}>
-                            <button
-                              onClick={() => saveAffiliateEdits(rowId)}
-                              disabled={affiliateSaving === rowId}
-                              style={{ background: "rgba(61,184,175,0.15)", border: "1px solid #3DB8AF", borderRadius: "6px", color: "#3DB8AF", padding: "0.2rem 0.7rem", cursor: "pointer", fontSize: "0.8rem", fontFamily: "inherit" }}
-                            >
-                              {affiliateSaving === rowId ? "…" : "Save"}
-                            </button>
-                          </td>
-                        )}
-                      </tr>
-                    );
-                  })}
-                </tbody>
-              </table>
-            ) : null}
-          </div>
-
-          {/* Row detail panel */}
-          {selectedRow && activeTabConfig && (
-            <div className="admin-detail-panel">
-              <div className="admin-detail-header">
-                <span className="admin-detail-title">
-                  {String(selectedRow.name ?? selectedRow.email ?? `Record #${selectedRow.id}`)}
-                </span>
-                <button className="admin-detail-close" onClick={() => setSelectedRow(null)}>✕ Close</button>
-              </div>
-              <div className="admin-detail-grid">
-                {activeTabConfig.columns.filter(col => col !== "id" && col !== "created_at").map((col) => {
-                  const val = selectedRow[col];
-                  const display = col === "created_at" ? fmtDate(val) : String(val ?? "—");
-                  if (!display || display === "—") return null;
-                  return (
-                    <div key={col} className="admin-detail-field">
-                      <div className="admin-detail-label">{col.replace(/_/g, " ")}</div>
-                      <div className="admin-detail-value">{display}</div>
-                    </div>
-                  );
-                })}
-                <div className="admin-detail-field">
-                  <div className="admin-detail-label">submitted</div>
-                  <div className="admin-detail-value">{fmtDate(selectedRow.created_at)}</div>
-                </div>
-              </div>
-            </div>
-          )}
-        </>
-      )}
+      {/* Tab content */}
+      {activeTab === "overview"           && <OverviewTab />}
+      {activeTab === "loyalty"            && <LoyaltyTab />}
+      {activeTab === "marketing"          && <MarketingTab />}
+      {activeTab === "budget"             && canSeeFinancials && <BudgetTab />}
+      {activeTab === "guestlist"          && <GuestListTab />}
+      {activeTab === "addons"             && <AddonsTab />}
+      {activeTab === "vendor_agreements"  && <VendorAgreementsTab />}
+      {activeTab === "vendors"            && <DataTab tableKey="vendors"             columns={["id","name","email","business","category","description","created_at"]} />}
+      {activeTab === "volunteers"         && <DataTab tableKey="volunteers"          columns={["id","name","email","phone","interest","experience","availability","created_at"]} />}
+      {activeTab === "instructor_waitlist"&& <DataTab tableKey="instructor_waitlist" columns={["id","name","email","phone","modality","years_teaching","interested_in_2026","interested_in_2027","offering","created_at"]} />}
+      {activeTab === "sponsors"           && <DataTab tableKey="sponsors"            columns={["id","name","email","company","budget_range","interests","goals","created_at"]} />}
     </div>
   );
 }

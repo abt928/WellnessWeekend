@@ -943,6 +943,50 @@ textarea:focus-visible {
 }
 
 /* ========== MIDNIGHT SUN SALE BANNER ========== */
+/* ========== PHOTO STRIP ========== */
+.photo-strip {
+  position: relative;
+  width: 100%;
+  height: clamp(320px, 48vw, 560px);
+  overflow: hidden;
+  background: #0e0618;
+}
+.photo-strip-slide {
+  position: absolute;
+  inset: 0;
+  opacity: 0;
+  transition: opacity 1.2s ease-in-out;
+}
+.photo-strip-slide.active {
+  opacity: 1;
+}
+.photo-strip-dots {
+  position: absolute;
+  bottom: 1.25rem;
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  gap: 0.45rem;
+  z-index: 2;
+}
+.photo-strip-dot {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  border: none;
+  background: rgba(255,255,255,0.35);
+  cursor: pointer;
+  padding: 0;
+  transition: background 0.3s ease, transform 0.3s ease;
+}
+.photo-strip-dot.active {
+  background: rgba(255,255,255,0.9);
+  transform: scale(1.25);
+}
+@media (prefers-reduced-motion: reduce) {
+  .photo-strip-slide { transition: none; }
+}
+
 .midnightsun-banner {
   background: linear-gradient(135deg, #180900 0%, #120600 50%, #1c0a00 100%);
   border-top: 1px solid rgba(255, 107, 53, 0.18);

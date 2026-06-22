@@ -7,6 +7,7 @@ import FAQ from "@/components/FAQ";
 import GetInvolved from "@/components/GetInvolved";
 import Store from "@/components/Store";
 import Packages from "@/components/Packages";
+import PhotoStrip from "@/components/PhotoStrip";
 import PhotoBanner from "@/components/PhotoBanner";
 import FloatingActions from "@/components/FloatingActions";
 import ConversionNudges from "@/components/ConversionNudges";
@@ -134,14 +135,17 @@ export default function Home() {
       {/* ═══ PHOTO BANNER ═══ */}
       <PhotoBanner />
 
+      {/* ═══ PHOTO STRIP ═══ */}
+      <PhotoStrip />
+
       {/* ═══ SCHEDULE ═══ */}
       <Schedule />
 
-      {/* ═══ PACKAGES ═══ */}
-      <Packages />
-
       {/* ═══ TICKETS STORE ═══ */}
       <Store />
+
+      {/* ═══ PACKAGES ═══ */}
+      <Packages />
 
       {/* ═══ ABOUT / PREVIOUS YEARS ═══ */}
       <section className="about section">

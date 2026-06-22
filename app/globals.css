@@ -3049,6 +3049,9 @@ textarea:focus-visible {
 .admin-tab.active {
   background: var(--aurora); color: white; border-color: var(--aurora);
 }
+.admin-tab-sep {
+  width: 1px; background: #d0cec9; margin: 0.25rem 0.25rem; align-self: stretch;
+}
 
 /* Toolbar */
 .admin-toolbar {

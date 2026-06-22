@@ -1444,6 +1444,63 @@ textarea:focus-visible {
 .form-submit:active { transform: scale(0.97); transition-duration: 0.1s; }
 .form-submit:disabled { opacity: 0.6; cursor: not-allowed; transform: none; }
 
+/* ========== FAMILY DAY SECTION ========== */
+.family-day-section {
+  background: linear-gradient(180deg, #0c1a12 0%, #0e1f15 100%);
+}
+.family-day-section .section-label { color: rgba(110,210,140,0.7); }
+.family-day-section .section-title { color: #f0f8f2; }
+.family-day-section .section-desc  { color: rgba(240,248,242,0.65); }
+
+.family-day-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  gap: 1.5rem;
+  margin-top: 2.5rem;
+  max-width: 1000px;
+  margin-left: auto;
+  margin-right: auto;
+}
+.family-day-feature {
+  background: rgba(255,255,255,0.04);
+  border: 1px solid rgba(110,210,140,0.18);
+  border-radius: 16px;
+  padding: 1.75rem 1.5rem;
+  transition: transform 0.25s ease, border-color 0.25s ease;
+}
+.family-day-feature:hover {
+  transform: translateY(-3px);
+  border-color: rgba(110,210,140,0.38);
+}
+.family-day-icon {
+  font-size: 2rem;
+  line-height: 1;
+  margin-bottom: 0.75rem;
+}
+.family-day-feature h3 {
+  font-family: var(--font-display);
+  font-size: 1.25rem;
+  font-weight: 400;
+  color: #d4f0da;
+  margin: 0 0 0.6rem;
+}
+.family-day-feature p {
+  font-size: 0.9rem;
+  line-height: 1.6;
+  color: rgba(240,248,242,0.6);
+  margin: 0;
+}
+.family-day-note {
+  text-align: center;
+  margin-top: 2rem;
+  font-size: 0.85rem;
+  letter-spacing: 0.04em;
+  color: rgba(110,210,140,0.6);
+}
+@media (max-width: 640px) {
+  .family-day-grid { grid-template-columns: 1fr; }
+}
+
 /* ========== PACKAGES ========== */
 .packages-section {
   background: linear-gradient(180deg, #0e0618 0%, #130d22 60%, #0e1a18 100%);

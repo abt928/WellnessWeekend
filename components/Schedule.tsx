@@ -62,6 +62,12 @@ const days: ScheduleBlock[] = [
         limited: true,
       },
       {
+        time: "2:30 PM",
+        event: "Nature Immersion Walk",
+        detail: "A guided slow walk through the surrounding boreal landscape — identifying plants, listening to the land, and practicing forest bathing",
+        element: "earth", location: "Trailhead",
+      },
+      {
         time: "3:00 PM",
         event: "Guided Meditation",
         detail: "Guided bilateral movement for a relaxing grounding session",
@@ -142,6 +148,12 @@ const days: ScheduleBlock[] = [
         detail: "Yoga with sound, breath and asanas",
         element: "fire", location: "Main Stage",
         hosts: ["logan-forehand"],
+      },
+      {
+        time: "9:30 AM",
+        event: "Plant Medicine Walk",
+        detail: "Learn Alaska's healing plants — yarrow, fireweed, spruce tips, and wild rose — with a guided foraging walk through the boreal forest",
+        element: "earth", location: "Trailhead",
       },
       {
         time: "10:00 AM",
@@ -260,6 +272,12 @@ const days: ScheduleBlock[] = [
         hosts: ["peace-pixy"],
       },
       {
+        time: "9:30 AM",
+        event: "Morning Nature Immersion",
+        detail: "Barefoot earth-walking, breathwork in the open air, and silent sit-spot practice with the valley at sunrise",
+        element: "earth", location: "Trailhead",
+      },
+      {
         time: "10:00 AM",
         event: "Earth Awareness Practice",
         element: "earth", location: "Outdoor Space",
@@ -323,6 +341,8 @@ const days: ScheduleBlock[] = [
 ];
 
 const FAMILY_DAY_ACTIVITIES = [
+  "Lake Obstacle Course",
+  "Intro Aerial Silks for Kids",
   "Paddleboard for Kids (limited spots)",
   "Arts & Crafts · Needlefelting",
   "Crystal Scavenger Hunt",

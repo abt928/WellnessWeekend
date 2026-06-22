@@ -143,6 +143,42 @@ export default function Home() {
       {/* ═══ PACKAGES ═══ */}
       <Packages />
 
+      {/* ═══ FAMILY DAY ═══ */}
+      <section className="family-day-section section">
+        <Reveal>
+          <p className="section-label">Sunday · August 9</p>
+          <h2 className="section-title">Family Day.</h2>
+          <p className="section-desc">
+            Wellness for all ages — Sunday is dedicated to families, children, and the next generation of earth stewards.
+          </p>
+        </Reveal>
+        <Reveal>
+          <div className="family-day-grid">
+            <div className="family-day-feature">
+              <div className="family-day-icon">🌊</div>
+              <h3>Lake Obstacle Course</h3>
+              <p>Our signature kids&apos; activity — an inflatable obstacle course on the lake with climbing, sliding, and splashing under the Alaskan sun. No experience needed, just a sense of adventure.</p>
+            </div>
+            <div className="family-day-feature">
+              <div className="family-day-icon">🪁</div>
+              <h3>Intro Aerial Silks for Kids</h3>
+              <p>Children discover the joy of movement in the air with a beginner-friendly aerial silks session. Limited spots — reserve ahead.</p>
+            </div>
+            <div className="family-day-feature">
+              <div className="family-day-icon">🪨</div>
+              <h3>Crystal Scavenger Hunt</h3>
+              <p>A guided crystal hunt through the grounds — kids learn about the stones of the earth and keep what they find.</p>
+            </div>
+            <div className="family-day-feature">
+              <div className="family-day-icon">🌿</div>
+              <h3>Arts, Crafts & Nature Play</h3>
+              <p>Needlefelting, nature art, and free play in the labyrinth garden. All materials provided.</p>
+            </div>
+          </div>
+          <p className="family-day-note">All Family Day proceeds support youth wellness nonprofits in the Matanuska-Susitna Valley.</p>
+        </Reveal>
+      </section>
+
       {/* ═══ ABOUT / PREVIOUS YEARS ═══ */}
       <section className="about section">
         <div className="about-grid">
@@ -179,42 +215,6 @@ export default function Home() {
             </Reveal>
           </div>
         </div>
-      </section>
-
-      {/* ═══ FAMILY DAY ═══ */}
-      <section className="family-day-section section">
-        <Reveal>
-          <p className="section-label">Sunday · August 9</p>
-          <h2 className="section-title">Family Day.</h2>
-          <p className="section-desc">
-            Wellness for all ages — Sunday is dedicated to families, children, and the next generation of earth stewards.
-          </p>
-        </Reveal>
-        <Reveal>
-          <div className="family-day-grid">
-            <div className="family-day-feature">
-              <div className="family-day-icon">🌊</div>
-              <h3>Lake Obstacle Course</h3>
-              <p>Our signature kids&apos; activity — an inflatable obstacle course on the lake with climbing, sliding, and splashing under the Alaskan sun. No experience needed, just a sense of adventure.</p>
-            </div>
-            <div className="family-day-feature">
-              <div className="family-day-icon">🪁</div>
-              <h3>Intro Aerial Silks for Kids</h3>
-              <p>Children discover the joy of movement in the air with a beginner-friendly aerial silks session. Limited spots — reserve ahead.</p>
-            </div>
-            <div className="family-day-feature">
-              <div className="family-day-icon">🪨</div>
-              <h3>Crystal Scavenger Hunt</h3>
-              <p>A guided crystal hunt through the grounds — kids learn about the stones of the earth and keep what they find.</p>
-            </div>
-            <div className="family-day-feature">
-              <div className="family-day-icon">🌿</div>
-              <h3>Arts, Crafts & Nature Play</h3>
-              <p>Needlefelting, nature art, and free play in the labyrinth garden. All materials provided.</p>
-            </div>
-          </div>
-          <p className="family-day-note">All Family Day proceeds support youth wellness nonprofits in the Matanuska-Susitna Valley.</p>
-        </Reveal>
       </section>
 
       {/* ═══ PLAN YOUR TRIP ═══ */}

@@ -13,11 +13,12 @@ interface CartItem {
 
 export async function POST(req: NextRequest) {
   try {
-    const { items, returnUrl, referralCode, redemptionId } = (await req.json()) as {
+    const { items, returnUrl, referralCode, redemptionId, promoCents } = (await req.json()) as {
       items: CartItem[];
       returnUrl?: string;
       referralCode?: string;
       redemptionId?: number;
+      promoCents?: number;
     };
 
     if (!items || items.length === 0) {
@@ -65,6 +66,14 @@ export async function POST(req: NextRequest) {
         name: "Points Reward",
         type: "FIXED_AMOUNT",
         amountMoney: { amount: BigInt(discountCents), currency: "USD" },
+        scope: "ORDER",
+      });
+    }
+    if (promoCents && promoCents > 0) {
+      orderDiscounts.push({
+        name: "Midnight Sun Sale — 2nd ticket 50% off",
+        type: "FIXED_AMOUNT",
+        amountMoney: { amount: BigInt(Math.round(promoCents)), currency: "USD" },
         scope: "ORDER",
       });
     }

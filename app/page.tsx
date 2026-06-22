@@ -6,7 +6,8 @@ import Schedule from "@/components/Schedule";
 import FAQ from "@/components/FAQ";
 import GetInvolved from "@/components/GetInvolved";
 import Store from "@/components/Store";
-import Gallery from "@/components/Gallery";
+import Packages from "@/components/Packages";
+import PhotoStrip from "@/components/PhotoStrip";
 import FloatingActions from "@/components/FloatingActions";
 import ConversionNudges from "@/components/ConversionNudges";
 import PartnerCard from "@/components/PartnerCard";
@@ -27,6 +28,13 @@ const partners = [
     logo: "/logos/sound-space.png",
     logoWidth: 120,
     logoHeight: 120,
+  },
+  {
+    name: "Flow Massage",
+    role: "Licensed Massage Therapy",
+    logo: "/logos/flow-massage.png",
+    logoWidth: 200,
+    logoHeight: 100,
   },
 ];
 
@@ -84,12 +92,10 @@ export default function Home() {
 
       {/* ═══ HERO ═══ */}
       <section className="hero">
-        <div className="hero-bg">
-          <Image src="/images/hero.png" alt="Alaska wilderness under the aurora" fill priority style={{ objectFit: "cover" }} />
-        </div>
         <div className="hero-overlay" />
+        <span className="hero-fire-horse-ghost" aria-hidden="true">🐎</span>
         <div className="hero-content">
-          <span className="hero-badge">4th Annual Gathering</span>
+          <span className="hero-badge">4th Annual Gathering · Lion's Gate</span>
           <h1 className="hero-title">
             Wellness <em>Weekend</em>
           </h1>
@@ -100,7 +106,6 @@ export default function Home() {
           <a href="#store" className="hero-cta">
             Get Your Tickets
           </a>
-          <p className="hero-pricing-hint">Day passes from $44 · Full weekend from $222</p>
           <CountdownTimer />
         </div>
         <div className="scroll-indicator">
@@ -113,11 +118,30 @@ export default function Home() {
         </div>
       </section>
 
+      {/* ═══ MIDNIGHT SUN SALE ═══ */}
+      <div className="midnightsun-banner" role="complementary" aria-label="Midnight Sun Sale">
+        <div className="midnightsun-inner">
+          <span className="midnightsun-sun" aria-hidden="true">☀</span>
+          <span className="midnightsun-title">Midnight Sun Sale</span>
+          <span className="midnightsun-desc">
+            Use code <span className="midnightsun-code">MIDNIGHTSUN</span> for 50% off your 2nd ticket
+            <span className="midnightsun-ends"> · Active through July 7</span>
+          </span>
+          <a href="#store" className="midnightsun-cta">Claim Now →</a>
+        </div>
+      </div>
+
+      {/* ═══ PHOTO STRIP ═══ */}
+      <PhotoStrip />
+
       {/* ═══ SCHEDULE ═══ */}
       <Schedule />
 
       {/* ═══ TICKETS STORE ═══ */}
       <Store />
+
+      {/* ═══ PACKAGES ═══ */}
+      <Packages />
 
       {/* ═══ ABOUT / PREVIOUS YEARS ═══ */}
       <section className="about section">
@@ -157,76 +181,41 @@ export default function Home() {
         </div>
       </section>
 
-      {/* ═══ LION'S GATE PORTAL ═══ */}
-      <section id="portal" className="portal-section" aria-label="Lion's Gate Portal">
-        {/* Aurora bands */}
-        <div className="portal-aurora" aria-hidden="true">
-          <div className="aurora-band aurora-band-1" />
-          <div className="aurora-band aurora-band-2" />
-          <div className="aurora-band aurora-band-3" />
-          <div className="aurora-band aurora-band-4" />
-        </div>
-
-        {/* Ghost fire horse */}
-        <div className="portal-fire-horse" aria-hidden="true">🐎</div>
-
-        <div className="portal-content">
-          <Reveal>
-            <p className="section-label portal-label">August 8 · 8:08 AM</p>
-            <h2 className="portal-title">Lion&apos;s Gate Portal</h2>
-            <p className="portal-desc">
-              August 8th. 8:08 AM. The sun is already high — Alaska doesn&apos;t
-              do dawn quietly in summer. Each year on this morning we step
-              outside together, hold ceremony on the land, and meet the day
-              with full presence. No building, no walls. Just mountain air,
-              open sky, and the earth beneath bare feet. Led by White Eagle
-              Medicine Woman.
-            </p>
-            <a href="#store" className="portal-cta">Claim Your Place in the Circle</a>
-          </Reveal>
-        </div>
-      </section>
-
-      {/* ═══ LABYRINTH GARDEN ═══ */}
-      <section id="labyrinth" className="labyrinth-section" aria-label="Labyrinth Garden">
-        <div className="labyrinth-spiral-bg" aria-hidden="true">
-          <div className="labyrinth-ring labyrinth-ring-1" />
-          <div className="labyrinth-ring labyrinth-ring-2" />
-          <div className="labyrinth-ring labyrinth-ring-3" />
-          <div className="labyrinth-ring labyrinth-ring-4" />
-          <div className="labyrinth-ring labyrinth-ring-5" />
-          <div className="labyrinth-ring labyrinth-ring-6" />
-          <div className="labyrinth-center-dot" />
-        </div>
-
-        <div className="labyrinth-content">
-          <Reveal>
-            <p className="section-label labyrinth-label">Sacred Ground</p>
-            <h2 className="labyrinth-title">The Labyrinth Garden</h2>
-            <p className="labyrinth-desc">
-              One path in. One path out. Walk it in silence — the land does the rest.
-            </p>
-          </Reveal>
-          <Reveal>
-            <div className="labyrinth-offerings">
-              {[
-                { time: "Dawn", offering: "Silent Walking Meditation", desc: "Guided entry at sunrise with breathwork activation" },
-                { time: "Midday", offering: "Integration Walks", desc: "Open access between ceremonies for personal reflection" },
-                { time: "Dusk", offering: "Closing Circle", desc: "Gratitude ceremony and group spiral walk at sunset" },
-              ].map((o) => (
-                <div className="labyrinth-offering-card" key={o.time}>
-                  <div className="labyrinth-offering-time">{o.time}</div>
-                  <div className="labyrinth-offering-name">{o.offering}</div>
-                  <div className="labyrinth-offering-desc">{o.desc}</div>
-                </div>
-              ))}
+      {/* ═══ FAMILY DAY ═══ */}
+      <section className="family-day-section section">
+        <Reveal>
+          <p className="section-label">Sunday · August 9</p>
+          <h2 className="section-title">Family Day.</h2>
+          <p className="section-desc">
+            Wellness for all ages — Sunday is dedicated to families, children, and the next generation of earth stewards.
+          </p>
+        </Reveal>
+        <Reveal>
+          <div className="family-day-grid">
+            <div className="family-day-feature">
+              <div className="family-day-icon">🌊</div>
+              <h3>Lake Obstacle Course</h3>
+              <p>Our signature kids&apos; activity — an inflatable obstacle course on the lake with climbing, sliding, and splashing under the Alaskan sun. No experience needed, just a sense of adventure.</p>
             </div>
-          </Reveal>
-        </div>
+            <div className="family-day-feature">
+              <div className="family-day-icon">🪁</div>
+              <h3>Intro Aerial Silks for Kids</h3>
+              <p>Children discover the joy of movement in the air with a beginner-friendly aerial silks session. Limited spots — reserve ahead.</p>
+            </div>
+            <div className="family-day-feature">
+              <div className="family-day-icon">🪨</div>
+              <h3>Crystal Scavenger Hunt</h3>
+              <p>A guided crystal hunt through the grounds — kids learn about the stones of the earth and keep what they find.</p>
+            </div>
+            <div className="family-day-feature">
+              <div className="family-day-icon">🌿</div>
+              <h3>Arts, Crafts & Nature Play</h3>
+              <p>Needlefelting, nature art, and free play in the labyrinth garden. All materials provided.</p>
+            </div>
+          </div>
+          <p className="family-day-note">All Family Day proceeds support youth wellness nonprofits in the Matanuska-Susitna Valley.</p>
+        </Reveal>
       </section>
-
-      {/* ═══ GALLERY ═══ */}
-      <Gallery />
 
       {/* ═══ PLAN YOUR TRIP ═══ */}
       <section id="alaska" className="trip-section">
@@ -322,7 +311,7 @@ export default function Home() {
         <div className="footer-socials">
           <a href="https://www.instagram.com/wellnessweekendak" target="_blank" rel="noopener noreferrer">Instagram</a>
           <a href="https://www.facebook.com/wellnessweekendak" target="_blank" rel="noopener noreferrer">Facebook</a>
-          <a href="mailto:hello@wellnessweekendak.com">Contact</a>
+          <a href="mailto:support@thesoundspace.us">Contact</a>
         </div>
         <div className="footer-legal">
           <a href="/privacy">Privacy</a>

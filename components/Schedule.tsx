@@ -272,14 +272,9 @@ const days: ScheduleBlock[] = [
         hosts: ["peace-pixy"],
       },
       {
-        time: "9:30 AM",
-        event: "Morning Nature Immersion",
-        detail: "Barefoot earth-walking, breathwork in the open air, and silent sit-spot practice with the valley at sunrise",
-        element: "earth", location: "Trailhead",
-      },
-      {
         time: "10:00 AM",
-        event: "Earth Awareness Practice",
+        event: "Earthing Practice with Gail",
+        detail: "Barefoot connection to the land — grounding through breath, movement, and direct contact with the earth",
         element: "earth", location: "Outdoor Space",
         hosts: ["gail"],
       },
@@ -304,6 +299,12 @@ const days: ScheduleBlock[] = [
         gloss: CONTRAST_GLOSS,
         limited: true,
         hosts: ["ashleigh"],
+      },
+      {
+        time: "12:00 PM",
+        event: "Kids Adventure Walk",
+        detail: "A guided nature walk for children through the boreal forest — spotting wildlife signs, touching plants, and exploring the Alaskan wilderness with curious eyes",
+        element: "earth", location: "Trailhead",
       },
       {
         time: "1:00 PM",

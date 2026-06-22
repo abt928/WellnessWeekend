@@ -20,6 +20,7 @@ export default function ThankYouTracker() {
     let currency = "USD";
     let quantity: number | undefined;
     let description = "square_checkout_complete";
+    let checkoutTimestamp: number | undefined;
 
     try {
       const raw = localStorage.getItem("ww-checkout");
@@ -31,6 +32,7 @@ export default function ThankYouTracker() {
           currency = checkout.currency || "USD";
           quantity = checkout.quantity;
           description = checkout.items || description;
+          checkoutTimestamp = checkout.timestamp;
         }
         // Clear it so it doesn't fire again on a future visit
         localStorage.removeItem("ww-checkout");
@@ -45,6 +47,15 @@ export default function ThankYouTracker() {
       quantity,
       description,
     });
+
+    // Award purchase points to logged-in members (1 pt per $1)
+    if (value && value > 0 && checkoutTimestamp) {
+      fetch("/api/members/earn", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ value, checkoutTimestamp }),
+      }).catch(() => { /* silent fail — points can be reconciled manually */ });
+    }
   }, []);
 
   return null;

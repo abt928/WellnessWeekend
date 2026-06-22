@@ -344,6 +344,22 @@ export default function Store() {
         <LotusIcon size={16} color="var(--aurora)" /> An intimate gathering limited to 200 seekers <LotusIcon size={16} color="var(--aurora)" />
       </p>
 
+      {/* Rewards callout */}
+      <div className="store-rewards-strip">
+        <div className="store-rewards-earn">
+          <span className="store-rewards-star">✦</span>
+          <span><strong>Earn 1 point per $1 spent</strong> — plus 50 bonus points every time you refer a friend</span>
+        </div>
+        <div className="store-rewards-redeem">
+          <span className="store-rewards-tier"><strong>100 pts</strong> $10 off add-ons or merch</span>
+          <span className="store-rewards-sep">·</span>
+          <span className="store-rewards-tier"><strong>500 pts</strong> Free day pass</span>
+          <span className="store-rewards-sep">·</span>
+          <span className="store-rewards-tier"><strong>1,000 pts</strong> Free weekend pass</span>
+        </div>
+        <a href="/members" className="store-rewards-cta">Join the Circle →</a>
+      </div>
+
       {/* Category Tabs */}
       <div className="store-tabs">
         {TABS.map((t) => (

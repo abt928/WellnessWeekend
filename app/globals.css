@@ -1750,6 +1750,67 @@ textarea:focus-visible {
   opacity: 0.8;
   font-family: var(--font-body);
 }
+/* Rewards strip */
+.store-rewards-strip {
+  max-width: 760px;
+  margin: 0 auto 2.5rem;
+  border: 1px solid rgba(201,152,63,0.25);
+  border-radius: 16px;
+  padding: 1.25rem 1.5rem;
+  background: rgba(201,152,63,0.04);
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  align-items: center;
+  text-align: center;
+}
+.store-rewards-earn {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 0.95rem;
+  color: var(--charcoal);
+}
+.store-rewards-star {
+  color: var(--gold);
+  font-size: 1rem;
+  flex-shrink: 0;
+}
+.store-rewards-redeem {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 0.4rem 0.75rem;
+  font-size: 0.82rem;
+  color: var(--charcoal);
+  opacity: 0.75;
+}
+.store-rewards-tier strong {
+  color: var(--gold);
+  font-weight: 600;
+  margin-right: 0.25rem;
+}
+.store-rewards-sep { opacity: 0.35; }
+.store-rewards-cta {
+  font-size: 0.8rem;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  color: var(--gold);
+  text-decoration: none;
+  border: 1px solid rgba(201,152,63,0.35);
+  border-radius: 50px;
+  padding: 0.3rem 1rem;
+  transition: background 0.2s ease;
+}
+.store-rewards-cta:hover { background: rgba(201,152,63,0.08); }
+
+@media (max-width: 600px) {
+  .store-rewards-strip { padding: 1rem 1.1rem; }
+  .store-rewards-earn { font-size: 0.88rem; }
+  .store-rewards-redeem { font-size: 0.78rem; }
+}
+
 .store-tabs {
   display: flex; gap: 0.5rem; justify-content: center; margin-bottom: 2.5rem; flex-wrap: wrap;
 }

@@ -91,14 +91,7 @@ const days: ScheduleBlock[] = [
         hosts: ["mary"],
       },
       {
-        time: "5:00 PM",
-        event: "Keys to Kreation",
-        detail: "Unlock your infinite potential of creative expression",
-        element: "fire", location: "Main Stage",
-        hosts: ["j-brave"],
-      },
-      {
-        time: "6:00 PM",
+        time: "3:00 PM",
         event: "Contrast Therapy",
         detail: "30 min · Cold plunge + heat cycling to activate circulation, reduce inflammation, and ground your nervous system",
         element: "water", secondElement: "fire",
@@ -106,6 +99,13 @@ const days: ScheduleBlock[] = [
         gloss: CONTRAST_GLOSS,
         limited: true,
         hosts: ["ashleigh"],
+      },
+      {
+        time: "5:00 PM",
+        event: "Keys to Kreation",
+        detail: "Unlock your infinite potential of creative expression · 2 hours",
+        element: "fire", location: "Main Stage",
+        hosts: ["j-brave"],
       },
       {
         time: "8:30 PM",
@@ -176,6 +176,7 @@ const days: ScheduleBlock[] = [
         event: "Ayni Despacho Ceremony",
         element: "fire", location: "Lodge",
         gloss: AYNI_GLOSS,
+        limited: true,
       },
       {
         time: "11:00 AM",
@@ -434,6 +435,29 @@ export default function Schedule() {
         <span className="schedule-heading">{currentDay.heading}</span>
         <span className="schedule-theme-text">{currentDay.theme}</span>
       </div>
+
+      {/* Book Ahead Panel */}
+      {(() => {
+        const limited = currentDay.events.filter((e) => e.limited);
+        if (limited.length === 0) return null;
+        return (
+          <div className="book-ahead-panel">
+            <div className="book-ahead-header">
+              <span className="book-ahead-badge">Reserve Your Spot</span>
+              <span className="book-ahead-note">These sessions have limited capacity — book ahead to secure your place</span>
+            </div>
+            <div className="book-ahead-list">
+              {limited.map((e, i) => (
+                <a key={i} href="#store" className="book-ahead-item">
+                  <span className="book-ahead-time">{e.time}</span>
+                  <span className="book-ahead-name">{e.event}</span>
+                  <span className="book-ahead-cta">Reserve →</span>
+                </a>
+              ))}
+            </div>
+          </div>
+        );
+      })()}
 
       {/* Timeline */}
       <div className="schedule-timeline" key={`${active}-${elementFilter ?? "all"}`}>

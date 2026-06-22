@@ -1110,6 +1110,76 @@ textarea:focus-visible {
   color: var(--sage);
 }
 
+/* Book Ahead Panel */
+.book-ahead-panel {
+  max-width: 700px;
+  margin: 0 auto 2rem;
+  border: 1px solid rgba(255,107,53,0.28);
+  border-radius: 14px;
+  overflow: hidden;
+  background: rgba(255,107,53,0.04);
+}
+.book-ahead-header {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 0.75rem 1.25rem;
+  background: rgba(255,107,53,0.08);
+  border-bottom: 1px solid rgba(255,107,53,0.15);
+  flex-wrap: wrap;
+}
+.book-ahead-badge {
+  font-size: 0.7rem;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: #FF6B35;
+  background: rgba(255,107,53,0.15);
+  padding: 0.25rem 0.6rem;
+  border-radius: 50px;
+  white-space: nowrap;
+}
+.book-ahead-note {
+  font-size: 0.8rem;
+  color: var(--text-muted);
+  opacity: 0.85;
+}
+.book-ahead-list {
+  display: flex;
+  flex-direction: column;
+}
+.book-ahead-item {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 0.65rem 1.25rem;
+  text-decoration: none;
+  border-bottom: 1px solid rgba(255,107,53,0.08);
+  transition: background 0.2s ease;
+}
+.book-ahead-item:last-child { border-bottom: none; }
+.book-ahead-item:hover { background: rgba(255,107,53,0.07); }
+.book-ahead-time {
+  font-size: 0.78rem;
+  color: #FF6B35;
+  font-weight: 600;
+  min-width: 5.5rem;
+  letter-spacing: 0.02em;
+}
+.book-ahead-name {
+  font-size: 0.88rem;
+  color: var(--charcoal);
+  flex: 1;
+}
+.book-ahead-cta {
+  font-size: 0.78rem;
+  font-weight: 600;
+  color: #FF6B35;
+  opacity: 0.75;
+  white-space: nowrap;
+}
+.book-ahead-item:hover .book-ahead-cta { opacity: 1; }
+
 /* Timeline */
 .schedule-timeline {
   max-width: 700px; margin: 0 auto;

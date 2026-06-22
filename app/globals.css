@@ -3562,6 +3562,7 @@ body {
 .section-title,
 .about-title,
 .about .section-label,
+.schedule .section-label,
 .faq-question {
   color: var(--ink);
 }

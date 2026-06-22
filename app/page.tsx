@@ -8,7 +8,6 @@ import GetInvolved from "@/components/GetInvolved";
 import Store from "@/components/Store";
 import Packages from "@/components/Packages";
 import PhotoStrip from "@/components/PhotoStrip";
-import PhotoBanner from "@/components/PhotoBanner";
 import FloatingActions from "@/components/FloatingActions";
 import ConversionNudges from "@/components/ConversionNudges";
 import PartnerCard from "@/components/PartnerCard";
@@ -131,9 +130,6 @@ export default function Home() {
           <a href="#store" className="midnightsun-cta">Claim Now →</a>
         </div>
       </div>
-
-      {/* ═══ PHOTO BANNER ═══ */}
-      <PhotoBanner />
 
       {/* ═══ PHOTO STRIP ═══ */}
       <PhotoStrip />

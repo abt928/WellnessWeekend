@@ -7,6 +7,7 @@ import FAQ from "@/components/FAQ";
 import GetInvolved from "@/components/GetInvolved";
 import Store from "@/components/Store";
 import Packages from "@/components/Packages";
+import PhotoBanner from "@/components/PhotoBanner";
 import FloatingActions from "@/components/FloatingActions";
 import ConversionNudges from "@/components/ConversionNudges";
 import PartnerCard from "@/components/PartnerCard";
@@ -129,6 +130,9 @@ export default function Home() {
           <a href="#store" className="midnightsun-cta">Claim Now →</a>
         </div>
       </div>
+
+      {/* ═══ PHOTO BANNER ═══ */}
+      <PhotoBanner />
 
       {/* ═══ SCHEDULE ═══ */}
       <Schedule />

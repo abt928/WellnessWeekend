@@ -56,6 +56,7 @@ export default function Packages() {
     }, 350);
   }
 
+  // Section stays visible during load; hides only after confirmed empty
   if (!loading && packages.length === 0) return null;
 
   return (

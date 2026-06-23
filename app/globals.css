@@ -3707,7 +3707,6 @@ body {
 /* Sections that previously assumed cream/warm-white drop their backgrounds */
 .about,
 .practitioners,
-.schedule,
 .gallery-section,
 .faq,
 .get-involved {
@@ -3716,11 +3715,16 @@ body {
 }
 .store-section { background: transparent; }
 
+/* Schedule keeps its dark canvas */
+.schedule {
+  background: linear-gradient(180deg, #0a0820 0%, #0d0b26 100%);
+  color: #fff;
+}
+
 /* Section title / label / desc colors flip */
 .section-title,
 .about-title,
 .about .section-label,
-.schedule .section-label,
 .faq-question {
   color: var(--ink);
 }
@@ -3733,27 +3737,29 @@ body {
   color: var(--gold-light);
 }
 
-/* Schedule on dark */
-.schedule-heading { color: var(--ink); }
-.schedule-theme-text { color: var(--ink-faint); }
-.schedule-event { color: var(--ink); }
-.schedule-detail { color: var(--ink-muted); }
-.schedule-time { color: var(--ink-faint); }
-.schedule-location { color: var(--ink-faint); font-style: italic; }
-.schedule-empty { color: var(--ink-faint); }
-.schedule-timeline { border-left-color: var(--line-medium); }
+/* Schedule — white text on dark indigo */
+.schedule .section-title  { color: #fff; }
+.schedule .section-label  { color: rgba(183, 168, 220, 0.75); }
+.schedule .section-desc   { color: rgba(255, 255, 255, 0.65); }
+.schedule-heading { color: #fff; }
+.schedule-theme-text { color: rgba(255, 255, 255, 0.5); }
+.schedule-event { color: #fff; }
+.schedule-detail { color: rgba(255, 255, 255, 0.58); }
+.schedule-time { color: #3DB8AF; }
+.schedule-location { color: rgba(183, 168, 220, 0.7); font-style: italic; }
+.schedule-empty { color: rgba(255, 255, 255, 0.38); }
+.schedule-timeline { border-left-color: rgba(255, 255, 255, 0.1); }
 .schedule-item {
   transition: background 0.3s cubic-bezier(0.16, 1, 0.3, 1);
 }
-.schedule-item:hover { background: rgba(139, 95, 191, 0.08); }
+.schedule-item:hover { background: rgba(139, 95, 191, 0.12); }
 .schedule-item::before {
-  border-color: var(--surface-page);
+  border-color: #0d0b26;
   transition: box-shadow 0.4s cubic-bezier(0.16, 1, 0.3, 1), transform 0.4s cubic-bezier(0.16, 1, 0.3, 1);
 }
 .schedule-item:hover::before {
-  /* Track-color halo on hover — ties decoration to information */
-  box-shadow: 0 0 0 4px color-mix(in srgb, var(--dot-color, var(--sage)) 18%, transparent),
-              0 0 14px 2px color-mix(in srgb, var(--dot-color, var(--sage)) 35%, transparent);
+  box-shadow: 0 0 0 4px color-mix(in srgb, var(--dot-color, var(--sage)) 22%, transparent),
+              0 0 14px 2px color-mix(in srgb, var(--dot-color, var(--sage)) 40%, transparent);
   transform: scale(1.15);
 }
 @media (prefers-reduced-motion: reduce) {
@@ -3762,19 +3768,19 @@ body {
 }
 
 .track-pill {
-  border-color: var(--line-medium);
-  color: var(--ink-muted);
+  border-color: rgba(255, 255, 255, 0.18);
+  color: rgba(255, 255, 255, 0.65);
 }
 .track-pill.active {
-  background: var(--pill-color, var(--ink)); color: white; border-color: var(--pill-color, var(--ink));
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.12);
+  background: var(--pill-color, var(--aurora)); color: white; border-color: var(--pill-color, var(--aurora));
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.25);
 }
 .schedule-day-btn {
-  border-color: var(--line-medium); color: var(--ink-muted);
+  border-color: rgba(183, 168, 220, 0.35); color: rgba(255, 255, 255, 0.65);
 }
 .schedule-day-btn:hover,
 .schedule-day-btn.active {
-  background: var(--ink); color: var(--surface-page); border-color: var(--ink);
+  background: rgba(139, 95, 191, 0.35); color: #fff; border-color: rgba(183, 168, 220, 0.65);
 }
 
 .family-day { border-top-color: var(--line-medium); }

@@ -391,7 +391,7 @@ export default function Schedule() {
       {/* Element Legend */}
       <div style={{ display: "flex", justifyContent: "center", gap: "1.5rem", marginBottom: "1.25rem", flexWrap: "wrap" }}>
         {(Object.entries(elementMeta) as [Element, typeof elementMeta["fire"]][]).map(([key, meta]) => (
-          <span key={key} style={{ fontSize: "0.75rem", color: "var(--charcoal)", letterSpacing: "0.06em", display: "flex", alignItems: "center", gap: "0.3rem" }}>
+          <span key={key} style={{ fontSize: "0.75rem", color: "rgba(255,255,255,0.7)", letterSpacing: "0.06em", display: "flex", alignItems: "center", gap: "0.3rem" }}>
             {meta.icon} {meta.desc}
           </span>
         ))}

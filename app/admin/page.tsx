@@ -10,11 +10,10 @@ type TableName =
   | "sponsors" | "instructor_waitlist" | "affiliates" | "referral_events";
 
 type ActiveTab =
-  | "overview" | "loyalty" | "marketing" | "budget"
-  | "guestlist" | "addons" | "vendor_agreements"
+  | "overview" | "loyalty" | "budget"
+  | "affiliates" | "referral_events" | "newsletter" | "leads"
+  | "addons" | "vendor_agreements"
   | "vendors" | "volunteers" | "instructor_waitlist" | "sponsors";
-
-type MarketingSubTab = "newsletter" | "leads" | "affiliates" | "referral_events";
 
 interface TabConfig {
   key: TableName;
@@ -22,19 +21,6 @@ interface TabConfig {
   columns: string[];
 }
 
-const MARKETING_TABS: TabConfig[] = [
-  { key: "newsletter",      label: "Newsletter",  columns: ["id","email","created_at"] },
-  { key: "leads",           label: "Leads",       columns: ["id","name","email","phone","message","source","created_at"] },
-  { key: "affiliates",      label: "Affiliates",  columns: ["id","name","email","code","company","commission_pct","status","notes","created_at"] },
-  { key: "referral_events", label: "Referrals",   columns: ["id","affiliate_code","event_type","order_id","order_amount_cents","commission_cents","created_at"] },
-];
-
-const OPS_TABS: TabConfig[] = [
-  { key: "vendors",             label: "Vendors",      columns: ["id","name","email","business","category","description","created_at"] },
-  { key: "volunteers",          label: "Volunteers",   columns: ["id","name","email","phone","interest","experience","availability","created_at"] },
-  { key: "instructor_waitlist", label: "Instructors",  columns: ["id","name","email","phone","modality","years_teaching","interested_in_2026","interested_in_2027","offering","created_at"] },
-  { key: "sponsors",            label: "Sponsors",     columns: ["id","name","email","company","budget_range","interests","goals","created_at"] },
-];
 
 interface BudgetItem {
   id: number;
@@ -622,387 +608,101 @@ function BudgetTab() {
 
 // ── Marketing Tab ─────────────────────────────────────────────────────
 
-function MarketingTab() {
-  const [subTab, setSubTab] = useState<MarketingSubTab>("newsletter");
+function AffiliatesTab() {
+  const COLS = ["id","name","email","code","company","commission_pct","status","notes","created_at"];
   const [rows, setRows] = useState<Record<string, unknown>[]>([]);
   const [count, setCount] = useState(0);
   const [loading, setLoading] = useState(false);
   const [search, setSearch] = useState("");
-  const [affiliateEdits, setAffiliateEdits] = useState<Record<number, { status?: string; commissionPct?: string; notes?: string; code?: string }>>({});
-  const [affiliateSaving, setAffiliateSaving] = useState<number | null>(null);
+  const [edits, setEdits] = useState<Record<number, { status?: string; commissionPct?: string; notes?: string; code?: string }>>({});
+  const [saving, setSaving] = useState<number | null>(null);
   const [selectedRow, setSelectedRow] = useState<Record<string, unknown> | null>(null);
 
-  const currentTabConfig = [...MARKETING_TABS].find(t => t.key === subTab)!;
-
-  const fetchData = useCallback(async (table: string, searchQuery?: string) => {
+  const fetchData = useCallback(async (searchQuery?: string) => {
     setLoading(true);
     try {
-      const params = new URLSearchParams({ table });
+      const params = new URLSearchParams({ table: "affiliates" });
       if (searchQuery) params.set("search", searchQuery);
       const res = await fetch(`/api/admin/data?${params}`);
-      if (res.ok) {
-        const data = await res.json();
-        setRows(data.rows || []);
-        setCount(data.count || 0);
-      }
-    } catch {
-      setRows([]);
-    }
+      if (res.ok) { const d = await res.json(); setRows(d.rows || []); setCount(d.count || 0); }
+    } catch { setRows([]); }
     setLoading(false);
   }, []);
 
-  useEffect(() => {
-    setSearch("");
-    setSelectedRow(null);
-    fetchData(subTab);
-  }, [subTab, fetchData]);
+  useEffect(() => { fetchData(); }, [fetchData]);
+  useEffect(() => { const t = setTimeout(() => fetchData(search), 300); return () => clearTimeout(t); }, [search, fetchData]);
 
-  useEffect(() => {
-    const t = setTimeout(() => fetchData(subTab, search), 300);
-    return () => clearTimeout(t);
-  }, [search, subTab, fetchData]);
-
-  const saveAffiliateEdits = async (id: number) => {
-    setAffiliateSaving(id);
-    const updates = affiliateEdits[id] ?? {};
-    await fetch("/api/admin/affiliates", {
-      method: "PATCH",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ id, ...updates }),
-    });
-    setAffiliateSaving(null);
-    fetchData("affiliates", search);
+  const saveEdits = async (id: number) => {
+    setSaving(id);
+    await fetch("/api/admin/affiliates", { method: "PATCH", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ id, ...edits[id] }) });
+    setSaving(null);
+    fetchData(search);
   };
 
   const exportCSV = () => {
-    if (rows.length === 0) return;
-    const cols = currentTabConfig.columns;
-    const csv = [cols.join(","), ...rows.map(row => cols.map(c => `"${String(row[c] ?? "").replace(/"/g, '""')}"`).join(","))].join("\n");
-    const blob = new Blob([csv], { type: "text/csv" });
-    const a = document.createElement("a");
-    a.href = URL.createObjectURL(blob);
-    a.download = `${subTab}_${new Date().toISOString().slice(0, 10)}.csv`;
-    a.click();
+    if (!rows.length) return;
+    const csv = [COLS.join(","), ...rows.map(r => COLS.map(c => `"${String(r[c] ?? "").replace(/"/g, '""')}"`).join(","))].join("\n");
+    const a = document.createElement("a"); a.href = URL.createObjectURL(new Blob([csv], { type: "text/csv" }));
+    a.download = `affiliates_${new Date().toISOString().slice(0, 10)}.csv`; a.click();
   };
-
-  const subTabStyle = (key: string): React.CSSProperties => ({
-    padding: "0.35rem 0.9rem", borderRadius: "8px", border: "none", cursor: "pointer",
-    fontSize: "0.8rem", fontFamily: "inherit", fontWeight: subTab === key ? 600 : 400,
-    background: subTab === key ? "rgba(61,184,175,0.12)" : "transparent",
-    color: subTab === key ? "#2a9d8f" : "var(--ink-muted)",
-  });
-
-  return (
-    <div>
-      {/* Sub-tab bar */}
-      <div style={{ display: "flex", gap: "0.25rem", padding: "0.75rem 1.5rem", borderBottom: "1px solid var(--line-subtle)", background: "var(--surface-elevated)" }}>
-        {MARKETING_TABS.map(t => (
-          <button key={t.key} style={subTabStyle(t.key)} onClick={() => setSubTab(t.key as MarketingSubTab)}>
-            {t.label}
-          </button>
-        ))}
-      </div>
-
-      {subTab === "affiliates" && (
-        <div style={{ padding: "0.75rem 1.5rem", background: "rgba(61,184,175,0.05)", borderBottom: "1px solid var(--line-subtle)", fontSize: "0.8rem", color: "var(--ink-muted)" }}>
-          Edit Code, Status, Commission %, or Notes inline then click <strong style={{ color: "var(--ink)" }}>Save</strong>.
-        </div>
-      )}
-
-      {/* Toolbar */}
-      <div className="admin-toolbar">
-        <div className="admin-toolbar-left">
-          <span className="admin-count">{count} records</span>
-          <input
-            type="text" value={search}
-            onChange={(e) => setSearch(e.target.value)}
-            placeholder="Search by email…" className="admin-search"
-          />
-        </div>
-        <div className="admin-toolbar-right">
-          <button onClick={() => fetchData(subTab, search)} className="admin-refresh-btn">Refresh</button>
-          <button onClick={exportCSV} className="admin-export-btn" disabled={rows.length === 0}>Export CSV</button>
-        </div>
-      </div>
-
-      <div className="admin-table-wrap">
-        {loading ? (
-          <div className="admin-loading">Loading…</div>
-        ) : rows.length === 0 ? (
-          <div className="admin-empty">No records found</div>
-        ) : (
-          <table className="admin-table">
-            <thead>
-              <tr>
-                {currentTabConfig.columns.map(col => <th key={col}>{col.replace(/_/g, " ")}</th>)}
-                {subTab === "affiliates" && <th>Save</th>}
-              </tr>
-            </thead>
-            <tbody>
-              {rows.map((row, i) => {
-                const rowId = Number(row.id);
-                const isSelected = selectedRow === row;
-                return (
-                  <tr
-                    key={i}
-                    onClick={() => setSelectedRow(isSelected ? null : row)}
-                    style={{ cursor: "pointer", background: isSelected ? "rgba(139,95,191,0.07)" : undefined }}
-                  >
-                    {currentTabConfig.columns.map(col => {
-                      const val = row[col];
-                      if (subTab === "affiliates" && col === "status") {
-                        return (
-                          <td key={col} onClick={e => e.stopPropagation()}>
-                            <select
-                              defaultValue={String(val ?? "pending")}
-                              onChange={e => setAffiliateEdits(a => ({ ...a, [rowId]: { ...a[rowId], status: e.target.value } }))}
-                              style={{ background: "var(--surface-elevated)", border: "1px solid var(--line-medium)", borderRadius: "6px", color: "var(--ink)", padding: "0.2rem 0.4rem", fontSize: "0.8rem" }}
-                            >
-                              <option value="pending">pending</option>
-                              <option value="active">active</option>
-                              <option value="inactive">inactive</option>
-                            </select>
-                          </td>
-                        );
-                      }
-                      if (subTab === "affiliates" && col === "commission_pct") {
-                        return (
-                          <td key={col} onClick={e => e.stopPropagation()}>
-                            <input
-                              type="number" defaultValue={String(val ?? 10)} min={0} max={100}
-                              onChange={e => setAffiliateEdits(a => ({ ...a, [rowId]: { ...a[rowId], commissionPct: e.target.value } }))}
-                              style={{ width: "55px", background: "var(--surface-elevated)", border: "1px solid var(--line-medium)", borderRadius: "6px", color: "var(--ink)", padding: "0.2rem 0.4rem", fontSize: "0.8rem" }}
-                            />
-                            <span style={{ marginLeft: "2px", fontSize: "0.75rem", color: "var(--ink-muted)" }}>%</span>
-                          </td>
-                        );
-                      }
-                      if (subTab === "affiliates" && col === "code") {
-                        return (
-                          <td key={col} onClick={e => e.stopPropagation()}>
-                            <input
-                              type="text" defaultValue={String(val ?? "")} placeholder="AFFILIATE CODE"
-                              onChange={e => setAffiliateEdits(a => ({ ...a, [rowId]: { ...a[rowId], code: e.target.value.toUpperCase() } }))}
-                              style={{ width: "110px", background: "var(--surface-elevated)", border: "1px solid var(--line-medium)", borderRadius: "6px", color: "var(--ink)", padding: "0.2rem 0.4rem", fontSize: "0.8rem", textTransform: "uppercase", fontFamily: "monospace" }}
-                            />
-                          </td>
-                        );
-                      }
-                      if (subTab === "affiliates" && col === "notes") {
-                        return (
-                          <td key={col} onClick={e => e.stopPropagation()}>
-                            <input
-                              type="text" defaultValue={String(val ?? "")} placeholder="Internal notes"
-                              onChange={e => setAffiliateEdits(a => ({ ...a, [rowId]: { ...a[rowId], notes: e.target.value } }))}
-                              style={{ width: "130px", background: "var(--surface-elevated)", border: "1px solid var(--line-medium)", borderRadius: "6px", color: "var(--ink)", padding: "0.2rem 0.4rem", fontSize: "0.8rem" }}
-                            />
-                          </td>
-                        );
-                      }
-                      return <td key={col}>{col === "created_at" ? fmtDate(val) : String(val ?? "—")}</td>;
-                    })}
-                    {subTab === "affiliates" && (
-                      <td onClick={e => e.stopPropagation()}>
-                        <button
-                          onClick={() => saveAffiliateEdits(rowId)}
-                          disabled={affiliateSaving === rowId}
-                          style={{ background: "rgba(61,184,175,0.15)", border: "1px solid #3DB8AF", borderRadius: "6px", color: "#3DB8AF", padding: "0.2rem 0.7rem", cursor: "pointer", fontSize: "0.8rem", fontFamily: "inherit" }}
-                        >
-                          {affiliateSaving === rowId ? "…" : "Save"}
-                        </button>
-                      </td>
-                    )}
-                  </tr>
-                );
-              })}
-            </tbody>
-          </table>
-        )}
-      </div>
-
-      {selectedRow && (
-        <div className="admin-detail-panel">
-          <div className="admin-detail-header">
-            <span className="admin-detail-title">
-              {String(selectedRow.name ?? selectedRow.email ?? `Record #${selectedRow.id}`)}
-            </span>
-            <button className="admin-detail-close" onClick={() => setSelectedRow(null)}>✕ Close</button>
-          </div>
-          <div className="admin-detail-grid">
-            {currentTabConfig.columns.filter(col => col !== "id" && col !== "created_at").map(col => {
-              const val = selectedRow[col];
-              const display = String(val ?? "—");
-              if (!display || display === "—") return null;
-              return (
-                <div key={col} className="admin-detail-field">
-                  <div className="admin-detail-label">{col.replace(/_/g, " ")}</div>
-                  <div className="admin-detail-value">{display}</div>
-                </div>
-              );
-            })}
-            <div className="admin-detail-field">
-              <div className="admin-detail-label">submitted</div>
-              <div className="admin-detail-value">{fmtDate(selectedRow.created_at)}</div>
-            </div>
-          </div>
-        </div>
-      )}
-    </div>
-  );
-}
-
-// ── Guest List Tab ────────────────────────────────────────────────────
-
-function GuestListTab() {
-  const [headers, setHeaders] = useState<string[]>([]);
-  const [rows, setRows] = useState<Record<string, string>[]>([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
-  const [needsSetup, setNeedsSetup] = useState(false);
-  const [search, setSearch] = useState("");
-  const [selectedGuest, setSelectedGuest] = useState<Record<string, string> | null>(null);
-
-  useEffect(() => {
-    fetch("/api/admin/guestlist")
-      .then(async (r) => {
-        const d = await r.json();
-        if (d.needsSetup) setNeedsSetup(true);
-        else if (d.error) setError(d.error);
-        else { setHeaders(d.headers || []); setRows(d.rows || []); }
-      })
-      .catch(() => setError("Failed to load guest list"))
-      .finally(() => setLoading(false));
-  }, []);
-
-  const nameCol = headers.find(h => /^(full.?name|name|first.?name|attendee|buyer|customer)/i.test(h)) ?? headers[0];
-  const emailCol = headers.find(h => /email/i.test(h));
-  const phoneCol = headers.find(h => /phone|mobile/i.test(h));
-
-  const getPassType = (row: Record<string, string>): string | null => {
-    const passCol = headers.find(h => /pass.?type|ticket.?type|product.?name|item.?name|ticket|product/i.test(h));
-    if (passCol && row[passCol]) return row[passCol];
-    for (const h of headers) {
-      const v = row[h];
-      if (v && /(day pass|earth pass|sanctuary pass|weekend pass)/i.test(v)) return v;
-    }
-    return null;
-  };
-
-  const getAddons = (row: Record<string, string>): { label: string; value: string }[] => {
-    const addonCols = headers.filter(h =>
-      /add.?on|aerial|paddleboard|massage|sauna|workshop|upgrade/i.test(h)
-    );
-    return addonCols
-      .filter(h => { const v = row[h]; return v && v !== "—" && v !== "0" && !/^(no|false|n\/a|none)$/i.test(v); })
-      .map(h => ({ label: h, value: row[h] }));
-  };
-
-  const isReturning = (row: Record<string, string>): boolean => {
-    const col = headers.find(h => /return|previous|past|prior|repeat/i.test(h));
-    if (!col) return false;
-    const v = row[col]?.toLowerCase().trim();
-    return v === "yes" || v === "true" || v === "1" || v === "returning" || v === "y";
-  };
-
-  const filtered = search
-    ? rows.filter(row => Object.values(row).some(v => v.toLowerCase().includes(search.toLowerCase())))
-    : rows;
-
-  const exportCSV = () => {
-    if (rows.length === 0) return;
-    const csv = [headers.join(","), ...rows.map(row => headers.map(h => `"${(row[h] ?? "").replace(/"/g, '""')}"`).join(","))].join("\n");
-    const blob = new Blob([csv], { type: "text/csv" });
-    const a = document.createElement("a");
-    a.href = URL.createObjectURL(blob);
-    a.download = `guest-list-${new Date().toISOString().slice(0, 10)}.csv`;
-    a.click();
-  };
-
-  const passColor = (pass: string) => {
-    if (/sanctuary/i.test(pass)) return { bg: "rgba(139,95,191,0.12)", color: "#8B5FBF" };
-    if (/earth/i.test(pass))     return { bg: "rgba(124,144,112,0.15)", color: "#5a7050" };
-    if (/day/i.test(pass))       return { bg: "rgba(61,184,175,0.12)", color: "#2a9d8f" };
-    return { bg: "rgba(0,0,0,0.06)", color: "#555" };
-  };
-
-  if (loading) return <div className="admin-loading">Loading guest list…</div>;
-
-  if (needsSetup) return (
-    <div style={{ padding: "3rem 2rem", maxWidth: "560px" }}>
-      <p style={{ fontWeight: 600, fontSize: "1rem", marginBottom: "1rem", color: "var(--ink)" }}>
-        Guest List Not Connected
-      </p>
-      <p style={{ color: "var(--ink-muted)", fontSize: "0.875rem", marginBottom: "1.5rem", lineHeight: 1.7 }}>
-        Connect your Square orders export sheet by publishing it as CSV and adding the URL as a Vercel environment variable.
-      </p>
-      <ol style={{ color: "var(--ink-muted)", fontSize: "0.85rem", lineHeight: 2.2, paddingLeft: "1.25rem" }}>
-        <li>Open your Google Sheet → <strong>File → Share → Publish to web</strong></li>
-        <li>Set format to <strong>Comma-separated values (.csv)</strong> → click <strong>Publish</strong></li>
-        <li>Copy the URL it gives you</li>
-        <li>In Vercel: <strong>Settings → Environment Variables</strong> → add <code style={{ background: "rgba(0,0,0,0.06)", padding: "0.1em 0.4em", borderRadius: "4px" }}>GUESTLIST_SHEET_URL</code> → paste the URL → Redeploy</li>
-      </ol>
-    </div>
-  );
-
-  if (error) return <div className="admin-empty" style={{ color: "#c0392b" }}>{error}</div>;
 
   return (
     <>
+      <div style={{ padding: "0.65rem 1.5rem", background: "rgba(61,184,175,0.05)", borderBottom: "1px solid var(--line-subtle)", fontSize: "0.8rem", color: "var(--ink-muted)" }}>
+        Edit Code, Status, Commission %, or Notes inline then click <strong style={{ color: "var(--ink)" }}>Save</strong> to approve or adjust a partner.
+      </div>
       <div className="admin-toolbar">
         <div className="admin-toolbar-left">
-          <span className="admin-count">{filtered.length} of {rows.length} guests</span>
-          <input
-            type="text" value={search}
-            onChange={(e) => setSearch(e.target.value)}
-            placeholder="Search name, email, pass type…" className="admin-search"
-          />
+          <span className="admin-count">{count} records</span>
+          <input type="text" value={search} onChange={e => setSearch(e.target.value)} placeholder="Search by email…" className="admin-search" />
         </div>
         <div className="admin-toolbar-right">
-          <button onClick={exportCSV} className="admin-export-btn" disabled={rows.length === 0}>Export CSV</button>
+          <button onClick={() => fetchData(search)} className="admin-refresh-btn">Refresh</button>
+          <button onClick={exportCSV} className="admin-export-btn" disabled={!rows.length}>Export CSV</button>
         </div>
       </div>
-
       <div className="admin-table-wrap">
-        {filtered.length === 0 ? (
-          <div className="admin-empty">No guests match your search</div>
-        ) : (
-          <table className="admin-table sheet-table">
-            <thead>
-              <tr>{headers.map((h, i) => <th key={i}>{h}</th>)}</tr>
-            </thead>
+        {loading ? <div className="admin-loading">Loading…</div> : rows.length === 0 ? <div className="admin-empty">No affiliates yet</div> : (
+          <table className="admin-table">
+            <thead><tr>{COLS.map(c => <th key={c}>{c.replace(/_/g, " ")}</th>)}<th>Save</th></tr></thead>
             <tbody>
-              {filtered.map((row, i) => {
-                const returning = isReturning(row);
-                const pass = getPassType(row);
-                const isSelected = selectedGuest === row;
+              {rows.map((row, i) => {
+                const id = Number(row.id);
+                const sel = selectedRow === row;
                 return (
-                  <tr
-                    key={i}
-                    onClick={() => setSelectedGuest(isSelected ? null : row)}
-                    style={{ cursor: "pointer", background: isSelected ? "rgba(139,95,191,0.07)" : undefined }}
-                  >
-                    {headers.map((h, j) => {
-                      const isNameCol = h === nameCol;
-                      const isPassCol = pass !== null && (
-                        headers.find(hh => /pass.?type|ticket.?type|product|item.?name|ticket/i.test(hh)) === h
-                      );
-                      return (
-                        <td key={j} title={row[h] || ""}>
-                          <span className="cell-truncate" style={{ display: "flex", alignItems: "center", gap: "0.35rem" }}>
-                            {isNameCol && returning && (
-                              <span title="Returning attendee" style={{ color: "#c9983f", fontSize: "0.85rem", flexShrink: 0 }}>★</span>
-                            )}
-                            {isPassCol && pass ? (
-                              <span style={{ fontSize: "0.72rem", fontWeight: 600, padding: "0.15rem 0.5rem", borderRadius: "20px", whiteSpace: "nowrap", ...passColor(pass) }}>
-                                {pass}
-                              </span>
-                            ) : (
-                              row[h] || "—"
-                            )}
-                          </span>
+                  <tr key={i} onClick={() => setSelectedRow(sel ? null : row)} style={{ cursor: "pointer", background: sel ? "rgba(139,95,191,0.07)" : undefined }}>
+                    {COLS.map(col => {
+                      const val = row[col];
+                      if (col === "status") return (
+                        <td key={col} onClick={e => e.stopPropagation()}>
+                          <select defaultValue={String(val ?? "pending")} onChange={e => setEdits(a => ({ ...a, [id]: { ...a[id], status: e.target.value } }))} style={{ background: "var(--surface-elevated)", border: "1px solid var(--line-medium)", borderRadius: "6px", color: "var(--ink)", padding: "0.2rem 0.4rem", fontSize: "0.8rem" }}>
+                            <option value="pending">pending</option><option value="active">active</option><option value="inactive">inactive</option>
+                          </select>
                         </td>
                       );
+                      if (col === "commission_pct") return (
+                        <td key={col} onClick={e => e.stopPropagation()}>
+                          <input type="number" defaultValue={String(val ?? 10)} min={0} max={100} onChange={e => setEdits(a => ({ ...a, [id]: { ...a[id], commissionPct: e.target.value } }))} style={{ width: "55px", background: "var(--surface-elevated)", border: "1px solid var(--line-medium)", borderRadius: "6px", color: "var(--ink)", padding: "0.2rem 0.4rem", fontSize: "0.8rem" }} />
+                          <span style={{ marginLeft: "2px", fontSize: "0.75rem", color: "var(--ink-muted)" }}>%</span>
+                        </td>
+                      );
+                      if (col === "code") return (
+                        <td key={col} onClick={e => e.stopPropagation()}>
+                          <input type="text" defaultValue={String(val ?? "")} placeholder="CODE" onChange={e => setEdits(a => ({ ...a, [id]: { ...a[id], code: e.target.value.toUpperCase() } }))} style={{ width: "100px", background: "var(--surface-elevated)", border: "1px solid var(--line-medium)", borderRadius: "6px", color: "var(--ink)", padding: "0.2rem 0.4rem", fontSize: "0.8rem", textTransform: "uppercase", fontFamily: "monospace" }} />
+                        </td>
+                      );
+                      if (col === "notes") return (
+                        <td key={col} onClick={e => e.stopPropagation()}>
+                          <input type="text" defaultValue={String(val ?? "")} placeholder="Notes" onChange={e => setEdits(a => ({ ...a, [id]: { ...a[id], notes: e.target.value } }))} style={{ width: "120px", background: "var(--surface-elevated)", border: "1px solid var(--line-medium)", borderRadius: "6px", color: "var(--ink)", padding: "0.2rem 0.4rem", fontSize: "0.8rem" }} />
+                        </td>
+                      );
+                      return <td key={col}>{col === "created_at" ? fmtDate(val) : String(val ?? "—")}</td>;
                     })}
+                    <td onClick={e => e.stopPropagation()}>
+                      <button onClick={() => saveEdits(id)} disabled={saving === id} style={{ background: "rgba(61,184,175,0.15)", border: "1px solid #3DB8AF", borderRadius: "6px", color: "#3DB8AF", padding: "0.2rem 0.7rem", cursor: "pointer", fontSize: "0.8rem", fontFamily: "inherit" }}>
+                        {saving === id ? "…" : "Save"}
+                      </button>
+                    </td>
                   </tr>
                 );
               })}
@@ -1010,64 +710,19 @@ function GuestListTab() {
           </table>
         )}
       </div>
-
-      {selectedGuest && (
-        <div className="admin-detail-panel" style={{ margin: "0 1.5rem 1.5rem" }}>
+      {selectedRow && (
+        <div className="admin-detail-panel">
           <div className="admin-detail-header">
-            <div style={{ display: "flex", alignItems: "center", gap: "0.75rem", flexWrap: "wrap" }}>
-              <span className="admin-detail-title">
-                {isReturning(selectedGuest) && <span title="Returning attendee" style={{ color: "#c9983f", marginRight: "0.4rem" }}>★</span>}
-                {selectedGuest[nameCol] || "Guest"}
-              </span>
-              {getPassType(selectedGuest) && (() => {
-                const pass = getPassType(selectedGuest)!;
-                const c = passColor(pass);
-                return <span style={{ fontSize: "0.75rem", fontWeight: 700, padding: "0.2rem 0.75rem", borderRadius: "20px", ...c }}>{pass}</span>;
-              })()}
-              {isReturning(selectedGuest) && (
-                <span style={{ fontSize: "0.72rem", fontWeight: 600, padding: "0.2rem 0.6rem", borderRadius: "20px", background: "rgba(201,152,63,0.12)", color: "#c9983f" }}>
-                  ★ Returning Attendee
-                </span>
-              )}
-            </div>
-            <button className="admin-detail-close" onClick={() => setSelectedGuest(null)}>✕ Close</button>
+            <span className="admin-detail-title">{String(selectedRow.name ?? selectedRow.email ?? `Record #${selectedRow.id}`)}</span>
+            <button className="admin-detail-close" onClick={() => setSelectedRow(null)}>✕ Close</button>
           </div>
-          <div style={{ padding: "1rem 1.25rem", borderBottom: "1px solid #eeece8", display: "flex", flexWrap: "wrap", gap: "1.5rem" }}>
-            {emailCol && selectedGuest[emailCol] && (
-              <div>
-                <div className="admin-detail-label">Email</div>
-                <a href={`mailto:${selectedGuest[emailCol]}`} style={{ fontSize: "0.875rem", color: "#3DB8AF" }}>{selectedGuest[emailCol]}</a>
-              </div>
-            )}
-            {phoneCol && selectedGuest[phoneCol] && (
-              <div>
-                <div className="admin-detail-label">Phone</div>
-                <div style={{ fontSize: "0.875rem" }}>{selectedGuest[phoneCol]}</div>
-              </div>
-            )}
-          </div>
-          {getAddons(selectedGuest).length > 0 && (
-            <div style={{ padding: "0.9rem 1.25rem", borderBottom: "1px solid #eeece8" }}>
-              <div className="admin-detail-label" style={{ marginBottom: "0.5rem" }}>Add-ons Booked</div>
-              <div style={{ display: "flex", flexWrap: "wrap", gap: "0.5rem" }}>
-                {getAddons(selectedGuest).map(({ label, value }) => (
-                  <span key={label} style={{ fontSize: "0.78rem", padding: "0.2rem 0.65rem", borderRadius: "20px", background: "rgba(232,149,106,0.12)", color: "#c0622a", fontWeight: 600 }}>
-                    {label}{value !== "yes" && value !== "1" && value !== "true" ? `: ${value}` : ""}
-                  </span>
-                ))}
-              </div>
-            </div>
-          )}
           <div className="admin-detail-grid">
-            {headers
-              .filter(h => h !== nameCol && h !== emailCol && h !== phoneCol)
-              .filter(h => selectedGuest[h] && selectedGuest[h] !== "—")
-              .map(h => (
-                <div key={h} className="admin-detail-field">
-                  <div className="admin-detail-label">{h}</div>
-                  <div className="admin-detail-value">{selectedGuest[h]}</div>
-                </div>
-              ))}
+            {COLS.filter(c => c !== "id" && c !== "created_at").map(col => {
+              const display = String(selectedRow[col] ?? "—");
+              if (display === "—") return null;
+              return <div key={col} className="admin-detail-field"><div className="admin-detail-label">{col.replace(/_/g, " ")}</div><div className="admin-detail-value">{display}</div></div>;
+            })}
+            <div className="admin-detail-field"><div className="admin-detail-label">submitted</div><div className="admin-detail-value">{fmtDate(selectedRow.created_at)}</div></div>
           </div>
         </div>
       )}
@@ -1634,21 +1289,23 @@ export default function AdminPage() {
 
       {dbSetupStatus && <div className="admin-status-bar">{dbSetupStatus}</div>}
 
-      {/* Tabs — grouped with visual separators */}
+      {/* Tabs */}
       <div className="admin-tabs">
         {tab("overview", "Overview")}
         {tab("loyalty", "Loyalty")}
-        {tab("marketing", "Marketing")}
         {tab("budget", "Budget", true)}
 
         <span className="admin-tab-sep" />
 
-        {tab("guestlist", "Guest List")}
-        {tab("addons", "Add-Ons")}
-        {tab("vendor_agreements", "Agreements")}
+        {tab("affiliates", "Affiliates")}
+        {tab("referral_events", "Referrals")}
+        {tab("newsletter", "Newsletter")}
+        {tab("leads", "Leads")}
 
         <span className="admin-tab-sep" />
 
+        {tab("addons", "Add-Ons")}
+        {tab("vendor_agreements", "Agreements")}
         {tab("vendors", "Vendors")}
         {tab("volunteers", "Volunteers")}
         {tab("instructor_waitlist", "Instructors")}
@@ -1656,17 +1313,19 @@ export default function AdminPage() {
       </div>
 
       {/* Tab content */}
-      {activeTab === "overview"           && <OverviewTab />}
-      {activeTab === "loyalty"            && <LoyaltyTab />}
-      {activeTab === "marketing"          && <MarketingTab />}
-      {activeTab === "budget"             && canSeeFinancials && <BudgetTab />}
-      {activeTab === "guestlist"          && <GuestListTab />}
-      {activeTab === "addons"             && <AddonsTab />}
-      {activeTab === "vendor_agreements"  && <VendorAgreementsTab />}
-      {activeTab === "vendors"            && <DataTab tableKey="vendors"             columns={["id","name","email","business","category","description","created_at"]} />}
-      {activeTab === "volunteers"         && <DataTab tableKey="volunteers"          columns={["id","name","email","phone","interest","experience","availability","created_at"]} />}
-      {activeTab === "instructor_waitlist"&& <DataTab tableKey="instructor_waitlist" columns={["id","name","email","phone","modality","years_teaching","interested_in_2026","interested_in_2027","offering","created_at"]} />}
-      {activeTab === "sponsors"           && <DataTab tableKey="sponsors"            columns={["id","name","email","company","budget_range","interests","goals","created_at"]} />}
+      {activeTab === "overview"            && <OverviewTab />}
+      {activeTab === "loyalty"             && <LoyaltyTab />}
+      {activeTab === "budget"              && canSeeFinancials && <BudgetTab />}
+      {activeTab === "affiliates"          && <AffiliatesTab />}
+      {activeTab === "referral_events"     && <DataTab tableKey="referral_events"    columns={["id","affiliate_code","event_type","order_id","order_amount_cents","commission_cents","created_at"]} />}
+      {activeTab === "newsletter"          && <DataTab tableKey="newsletter"          columns={["id","email","created_at"]} />}
+      {activeTab === "leads"               && <DataTab tableKey="leads"               columns={["id","name","email","phone","message","source","created_at"]} />}
+      {activeTab === "addons"              && <AddonsTab />}
+      {activeTab === "vendor_agreements"   && <VendorAgreementsTab />}
+      {activeTab === "vendors"             && <DataTab tableKey="vendors"             columns={["id","name","email","business","category","description","created_at"]} />}
+      {activeTab === "volunteers"          && <DataTab tableKey="volunteers"          columns={["id","name","email","phone","interest","experience","availability","created_at"]} />}
+      {activeTab === "instructor_waitlist" && <DataTab tableKey="instructor_waitlist" columns={["id","name","email","phone","modality","years_teaching","interested_in_2026","interested_in_2027","offering","created_at"]} />}
+      {activeTab === "sponsors"            && <DataTab tableKey="sponsors"            columns={["id","name","email","company","budget_range","interests","goals","created_at"]} />}
     </div>
   );
 }

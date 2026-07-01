@@ -36,6 +36,20 @@ const partners = [
     logoWidth: 200,
     logoHeight: 100,
   },
+  {
+    name: "The Alaska Massage Band",
+    role: "Therapeutic Massage · Bodywork",
+    logo: "/logos/alaska-massage-band.png",
+    logoWidth: 200,
+    logoHeight: 100,
+  },
+  {
+    name: "Alaska Meal Prep",
+    role: "Nourishment · Clean Eating",
+    logo: "/logos/alaska-meal-prep.png",
+    logoWidth: 200,
+    logoHeight: 100,
+  },
 ];
 
 export default function Home() {
@@ -154,11 +168,6 @@ export default function Home() {
         </Reveal>
         <Reveal>
           <div className="family-day-grid">
-            <div className="family-day-feature">
-              <div className="family-day-icon">🌊</div>
-              <h3>Lake Obstacle Course</h3>
-              <p>Our signature kids&apos; activity — an inflatable obstacle course on the lake with climbing, sliding, and splashing under the Alaskan sun. No experience needed, just a sense of adventure.</p>
-            </div>
             <div className="family-day-feature">
               <div className="family-day-icon">🪁</div>
               <h3>Intro Aerial Silks for Kids</h3>
@@ -293,6 +302,28 @@ export default function Home() {
             {partners.map((p) => (
               <PartnerCard key={p.name} {...p} />
             ))}
+          </div>
+        </Reveal>
+      </section>
+
+      {/* ═══ VENDORS ═══ */}
+      <section id="vendors" className="section practitioners">
+        <Reveal>
+          <p className="section-label">On-Site Vendors</p>
+          <h2 className="section-title">Vendors.</h2>
+          <p className="section-desc">
+            Thoughtfully curated vendors bringing nourishment, craft, and community to the grounds all weekend long.
+          </p>
+        </Reveal>
+        <Reveal>
+          <div className="partner-grid">
+            <div className="partner-card" style={{ textAlign: "center", padding: "2rem 1.5rem" }}>
+              <div style={{ fontSize: "2.5rem", marginBottom: "0.75rem" }}>☕</div>
+              <h3 style={{ fontFamily: "var(--font-serif)", fontSize: "1.25rem", marginBottom: "0.35rem" }}>Retro Roasters Coffee</h3>
+              <p style={{ fontSize: "0.875rem", color: "var(--muted)", lineHeight: 1.6 }}>
+                Specialty coffee, crafted slow. Retro Roasters brings their signature brews and warm presence to Wellness Weekend — fueling morning ceremonies and afternoon conversations all three days.
+              </p>
+            </div>
           </div>
         </Reveal>
       </section>

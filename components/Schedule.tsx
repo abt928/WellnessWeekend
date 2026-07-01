@@ -60,6 +60,7 @@ const days: ScheduleBlock[] = [
         detail: "All levels, beginner flow — you might get wet!",
         element: "water", location: "Lakeside",
         limited: true,
+        hosts: ["ashleigh"],
       },
       {
         time: "2:30 PM",
@@ -81,14 +82,7 @@ const days: ScheduleBlock[] = [
         detail: "Beginner silks flow · 6 people max",
         element: "air",
         limited: true,
-        hosts: ["alice"],
-      },
-      {
-        time: "4:00 PM",
-        event: "Yin Yoga & Sound Savasana",
-        detail: "Restorative poses with sound savasana",
-        element: "earth", location: "Tea Lounge",
-        hosts: ["mary"],
+        hosts: ["beth"],
       },
       {
         time: "3:00 PM",
@@ -101,6 +95,19 @@ const days: ScheduleBlock[] = [
         hosts: ["ashleigh"],
       },
       {
+        time: "4:00 PM",
+        event: "Yin Yoga & Sound Savasana",
+        detail: "Restorative poses with sound savasana",
+        element: "earth", location: "Lodge",
+        hosts: ["mary"],
+      },
+      {
+        time: "4:00 PM",
+        event: "Tea Lounge",
+        detail: "Come as you are. Community tea in the garden — a daily gathering to slow down, connect, and be.",
+        element: "earth", location: "Labyrinth Garden",
+      },
+      {
         time: "5:00 PM",
         event: "Keys to Kreation",
         detail: "Unlock your infinite potential of creative expression · 2 hours",
@@ -108,13 +115,13 @@ const days: ScheduleBlock[] = [
         hosts: ["j-brave"],
       },
       {
-        time: "8:30 PM",
+        time: "7:30 PM",
         event: "Cacao Ceremony · Heart Activation",
         element: "fire", location: "Main Stage",
         hosts: ["az"],
       },
       {
-        time: "9:00 PM",
+        time: "8:00 PM",
         event: "Ecstatic Dance",
         element: "fire", location: "Main Stage",
         hosts: ["flowscape"],
@@ -169,7 +176,7 @@ const days: ScheduleBlock[] = [
         detail: "Floating in silks · 6 people max",
         element: "air",
         limited: true,
-        hosts: ["alice"],
+        hosts: ["beth"],
       },
       {
         time: "11:00 AM",
@@ -183,6 +190,13 @@ const days: ScheduleBlock[] = [
         event: "Feel Good Flow",
         element: "air",
         hosts: ["jenni"],
+      },
+      {
+        time: "12:00 PM",
+        event: "Yogassage",
+        detail: "A blend of yoga assists and massage — receive hands-on adjustments in restorative poses",
+        element: "earth",
+        hosts: ["sarah"],
       },
       {
         time: "12:30 PM",
@@ -205,14 +219,14 @@ const days: ScheduleBlock[] = [
         event: "Paddleboard Yoga",
         element: "water", location: "Lakeside",
         limited: true,
-        hosts: ["alice"],
+        hosts: ["ashleigh"],
       },
       {
         time: "2:00 PM",
         event: "Intro Aerial",
         element: "air",
         limited: true,
-        hosts: ["alice"],
+        hosts: ["beth"],
       },
       {
         time: "3:00 PM",
@@ -225,8 +239,14 @@ const days: ScheduleBlock[] = [
         time: "4:00 PM",
         event: "Roots for Recovery",
         detail: "Yin yoga with long holds, MFR props, ending in a Tibetan bowl and gong sound bath",
-        element: "earth", location: "Tea Lounge",
+        element: "earth", location: "Lodge",
         hosts: ["jon"],
+      },
+      {
+        time: "4:00 PM",
+        event: "Tea Lounge",
+        detail: "Come as you are. Community tea in the garden — a daily gathering to slow down, connect, and be.",
+        element: "earth", location: "Labyrinth Garden",
       },
       {
         time: "5:30 PM",
@@ -274,6 +294,12 @@ const days: ScheduleBlock[] = [
       },
       {
         time: "10:00 AM",
+        event: "Tai Chi Dance",
+        detail: "Flowing movement meditation — drawing from the traditions of Tai Chi to awaken the body with grace and presence",
+        element: "fire", location: "Main Stage",
+      },
+      {
+        time: "10:00 AM",
         event: "Earthing Practice with Gail",
         detail: "Barefoot connection to the land — grounding through breath, movement, and direct contact with the earth",
         element: "earth", location: "Outdoor Space",
@@ -284,7 +310,7 @@ const days: ScheduleBlock[] = [
         event: "Intro Aerial for Kids",
         element: "air",
         limited: true,
-        hosts: ["alice"],
+        hosts: ["beth"],
       },
       {
         time: "11:11 AM",
@@ -315,12 +341,6 @@ const days: ScheduleBlock[] = [
         hosts: ["kuf-knotz", "christine-elise"],
       },
       {
-        time: "1:30 PM",
-        event: "Yogassage",
-        element: "earth",
-        hosts: ["sarah"],
-      },
-      {
         time: "3:15 PM",
         event: "J Brave",
         detail: "45 minutes",
@@ -330,8 +350,14 @@ const days: ScheduleBlock[] = [
       {
         time: "4:00 PM",
         event: "Tarot + Tea Party",
-        detail: "Tea Lounge welcomes divinators to share and activate this space",
-        element: "earth", location: "Tea Lounge",
+        detail: "Divinators gather in the garden to share readings, activate the space, and close the weekend with mystery and magic",
+        element: "earth", location: "Labyrinth Garden",
+      },
+      {
+        time: "4:00 PM",
+        event: "Tea Lounge",
+        detail: "Come as you are. Community tea in the garden — a daily gathering to slow down, connect, and be.",
+        element: "earth", location: "Labyrinth Garden",
       },
       {
         time: "5:00 PM",
@@ -343,11 +369,9 @@ const days: ScheduleBlock[] = [
 ];
 
 const FAMILY_DAY_ACTIVITIES = [
-  "Lake Obstacle Course",
   "Intro Aerial Silks for Kids",
-  "Paddleboard for Kids (limited spots)",
-  "Arts & Crafts · Needlefelting",
   "Crystal Scavenger Hunt",
+  "Arts & Crafts · Needlefelting",
 ];
 
 const DAY_KEYS = ["friday", "saturday", "sunday"] as const;

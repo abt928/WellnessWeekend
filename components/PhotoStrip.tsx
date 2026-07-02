@@ -33,7 +33,7 @@ export default function PhotoStrip() {
             fill
             priority={i === 0}
             sizes="100vw"
-            style={{ objectFit: "cover", objectPosition: "center 40%" }}
+            style={{ objectFit: "contain", objectPosition: "center center" }}
           />
         </div>
       ))}

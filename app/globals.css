@@ -958,7 +958,7 @@ textarea:focus-visible {
 .photo-strip {
   position: relative;
   width: 100%;
-  height: clamp(320px, 48vw, 560px);
+  height: clamp(420px, 65vw, 720px);
   overflow: hidden;
   background: #0e0618;
 }

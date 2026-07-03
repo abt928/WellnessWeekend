@@ -4,7 +4,7 @@ import BookingModal from "@/components/BookingModal";
 
 type ClassType = "sauna" | "aerial" | "paddle";
 
-const ADDONS = [
+const ADDONS: { type: ClassType | null; icon: string; title: string; subtitle: string; desc: string; cta: string; fee?: boolean }[] = [
   {
     type: "sauna" as ClassType,
     icon: "🔥",
@@ -31,11 +31,12 @@ const ADDONS = [
   },
   {
     type: null,
-    icon: "🙌",
-    title: "Massage",
-    subtitle: "Restore · Release · Renew",
-    desc: "Multiple licensed massage therapists on-site all weekend — Flow Massage, Starfish Wellness & Massage, Tundra Wellness, and Alaska Fly Dog. Book directly at their vendor booth.",
-    cta: "Available On-Site",
+    icon: "🌿",
+    title: "Ayni Despacho",
+    subtitle: "Ceremony · Offering · Reciprocity",
+    desc: "An Andean ceremony of sacred reciprocity — a bundle of seeds, flowers, and offerings built together and given back to the mountain spirits. Saturday 11 AM in the Lodge.",
+    cta: "Workshop materials fee · $75",
+    fee: true,
   },
 ];
 
@@ -59,13 +60,17 @@ export default function BuildYourWeekend() {
                 <p className="build-card-sub">{a.subtitle}</p>
                 <p className="build-card-desc">{a.desc}</p>
               </div>
-              <button
-                className={`build-card-cta${a.type ? "" : " no-book"}`}
-                onClick={() => a.type && setBooking(a.type)}
-                disabled={!a.type}
-              >
-                {a.cta}
-              </button>
+              {a.fee ? (
+                <span className="build-card-fee">{a.cta}</span>
+              ) : (
+                <button
+                  className={`build-card-cta${a.type ? "" : " no-book"}`}
+                  onClick={() => a.type && setBooking(a.type)}
+                  disabled={!a.type}
+                >
+                  {a.cta}
+                </button>
+              )}
             </div>
           ))}
         </div>

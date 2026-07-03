@@ -1047,6 +1047,19 @@ textarea:focus-visible {
   background: none; color: var(--ink-muted, #666);
   border: 1.5px solid rgba(0,0,0,0.15); cursor: default;
 }
+.build-card-fee {
+  display: inline-block;
+  margin-top: 0.5rem;
+  padding: 0.6rem 1.1rem;
+  background: none;
+  color: var(--sage);
+  border: 1.5px solid rgba(78,144,112,0.4);
+  border-radius: 8px;
+  font-size: 0.85rem;
+  font-weight: 600;
+  letter-spacing: 0.03em;
+  align-self: flex-start;
+}
 
 /* ========== CAMPING URGENCY ========== */
 .camping-urgency {
@@ -1410,6 +1423,21 @@ textarea:focus-visible {
 }
 .schedule-limited:hover {
   background: rgba(201,152,63,0.1);
+}
+.schedule-fee {
+  display: inline-flex;
+  align-items: center;
+  font-size: 0.65rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  font-weight: 600;
+  color: var(--sage);
+  border: 1px solid rgba(78,144,112,0.35);
+  border-radius: 20px;
+  padding: 0.15rem 0.6rem;
+  margin-left: 0.5rem;
+  vertical-align: middle;
+  white-space: nowrap;
 }
 
 /* Host bio badges */
@@ -2531,6 +2559,24 @@ textarea:focus-visible {
   gap: 2rem;
   max-width: 800px;
   margin: 0 auto;
+}
+.partner-row {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  align-items: center;
+  gap: 1.25rem;
+  margin: 0 auto;
+}
+.partner-row .partner-card {
+  flex: 0 1 160px;
+  padding: 1.25rem 1rem;
+}
+.partner-row .partner-logo-img-wrap {
+  height: 60px;
+}
+@media (max-width: 600px) {
+  .partner-row .partner-card { flex: 0 1 130px; padding: 1rem 0.75rem; }
 }
 .partner-card {
   flex: 0 1 260px;

@@ -52,6 +52,13 @@ const partners = [
     logoWidth: 200,
     logoHeight: 100,
   },
+  {
+    name: "Whirling Rainbow Foundation",
+    role: "Community Nonprofit",
+    logo: "/logos/whirling-rainbow.png",
+    logoWidth: 200,
+    logoHeight: 100,
+  },
 ];
 
 export default function Home() {
@@ -147,17 +154,17 @@ export default function Home() {
         </div>
       </div>
 
-      {/* ═══ PHOTO STRIP ═══ */}
-      <PhotoStrip />
-
       {/* ═══ SCHEDULE ═══ */}
       <Schedule />
 
-      {/* ═══ BUILD YOUR WEEKEND ═══ */}
-      <BuildYourWeekend />
+      {/* ═══ PHOTO STRIP ═══ */}
+      <PhotoStrip />
 
       {/* ═══ TICKETS STORE ═══ */}
       <Store />
+
+      {/* ═══ BUILD YOUR WEEKEND ═══ */}
+      <BuildYourWeekend />
 
       {/* ═══ PACKAGES ═══ */}
       <Packages />
@@ -306,9 +313,6 @@ export default function Home() {
 
       </section>
 
-      {/* ═══ FAQ ═══ */}
-      <FAQ />
-
       {/* ═══ INSTRUCTORS ═══ */}
       <Instructors />
 
@@ -323,7 +327,7 @@ export default function Home() {
           </p>
         </Reveal>
         <Reveal>
-          <div className="partner-grid">
+          <div className="partner-row">
             {partners.map((p) => (
               <PartnerCard key={p.name} {...p} />
             ))}
@@ -361,6 +365,9 @@ export default function Home() {
           </div>
         </Reveal>
       </section>
+
+      {/* ═══ FAQ ═══ */}
+      <FAQ />
 
       {/* ═══ GET INVOLVED ═══ */}
       <GetInvolved />

@@ -31,6 +31,7 @@ interface ScheduleEvent {
   location?: string;
   gloss?: string;
   limited?: boolean;
+  fee?: string;
   hosts?: string[];
 }
 
@@ -189,7 +190,7 @@ const days: ScheduleBlock[] = [
         event: "Ayni Despacho Ceremony",
         element: "fire", location: "Lodge",
         gloss: AYNI_GLOSS,
-        limited: true,
+        fee: "Workshop materials fee · $75",
       },
       {
         time: "11:00 AM",
@@ -511,6 +512,9 @@ export default function Schedule() {
               {e.gloss ? <EventGloss term={e.event} gloss={e.gloss} /> : e.event}
               {e.limited && (
                 <a href="#store" className="schedule-limited">Limited · Book ahead</a>
+              )}
+              {e.fee && (
+                <span className="schedule-fee">{e.fee}</span>
               )}
             </div>
             {e.detail && <div className="schedule-detail">{e.detail}</div>}

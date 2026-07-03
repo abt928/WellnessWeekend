@@ -13,7 +13,7 @@ import ConversionNudges from "@/components/ConversionNudges";
 import PartnerCard from "@/components/PartnerCard";
 import BuildYourWeekend from "@/components/BuildYourWeekend";
 import Instructors from "@/components/Instructors";
-import Musicians from "@/components/Musicians";
+import ChatBot from "@/components/ChatBot";
 import { PlaneIcon, MapPinIcon, LeafIcon, MoonIcon } from "@/components/Icons";
 
 /* ── static data ── */
@@ -109,6 +109,7 @@ export default function Home() {
       <Navigation />
       <FloatingActions />
       <ConversionNudges />
+      <ChatBot />
 
       <a className="skip-link" href="#main">Skip to main content</a>
 
@@ -316,9 +317,6 @@ export default function Home() {
 
       {/* ═══ INSTRUCTORS ═══ */}
       <Instructors />
-
-      {/* ═══ MUSICIANS ═══ */}
-      <Musicians />
 
       {/* ═══ BRAND PARTNERS ═══ */}
       <section id="partners" className="section practitioners">

@@ -347,22 +347,6 @@ export default function Store() {
         <span>Camping passes are nearly sold out — fewer than 10 remain. <a href="#store">Secure yours now →</a></span>
       </div>
 
-      {/* Rewards callout */}
-      <div className="store-rewards-strip">
-        <div className="store-rewards-earn">
-          <span className="store-rewards-star">✦</span>
-          <span><strong>Earn 1 point per $1 spent</strong> — plus 50 bonus points every time you refer a friend</span>
-        </div>
-        <div className="store-rewards-redeem">
-          <span className="store-rewards-tier"><strong>100 pts</strong> $10 off add-ons or merch</span>
-          <span className="store-rewards-sep">·</span>
-          <span className="store-rewards-tier"><strong>500 pts</strong> Free day pass</span>
-          <span className="store-rewards-sep">·</span>
-          <span className="store-rewards-tier"><strong>1,000 pts</strong> Free weekend pass</span>
-        </div>
-        <a href="/members" className="store-rewards-cta">Join the Circle →</a>
-      </div>
-
       {/* Category Tabs */}
       <div className="store-tabs">
         {TABS.map((t) => (
@@ -433,6 +417,22 @@ export default function Store() {
           )}
         </div>
       )}
+
+      {/* Rewards callout — below price boxes */}
+      <div className="store-rewards-strip">
+        <div className="store-rewards-earn">
+          <span className="store-rewards-star">✦</span>
+          <span><strong>Earn 1 point per $1 spent</strong> — plus 50 bonus points every time you refer a friend</span>
+        </div>
+        <div className="store-rewards-redeem">
+          <span className="store-rewards-tier"><strong>100 pts</strong> $10 off add-ons or merch</span>
+          <span className="store-rewards-sep">·</span>
+          <span className="store-rewards-tier"><strong>500 pts</strong> Free day pass</span>
+          <span className="store-rewards-sep">·</span>
+          <span className="store-rewards-tier"><strong>1,000 pts</strong> Free weekend pass</span>
+        </div>
+        <a href="/members" className="store-rewards-cta">Join the Circle →</a>
+      </div>
 
       {/* Floating Cart Bar */}
       {cartCount > 0 && (

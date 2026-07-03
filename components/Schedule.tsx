@@ -468,29 +468,6 @@ export default function Schedule() {
         <span className="schedule-theme-text">{currentDay.theme}</span>
       </div>
 
-      {/* Book Ahead Panel */}
-      {(() => {
-        const limited = currentDay.events.filter((e) => e.limited);
-        if (limited.length === 0) return null;
-        return (
-          <div className="book-ahead-panel">
-            <div className="book-ahead-header">
-              <span className="book-ahead-badge">Reserve Your Spot</span>
-              <span className="book-ahead-note">These sessions have limited capacity — book ahead to secure your place</span>
-            </div>
-            <div className="book-ahead-list">
-              {limited.map((e, i) => (
-                <a key={i} href="#store" className="book-ahead-item">
-                  <span className="book-ahead-time">{e.time}</span>
-                  <span className="book-ahead-name">{e.event}</span>
-                  <span className="book-ahead-cta">Reserve →</span>
-                </a>
-              ))}
-            </div>
-          </div>
-        );
-      })()}
-
       {/* Timeline */}
       <div className="schedule-timeline" key={`${active}-${elementFilter ?? "all"}`}>
         {filteredEvents.map((e, i) => (
@@ -534,6 +511,29 @@ export default function Schedule() {
           </div>
         )}
       </div>
+
+      {/* Book Ahead Panel — bottom of schedule */}
+      {(() => {
+        const limited = currentDay.events.filter((e) => e.limited);
+        if (limited.length === 0) return null;
+        return (
+          <div className="book-ahead-panel">
+            <div className="book-ahead-header">
+              <span className="book-ahead-badge">Reserve Your Spot</span>
+              <span className="book-ahead-note">These sessions have limited capacity — book ahead to secure your place</span>
+            </div>
+            <div className="book-ahead-list">
+              {limited.map((e, i) => (
+                <a key={i} href="#store" className="book-ahead-item">
+                  <span className="book-ahead-time">{e.time}</span>
+                  <span className="book-ahead-name">{e.event}</span>
+                  <span className="book-ahead-cta">Reserve →</span>
+                </a>
+              ))}
+            </div>
+          </div>
+        );
+      })()}
 
       {/* Sunday Family Day */}
       {active === 2 && (

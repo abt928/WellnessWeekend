@@ -307,23 +307,32 @@ export default function Home() {
       </section>
 
       {/* ═══ VENDORS ═══ */}
-      <section id="vendors" className="section practitioners">
+      <section id="vendors" className="section" style={{ paddingTop: "3rem", paddingBottom: "3rem" }}>
         <Reveal>
           <p className="section-label">On-Site Vendors</p>
-          <h2 className="section-title">Vendors.</h2>
-          <p className="section-desc">
-            Thoughtfully curated vendors bringing nourishment, craft, and community to the grounds all weekend long.
-          </p>
+          <h2 className="section-title" style={{ marginBottom: "1.5rem" }}>Vendors.</h2>
         </Reveal>
         <Reveal>
-          <div className="partner-grid">
-            <div className="partner-card" style={{ textAlign: "center", padding: "2rem 1.5rem" }}>
-              <div style={{ fontSize: "2.5rem", marginBottom: "0.75rem" }}>☕</div>
-              <h3 style={{ fontFamily: "var(--font-serif)", fontSize: "1.25rem", marginBottom: "0.35rem" }}>Retro Roasters Coffee</h3>
-              <p style={{ fontSize: "0.875rem", color: "var(--muted)", lineHeight: 1.6 }}>
-                Specialty coffee, crafted slow. Retro Roasters brings their signature brews and warm presence to Wellness Weekend — fueling morning ceremonies and afternoon conversations all three days.
-              </p>
-            </div>
+          <div className="vendor-list">
+            {[
+              { name: "Retro Roasters Coffee",          role: "Specialty Coffee" },
+              { name: "Cacao Bar",                       role: "Ceremonial Cacao" },
+              { name: "Whirling Rainbow Foundation",     role: "Community Nonprofit" },
+              { name: "Flow Massage",                    role: "Chair Massage" },
+              { name: "Echo and Sage",                   role: "Stained Glass Art" },
+              { name: "Ecuadorian Products",             role: "Artisan Goods" },
+              { name: "Tundra Wellness",                 role: "Massage · Craniosacral · Wellness Products" },
+              { name: "AK Child & Family",               role: "Family Resources" },
+              { name: "Aurora Acupuncture",              role: "Acupuncture" },
+              { name: "Fireweed and Flames",             role: "Reiki Candles · Reiki & Tarot" },
+              { name: "Starfish Wellness & Massage",     role: "Massage Therapy" },
+              { name: "Lifewave",                        role: "Wellness Products" },
+            ].map((v) => (
+              <div key={v.name} className="vendor-row">
+                <span className="vendor-name">{v.name}</span>
+                <span className="vendor-role">{v.role}</span>
+              </div>
+            ))}
           </div>
         </Reveal>
       </section>

@@ -1,5 +1,6 @@
 "use client";
 import { useState, useEffect } from "react";
+import Image from "next/image";
 import { practitioners } from "@/lib/practitioners";
 
 export default function BioTrigger({ slug }: { slug: string }) {
@@ -47,7 +48,11 @@ export default function BioTrigger({ slug }: { slug: string }) {
             </button>
 
             <div className="bio-avatar">
-              <span className="bio-initials">{initials}</span>
+              {person.photo ? (
+                <Image src={person.photo} alt={person.name} fill style={{ objectFit: "cover" }} />
+              ) : (
+                <span className="bio-initials">{initials}</span>
+              )}
             </div>
 
             <div className="bio-header">

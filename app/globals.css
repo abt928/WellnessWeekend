@@ -5001,3 +5001,102 @@ body {
     padding: 1.25rem;
   }
 }
+
+/* ── Instructors Section ── */
+.instructors-section {
+  background: var(--parchment);
+}
+@media (prefers-color-scheme: dark) {
+  .instructors-section { background: #0f0e1a; }
+}
+:root[data-theme="dark"] .instructors-section { background: #0f0e1a; }
+:root[data-theme="light"] .instructors-section { background: var(--parchment); }
+
+.instructors-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+  gap: 1.5rem;
+  margin-top: 2.5rem;
+}
+
+.instructor-card {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.75rem;
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 1.25rem 0.75rem;
+  border-radius: 12px;
+  text-align: center;
+  transition: background 0.2s;
+}
+.instructor-card:hover {
+  background: rgba(0,0,0,0.04);
+}
+@media (prefers-color-scheme: dark) {
+  .instructor-card:hover { background: rgba(255,255,255,0.06); }
+}
+:root[data-theme="dark"] .instructor-card:hover { background: rgba(255,255,255,0.06); }
+:root[data-theme="light"] .instructor-card:hover { background: rgba(0,0,0,0.04); }
+
+.instructor-avatar {
+  position: relative;
+  width: 90px;
+  height: 90px;
+  border-radius: 50%;
+  overflow: hidden;
+  background: var(--sage);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.instructor-initials {
+  color: #fff;
+  font-size: 1.4rem;
+  font-weight: 700;
+  letter-spacing: 0.02em;
+  line-height: 1;
+}
+
+.instructor-info {
+  display: flex;
+  flex-direction: column;
+  gap: 0.2rem;
+}
+
+.instructor-name {
+  font-size: 0.95rem;
+  font-weight: 700;
+  color: var(--ink);
+  line-height: 1.2;
+}
+
+.instructor-role {
+  font-size: 0.75rem;
+  color: var(--sage);
+  font-weight: 500;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+}
+
+.instructor-offering {
+  font-size: 0.75rem;
+  color: var(--ink-muted);
+  line-height: 1.3;
+  margin-top: 0.1rem;
+}
+
+@media (max-width: 600px) {
+  .instructors-grid {
+    grid-template-columns: repeat(auto-fill, minmax(130px, 1fr));
+    gap: 1rem;
+  }
+  .instructor-avatar {
+    width: 72px;
+    height: 72px;
+  }
+}

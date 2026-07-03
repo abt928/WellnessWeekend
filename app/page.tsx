@@ -12,6 +12,7 @@ import FloatingActions from "@/components/FloatingActions";
 import ConversionNudges from "@/components/ConversionNudges";
 import PartnerCard from "@/components/PartnerCard";
 import BuildYourWeekend from "@/components/BuildYourWeekend";
+import Instructors from "@/components/Instructors";
 import { PlaneIcon, MapPinIcon, LeafIcon, MoonIcon } from "@/components/Icons";
 
 /* ── static data ── */
@@ -307,6 +308,9 @@ export default function Home() {
 
       {/* ═══ FAQ ═══ */}
       <FAQ />
+
+      {/* ═══ INSTRUCTORS ═══ */}
+      <Instructors />
 
       {/* ═══ BRAND PARTNERS ═══ */}
       <section id="partners" className="section practitioners">

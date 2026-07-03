@@ -150,4 +150,11 @@ export const practitioners: Practitioner[] = [
     offering: "Yogassage",
     bio: "Sarah offers Yogassage — a deeply restorative fusion of assisted yoga stretching and Thai massage that works on the whole body at once. Sessions are done fully clothed on a mat and leave participants in a state of physical ease that's hard to describe and easy to feel.",
   },
+  {
+    slug: "beth",
+    name: "Beth",
+    role: "Aerial Silk Artist",
+    offering: "Aerial Silk · All Weekend",
+    bio: "Beth is an aerial silk artist and movement educator who brings warmth, technical skill, and genuine joy to every session. Her beginner-friendly aerial classes create a safe, encouraging space for people of all backgrounds to discover what it feels like to leave the ground. Small groups of 6 ensure everyone gets hands-on attention.",
+  },
 ];

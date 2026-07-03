@@ -13,6 +13,7 @@ import ConversionNudges from "@/components/ConversionNudges";
 import PartnerCard from "@/components/PartnerCard";
 import BuildYourWeekend from "@/components/BuildYourWeekend";
 import Instructors from "@/components/Instructors";
+import Musicians from "@/components/Musicians";
 import { PlaneIcon, MapPinIcon, LeafIcon, MoonIcon } from "@/components/Icons";
 
 /* ── static data ── */
@@ -315,6 +316,9 @@ export default function Home() {
 
       {/* ═══ INSTRUCTORS ═══ */}
       <Instructors />
+
+      {/* ═══ MUSICIANS ═══ */}
+      <Musicians />
 
       {/* ═══ BRAND PARTNERS ═══ */}
       <section id="partners" className="section practitioners">

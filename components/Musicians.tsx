@@ -69,41 +69,28 @@ function BioModal({ person, onClose }: { person: Practitioner; onClose: () => vo
   );
 }
 
-const PRIORITY_ORDER = [
-  "j-brave",
-  "white-eagle",
-  "gail",
-  "avalon-starling",
-  "alice",
-  "ashleigh",
-];
+const MUSICIAN_ORDER = ["kuf-knotz", "christine-elise", "shawn-zuke", "flowscape", "s7ngrae"];
 
-function sortedInstructors(list: Practitioner[]) {
-  const instructors = list.filter((p) => !p.isMusician);
-  return [
-    ...PRIORITY_ORDER.map((slug) => instructors.find((p) => p.slug === slug)).filter(Boolean) as Practitioner[],
-    ...instructors.filter((p) => !PRIORITY_ORDER.includes(p.slug)),
-  ];
-}
-
-export default function Instructors() {
+export default function Musicians() {
   const [selected, setSelected] = useState<Practitioner | null>(null);
-  const ordered = sortedInstructors(practitioners);
+
+  const musicians = MUSICIAN_ORDER
+    .map((slug) => practitioners.find((p) => p.slug === slug))
+    .filter(Boolean) as Practitioner[];
 
   return (
-    <section id="instructors" className="section instructors-section">
+    <section id="musicians" className="section musicians-section">
       <Reveal>
-        <p className="section-label">Meet the Healers</p>
-        <h2 className="section-title">Practitioners.</h2>
+        <p className="section-label">Live Music</p>
+        <h2 className="section-title">Musicians.</h2>
         <p className="section-desc">
-          The teachers, artists, and ceremony holders who make Wellness Weekend what it is.
-          Click any card to learn more.
+          The artists and performers who carry the sonic heartbeat of Wellness Weekend.
         </p>
       </Reveal>
 
       <Reveal>
-        <div className="instructors-grid">
-          {ordered.map((p: Practitioner) => {
+        <div className="instructors-grid musicians-grid">
+          {musicians.map((p) => {
             const initials = p.name
               .split(" ")
               .map((w) => w[0])
@@ -114,11 +101,11 @@ export default function Instructors() {
             return (
               <button
                 key={p.slug}
-                className="instructor-card"
+                className="instructor-card musician-card"
                 onClick={() => setSelected(p)}
                 aria-label={`Learn more about ${p.name}`}
               >
-                <div className="instructor-avatar">
+                <div className="instructor-avatar musician-avatar">
                   {p.photo ? (
                     <Image src={p.photo} alt={p.name} fill style={{ objectFit: "cover" }} />
                   ) : (

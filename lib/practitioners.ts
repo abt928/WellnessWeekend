@@ -7,6 +7,7 @@ export interface Practitioner {
   photo?: string;
   website?: string;
   instagram?: string;
+  isMusician?: boolean;
 }
 
 export const practitioners: Practitioner[] = [
@@ -19,7 +20,7 @@ export const practitioners: Practitioner[] = [
   },
   {
     slug: "ashleigh",
-    name: "Ashleigh",
+    name: "Ashleigh Bicknell",
     role: "Dance & Movement Facilitator",
     offering: "Dance Alchemy · Opening Ceremony",
     bio: "Ashleigh is a movement medicine facilitator whose Dance Alchemy sessions dissolve the boundary between dance and healing. Through improvisational movement, breath, and live music, she creates a container where the body can finally say what words cannot. Expect to sweat, shake, and arrive home in yourself.",
@@ -47,7 +48,7 @@ export const practitioners: Practitioner[] = [
   },
   {
     slug: "alice",
-    name: "Alice",
+    name: "Alice Sullivan",
     role: "Aerial Silk Artist & SUP Yoga Instructor",
     offering: "Aerial Silk · Paddleboard Yoga",
     bio: "Alice is a certified aerial silk artist and stand-up paddleboard yoga instructor with a gift for making both disciplines accessible and joyful. Whether you're floating on fabric or floating on water, she meets you exactly where you are with encouragement, laughter, and skill.",
@@ -58,13 +59,6 @@ export const practitioners: Practitioner[] = [
     role: "Yoga & Movement Instructor",
     offering: "Feel Good Flow",
     bio: "Jenni's Feel Good Flow is exactly what it sounds like — a joyful, feel-good yoga class designed to get you out of your head and into your body. Open to all levels, her sessions blend fluid movement, breath, and music into a practice that leaves you lighter than when you arrived.",
-  },
-  {
-    slug: "alex",
-    name: "Alex",
-    role: "Laughter Yoga Facilitator",
-    offering: "Laugh Your Way to Wellness",
-    bio: "Alex is a certified laughter yoga practitioner and wellness educator who uses therapeutic laughter, play, and breathwork to unlock the body's natural healing response. Don't be surprised if you arrive skeptical and leave wiping tears of joy — it happens every time.",
   },
   {
     slug: "az",
@@ -79,13 +73,6 @@ export const practitioners: Practitioner[] = [
     role: "Sound Alchemist & Keys Artist",
     offering: "Keys to Kreation · Ecstatic Dance",
     bio: "J Brave is a visionary keys artist and sonic alchemist who performs at the intersection of music, consciousness, and creative activation. Keys to Kreation is his signature immersive experience — two hours of live improvisation, frequencies, and presence designed to unlock the creative infinite within you.",
-  },
-  {
-    slug: "zwami",
-    name: "Zwami",
-    role: "DJ & Electronic Music Artist",
-    offering: "Music Activation · Ecstatic Dance",
-    bio: "Zwami is an Alaskan-rooted DJ and music artist whose sets build from atmospheric openings into transcendent peaks. Known for reading the room and lifting the energy at exactly the right moment, he is a core part of the Wellness Weekend sonic experience.",
   },
   {
     slug: "jon",
@@ -107,6 +94,7 @@ export const practitioners: Practitioner[] = [
     role: "Hip Hop Artist & Conscious Lyricist",
     offering: "Live Music · Sunday Main Stage",
     bio: "Kuf Knotz is an award-winning hip hop artist, producer, and poet whose music has been described as soul medicine in rhyme form. His live performances weave conscious lyricism with groove-heavy production into something that moves the body and the spirit simultaneously.",
+    isMusician: true,
   },
   {
     slug: "christine-elise",
@@ -114,13 +102,31 @@ export const practitioners: Practitioner[] = [
     role: "Singer-Songwriter & Multi-Instrumentalist",
     offering: "Live Music · Sunday Main Stage",
     bio: "Christine Elise is a singer-songwriter and multi-instrumentalist whose intimate performances are powered by raw honesty and melodic precision. She performs alongside Kuf Knotz for a Sunday afternoon set that will leave you sitting in silence for a moment before you remember to applaud.",
+    isMusician: true,
   },
   {
     slug: "flowscape",
     name: "Flowscape",
     role: "Electronic Music Producer & DJ",
-    offering: "Ecstatic Dance · Evening Closing",
+    offering: "Ecstatic Dance · Friday & Sunday",
     bio: "Flowscape is an electronic music producer and DJ whose genre-dissolving sets are purpose-built for ecstatic dance, ceremony, and late-night exploration. Expect deep bass, ethereal textures, and the kind of music that makes your body move before your mind has caught up.",
+    isMusician: true,
+  },
+  {
+    slug: "shawn-zuke",
+    name: "Shawn Zuke",
+    role: "DJ & Music Producer",
+    offering: "Live Music · Ecstatic Dance",
+    bio: "Shawn Zuke is a DJ and music producer known for blending deep electronic soundscapes with healing frequencies. His sets move seamlessly between ceremony and dancefloor, creating a sonic container where transformation feels inevitable.",
+    isMusician: true,
+  },
+  {
+    slug: "s7ngrae",
+    name: "S7ngrae",
+    role: "Artist & Performer",
+    offering: "Live Music · Wellness Weekend",
+    bio: "S7ngrae brings a unique voice to the Wellness Weekend stage — an artist whose performances sit at the intersection of music, movement, and conscious expression.",
+    isMusician: true,
   },
   {
     slug: "dixie",

@@ -5146,3 +5146,23 @@ body {
     height: 72px;
   }
 }
+
+/* ── Musicians Section ── */
+.musicians-section {
+  background: var(--parchment);
+}
+@media (prefers-color-scheme: dark) {
+  .musicians-section { background: #120d1e; }
+}
+:root[data-theme="dark"] .musicians-section { background: #120d1e; }
+:root[data-theme="light"] .musicians-section { background: var(--parchment); }
+
+.musician-avatar {
+  background: var(--aurora, #8B5FBF) !important;
+}
+
+.musicians-grid {
+  max-width: 900px;
+  margin-left: auto;
+  margin-right: auto;
+}

@@ -323,6 +323,7 @@ const days: ScheduleBlock[] = [
         time: "11:11 AM",
         event: "Message from the Bees — Ecstatic Dance",
         element: "earth", location: "Labyrinth Garden",
+        hosts: ["flowscape"],
       },
       {
         time: "11:30 AM",

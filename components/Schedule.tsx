@@ -56,6 +56,12 @@ const days: ScheduleBlock[] = [
       },
       {
         time: "2:00 PM",
+        event: "Past Life Guided Meditation",
+        detail: "For those ready to go deep — an epic cleanse focusing on past lives in the multidimensional world",
+        element: "fire", location: "Main Stage",
+      },
+      {
+        time: "2:00 PM",
         event: "Paddleboard Yoga",
         detail: "All levels, beginner flow — you might get wet!",
         element: "water", location: "Lakeside",

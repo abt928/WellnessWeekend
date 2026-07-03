@@ -11,6 +11,7 @@ import PhotoStrip from "@/components/PhotoStrip";
 import FloatingActions from "@/components/FloatingActions";
 import ConversionNudges from "@/components/ConversionNudges";
 import PartnerCard from "@/components/PartnerCard";
+import BuildYourWeekend from "@/components/BuildYourWeekend";
 import { PlaneIcon, MapPinIcon, LeafIcon, MoonIcon } from "@/components/Icons";
 
 /* ── static data ── */
@@ -151,6 +152,9 @@ export default function Home() {
       {/* ═══ SCHEDULE ═══ */}
       <Schedule />
 
+      {/* ═══ BUILD YOUR WEEKEND ═══ */}
+      <BuildYourWeekend />
+
       {/* ═══ TICKETS STORE ═══ */}
       <Store />
 
@@ -272,6 +276,23 @@ export default function Home() {
             </div>
           </Reveal>
         </div>
+
+        {/* Warrior Lodge pitch */}
+        <Reveal>
+          <div className="warrior-lodge">
+            <div className="warrior-lodge-text">
+              <p className="section-label" style={{ textAlign: "left" }}>Warrior Lodge · On-Site Accommodation</p>
+              <h3 className="warrior-lodge-title">Stay warm. Stay dry. Dance all night.</h3>
+              <p className="warrior-lodge-desc">
+                August in Alaska is wild — radiant summer days that stretch past midnight and cool, crisp nights perfect for gathering under the stars. The Warrior Lodge and on-site cabins were built for exactly this: a warm, dry sanctuary between ceremonies so you never have to leave the magic.
+              </p>
+              <p className="warrior-lodge-desc" style={{ marginTop: "0.75rem" }}>
+                Wake up steps from the lake. Walk to morning yoga. Come back to a real bed after the fire dies. On-site lodging is limited and fills every year — fewer than 10 camping passes remain.
+              </p>
+              <a href="#store" className="warrior-lodge-cta">Reserve Lodging →</a>
+            </div>
+          </div>
+        </Reveal>
 
         {/* Land acknowledgment */}
         <div className="land-ack">

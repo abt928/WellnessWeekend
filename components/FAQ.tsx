@@ -42,6 +42,10 @@ const faqs = [
     q: "Is there RV camping?",
     a: "Yes, we have a very limited number of RV spaces. You must contact us in advance and provide the size of your rig so we can confirm availability and placement.",
   },
+  {
+    q: "Where can I camp nearby if on-site is full?",
+    a: "On-site camping passes are nearly sold out. Nearby options include: King Mountain State Recreation Site (15 min east on Glenn Hwy — tent sites, pit toilets, river access), Matanuska River Park in Palmer (20 min west — full hookups available), Long Lake State Recreation Site (25 min — lakeside tent camping), and several private RV parks in Palmer and Wasilla (30–40 min). We recommend booking your site early — August in the Valley fills up fast.",
+  },
 ];
 
 export default function FAQ() {

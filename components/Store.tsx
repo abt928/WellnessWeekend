@@ -332,17 +332,20 @@ export default function Store() {
 
   return (
     <section id="store" className="section store-section">
-      <p className="section-label">Build Your Experience</p>
+      <p className="section-label">Tickets & Add-Ons</p>
       <h2 className="section-title">
-        Build your weekend.
+        We welcome all guests for a day or a weekend.
       </h2>
       <p className="section-desc">
-        Choose your tickets, add-on experiences, and merch to craft the perfect
-        Wellness Weekend, all processed securely through Square.
+        Choose your tickets, add-on experiences, and merch — all processed securely through Square.
       </p>
       <p className="store-capacity" style={{ display: "flex", alignItems: "center", justifyContent: "center", gap: "0.5rem" }}>
-        <LotusIcon size={16} color="var(--aurora)" /> An intimate gathering limited to 200 seekers <LotusIcon size={16} color="var(--aurora)" />
+        <LotusIcon size={16} color="var(--aurora)" /> Limited lodging on-site — the nearest campground is 15 minutes away <LotusIcon size={16} color="var(--aurora)" />
       </p>
+      <div className="camping-urgency">
+        <span className="camping-urgency-badge">Almost Gone</span>
+        <span>Camping passes are nearly sold out — fewer than 10 remain. <a href="#store">Secure yours now →</a></span>
+      </div>
 
       {/* Rewards callout */}
       <div className="store-rewards-strip">

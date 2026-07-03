@@ -66,7 +66,7 @@ const days: ScheduleBlock[] = [
         detail: "All levels, beginner flow — you might get wet!",
         element: "water", location: "Lakeside",
         limited: true,
-        hosts: ["ashleigh"],
+        hosts: ["alice"],
       },
       {
         time: "2:30 PM",

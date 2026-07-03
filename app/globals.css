@@ -953,6 +953,140 @@ textarea:focus-visible {
   .photo-banner-caption { display: none; }
 }
 
+/* ========== BOOKING MODAL ========== */
+.booking-overlay {
+  position: fixed; inset: 0; z-index: 900;
+  background: rgba(10, 8, 32, 0.72);
+  backdrop-filter: blur(6px);
+  display: flex; align-items: center; justify-content: center;
+  padding: 1rem;
+}
+.booking-modal {
+  background: var(--cream, #F7F3EC);
+  border-radius: 16px;
+  padding: 2rem;
+  max-width: 480px; width: 100%;
+  max-height: 90vh; overflow-y: auto;
+  position: relative;
+  box-shadow: 0 24px 80px rgba(0,0,0,0.35);
+}
+.booking-close {
+  position: absolute; top: 1rem; right: 1rem;
+  background: none; border: none; font-size: 1.25rem;
+  cursor: pointer; color: var(--ink-muted, #666); line-height: 1;
+}
+.booking-header { text-align: center; margin-bottom: 1.5rem; }
+.booking-icon { font-size: 2rem; display: block; margin-bottom: 0.5rem; }
+.booking-title { font-size: 1.375rem; font-family: var(--font-serif); margin-bottom: 0.4rem; }
+.booking-desc { font-size: 0.875rem; color: var(--ink-muted, #666); line-height: 1.5; }
+.booking-slots { display: flex; flex-direction: column; gap: 0.5rem; margin-bottom: 1rem; }
+.booking-slot {
+  display: flex; justify-content: space-between; align-items: center;
+  padding: 0.75rem 1rem; border-radius: 8px;
+  border: 2px solid rgba(0,0,0,0.12); background: none;
+  cursor: pointer; text-align: left; transition: border-color 0.15s;
+}
+.booking-slot:hover:not(.full) { border-color: var(--aurora, #8B5FBF); }
+.booking-slot.selected { border-color: var(--aurora, #8B5FBF); background: rgba(139,95,191,0.08); }
+.booking-slot.full { opacity: 0.45; cursor: not-allowed; }
+.booking-slot-label { font-weight: 500; font-size: 0.9375rem; }
+.booking-slot-avail { font-size: 0.8rem; color: var(--ink-muted, #666); }
+.booking-slot.full .booking-slot-avail { color: var(--rose, #C4847A); }
+.booking-form { display: flex; flex-direction: column; gap: 0.75rem; margin-top: 1rem; }
+.booking-input {
+  padding: 0.75rem 1rem; border-radius: 8px;
+  border: 1.5px solid rgba(0,0,0,0.15); background: #fff;
+  font-size: 0.9375rem; width: 100%;
+}
+.booking-input:focus { outline: none; border-color: var(--aurora, #8B5FBF); }
+.booking-btn {
+  padding: 0.875rem 1.5rem; border-radius: 8px;
+  background: var(--aurora, #8B5FBF); color: #fff;
+  border: none; font-size: 1rem; font-weight: 600;
+  cursor: pointer; transition: opacity 0.15s;
+}
+.booking-btn:disabled { opacity: 0.5; cursor: not-allowed; }
+.booking-note { font-size: 0.75rem; color: var(--ink-muted, #666); text-align: center; line-height: 1.5; }
+.booking-loading { text-align: center; color: var(--ink-muted, #666); padding: 1rem 0; }
+.booking-error { color: var(--rose, #C4847A); font-size: 0.875rem; margin-top: 0.5rem; text-align: center; }
+.booking-success { text-align: center; padding: 1rem 0; }
+.booking-success-icon { font-size: 2rem; display: block; margin-bottom: 0.75rem; color: var(--sage, #6B7F60); }
+.booking-success p { margin-bottom: 1.25rem; line-height: 1.6; }
+
+/* ========== BUILD YOUR WEEKEND ========== */
+.build-weekend { padding-top: 4rem; padding-bottom: 4rem; }
+.build-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  gap: 1.25rem;
+  margin-top: 2rem;
+}
+.build-card {
+  background: rgba(255,255,255,0.7);
+  border: 1px solid rgba(0,0,0,0.09);
+  border-radius: 14px;
+  padding: 1.75rem 1.5rem;
+  display: flex; flex-direction: column; gap: 0.75rem;
+  transition: box-shadow 0.2s;
+}
+.build-card:hover { box-shadow: 0 6px 28px rgba(0,0,0,0.09); }
+.build-card-icon { font-size: 2rem; line-height: 1; }
+.build-card-title { font-family: var(--font-serif); font-size: 1.2rem; }
+.build-card-sub { font-size: 0.8rem; letter-spacing: 0.08em; text-transform: uppercase; color: var(--aurora, #8B5FBF); font-weight: 600; }
+.build-card-body { flex: 1; }
+.build-card-desc { font-size: 0.875rem; color: var(--ink-muted, #666); line-height: 1.6; margin-top: 0.4rem; }
+.build-card-cta {
+  margin-top: 0.5rem; padding: 0.7rem 1.25rem;
+  background: var(--aurora, #8B5FBF); color: #fff;
+  border: none; border-radius: 8px;
+  font-size: 0.9rem; font-weight: 600; cursor: pointer;
+  transition: opacity 0.15s; align-self: flex-start;
+}
+.build-card-cta:hover { opacity: 0.88; }
+.build-card-cta.no-book {
+  background: none; color: var(--ink-muted, #666);
+  border: 1.5px solid rgba(0,0,0,0.15); cursor: default;
+}
+
+/* ========== CAMPING URGENCY ========== */
+.camping-urgency {
+  display: flex; align-items: center; gap: 0.6rem; justify-content: center;
+  background: rgba(197,132,82,0.12); border: 1px solid rgba(197,132,82,0.35);
+  border-radius: 8px; padding: 0.6rem 1.25rem;
+  font-size: 0.875rem; color: var(--charcoal, #333);
+  margin: 0.75rem auto 0; max-width: 560px;
+}
+.camping-urgency a { color: var(--aurora, #8B5FBF); font-weight: 600; }
+.camping-urgency-badge {
+  background: var(--coral, #E8956A); color: #fff;
+  font-size: 0.7rem; font-weight: 700; letter-spacing: 0.06em;
+  padding: 0.2rem 0.5rem; border-radius: 4px; text-transform: uppercase; flex-shrink: 0;
+}
+
+/* ========== WARRIOR LODGE ========== */
+.warrior-lodge {
+  max-width: 700px; margin: 2.5rem auto 0;
+  background: linear-gradient(135deg, rgba(36,48,40,0.96) 0%, rgba(15,20,15,0.98) 100%);
+  border-radius: 18px; padding: 2.5rem 2.75rem;
+  color: #fff;
+}
+.warrior-lodge-title {
+  font-family: var(--font-serif);
+  font-size: clamp(1.5rem, 1rem + 2vw, 2.25rem);
+  line-height: 1.2; margin: 0.5rem 0 1rem;
+  color: #fff;
+}
+.warrior-lodge-desc { font-size: 0.9375rem; line-height: 1.7; color: rgba(255,255,255,0.82); }
+.warrior-lodge-cta {
+  display: inline-block; margin-top: 1.5rem;
+  padding: 0.75rem 1.5rem; border-radius: 8px;
+  background: var(--gold, #C9983F); color: #fff;
+  font-weight: 700; font-size: 0.9375rem; text-decoration: none;
+  transition: opacity 0.15s;
+}
+.warrior-lodge-cta:hover { opacity: 0.88; }
+@media (max-width: 600px) { .warrior-lodge { padding: 1.75rem 1.5rem; } }
+
 /* ========== VENDORS ========== */
 .vendor-list {
   max-width: 680px;

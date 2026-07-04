@@ -70,12 +70,6 @@ const days: ScheduleBlock[] = [
         hosts: ["alice"],
       },
       {
-        time: "2:30 PM",
-        event: "Nature Immersion Walk",
-        detail: "A guided slow walk through the surrounding boreal landscape — identifying plants, listening to the land, and practicing forest bathing",
-        element: "earth", location: "Trailhead",
-      },
-      {
         time: "3:00 PM",
         event: "Guided Meditation",
         detail: "Guided bilateral movement for a relaxing grounding session",
@@ -164,12 +158,6 @@ const days: ScheduleBlock[] = [
         hosts: ["logan-forehand"],
       },
       {
-        time: "9:30 AM",
-        event: "Plant Medicine Walk",
-        detail: "Learn Alaska's healing plants — yarrow, fireweed, spruce tips, and wild rose — with a guided foraging walk through the boreal forest",
-        element: "earth", location: "Trailhead",
-      },
-      {
         time: "10:00 AM",
         event: "Quantum Light Activation",
         detail: "Activate your healing with phototherapy",
@@ -200,10 +188,10 @@ const days: ScheduleBlock[] = [
       },
       {
         time: "12:00 PM",
-        event: "Yogassage",
-        detail: "A blend of yoga assists and massage — receive hands-on adjustments in restorative poses",
-        element: "earth",
-        hosts: ["sarah"],
+        event: "Heartbeat of the Lion's Gate: Riding the Fire Horse into Your Destiny",
+        detail: "A Drumming Ceremony of Courage, Sovereignty and Sacred Purpose — bring your drum",
+        element: "fire", location: "Main Stage",
+        hosts: ["white-eagle"],
       },
       {
         time: "12:30 PM",
@@ -234,6 +222,13 @@ const days: ScheduleBlock[] = [
         element: "air",
         limited: true,
         hosts: ["beth"],
+      },
+      {
+        time: "2:30 PM",
+        event: "Yogassage",
+        detail: "A blend of yoga assists and massage — receive hands-on adjustments in restorative poses",
+        element: "earth",
+        hosts: ["sarah"],
       },
       {
         time: "3:00 PM",
@@ -272,14 +267,6 @@ const days: ScheduleBlock[] = [
       },
       {
         time: "8:00 PM",
-        event: "Lionsgate Drumming Ceremony",
-        detail: "Bring your drum for a community drum circle with the sacred Grandmother Drum",
-        element: "fire", location: "Main Stage",
-        gloss: LIONSGATE_GLOSS,
-        hosts: ["white-eagle"],
-      },
-      {
-        time: "9:30 PM",
         event: "Ecstatic Dance",
         element: "fire", location: "Main Stage",
         hosts: ["j-brave"],
@@ -334,12 +321,6 @@ const days: ScheduleBlock[] = [
         gloss: CONTRAST_GLOSS,
         limited: true,
         hosts: ["ashleigh"],
-      },
-      {
-        time: "12:00 PM",
-        event: "Kids Adventure Walk",
-        detail: "A guided nature walk for children through the boreal forest — spotting wildlife signs, touching plants, and exploring the Alaskan wilderness with curious eyes",
-        element: "earth", location: "Trailhead",
       },
       {
         time: "1:00 PM",

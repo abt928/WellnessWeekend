@@ -11,7 +11,7 @@ const LIONSGATE_GLOSS =
 const AYNI_GLOSS =
   "An Andean ceremony of reciprocity. A small bundle of seeds, flowers, and offerings is built and given back to the mountain spirits.";
 const CONTRAST_GLOSS =
-  "Alternating cold water immersion and heat activates circulation, reduces inflammation, and powerfully grounds the nervous system. 30-minute facilitated sessions with limited spots — book ahead.";
+  "Alternating cold water immersion and heat activates circulation, reduces inflammation, and powerfully grounds the nervous system. Sessions run all day Friday–Sunday in 30-minute slots — sauna holds 4 people maximum. Must be booked in advance. Facilitated by Ashleigh Bicknell.";
 const LABYRINTH_GLOSS =
   "One path in. One path out. The labyrinth garden is open throughout the weekend for silent walking, integration, and personal reflection between ceremonies.";
 
@@ -287,6 +287,16 @@ const days: ScheduleBlock[] = [
         hosts: ["peace-pixy"],
       },
       {
+        time: "9:00 AM",
+        event: "Contrast Therapy",
+        detail: "30 min · Available all day — cold plunge + sauna cycling. Must be booked in advance.",
+        element: "water", secondElement: "fire",
+        location: "Lakeside",
+        gloss: CONTRAST_GLOSS,
+        limited: true,
+        hosts: ["ashleigh"],
+      },
+      {
         time: "10:00 AM",
         event: "Tai Chi Dance",
         detail: "Flowing movement meditation — drawing from the traditions of Tai Chi to awaken the body with grace and presence",
@@ -315,7 +325,7 @@ const days: ScheduleBlock[] = [
       {
         time: "11:30 AM",
         event: "Contrast Therapy",
-        detail: "30 min · Sunday morning reset — invigorate and integrate before the day unfolds",
+        detail: "30 min · Invigorate and integrate — available all day, must be booked in advance",
         element: "water", secondElement: "fire",
         location: "Lakeside",
         gloss: CONTRAST_GLOSS,

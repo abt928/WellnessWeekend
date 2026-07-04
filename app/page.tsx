@@ -12,7 +12,7 @@ import FloatingActions from "@/components/FloatingActions";
 import ConversionNudges from "@/components/ConversionNudges";
 import PartnerCard from "@/components/PartnerCard";
 import BuildYourWeekend from "@/components/BuildYourWeekend";
-import Instructors from "@/components/Instructors";
+import ContrastTherapy from "@/components/ContrastTherapy";
 import { PlaneIcon, MapPinIcon, LeafIcon, MoonIcon } from "@/components/Icons";
 
 /* ── static data ── */
@@ -166,6 +166,9 @@ export default function Home() {
       {/* ═══ BUILD YOUR WEEKEND ═══ */}
       <BuildYourWeekend />
 
+      {/* ═══ CONTRAST THERAPY ═══ */}
+      <ContrastTherapy />
+
       {/* ═══ PACKAGES ═══ */}
       <Packages />
 
@@ -312,9 +315,6 @@ export default function Home() {
         </div>
 
       </section>
-
-      {/* ═══ INSTRUCTORS ═══ */}
-      <Instructors />
 
       {/* ═══ BRAND PARTNERS ═══ */}
       <section id="partners" className="section practitioners">

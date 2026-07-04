@@ -99,7 +99,7 @@ const days: ScheduleBlock[] = [
         time: "4:00 PM",
         event: "Yin Yoga & Sound Savasana",
         detail: "Restorative poses with sound savasana",
-        element: "earth", location: "Lodge",
+        element: "earth", location: "Main Stage",
         hosts: ["mary"],
       },
       {
@@ -117,9 +117,10 @@ const days: ScheduleBlock[] = [
       },
       {
         time: "7:30 PM",
-        event: "Cacao Ceremony · Heart Activation",
+        event: "Sacred Heart Activation",
+        detail: "Cacao ceremony and heart activation — an opening of the sacred heart through ceremony, sound, and intention",
         element: "fire", location: "Main Stage",
-        hosts: ["az"],
+        hosts: ["az", "avalon-starling"],
       },
       {
         time: "8:00 PM",
@@ -158,11 +159,20 @@ const days: ScheduleBlock[] = [
         hosts: ["logan-forehand"],
       },
       {
+        time: "9:30 AM",
+        event: "Contrast Therapy",
+        detail: "30 min · Cold plunge + heat cycling — ground and reset at the midpoint of your day",
+        element: "water", secondElement: "fire",
+        location: "Lakeside",
+        gloss: CONTRAST_GLOSS,
+        limited: true,
+        hosts: ["ashleigh"],
+      },
+      {
         time: "10:00 AM",
         event: "Quantum Light Activation",
         detail: "Activate your healing with phototherapy",
-        element: "earth", location: "Labyrinth Garden",
-        gloss: LABYRINTH_GLOSS,
+        element: "earth", location: "Main Stage",
         hosts: ["shawn"],
       },
       {
@@ -172,13 +182,6 @@ const days: ScheduleBlock[] = [
         element: "air",
         limited: true,
         hosts: ["beth"],
-      },
-      {
-        time: "11:00 AM",
-        event: "Ayni Despacho Ceremony",
-        element: "fire", location: "Lodge",
-        gloss: AYNI_GLOSS,
-        fee: "Workshop materials fee · $75",
       },
       {
         time: "11:00 AM",
@@ -194,27 +197,18 @@ const days: ScheduleBlock[] = [
         hosts: ["white-eagle"],
       },
       {
-        time: "12:30 PM",
-        event: "Contrast Therapy",
-        detail: "30 min · Cold plunge + heat cycling — ground and reset at the midpoint of your day",
-        element: "water", secondElement: "fire",
-        location: "Lakeside",
-        gloss: CONTRAST_GLOSS,
-        limited: true,
-        hosts: ["ashleigh"],
-      },
-      {
         time: "1:00 PM",
-        event: "Authentic Relating Practice",
-        element: "fire", location: "Main Stage",
-        hosts: ["az"],
-      },
-      {
-        time: "2:00 PM",
         event: "Paddleboard Yoga",
         element: "water", location: "Lakeside",
         limited: true,
         hosts: ["ashleigh"],
+      },
+      {
+        time: "2:00 PM",
+        event: "Ayni Despacho Ceremony",
+        element: "fire", location: "Lodge",
+        gloss: AYNI_GLOSS,
+        fee: "Workshop materials fee · $75",
       },
       {
         time: "2:00 PM",
@@ -232,16 +226,22 @@ const days: ScheduleBlock[] = [
       },
       {
         time: "3:00 PM",
+        event: "Authentic Relating Practice",
+        element: "fire", location: "Lodge",
+        hosts: ["az"],
+      },
+      {
+        time: "3:00 PM",
         event: "Miracle of Mind",
         detail: "Beginner-friendly guided meditation and discussion",
-        element: "earth", location: "Labyrinth Garden",
+        element: "earth", location: "Main Stage",
         hosts: ["logan-forehand"],
       },
       {
         time: "4:00 PM",
         event: "Roots for Recovery",
         detail: "Yin yoga with long holds, MFR props, ending in a Tibetan bowl and gong sound bath",
-        element: "earth", location: "Lodge",
+        element: "earth", location: "Main Stage",
         hosts: ["jon"],
       },
       {

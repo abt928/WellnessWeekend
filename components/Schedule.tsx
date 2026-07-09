@@ -118,10 +118,13 @@ export default function Schedule() {
         ))}
       </div>
 
-      {/* Print link */}
-      <div style={{ textAlign: "center", marginBottom: "0.5rem" }}>
-        <a href="/schedule/print" target="_blank" rel="noopener noreferrer" className="print-schedule-link">
-          🖨 Print full schedule
+      {/* Print / PDF links */}
+      <div style={{ display: "flex", justifyContent: "center", gap: "0.75rem", marginBottom: "1rem", flexWrap: "wrap" }}>
+        <a href="/schedule/print" target="_blank" rel="noopener noreferrer" className="schedule-pdf-btn">
+          🖨 Full Schedule PDF
+        </a>
+        <a href="/schedule/print/addons" target="_blank" rel="noopener noreferrer" className="schedule-pdf-btn">
+          ✦ Add-Ons PDF
         </a>
       </div>
 

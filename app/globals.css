@@ -5504,16 +5504,26 @@ body {
   vertical-align: middle;
 }
 
-/* ── Print schedule link (in interactive schedule) ── */
-.print-schedule-link {
+/* ── Schedule PDF buttons ── */
+.schedule-pdf-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  padding: 0.45rem 1.1rem;
+  border-radius: 20px;
+  border: 1.5px solid rgba(255, 255, 255, 0.35);
+  color: rgba(255, 255, 255, 0.85);
+  background: rgba(255, 255, 255, 0.07);
   font-size: 0.8rem;
-  color: rgba(255, 255, 255, 0.45);
-  text-decoration: none;
+  font-weight: 600;
   letter-spacing: 0.04em;
-  transition: color 0.2s;
+  text-decoration: none;
+  transition: border-color 0.2s, background 0.2s, color 0.2s;
 }
-.print-schedule-link:hover {
-  color: rgba(255, 255, 255, 0.8);
+.schedule-pdf-btn:hover {
+  border-color: rgba(255, 255, 255, 0.7);
+  background: rgba(255, 255, 255, 0.14);
+  color: #fff;
 }
 
 /* ── Print pages ── */

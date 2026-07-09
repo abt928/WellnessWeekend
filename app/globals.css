@@ -5503,3 +5503,249 @@ body {
   letter-spacing: 0.07em;
   vertical-align: middle;
 }
+
+/* ── Print schedule link (in interactive schedule) ── */
+.print-schedule-link {
+  font-size: 0.8rem;
+  color: rgba(255, 255, 255, 0.45);
+  text-decoration: none;
+  letter-spacing: 0.04em;
+  transition: color 0.2s;
+}
+.print-schedule-link:hover {
+  color: rgba(255, 255, 255, 0.8);
+}
+
+/* ── Print pages ── */
+.print-page {
+  max-width: 1000px;
+  margin: 0 auto;
+  padding: 2rem 1.5rem;
+  font-family: Georgia, "Times New Roman", serif;
+  color: #111;
+  background: #fff;
+}
+
+.print-controls {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  margin-bottom: 1.5rem;
+  padding-bottom: 1rem;
+  border-bottom: 1px solid #e5e5e5;
+  flex-wrap: wrap;
+}
+
+.print-back-link {
+  font-size: 0.85rem;
+  color: #444;
+  text-decoration: none;
+  font-family: system-ui, sans-serif;
+}
+.print-back-link:hover { color: #000; }
+
+.print-btn {
+  margin-left: auto;
+  padding: 0.45rem 1.1rem;
+  border: 1.5px solid #222;
+  border-radius: 6px;
+  background: #fff;
+  font-size: 0.85rem;
+  font-family: system-ui, sans-serif;
+  cursor: pointer;
+  transition: background 0.15s, color 0.15s;
+}
+.print-btn:hover {
+  background: #222;
+  color: #fff;
+}
+
+.print-header {
+  text-align: center;
+  margin-bottom: 1.5rem;
+  padding-bottom: 1rem;
+  border-bottom: 2px solid #111;
+}
+
+.print-eyebrow {
+  font-size: 0.75rem;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: #666;
+  margin: 0 0 0.35rem;
+  font-family: system-ui, sans-serif;
+}
+
+.print-title {
+  font-size: 2rem;
+  font-weight: 700;
+  margin: 0 0 0.25rem;
+  font-family: Georgia, serif;
+}
+
+.print-subtitle {
+  font-size: 0.9rem;
+  color: #444;
+  margin: 0;
+  font-family: system-ui, sans-serif;
+}
+
+.print-legend {
+  display: flex;
+  gap: 1.25rem;
+  flex-wrap: wrap;
+  font-size: 0.75rem;
+  font-family: system-ui, sans-serif;
+  color: #555;
+  margin-bottom: 1.25rem;
+  padding: 0.5rem 0.75rem;
+  background: #f8f8f8;
+  border-radius: 4px;
+}
+
+.print-legend-item {
+  display: flex;
+  align-items: center;
+  gap: 0.25rem;
+}
+
+.print-day {
+  margin-bottom: 2rem;
+  page-break-inside: avoid;
+}
+
+.print-day-header {
+  display: flex;
+  align-items: baseline;
+  gap: 0.75rem;
+  margin-bottom: 0.5rem;
+  padding-bottom: 0.35rem;
+  border-bottom: 1.5px solid #333;
+}
+
+.print-day-title {
+  font-size: 1.15rem;
+  font-weight: 700;
+  margin: 0;
+  font-family: Georgia, serif;
+}
+
+.print-day-theme {
+  font-size: 0.8rem;
+  color: #666;
+  font-family: system-ui, sans-serif;
+  font-style: italic;
+}
+
+.print-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.82rem;
+  font-family: system-ui, sans-serif;
+}
+
+.print-table th {
+  text-align: left;
+  font-size: 0.7rem;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: #666;
+  padding: 0.35rem 0.5rem;
+  border-bottom: 1px solid #ccc;
+  font-weight: 600;
+}
+
+.print-table td {
+  padding: 0.45rem 0.5rem;
+  vertical-align: top;
+  border-bottom: 1px solid #eee;
+}
+
+.print-row:last-child td {
+  border-bottom: none;
+}
+
+.print-row-fire   { background: rgba(255, 107, 53, 0.04); }
+.print-row-water  { background: rgba(61, 184, 175, 0.04); }
+.print-row-air    { background: rgba(155, 127, 212, 0.04); }
+.print-row-earth  { background: rgba(94, 138, 106, 0.04); }
+
+.print-time {
+  font-weight: 600;
+  white-space: nowrap;
+  color: #222;
+}
+
+.print-event-name {
+  font-weight: 500;
+  color: #111;
+  line-height: 1.4;
+}
+
+.print-elem-sym {
+  margin-right: 0.25em;
+  font-size: 0.85em;
+}
+
+.print-detail {
+  font-size: 0.75rem;
+  color: #555;
+  margin-top: 0.2rem;
+  font-style: italic;
+}
+
+.print-location {
+  color: #444;
+}
+
+.print-hosts {
+  color: #444;
+}
+
+.print-notes {
+  white-space: nowrap;
+}
+
+.print-badge-limited {
+  display: inline-block;
+  padding: 0.1rem 0.35rem;
+  border-radius: 3px;
+  background: rgba(255, 107, 53, 0.1);
+  border: 1px solid rgba(255, 107, 53, 0.3);
+  color: #b84a00;
+  font-size: 0.68rem;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+}
+
+.print-badge-fee {
+  display: inline-block;
+  padding: 0.1rem 0.35rem;
+  border-radius: 3px;
+  background: rgba(94, 138, 106, 0.1);
+  border: 1px solid rgba(94, 138, 106, 0.35);
+  color: #3a6b46;
+  font-size: 0.68rem;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+}
+
+.print-footer {
+  margin-top: 1.5rem;
+  padding-top: 0.75rem;
+  border-top: 1px solid #ccc;
+  font-size: 0.75rem;
+  color: #666;
+  font-family: system-ui, sans-serif;
+  text-align: center;
+}
+
+/* Print media — hide screen controls, force white background */
+@media print {
+  .no-print { display: none !important; }
+  .print-page { padding: 0; max-width: none; }
+  body { background: #fff !important; color: #000 !important; }
+  .print-day { page-break-inside: avoid; }
+  .print-row { page-break-inside: avoid; }
+  .print-table { font-size: 0.75rem; }
+}

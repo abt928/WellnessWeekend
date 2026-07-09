@@ -360,7 +360,7 @@ export default function Home() {
               { name: "Starfish Wellness & Massage",     role: "Massage Therapy" },
               { name: "Lifewave",                        role: "Wellness Products" },
               { name: "Arbonne",                         role: "Clean Beauty & Wellness" },
-              { name: "Northern Messages",               role: "Artisan Goods" },
+              { name: "Northern Messages",               role: "Psychic Readings" },
             ].map((v) => (
               <div key={v.name} className="vendor-row">
                 <span className="vendor-name">{v.name}</span>

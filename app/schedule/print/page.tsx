@@ -1,4 +1,5 @@
 import Link from "next/link";
+import PrintButton from "@/components/PrintButton";
 import { scheduleDays } from "@/lib/schedule-data";
 import { practitioners } from "@/lib/practitioners";
 
@@ -23,9 +24,7 @@ export default function PrintSchedulePage() {
       {/* Screen-only controls */}
       <div className="print-controls no-print">
         <Link href="/#schedule" className="print-back-link">← Back to site</Link>
-        <button className="print-btn" onClick={() => window.print()}>
-          🖨 Print / Save as PDF
-        </button>
+        <PrintButton />
         <Link href="/schedule/print/addons" className="print-back-link">
           View Add-Ons →
         </Link>

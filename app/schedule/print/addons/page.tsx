@@ -1,4 +1,5 @@
 import Link from "next/link";
+import PrintButton from "@/components/PrintButton";
 
 export const metadata = {
   title: "Add-Ons & Bookable Experiences · Wellness Weekend 2026",
@@ -126,9 +127,7 @@ export default function AddOnsPrintPage() {
       {/* Screen-only controls */}
       <div className="print-controls no-print">
         <Link href="/schedule/print" className="print-back-link">← Full Schedule</Link>
-        <button className="print-btn" onClick={() => window.print()}>
-          🖨 Print / Save as PDF
-        </button>
+        <PrintButton />
         <Link href="/#store" className="print-back-link">
           Book Now →
         </Link>

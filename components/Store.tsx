@@ -35,6 +35,9 @@ const TABS = [
 
 const MAX_QTY_PER_ITEM = 20;
 
+// Items whose name contains any of these strings (case-insensitive) are shown as sold out
+const SOLD_OUT_PATTERNS = ["earth pass"];
+
 function formatPrice(cents: number) {
   return `$${(cents / 100).toFixed(cents % 100 === 0 ? 0 : 2)}`;
 }
@@ -340,11 +343,11 @@ export default function Store() {
         Choose your tickets, add-on experiences, and merch — all processed securely through Square.
       </p>
       <p className="store-capacity" style={{ display: "flex", alignItems: "center", justifyContent: "center", gap: "0.5rem" }}>
-        <LotusIcon size={16} color="var(--aurora)" /> Limited lodging on-site — the nearest campground is 15 minutes away <LotusIcon size={16} color="var(--aurora)" />
+        <LotusIcon size={16} color="var(--aurora)" /> Camping is sold out — cabin beds only <LotusIcon size={16} color="var(--aurora)" />
       </p>
       <div className="camping-urgency">
-        <span className="camping-urgency-badge">Almost Gone</span>
-        <span>Camping passes are nearly sold out — fewer than 10 remain. <a href="#store">Secure yours now →</a></span>
+        <span className="camping-urgency-badge">Limited Cabins</span>
+        <span>Camping passes are sold out. On-site cabin beds are still available — <a href="#store">reserve yours before they&apos;re gone →</a></span>
       </div>
 
       {/* Category Tabs */}
@@ -374,13 +377,18 @@ export default function Store() {
         </div>
       ) : (
         <div className="store-grid">
-          {filtered.map((item) => (
-            <div className="store-card" key={item.id}>
+          {filtered.map((item) => {
+            const soldOut = SOLD_OUT_PATTERNS.some((p) =>
+              item.name.toLowerCase().includes(p)
+            );
+            return (
+            <div className={`store-card${soldOut ? " store-card-sold-out" : ""}`} key={item.id}>
               <div className="store-card-header">
                 <h3 className="store-card-name">
                   {item.name}
+                  {soldOut && <span className="store-sold-out-badge">Sold Out</span>}
                 </h3>
-                {item.variations.length === 1 && (
+                {!soldOut && item.variations.length === 1 && (
                   <span className="store-card-price">
                     {formatPrice(item.variations[0].price)}
                   </span>
@@ -388,7 +396,11 @@ export default function Store() {
               </div>
               <p className="store-card-desc">{item.description}</p>
               <div className="store-card-actions">
-                {item.variations.length === 1 ? (
+                {soldOut ? (
+                  <button className="store-add-btn" disabled style={{ opacity: 0.4, cursor: "not-allowed" }}>
+                    Sold Out
+                  </button>
+                ) : item.variations.length === 1 ? (
                   <button
                     className="store-add-btn"
                     onClick={() => addToCart(item, item.variations[0])}
@@ -411,7 +423,8 @@ export default function Store() {
                 )}
               </div>
             </div>
-          ))}
+            );
+          })}
           {filtered.length === 0 && !loading && (
             <p className="store-empty">No items in this category yet.</p>
           )}

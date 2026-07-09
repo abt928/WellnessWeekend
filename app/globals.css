@@ -5483,3 +5483,23 @@ body {
   }
   .practitioner-initials { font-size: 2.25rem; }
 }
+
+/* ── Store sold-out state ── */
+.store-card-sold-out {
+  opacity: 0.65;
+  position: relative;
+}
+.store-sold-out-badge {
+  display: inline-block;
+  margin-left: 0.5rem;
+  padding: 0.15rem 0.5rem;
+  border-radius: 20px;
+  background: rgba(180, 60, 60, 0.12);
+  border: 1px solid rgba(180, 60, 60, 0.3);
+  color: #b44040;
+  font-size: 0.7rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.07em;
+  vertical-align: middle;
+}

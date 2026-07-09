@@ -339,7 +339,10 @@ export default function Home() {
       <section id="vendors" className="section" style={{ paddingTop: "3rem", paddingBottom: "3rem" }}>
         <Reveal>
           <p className="section-label">On-Site Vendors</p>
-          <h2 className="section-title" style={{ marginBottom: "1.5rem" }}>Vendors.</h2>
+          <h2 className="section-title" style={{ marginBottom: "0.75rem" }}>Vendors.</h2>
+          <p className="section-desc" style={{ marginBottom: "0.5rem" }}>
+            Vendor Village is full for 2026. Day vendor spots are available at $100/day — contact us to inquire.
+          </p>
         </Reveal>
         <Reveal>
           <div className="vendor-list">
@@ -356,6 +359,8 @@ export default function Home() {
               { name: "Fireweed and Flames",             role: "Reiki Candles · Reiki & Tarot" },
               { name: "Starfish Wellness & Massage",     role: "Massage Therapy" },
               { name: "Lifewave",                        role: "Wellness Products" },
+              { name: "Arbonne",                         role: "Clean Beauty & Wellness" },
+              { name: "Northern Messages",               role: "Artisan Goods" },
             ].map((v) => (
               <div key={v.name} className="vendor-row">
                 <span className="vendor-name">{v.name}</span>

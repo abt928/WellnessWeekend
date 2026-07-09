@@ -213,21 +213,20 @@ export default function GetInvolved() {
         <div className="involve-card">
           <div className="involve-icon"><StorefrontIcon size={32} color="var(--psyche-cyan)" /></div>
           <h3 className="involve-title">
-            Vendor Application
+            Vendor Village
           </h3>
           <p className="involve-desc">
-            Share your healing arts, handmade goods, crystals, wellness products, or
-            food with our community of 200+ seekers.
+            Vendor Village is full for 2026. Day vendor spots are available for those who want to join us for a single day.
           </p>
           <ul className="involve-perks">
-            <li>10×10 booth space included</li>
-            <li>Full weekend vendor pass</li>
-            <li>Access to all ceremonies</li>
-            <li>Listing on festival website</li>
+            <li>Vendor Village is full for 2026</li>
+            <li>Day vendor spots: $100/day</li>
+            <li>Limited day spots remaining</li>
+            <li>Contact us to inquire</li>
           </ul>
-          <Link href="/vendors" className="involve-btn" style={{ display: "block", textAlign: "center" }}>
-            Apply as Vendor
-          </Link>
+          <a href="mailto:support@thesoundspace.us" className="involve-btn" style={{ display: "block", textAlign: "center" }}>
+            Inquire About Day Spots
+          </a>
         </div>
 
         {/* Sponsor */}

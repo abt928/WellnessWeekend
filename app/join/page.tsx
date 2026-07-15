@@ -1,29 +1,29 @@
 "use client";
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import Link from "next/link";
 import { trackLead } from "@/lib/tracking";
 
 const BASE_URL = "https://www.wellnessweekendak.com";
+
+function readReferralCode() {
+  if (typeof window === "undefined") return null;
+  try {
+    return window.localStorage.getItem("ww-ref");
+  } catch {
+    return null;
+  }
+}
 
 export default function JoinPage() {
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [confirm, setConfirm] = useState("");
-  const [referralCode, setReferralCode] = useState<string | null>(null);
+  const [referralCode] = useState<string | null>(readReferralCode);
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
   const [memberCode, setMemberCode] = useState<string | null>(null);
   const [copied, setCopied] = useState(false);
-
-  useEffect(() => {
-    try {
-      const ref = localStorage.getItem("ww-ref");
-      if (ref) setReferralCode(ref);
-    } catch {
-      // ignore
-    }
-  }, []);
 
   const referralUrl = memberCode ? `${BASE_URL}?ref=${memberCode}` : "";
 

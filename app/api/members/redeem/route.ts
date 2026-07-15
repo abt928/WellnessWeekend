@@ -92,15 +92,16 @@ export async function POST(req: NextRequest) {
       );
     }
 
-    // Check no existing pending redemption
+    // A checkout reservation stays active until Square confirms payment. Do
+    // not let the same balance create another reward in the meantime.
     const pending = await sql`
       SELECT id FROM member_redemptions
-      WHERE member_code = ${m.code} AND status = 'pending'
+      WHERE member_code = ${m.code} AND status IN ('pending', 'reserved')
       LIMIT 1
     `;
     if (pending.length > 0) {
       return NextResponse.json(
-        { error: "You already have a pending redemption. Use it at checkout first." },
+        { error: "You already have an active redemption. Use it at checkout first." },
         { status: 409 }
       );
     }

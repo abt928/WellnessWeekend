@@ -1,59 +1,94 @@
-# DESIGN.md — Wellness Weekend Visual System
+# DESIGN.md — Wellness Weekend
 
-## Creative North Star
-"Sacred geometry meets Alaskan wilderness — where earthy warmth and psychedelic energy coexist in intentional luxury."
+## Creative north star
 
-## Color Palette
+An Alaskan field poster pinned to a cedar lodge door at midnight: documentary,
+tactile, bright, and a little unruly. Real people carry the story. The design
+should feel like the gathering itself, not like a generic luxury retreat.
 
-| Token               | Hex       | Name             | Role                              |
-|---------------------|-----------|------------------|-----------------------------------|
-| `--sage`            | `#6B7F60` | Lichen Green     | Muted accent, labels, metadata    |
-| `--forest`          | `#243028` | Old Growth       | Primary dark, text, nav, footer   |
-| `--aurora`          | `#8B5FBF` | Amethyst Glow    | Primary brand accent              |
-| `--gold`            | `#C9983F` | Midnight Gold    | CTAs, badges, urgency             |
-| `--rose`            | `#C4847A` | Canyon Rose      | Secondary warm accent             |
-| `--coral`           | `#E8956A` | Salmon Fire      | Gradient pairing with gold        |
-| `--cream`           | `#F7F3EC` | Bone White       | Section bg (warm)                 |
-| `--warm-white`      | `#FBF9F4` | Eggshell         | Card bg, alt sections             |
-| `--charcoal`        | `#333533` | Forest Charcoal  | Body text                         |
-| `--psyche-pink`     | `#D4639F` | Ceremonial Pink  | Psychedelic gradient accent       |
-| `--psyche-cyan`     | `#3DB8AF` | Spirit Teal      | Highlight, emphasis, hero em      |
-| `--psyche-indigo`   | `#4F3682` | Deep Ceremony    | Stat numbers, dark accent         |
-| `--psyche-amber`    | `#E59C32` | Sun Ember        | Warm psychedelic accent           |
+## Voice
 
-## Typography
+Sacred. Wild. Intentional.
 
-| Lane       | Font               | Weight    | Usage                          |
-|------------|--------------------|-----------|---------------------------------|
-| Display    | Playfair Display   | 300, ital | Hero titles, section headings  |
-| Body       | Inter              | 400, 600  | Paragraphs, labels, buttons    |
-| Accent     | Cormorant Garamond | 300–600   | Subtitles, quotes, descriptions|
+## Color strategy
 
-## Spacing Scale
-Base unit: `1rem`. Sections use `7rem` vertical padding. Section labels: `1.25rem` bottom margin. Section titles: `2rem` bottom margin. Section descriptions: `3.5rem` bottom margin. Cards: `2.5rem` internal. Grids: `2–2.5rem` gaps.
+Committed. Deep black-spruce and cool off-white form the ground. Fireweed orange
+is the single purchase color; glacial blue is reserved for emotional emphasis.
 
-## Border Radius
-- Buttons/pills: `30px` (full-round)
-- Cards: `20–24px` (large, soft)
-- Stat items: `16px` (medium)
-- Form inputs: `12px` (subtle)
-- Images/masonry: `16px`
+| Token | OKLCH | Use |
+| --- | --- | --- |
+| `--ww-ink` | `oklch(0.22 0.035 155)` | Hero, schedule, footer, primary text |
+| `--ww-paper` | `oklch(0.975 0.006 155)` | Main light surface |
+| `--ww-fire` | `oklch(0.69 0.205 39)` | Ticket actions and one proof section |
+| `--ww-lake` | `oklch(0.84 0.09 184)` | Select emphasis on dark surfaces |
+| `--ww-moss` | `oklch(0.74 0.08 135)` | Quiet supporting accents |
+
+No gradient text. Photo scrims are allowed only when they make overlaid text
+readable. Body text must meet WCAG AA contrast.
+
+## Type
+
+- Display: Bricolage Grotesque, variable 200–800
+- Body: Manrope, 400–700
+- Display letter spacing never tighter than `-0.04em`
+- Headings balance; paragraphs use pretty wrapping and stay under 70ch
+
+The display face should read like sturdy festival-poster type, not editorial
+luxury. Serif italics are no longer part of the brand system.
+
+## Imagery
+
+Use only real Wellness Weekend photography on the purchase path. Crops should
+feel documentary and full-bleed, with square or lightly rounded geometry.
+
+Preferred assets:
+
+- `Woman-Harmonium-Gong.jpg` for the hero
+- `Group-Circle-Arms-Raised.jpg` for community proof and social sharing
+- `Woman-Dancing-Laughing.jpg` for joy and movement
+- `Crystal-Bowls-Sound-Healing.jpg` for practice detail
+- `Evening-Campfire.jpg` for place and evening atmosphere
+
+Do not use `hero.png`, `alaska.png`, `movement.png`, or `sound-healing.png` on
+public marketing surfaces. They read as synthetic and weaken trust.
+
+## Conversion hierarchy
+
+The homepage order is fixed unless current funnel data shows a better sequence:
+
+1. Real-photo hero with date, place, offer, and one ticket action
+2. Short experience proof
+3. Live Square pass selector
+4. Three-day schedule preview
+5. Real-photo community proof
+6. Travel and lodging facts
+7. FAQ and policy clarity
+8. Final ticket action and secondary email capture
+
+Practitioner directories, vendors, applications, packages, and full add-on
+education do not interrupt the cold-ad purchase path.
+
+## Components and geometry
+
+- Buttons may be pills; content containers stay at 12px radius or less
+- Ticket cards are a real selection affordance and may use a responsive grid
+- Avoid card grids for narrative content
+- Use full borders or surface changes, never thick colored side stripes
+- Touch targets are at least 44px
+- Fixed mobile actions respect `env(safe-area-inset-bottom)`
 
 ## Motion
-- Easing: `cubic-bezier(0.16, 1, 0.3, 1)` (spring-out) for transforms
-- Durations: hover 0.3s, reveals 0.7s, modals 0.4s
-- Scroll reveals: translateY(40px) → 0 with spring easing
-- Hero CTA: aurora gradient shift animation (5s infinite)
-- Active/press: scale(0.96) at 0.1s
 
-## Gradient Patterns
-- Dark sections: `var(--forest)` → `var(--psyche-indigo)` (135°)
-- CTAs: `var(--gold)` → `var(--coral)` (warm urgency)
-- Hero CTA: `var(--aurora)` → `var(--psyche-pink)` → `var(--gold)` (shifting)
-- Overlays: radial gradients with 6–10% opacity for ambient glow
+Use one restrained hero entrance and subtle photo scale on pointer hover. Never
+hide readable content behind JavaScript-driven reveal animations. All motion has
+a reduced-motion path.
 
-## Interaction States
-- Hover: translateY(-6px) + shadow deepening
-- Active: scale(0.96) at 0.1s (haptic feel)
-- Focus: 3px box-shadow ring in `rgba(aurora, 0.1)`
-- Disabled: opacity 0.6, cursor: not-allowed
+## Hard bans
+
+- Animated tie-dye or aurora gradients
+- Decorative sparkles, emojis, sacred-geometry filler, or ghost animals
+- Initial-only practitioner cards on the landing page
+- Repeated uppercase eyebrow labels
+- Gradient text, glass cards, oversized soft shadows, and over-rounded sections
+- Synthetic landscape imagery presented as a real place
+- Competing popups, message buttons, exit intent, and ticket actions on mobile

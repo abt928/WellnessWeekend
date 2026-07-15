@@ -1,72 +1,124 @@
-"use client";
-import { useState } from "react";
+import Link from "next/link";
 
 const faqs = [
   {
-    q: "What should I bring?",
-    a: "Layers of warm clothing, a cold-weather sleeping bag (rated for 40°F or below), your own towel, a tent that can handle rain, yoga mat, water bottle, journal, sunscreen, and insect repellent. We'll send a full packing list closer to the event.",
+    question: "What does my festival pass include?",
+    answer: (
+      <p>
+        Your pass covers the main Wellness Weekend program, including more than
+        40 scheduled sessions across the main stage, lake, aerial space, and
+        labyrinth garden. Small-capacity experiences, bodywork, meals, and
+        lodging are sold separately and clearly marked in the ticket shop.
+      </p>
+    ),
   },
   {
-    q: "What's the weather like in August?",
-    a: "Sutton, Alaska enjoys long summer days with temperatures between 55-75°F. Evenings can cool to 40-50°F. The midnight sun provides nearly 20 hours of daylight; bring an eye mask for sleeping!",
+    question: "Can I come for just one day?",
+    answer: (
+      <p>
+        Yes. Choose a single-day pass, the Sunday Family Day pass, or a full
+        weekend pass in the ticket section. Your Square checkout will show the
+        current price before payment.
+      </p>
+    ),
   },
   {
-    q: "How do I get to the festival?",
-    a: "Fly into Ted Stevens Anchorage International Airport (ANC). Sutton is a scenic 1.5-hour drive northeast on the Glenn Highway. We offer shuttle service from Anchorage for an additional fee.",
+    question: "Is Wellness Weekend beginner-friendly?",
+    answer: (
+      <p>
+        Yes. You do not need prior experience with yoga, meditation, sound work,
+        or ceremony. Practitioners explain what to expect, and you can skip any
+        session, take a break, or build a quieter weekend at your own pace.
+      </p>
+    ),
   },
   {
-    q: "Are meals included?",
-    a: "Meals are available for purchase on-site from our curated food vendors and the Cacao Bar. Vegan, vegetarian, and gluten-free options are always available. Beverage tokens can be pre-purchased in the store.",
+    question: "How does Sunday Family Day work?",
+    answer: (
+      <p>
+        Sunday includes family-focused activities such as aerial silks, art,
+        nature play, and a crystal scavenger hunt. Children under 18 receive free
+        Sunday admission and must attend with a parent or legal guardian.
+      </p>
+    ),
   },
   {
-    q: "What is the cancellation policy?",
-    a: "All ticket sales are final: there are no refunds for cancellations. However, we can apply a credit toward next year’s gathering. Tickets may also be transferred to another attendee at any time. Contact us to arrange a transfer or credit.",
+    question: "Where can I stay if camping is sold out?",
+    answer: (
+      <p>
+        Shared cabin beds and private cabin options appear in the ticket shop
+        while available. Nearby camping and lodging can also be found around
+        Palmer, Wasilla, King Mountain, Matanuska River Park, and Long Lake.
+        Book early because August weekends in the Valley fill quickly.
+      </p>
+    ),
   },
   {
-    q: "Is this suitable for beginners?",
-    a: "Absolutely. Wellness Weekend welcomes all experience levels. Our practitioners create safe, inclusive spaces for both seasoned practitioners and those just beginning their healing practice.",
+    question: "Are meals and showers available?",
+    answer: (
+      <p>
+        Meals and drinks are available for purchase from on-site vendors, with
+        vegan, vegetarian, and gluten-free options. Showers are available, but
+        bring your own towel. Emergency Wi-Fi is available at registration;
+        general cell service is limited.
+      </p>
+    ),
   },
   {
-    q: "Will there be cell service?",
-    a: "Cell service is very limited in Sutton. We encourage this as part of the digital detox experience. WiFi is available at the registration tent for emergencies.",
+    question: "How do I get to Warrior Lodge?",
+    answer: (
+      <p>
+        Fly into Ted Stevens Anchorage International Airport (ANC). Warrior
+        Lodge in Sutton is about a 90-minute drive northeast on the Glenn
+        Highway. Shuttle service can be added for an additional fee.
+      </p>
+    ),
   },
   {
-    q: "Is the festival pet friendly?",
-    a: "No pets are allowed on the property or at the festival. Violations will result in your ticket being voided. Service animals are the only accepted accommodation and must be prearranged with us in advance.",
+    question: "What is the refund and transfer policy?",
+    answer: (
+      <p>
+        Refunds depend on when the request is made: full refunds more than 60
+        days before the event, 50% refunds 30–60 days before, and no refunds
+        within 30 days. Tickets can be transferred to another attendee at no
+        charge. Read the full <Link href="/refunds">refund policy</Link> before
+        purchasing.
+      </p>
+    ),
   },
   {
-    q: "Are there showers on-site?",
-    a: "Yes, showers are available on-site. Please bring your own towel.",
-  },
-  {
-    q: "Is there RV camping?",
-    a: "Yes, we have a very limited number of RV spaces. You must contact us in advance and provide the size of your rig so we can confirm availability and placement.",
-  },
-  {
-    q: "Where can I camp nearby if on-site is full?",
-    a: "On-site camping passes are sold out. Nearby options include: King Mountain State Recreation Site (15 min east on Glenn Hwy: tent sites, pit toilets, river access), Matanuska River Park in Palmer (20 min west: full hookups available), Long Lake State Recreation Site (25 min: lakeside tent camping), and several private RV parks in Palmer and Wasilla (30-40 min). We recommend booking your site early. August in the Valley fills up fast.",
+    question: "What should I bring?",
+    answer: (
+      <p>
+        Pack warm layers, rain protection, sturdy footwear, a yoga mat, water
+        bottle, towel, sunscreen, insect repellent, and an eye mask for the long
+        daylight hours. If you are staying off site, you will not need camping
+        gear.
+      </p>
+    ),
   },
 ];
 
 export default function FAQ() {
-  const [open, setOpen] = useState<number | null>(null);
   return (
-    <section id="faq" className="section faq">
-      <p className="section-label">Questions & Answers</p>
-      <h2 className="section-title">
-        Questions.
-      </h2>
-      <div className="faq-list">
-        {faqs.map((f, i) => (
-          <div key={i} className={`faq-item${open === i ? " open" : ""}`}>
-            <button className="faq-question" onClick={() => setOpen(open === i ? null : i)}>
-              {f.q}
-              <span className="faq-icon">+</span>
-            </button>
-            <div className="faq-answer">
-              <p>{f.a}</p>
-            </div>
-          </div>
+    <section id="faq" className="ww-faq" data-conversion-section="faq">
+      <header className="ww-faq-header">
+        <div>
+          <p className="ww-faq-marker">Before you book</p>
+          <h2>What you need to know.</h2>
+        </div>
+        <p>
+          The practical details, from what your pass covers to where you can
+          sleep. If your question is not here, email us and a real person will
+          answer.
+        </p>
+      </header>
+      <div className="ww-faq-list">
+        {faqs.map((faq) => (
+          <details className="ww-faq-item" key={faq.question}>
+            <summary>{faq.question}</summary>
+            <div className="ww-faq-answer">{faq.answer}</div>
+          </details>
         ))}
       </div>
     </section>

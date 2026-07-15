@@ -15,13 +15,6 @@ type ActiveTab =
   | "addons" | "vendor_agreements"
   | "vendors" | "volunteers" | "instructor_waitlist" | "sponsors";
 
-interface TabConfig {
-  key: TableName;
-  label: string;
-  columns: string[];
-}
-
-
 interface BudgetItem {
   id: number;
   type: string;
@@ -282,6 +275,8 @@ function LoyaltyTab() {
     }
   }, []);
 
+  // This client-only tab synchronizes its initial state with the admin API.
+  // eslint-disable-next-line react-hooks/set-state-in-effect
   useEffect(() => { load(); }, [load]);
 
   if (loading) return <div className="admin-loading">Loading loyalty data…</div>;
@@ -449,6 +444,8 @@ function BudgetTab() {
     }
   }, []);
 
+  // This client-only tab synchronizes its initial state with the admin API.
+  // eslint-disable-next-line react-hooks/set-state-in-effect
   useEffect(() => { fetchBudget(); }, [fetchBudget]);
 
   const saveBudgetItem = async () => {
@@ -629,6 +626,8 @@ function AffiliatesTab() {
     setLoading(false);
   }, []);
 
+  // This client-only tab synchronizes its initial state with the admin API.
+  // eslint-disable-next-line react-hooks/set-state-in-effect
   useEffect(() => { fetchData(); }, [fetchData]);
   useEffect(() => { const t = setTimeout(() => fetchData(search), 300); return () => clearTimeout(t); }, [search, fetchData]);
 
@@ -867,6 +866,8 @@ function VendorAgreementsTab() {
       .finally(() => setLoading(false));
   }, []);
 
+  // This client-only tab synchronizes its initial state with the admin API.
+  // eslint-disable-next-line react-hooks/set-state-in-effect
   useEffect(() => { load(); }, [load]);
 
   const updateStatus = async (id: number, payment_status: string) => {
@@ -1070,6 +1071,8 @@ function DataTab({ tableKey, columns }: { tableKey: TableName; columns: string[]
     setLoading(false);
   }, [tableKey]);
 
+  // This client-only tab synchronizes its initial state with the admin API.
+  // eslint-disable-next-line react-hooks/set-state-in-effect
   useEffect(() => { fetchData(); }, [fetchData]);
 
   useEffect(() => {

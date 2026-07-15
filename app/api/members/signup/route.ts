@@ -6,11 +6,12 @@ import crypto from "crypto";
 export const dynamic = "force-dynamic";
 
 function getMemberSessionSecret(): string {
-  return (
-    process.env.MEMBER_SESSION_SECRET ||
-    process.env.NEXTAUTH_SECRET ||
-    "ww-member-secret"
-  );
+  const secret =
+    process.env.MEMBER_SESSION_SECRET || process.env.NEXTAUTH_SECRET;
+  if (!secret) {
+    throw new Error("MEMBER_SESSION_SECRET is not configured");
+  }
+  return secret;
 }
 
 function buildSessionCookie(memberId: number): string {
@@ -26,6 +27,9 @@ function buildSessionCookie(memberId: number): string {
 
 export async function POST(req: NextRequest) {
   try {
+    // Fail before any database mutation when sessions cannot be signed.
+    getMemberSessionSecret();
+
     const { name, email, password, referralCode } = (await req.json()) as {
       name?: string;
       email?: string;

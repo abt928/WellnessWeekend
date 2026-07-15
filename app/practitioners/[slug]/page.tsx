@@ -90,9 +90,9 @@ export default async function PractitionerPage({ params }: { params: Promise<{ s
                 Website →
               </a>
             )}
-            <a href="/#store" className="practitioner-link practitioner-link-cta">
+            <Link href="/#store" className="practitioner-link practitioner-link-cta">
               Get Tickets →
-            </a>
+            </Link>
           </div>
         </div>
       </div>

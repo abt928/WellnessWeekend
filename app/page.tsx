@@ -1,69 +1,76 @@
 import Image from "next/image";
 import Navigation from "@/components/Navigation";
 import CountdownTimer from "@/components/CountdownTimer";
-import Reveal from "@/components/Reveal";
-import Schedule from "@/components/Schedule";
+import ConversionTracker from "@/components/ConversionTracker";
 import FAQ from "@/components/FAQ";
-import GetInvolved from "@/components/GetInvolved";
-import Store from "@/components/Store";
-import Packages from "@/components/Packages";
-import PhotoStrip from "@/components/PhotoStrip";
-import Instructors from "@/components/Instructors";
-import Musicians from "@/components/Musicians";
-import LeadCapture from "@/components/LeadCapture";
-import NewsletterForm from "@/components/NewsletterForm";
-import Gallery from "@/components/Gallery";
 import FloatingActions from "@/components/FloatingActions";
-import ConversionNudges from "@/components/ConversionNudges";
-import PartnerCard from "@/components/PartnerCard";
-import BuildYourWeekend from "@/components/BuildYourWeekend";
-import ContrastTherapy from "@/components/ContrastTherapy";
-import { PlaneIcon, MapPinIcon, LeafIcon, MoonIcon, WindIcon, DiamondIcon } from "@/components/Icons";
+import NewsletterForm from "@/components/NewsletterForm";
+import Store from "@/components/Store";
+import { scheduleDays } from "@/lib/schedule-data";
+import heroPhoto from "../public/images/gallery/2025-08-09_Festival_Wellness_Woman-Harmonium-Gong.jpg";
+import circlePhoto from "../public/images/gallery/2025-08-09_Festival_Wellness_Group-Circle-Arms-Raised.jpg";
+import joyPhoto from "../public/images/gallery/2025-08-09_Festival_Wellness_Woman-Dancing-Laughing.jpg";
+import colorPhoto from "../public/images/gallery/2025-08-09_Festival_Wellness_Woman-Dancing-Colorful-Dress.jpg";
+import soundPhoto from "../public/images/gallery/2023-08-06_Festival_Wellness_Crystal-Bowls-Sound-Healing.jpg";
+import campfirePhoto from "../public/images/gallery/2023-08-06_Festival_Wellness_Evening-Campfire.jpg";
+import paddleboardPhoto from "../public/images/client-2026/lakeside-paddleboard-practice.webp";
+import jBraveFeature from "../public/images/client-2026/j-brave-feature.webp";
+import whiteEagleFeature from "../public/images/client-2026/white-eagle-medicine-woman-feature.webp";
+import messageFromBeesFeature from "../public/images/client-2026/message-from-the-bees-feature.webp";
+import styles from "./home.module.css";
 
-/* ── static data ── */
-const partners = [
+const experiencePhotos = [
   {
-    name: "Alaska Fly Dog",
-    role: "Massage · Adventures in Wellness",
-    logo: "/logos/alaska-fly-dog.png",
-    logoWidth: 260,
-    logoHeight: 120,
+    src: joyPhoto,
+    alt: "A Wellness Weekend guest dancing with both arms raised among the birch trees",
+    title: "Move freely",
+    detail: "Yoga, ecstatic dance, aerial silks, and lakeside movement",
+    className: styles.photoTall,
   },
   {
-    name: "The Sound Space",
-    role: "Sound Healing Partner",
-    logo: "/logos/sound-space.png",
-    logoWidth: 120,
-    logoHeight: 120,
+    src: soundPhoto,
+    alt: "Crystal singing bowls arranged on the grass for an outdoor sound bath",
+    title: "Drop deeper",
+    detail: "Sound journeys, meditation, cacao, and earth-based ceremony",
+    className: styles.photoWide,
   },
   {
-    name: "Flow Massage",
-    role: "Licensed Massage Therapy",
-    logo: "/logos/flow-massage.png",
-    logoWidth: 200,
-    logoHeight: 100,
+    src: circlePhoto,
+    alt: "A real Wellness Weekend circle raising their arms together outdoors",
+    title: "Find your people",
+    detail: "An intentionally small gathering capped at 200 guests",
+    className: styles.photoWide,
+  },
+];
+
+const featuredProgram = [
+  {
+    src: jBraveFeature,
+    alt: "",
+    name: "J Brave",
+    role: "Keys artist + sound alchemist",
+    detail: "Keys to Kreation · Friday / Ecstatic Dance · Saturday / Live set · Sunday",
   },
   {
-    name: "The Alaska Massage Band",
-    role: "Therapeutic Massage · Bodywork",
-    logo: "/logos/alaska-massage-band.png",
-    logoWidth: 200,
-    logoHeight: 100,
+    src: whiteEagleFeature,
+    alt: "",
+    name: "White Eagle Medicine Woman",
+    role: "Traditional ceremony leader",
+    detail: "Lionsgate drumming ceremony · Saturday at noon",
   },
   {
-    name: "Alaska Meal Prep",
-    role: "Nourishment · Clean Eating",
-    logo: "/logos/alaska-meal-prep.png",
-    logoWidth: 200,
-    logoHeight: 100,
+    src: messageFromBeesFeature,
+    alt: "",
+    name: "Ecstatic Dance + Message from the Bees",
+    role: "Two movement-led gatherings",
+    detail: "Friday evening + Sunday at 11:11 AM",
   },
-  {
-    name: "Whirling Rainbow Foundation",
-    role: "Community Nonprofit",
-    logo: "/logos/whirling-rainbow.png",
-    logoWidth: 200,
-    logoHeight: 100,
-  },
+];
+
+const schedulePicks = [
+  ["Opening Ceremony", "Paddleboard Yoga", "Sacred Heart Activation", "Ecstatic Dance"],
+  ["Lionsgate Activation + Floating Sound Bath", "Ayni Despacho Ceremony", "Authentic Relating Practice", "Cacao Ceremony"],
+  ["Sound Journey", "Intro Aerial for Kids", "Kuf Knotz + Christine Elise", "Closing Ceremony"],
 ];
 
 export default function Home() {
@@ -72,7 +79,7 @@ export default function Home() {
     "@type": "Event",
     name: "Wellness Weekend · 4th Annual Healing Arts Festival",
     description:
-      "A transformational weekend of sound healing, earth medicine, and movement under Alaska's midnight sun. Featuring the 8/8 Lion's Gate Activation Ceremony, sacred drumming circles, plant medicine work, breathwork, yoga, ecstatic dance, and more.",
+      "A three-day healing arts gathering with sound, movement, ceremony, and lakeside restoration under Alaska's midnight sun.",
     startDate: "2026-08-07",
     endDate: "2026-08-09",
     eventAttendanceMode: "https://schema.org/OfflineEventAttendanceMode",
@@ -87,7 +94,9 @@ export default function Home() {
         addressCountry: "US",
       },
     },
-    image: ["https://www.wellnessweekendak.com/images/hero.png"],
+    image: [
+      "https://www.wellnessweekendak.com/images/gallery/2025-08-09_Festival_Wellness_Group-Circle-Arms-Raised.jpg",
+    ],
     organizer: {
       "@type": "Organization",
       name: "Wellness Weekend",
@@ -98,9 +107,10 @@ export default function Home() {
       url: "https://www.wellnessweekendak.com/#store",
       availability: "https://schema.org/InStock",
       priceCurrency: "USD",
+      lowPrice: "33",
+      highPrice: "123",
+      offerCount: 3,
     },
-    performer: [{ "@type": "Person", name: "White Eagle Medicine Woman" }],
-    typicalAgeRange: "18+",
     maximumAttendeeCapacity: 200,
   };
 
@@ -110,320 +120,337 @@ export default function Home() {
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
       />
+      <a className="skip-link" href="#main">
+        Skip to main content
+      </a>
       <Navigation />
-      <FloatingActions />
-      <ConversionNudges />
 
-      <a className="skip-link" href="#main">Skip to main content</a>
-
-      <main id="main">
-
-      {/* ═══ HERO ═══ */}
-      <section className="hero">
-        <div className="hero-overlay" />
-        <span className="hero-fire-horse-ghost" aria-hidden="true">🐎</span>
-        <div className="hero-content">
-          <span className="hero-badge">4th Annual Gathering · Lion's Gate</span>
-          <h1 className="hero-title">
-            Wellness <em>Weekend</em>
-          </h1>
-          <p className="hero-subtitle">
-            A Healing Arts Gathering Under the Midnight Sun
-          </p>
-          <p className="hero-date">August 7-9, 2026 · Sutton, Alaska</p>
-          <a href="#store" className="hero-cta">
-            Get Your Tickets
-          </a>
-          <CountdownTimer />
-        </div>
-        <div className="scroll-indicator">
-          <span>Discover</span>
-          <div className="scroll-constellation" aria-hidden="true">
-            <span className="constellation-dot" />
-            <span className="constellation-dot" />
-            <span className="constellation-dot" />
+      <main id="main" className={styles.home}>
+        <section
+          className={styles.hero}
+          aria-labelledby="hero-title"
+          data-conversion-section="hero"
+        >
+          <Image
+            src={heroPhoto}
+            alt="A Wellness Weekend musician in ceremony with harmonium, singing bowl, and gong"
+            fill
+            priority
+            sizes="100vw"
+            className={styles.heroImage}
+          />
+          <div className={styles.heroVeil} />
+          <div className={styles.heroContent}>
+            <p className={styles.heroDate}>August 7–9, 2026 · Sutton, Alaska</p>
+            <h1 id="hero-title" className={styles.heroTitle}>
+              Three days to feel <span>fully alive.</span>
+            </h1>
+            <p className={styles.heroCopy}>
+              Healing arts, ecstatic movement, live music, and lakeside ceremony
+              under Alaska&apos;s midnight sun.
+            </p>
+            <div className={styles.heroActions}>
+              <a
+                href="#store"
+                className={styles.primaryButton}
+                data-cta="hero_choose_pass"
+              >
+                Choose your pass
+              </a>
+              <a
+                href="#experience"
+                className={styles.textButton}
+                data-cta="hero_see_experience"
+              >
+                See what&apos;s included
+              </a>
+            </div>
+            <div className={styles.heroProof} aria-label="Event highlights">
+              <span>4th annual</span>
+              <span>40+ sessions</span>
+              <span>200-person cap</span>
+            </div>
+            <CountdownTimer />
           </div>
-        </div>
-      </section>
+        </section>
 
-      {/* ═══ PHOTO STRIP ═══ */}
-      <PhotoStrip />
-
-      {/* ═══ INSTRUCTORS ═══ */}
-      <Instructors />
-
-      {/* ═══ MUSICIANS ═══ */}
-      <Musicians />
-
-      {/* ═══ SCHEDULE ═══ */}
-      <Schedule />
-
-      {/* ═══ TICKETS STORE ═══ */}
-      <Store />
-
-      {/* ═══ PACKAGES ═══ */}
-      <Packages />
-
-      {/* ═══ BUILD YOUR WEEKEND ═══ */}
-      <BuildYourWeekend />
-
-      {/* ═══ CONTRAST THERAPY ═══ */}
-      <ContrastTherapy />
-
-      {/* ═══ FAMILY DAY ═══ */}
-      <section className="family-day-section section">
-        <Reveal>
-          <p className="section-label">Sunday · August 9</p>
-          <h2 className="section-title">Family Day.</h2>
-          <p className="section-desc">
-            Wellness for all ages: Sunday is dedicated to families, children, and the next generation of earth stewards.
-          </p>
-        </Reveal>
-        <Reveal>
-          <div className="family-day-grid">
-            <div className="family-day-feature">
-              <div className="family-day-icon" aria-hidden="true"><WindIcon size={28} color="var(--psyche-cyan)" /></div>
-              <h3>Intro Aerial Silks for Kids</h3>
-              <p>Children discover the joy of movement in the air with a beginner-friendly aerial silks session. Limited spots; reserve ahead.</p>
-            </div>
-            <div className="family-day-feature">
-              <div className="family-day-icon" aria-hidden="true"><DiamondIcon size={28} color="var(--psyche-cyan)" /></div>
-              <h3>Crystal Scavenger Hunt</h3>
-              <p>A guided crystal hunt through the grounds: kids learn about the stones of the earth and keep what they find.</p>
-            </div>
-            <div className="family-day-feature">
-              <div className="family-day-icon" aria-hidden="true"><LeafIcon size={28} color="var(--psyche-cyan)" /></div>
-              <h3>Arts, Crafts & Nature Play</h3>
-              <p>Needlefelting, nature art, and free play in the labyrinth garden. All materials provided.</p>
-            </div>
+        <section
+          id="experience"
+          className={styles.experience}
+          data-conversion-section="experience"
+        >
+          <div className={styles.sectionIntro}>
+            <p className={styles.sectionMarker}>The weekend</p>
+            <h2>Come for the practices. Stay for the feeling.</h2>
+            <p>
+              Move before breakfast. Learn by the lake. Sit in ceremony as the
+              sky stays bright late into the evening. Pick your own pace, from
+              full-volume dance to a quiet walk through the labyrinth garden.
+            </p>
           </div>
-          <p className="family-day-note">All Family Day proceeds support youth wellness nonprofits in the Matanuska-Susitna Valley.</p>
-        </Reveal>
-      </section>
 
-      {/* ═══ ABOUT / PREVIOUS YEARS ═══ */}
-      <section className="about section">
-        <div className="about-grid">
-          <div className="about-headline">
-            <Reveal>
-              <p className="section-label">Our Story</p>
-              <h2 className="about-title">
-                Four years of gathering on this land.
-              </h2>
-              <p className="about-stats">
-                Est. 2023<br />
-                4th Annual<br />
-                Sutton, Alaska<br />
-                3 Days of Ceremony
-              </p>
-            </Reveal>
-          </div>
-          <div className="about-desc">
-            <Reveal>
-              <p>
-                What began with a small circle of healers in the summer of 2023
-                has become one of Alaska&apos;s most quietly powerful gatherings.
-                Each year the community returns: different faces, deepening
-                roots. Teachers who came as students. First-timers who drove
-                through the night to make it. Families who camp together every
-                August.
-              </p>
-              <p style={{ marginTop: "1.25rem" }}>
-                Not a festival. A gathering. A living thread of ceremony,
-                sound, and shared presence. The land holds the memory of every
-                circle we&apos;ve sat in, every fire we&apos;ve lit, every
-                healing that has happened here.
-              </p>
-            </Reveal>
-          </div>
-        </div>
-      </section>
-
-      {/* ═══ CTA BRIDGE (post-About) ═══ */}
-      <div className="camping-urgency" style={{ maxWidth: 760, margin: "2.5rem auto" }}>
-        <span className="camping-urgency-badge">4th Annual</span>
-        <span>Four years, and the circle keeps returning. <a href="#store">Reserve your place in the 2026 gathering -&gt;</a></span>
-      </div>
-
-      {/* ═══ PLAN YOUR TRIP ═══ */}
-      <section id="alaska" className="trip-section">
-
-        {/* Photo banner */}
-        <div className="trip-photo">
-          <Image src="/images/alaska.png" alt="Matanuska Valley, Alaska" fill style={{ objectFit: "cover", objectPosition: "center 35%" }} priority={false} />
-          <div className="trip-photo-overlay" />
-          <div className="trip-photo-text">
-            <Reveal>
-              <p className="section-label" style={{ color: "rgba(255,255,255,0.75)", textAlign: "left" }}>Sutton, Alaska · Aug 7-9</p>
-              <h2 className="trip-photo-heading">Plan Your Trip</h2>
-            </Reveal>
-          </div>
-        </div>
-
-        {/* Trip planning cards */}
-        <div className="trip-cards">
-          <Reveal>
-            <div className="trip-card">
-              <span className="trip-card-icon"><PlaneIcon size={20} color="var(--sage)" /></span>
-              <h3 className="trip-card-title">Getting Here</h3>
-              <p className="trip-card-body">Fly into Ted Stevens Anchorage International Airport (ANC), then follow the Glenn Highway northeast to Sutton in the Matanuska-Susitna Valley, one of Alaska&apos;s most breathtaking drives.</p>
-            </div>
-          </Reveal>
-          <Reveal>
-            <div className="trip-card">
-              <span className="trip-card-icon"><MoonIcon size={20} color="var(--sage)" /></span>
-              <h3 className="trip-card-title">August in Alaska</h3>
-              <p className="trip-card-body">Days stretch to nearly 19 hours of light around August 8. Temperatures run 55-70°F with cool mornings and evenings. Layers are essential: Alaskan weather is generous and unpredictable.</p>
-            </div>
-          </Reveal>
-          <Reveal>
-            <div className="trip-card">
-              <span className="trip-card-icon"><MapPinIcon size={20} color="var(--sage)" /></span>
-              <h3 className="trip-card-title">Where to Stay</h3>
-              <p className="trip-card-body">Camping passes for 2026 are sold out. A limited number of on-site cabin beds remain; reserve yours in <a href="#store">the store</a>. Prefer a hotel or cabin? Palmer and Wasilla are 30 to 40 minutes away.</p>
-            </div>
-          </Reveal>
-          <Reveal>
-            <div className="trip-card">
-              <span className="trip-card-icon"><LeafIcon size={20} color="var(--sage)" /></span>
-              <h3 className="trip-card-title">What to Pack</h3>
-              <p className="trip-card-body">Rain jacket, sturdy waterproof footwear, sun protection (the midnight sun is real), and something warm for ceremony under the stars. Leave space in your bag for what you&apos;ll carry home.</p>
-            </div>
-          </Reveal>
-        </div>
-
-        {/* Warrior Lodge pitch */}
-        <Reveal>
-          <div className="warrior-lodge">
-            <div className="warrior-lodge-text">
-              <p className="section-label" style={{ textAlign: "left" }}>Warrior Lodge · On-Site Accommodation</p>
-              <h3 className="warrior-lodge-title">Stay warm. Stay dry. Dance all night.</h3>
-              <p className="warrior-lodge-desc">
-                August in Alaska is wild: radiant summer days that stretch past midnight and cool, crisp nights perfect for gathering under the stars. The Warrior Lodge and on-site cabins were built for exactly this: a warm, dry sanctuary between ceremonies so you never have to leave the magic.
-              </p>
-              <p className="warrior-lodge-desc" style={{ marginTop: "0.75rem" }}>
-                Wake up steps from the lake. Walk to morning yoga. Come back to a real bed after the fire dies. On-site lodging is limited and fills every year; camping passes are sold out, but a few cabin beds remain.
-              </p>
-              <a href="#store" className="warrior-lodge-cta">Reserve Lodging →</a>
-            </div>
-          </div>
-        </Reveal>
-
-        {/* Land acknowledgment */}
-        <div className="land-ack">
-          <p className="land-ack-text">
-            We gather on the unceded ancestral homeland of the Dena&apos;ina Athabascan people,
-            whose relationship with this valley, these rivers, and these mountains stretches
-            back thousands of years and continues today. We are grateful to be guests on this land.
-          </p>
-        </div>
-
-      </section>
-
-      {/* ═══ BRAND PARTNERS ═══ */}
-      <section id="partners" className="section practitioners">
-        <Reveal>
-          <p className="section-label">Our Partners</p>
-          <h2 className="section-title">Partners.</h2>
-          <p className="section-desc">
-            Proud to collaborate with brands that share our vision for healing,
-            adventure, and community in the Alaskan wilderness.
-          </p>
-        </Reveal>
-        <Reveal>
-          <div className="partner-row">
-            {/* logoReady=false: logo files are not yet uploaded to /logos/, so
-                render the partner name (avoids 404 requests for missing images).
-                Set logoReady once the corresponding PNG exists. */}
-            {partners.map((p) => (
-              <PartnerCard key={p.name} {...p} logoReady={false} />
+          <div className={styles.photoMosaic}>
+            {experiencePhotos.map((photo) => (
+              <figure className={photo.className} key={photo.title}>
+                <Image
+                  src={photo.src}
+                  alt={photo.alt}
+                  fill
+                  sizes="(max-width: 760px) 100vw, 50vw"
+                />
+                <figcaption>
+                  <strong>{photo.title}</strong>
+                  <span>{photo.detail}</span>
+                </figcaption>
+              </figure>
             ))}
           </div>
-        </Reveal>
-      </section>
 
-      {/* ═══ VENDORS ═══ */}
-      <section id="vendors" className="section" style={{ paddingTop: "3rem", paddingBottom: "3rem" }}>
-        <Reveal>
-          <p className="section-label">On-Site Vendors</p>
-          <h2 className="section-title" style={{ marginBottom: "0.75rem" }}>Vendors.</h2>
-          <p className="section-desc" style={{ marginBottom: "0.5rem" }}>
-            Vendor Village is full for 2026. Day vendor spots are available from $75/day; contact us to inquire.
-          </p>
-        </Reveal>
-        <Reveal>
-          <div className="vendor-list">
-            {[
-              { name: "Retro Roasters Coffee",          role: "Specialty Coffee" },
-              { name: "Cacao Bar",                       role: "Ceremonial Cacao" },
-              { name: "Whirling Rainbow Foundation",     role: "Community Nonprofit" },
-              { name: "Flow Massage",                    role: "Chair Massage" },
-              { name: "Echo and Sage",                   role: "Stained Glass Art" },
-              { name: "Ecuadorian Products",             role: "Artisan Goods" },
-              { name: "Tundra Wellness",                 role: "Massage · Craniosacral · Wellness Products" },
-              { name: "AK Child & Family",               role: "Family Resources" },
-              { name: "Aurora Acupuncture",              role: "Acupuncture" },
-              { name: "Fireweed and Flames",             role: "Reiki Candles · Reiki & Tarot" },
-              { name: "Starfish Wellness & Massage",     role: "Massage Therapy" },
-              { name: "Lifewave",                        role: "Wellness Products" },
-              { name: "Arbonne",                         role: "Clean Beauty & Wellness" },
-              { name: "Northern Messages",               role: "Psychic Readings" },
-            ].map((v) => (
-              <div key={v.name} className="vendor-row">
-                <span className="vendor-name">{v.name}</span>
-                <span className="vendor-role">{v.role}</span>
+          <div className={styles.inclusionStrip}>
+            <p>
+              <strong>Your pass includes the main three-day program.</strong>
+              Select small-group sessions, bodywork, meals, and lodging are
+              booked separately.
+            </p>
+            <a href="#store" data-cta="experience_choose_pass">
+              Compare passes
+            </a>
+          </div>
+        </section>
+
+        <div className={styles.storeFrame} data-conversion-section="store">
+          <Store />
+        </div>
+
+        <section
+          id="schedule"
+          className={styles.schedule}
+          data-conversion-section="schedule"
+        >
+          <div className={styles.sectionIntroDark}>
+            <p className={styles.sectionMarker}>Three days, your pace</p>
+            <h2>A full weekend without the frantic festival feeling.</h2>
+            <p>
+              These are a few anchors. The full program includes more than 40
+              sessions across the main stage, lake, aerial space, and labyrinth
+              garden.
+            </p>
+          </div>
+
+          <div className={styles.dayList}>
+            {scheduleDays.map((day, dayIndex) => {
+              const highlights = schedulePicks[dayIndex]
+                .map((name) => day.events.find((event) => event.event === name))
+                .filter((event) => event !== undefined);
+
+              return (
+                <article className={styles.day} key={day.label}>
+                  <header>
+                    <p>{day.label}</p>
+                    <h3>{day.headingText}</h3>
+                    <span>{day.theme}</span>
+                  </header>
+                  <ol>
+                    {highlights.map((event) => (
+                      <li key={`${event.time}-${event.event}`}>
+                        <time>{event.time}</time>
+                        <div>
+                          <strong>{event.event}</strong>
+                          {event.location && <span>{event.location}</span>}
+                        </div>
+                      </li>
+                    ))}
+                  </ol>
+                </article>
+              );
+            })}
+          </div>
+
+          <div className={styles.scheduleActions}>
+            <a href="/schedule/print" data-cta="schedule_view_full">
+              View the full schedule
+            </a>
+            <a href="#store" data-cta="schedule_choose_pass">
+              Choose a pass
+            </a>
+          </div>
+
+          <div className={styles.featuredLineup} aria-labelledby="featured-lineup-title">
+            <div className={styles.featuredLineupHeader}>
+              <div>
+                <p className={styles.sectionMarker}>Featured in 2026</p>
+                <h3 id="featured-lineup-title">People and practices worth circling.</h3>
               </div>
-            ))}
+              <p>
+                Visiting artists and ceremony leaders shape a program that moves
+                from quiet listening to full-room release.
+              </p>
+            </div>
+
+            <div className={styles.lineupRail}>
+              {featuredProgram.map((feature) => (
+                <figure className={styles.lineupCard} key={feature.name}>
+                  <div className={styles.lineupArtwork}>
+                    <Image
+                      src={feature.src}
+                      alt={feature.alt}
+                      fill
+                      placeholder="blur"
+                      sizes="(max-width: 760px) 78vw, (max-width: 1100px) 45vw, 24rem"
+                    />
+                  </div>
+                  <figcaption>
+                    <strong>{feature.name}</strong>
+                    <span>{feature.role}</span>
+                    <small>{feature.detail}</small>
+                  </figcaption>
+                </figure>
+              ))}
+            </div>
           </div>
-        </Reveal>
-      </section>
+        </section>
 
-      {/* ═══ GALLERY ═══ */}
-      <Gallery />
+        <section className={styles.realWeekend} data-conversion-section="proof">
+          <div className={styles.realWeekendCopy}>
+            <p className={styles.sectionMarker}>This is what it looks like</p>
+            <h2>The weekend, as it really happens.</h2>
+            <p>
+              Bare feet on cold grass. A gong carrying through the birch trees.
+              Breakfast with someone who was a stranger the day before. The
+              photographs here are all from Wellness Weekend gatherings.
+            </p>
+          </div>
+          <div className={styles.realWeekendPhotos}>
+            <figure>
+              <Image
+                src={colorPhoto}
+                alt="A ceremony leader in a colorful dress moving outdoors at Wellness Weekend"
+                fill
+                sizes="(max-width: 760px) 80vw, 34vw"
+              />
+            </figure>
+            <figure>
+              <Image
+                src={circlePhoto}
+                alt="Wellness Weekend guests moving together in a circle"
+                fill
+                sizes="(max-width: 760px) 80vw, 34vw"
+              />
+            </figure>
+            <figure>
+              <Image
+                src={paddleboardPhoto}
+                alt="A person kneeling in prayer on a paddleboard on a calm Alaska lake"
+                fill
+                sizes="(max-width: 760px) 80vw, 34vw"
+              />
+            </figure>
+          </div>
+        </section>
 
-      {/* ═══ FAQ ═══ */}
-      <FAQ />
+        <section
+          id="visit"
+          className={styles.visit}
+          data-conversion-section="visit"
+        >
+          <div className={styles.visitPhoto}>
+            <Image
+              src={campfirePhoto}
+              alt="The evening campfire at a previous Wellness Weekend gathering in Sutton"
+              fill
+              sizes="(max-width: 900px) 100vw, 48vw"
+            />
+          </div>
+          <div className={styles.visitContent}>
+            <p className={styles.sectionMarker}>Warrior Lodge · Sutton</p>
+            <h2>Close enough to reach. Far enough to exhale.</h2>
+            <p>
+              Warrior Lodge is about 90 minutes northeast of Anchorage along the
+              Glenn Highway. August days are long, nights are cool, and the lake
+              is only steps from the gathering spaces.
+            </p>
+            <dl className={styles.visitFacts}>
+              <div>
+                <dt>Getting here</dt>
+                <dd>Fly into ANC, then drive or add a shuttle to your trip.</dd>
+              </div>
+              <div>
+                <dt>Staying over</dt>
+                <dd>On-site camping is sold out. Limited shared cabin beds remain.</dd>
+              </div>
+              <div>
+                <dt>Food and comfort</dt>
+                <dd>Meals are sold on site. Showers and emergency Wi-Fi are available.</dd>
+              </div>
+            </dl>
+            <a href="#store" className={styles.visitLink} data-cta="visit_view_lodging">
+              See passes and cabin options
+            </a>
+            <p className={styles.landAcknowledgment}>
+              We gather on the unceded ancestral homeland of the Dena&apos;ina
+              Athabascan people, whose relationship with this valley continues
+              today. We are grateful to be guests on this land.
+            </p>
+          </div>
+        </section>
 
-      {/* ═══ CTA BRIDGE (post-FAQ close) ═══ */}
-      <div className="camping-urgency" style={{ maxWidth: 760, margin: "2.5rem auto" }}>
-        <span className="camping-urgency-badge">Capped at 200</span>
-        <span>Questions answered? Camping is sold out and cabin beds are limited. <a href="#store">Reserve your pass for August 7-9 -&gt;</a></span>
-      </div>
+        <FAQ />
 
-      {/* ═══ LEAD CAPTURE ═══ */}
-      <LeadCapture />
-
-      {/* ═══ GET INVOLVED ═══ */}
-      <GetInvolved />
-
+        <section className={styles.finalCta} data-conversion-section="final_cta">
+          <div>
+            <p className={styles.sectionMarker}>August 7–9 · Sutton, Alaska</p>
+            <h2>There is still room in the circle.</h2>
+            <p>
+              Pick a day, stay for the weekend, or reserve one of the remaining
+              cabin options.
+            </p>
+            <a href="#store" className={styles.primaryButton} data-cta="final_choose_pass">
+              Choose your pass
+            </a>
+          </div>
+          <div className={styles.emailCapture}>
+            <h3>Not ready to choose?</h3>
+            <p>Get schedule notes and final lodging updates by email.</p>
+            <NewsletterForm />
+          </div>
+        </section>
       </main>
 
-      {/* ═══ FOOTER ═══ */}
-      <footer className="footer">
-        <h2 className="footer-title">
-          See you under the <em>midnight sun</em>.
-        </h2>
-        <p className="footer-text">Sutton, Alaska · August 7-9, 2026</p>
-        <div className="footer-newsletter">
-          <p className="footer-newsletter-heading">Stay in the loop.</p>
-          <NewsletterForm />
+      <footer className={styles.footer}>
+        <div className={styles.footerBrand}>
+          <strong>Wellness Weekend</strong>
+          <span>August 7–9, 2026 · Sutton, Alaska</span>
         </div>
-        <div className="footer-socials">
-          <a href="https://www.instagram.com/wellnessweekendak" target="_blank" rel="noopener noreferrer">Instagram</a>
-          <a href="https://www.facebook.com/wellnessweekendak" target="_blank" rel="noopener noreferrer">Facebook</a>
+        <nav aria-label="Footer navigation" className={styles.footerLinks}>
+          <a href="/vendors">Vendors</a>
+          <a href="/affiliates">Affiliates</a>
+          <a href="/join">Join the Circle</a>
           <a href="mailto:support@thesoundspace.us">Contact</a>
-        </div>
-        <div className="footer-legal">
           <a href="/privacy">Privacy</a>
-          <span className="footer-legal-sep">·</span>
           <a href="/terms">Terms</a>
-          <span className="footer-legal-sep">·</span>
-          <a href="/refunds">Refund Policy</a>
+          <a href="/refunds">Refunds</a>
+        </nav>
+        <div className={styles.footerSocials}>
+          <a
+            href="https://www.instagram.com/wellnessweekendak"
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            Instagram
+          </a>
+          <a
+            href="https://www.facebook.com/wellnessweekendak"
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            Facebook
+          </a>
         </div>
-        <div className="footer-bottom">
-          © {new Date().getFullYear()} Wellness Weekend. All rights reserved.
-        </div>
+        <p>© {new Date().getFullYear()} Wellness Weekend</p>
       </footer>
+
+      <FloatingActions />
+      <ConversionTracker />
     </>
   );
 }

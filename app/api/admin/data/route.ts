@@ -54,7 +54,11 @@ export async function GET(req: NextRequest) {
 
     // Strip passwordHash from affiliates before sending
     if (table === "affiliates") {
-      rows = (rows as Record<string, unknown>[]).map(({ passwordHash: _ph, ...rest }) => rest);
+      rows = (rows as Record<string, unknown>[]).map((row) => {
+        const sanitized = { ...row };
+        delete sanitized.passwordHash;
+        return sanitized;
+      });
     }
 
     return NextResponse.json({ rows, count: rows.length });

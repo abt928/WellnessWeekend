@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { neon } from "@neondatabase/serverless";
-import { verifyPassword, hashPassword, generateAffiliateCode } from "@/lib/password";
+import { verifyPassword } from "@/lib/password";
 import crypto from "crypto";
 
 export const dynamic = "force-dynamic";
@@ -8,11 +8,12 @@ export const dynamic = "force-dynamic";
 const COOKIE_NAME = "member-session";
 
 function getMemberSessionSecret(): string {
-  return (
-    process.env.MEMBER_SESSION_SECRET ||
-    process.env.NEXTAUTH_SECRET ||
-    "ww-member-secret"
-  );
+  const secret =
+    process.env.MEMBER_SESSION_SECRET || process.env.NEXTAUTH_SECRET;
+  if (!secret) {
+    throw new Error("MEMBER_SESSION_SECRET is not configured");
+  }
+  return secret;
 }
 
 /**
@@ -105,6 +106,9 @@ export async function GET(req: NextRequest) {
 /** POST — login with email + password */
 export async function POST(req: NextRequest) {
   try {
+    // Fail before credential lookup when sessions cannot be signed.
+    getMemberSessionSecret();
+
     const { email, password } = (await req.json()) as {
       email?: string;
       password?: string;

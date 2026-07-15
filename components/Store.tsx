@@ -35,6 +35,12 @@ const TABS = [
 
 const MAX_QTY_PER_ITEM = 20;
 
+const CORE_TICKET_ORDER = [
+  "Weekend Pass",
+  "Day Pass",
+  "Sunday Only Day Pass (Family Day)",
+];
+
 // Items whose name contains any of these strings (case-insensitive) are shown as sold out
 const SOLD_OUT_PATTERNS = ["earth pass"];
 
@@ -144,8 +150,7 @@ export default function Store() {
   // Cart hydration is the lazy initializer above (readInitialCart). Persist on changes:
   useEffect(() => {
     localStorage.setItem("ww-cart", JSON.stringify(cart));
-    // Clear promo result if cart changes so stale discount doesn't carry over
-    setPromoResult(null);
+    window.dispatchEvent(new Event("ww-cart-change"));
   }, [cart]);
 
   // Listen for external cart open requests (from FloatingActions FAB)
@@ -169,6 +174,7 @@ export default function Store() {
         }
         return [...prev, { variationId, name, variantName, price, quantity: 1 }];
       });
+      setPromoResult(null);
       // Packages component only dispatches the event; fire the AddToCart
       // conversion here so package add-to-carts match the in-store ones.
       try {
@@ -216,9 +222,6 @@ export default function Store() {
     return () => window.removeEventListener("keydown", onKey);
   }, [cartOpen]);
 
-  // Promo field defaults collapsed each time the cart opens
-  useEffect(() => { if (cartOpen) setShowPromo(false); }, [cartOpen]);
-
   // Clear the transient "just added" timer on unmount
   useEffect(() => () => { if (justAddedTimer.current) clearTimeout(justAddedTimer.current); }, []);
 
@@ -239,6 +242,7 @@ export default function Store() {
         quantity: 1,
       }];
     });
+    setPromoResult(null);
     trackAddToCart({
       contentId: variation.id,
       contentName: item.name,
@@ -262,6 +266,7 @@ export default function Store() {
         )
         .filter((c) => c.quantity > 0)
     );
+    setPromoResult(null);
   }, []);
 
   const applyPromo = useCallback(async () => {
@@ -286,26 +291,6 @@ export default function Store() {
 
   const cartTotal = cart.reduce((sum, c) => sum + c.price * c.quantity, 0);
   const cartCount = cart.reduce((sum, c) => sum + c.quantity, 0);
-
-  // Cross-sell order bump: up to 3 add-on/cacao items not already in the cart,
-  // shown only once the cart holds at least one ticket.
-  const cartVariationIds = new Set(cart.map((c) => c.variationId));
-  const ticketVariationIds = new Set(
-    items.filter((i) => i.category === "tickets").flatMap((i) => i.variations.map((v) => v.id))
-  );
-  const cartHasTicket = cart.some((c) => ticketVariationIds.has(c.variationId));
-  const bumpItems = items
-    .filter((i) => (i.category === "addons" || i.category === "cacao") && i.variations.length > 0)
-    .filter((i) => !i.variations.some((v) => cartVariationIds.has(v.id)))
-    .slice(0, 3);
-
-  // Points earned on this order, using the same discounted total shown below.
-  const pointsToEarn = Math.max(
-    0,
-    Math.floor(
-      (cartTotal - (promoResult?.valid ? (promoResult.discountCents ?? 0) : 0) - (pendingRedemption?.discountCents ?? 0)) / 100
-    )
-  );
 
   const handleCheckout = async () => {
     if (cart.length === 0) return;
@@ -371,6 +356,9 @@ export default function Store() {
         // Keep the cart intact so the shopper can retry.
         setCheckingOut(false);
         setCheckoutError("Checkout is unavailable right now. Please try again.");
+        window.dispatchEvent(new CustomEvent("ww-checkout-error", {
+          detail: { reason: data?.error || `http_${res.status}` },
+        }));
         return;
       }
 
@@ -392,52 +380,125 @@ export default function Store() {
         /* quota exceeded — Purchase still fires with a random event_id */
       }
 
+      window.dispatchEvent(new CustomEvent("ww-checkout-link-created", {
+        detail: { value: paidValue, quantity: cartCount },
+      }));
+
       // Clear the cart since checkout started
       setCart([]);
       window.location.href = data.checkoutUrl;
     } catch {
       setCheckingOut(false);
       setCheckoutError("Checkout is unavailable right now. Please try again.");
+      window.dispatchEvent(new CustomEvent("ww-checkout-error", {
+        detail: { reason: "network_error" },
+      }));
     }
   };
 
-  const filtered = items.filter((i) => i.category === activeTab);
+  const ticketItems = items.filter((item) => item.category === "tickets");
+  const coreTicketItems = CORE_TICKET_ORDER
+    .map((name) => ticketItems.find((item) => item.name === name))
+    .filter((item): item is CatalogItem => item !== undefined);
+  const lodgingItems = ticketItems.filter(
+    (item) => !CORE_TICKET_ORDER.includes(item.name),
+  );
+  const extrasTabs = TABS.filter((tab) => tab.key !== "tickets");
+  const filteredExtras = items.filter((item) => item.category === activeTab);
+
+  const renderCatalogItem = (
+    item: CatalogItem,
+    kind: "admission" | "lodging" | "extra",
+  ) => {
+    const soldOut = SOLD_OUT_PATTERNS.some((pattern) =>
+      item.name.toLowerCase().includes(pattern),
+    );
+    const featured = item.name === "Weekend Pass";
+    const familyDay = item.name.startsWith("Sunday Only");
+    const actionLabel = kind === "admission"
+      ? "Add this pass"
+      : kind === "lodging"
+        ? "Add this option"
+        : "Add to cart";
+
+    return (
+      <article
+        className={`store-card${soldOut ? " store-card-sold-out" : ""}${featured ? " store-card-featured" : ""}`}
+        data-catalog-kind={kind}
+        key={item.id}
+      >
+        <div className="store-card-header">
+          <h3 className="store-card-name">
+            {item.name}
+            {soldOut && <span className="store-sold-out-badge">Sold out</span>}
+            {featured && <span className="store-featured-badge">Full weekend</span>}
+            {familyDay && <span className="store-family-badge">Kids under 18 free</span>}
+          </h3>
+          {!soldOut && item.variations.length === 1 && (
+            <span className="store-card-price">
+              {formatPrice(item.variations[0].price)}
+            </span>
+          )}
+        </div>
+        <p className="store-card-desc">{item.description}</p>
+        <div className="store-card-actions">
+          {soldOut ? (
+            <button className="store-add-btn" disabled>
+              Sold out
+            </button>
+          ) : item.variations.length === 1 ? (
+            <button
+              className="store-add-btn"
+              onClick={() => addToCart(item, item.variations[0])}
+              disabled={justAddedId === item.variations[0].id}
+              aria-label={`${actionLabel}: ${item.name}`}
+            >
+              {justAddedId === item.variations[0].id ? "Added ✓" : actionLabel}
+            </button>
+          ) : (
+            <div className="store-variants">
+              {item.variations.map((variation) => (
+                <button
+                  key={variation.id}
+                  className="store-variant-btn"
+                  onClick={() => addToCart(item, variation)}
+                  disabled={justAddedId === variation.id}
+                  aria-label={`${actionLabel}: ${item.name}, ${variation.name}, ${formatPrice(variation.price)}`}
+                >
+                  <span className="variant-name">
+                    {justAddedId === variation.id ? "Added ✓" : variation.name}
+                  </span>
+                  <span className="variant-price">{formatPrice(variation.price)}</span>
+                </button>
+              ))}
+            </div>
+          )}
+        </div>
+      </article>
+    );
+  };
 
   return (
     <section id="store" className="section store-section">
-      <p className="section-label">Tickets & Add-Ons</p>
+      <p className="section-label">Passes for 2026</p>
       <h2 className="section-title">
-        We welcome all guests for a day or a weekend.
+        Choose the way you want to join.
       </h2>
       <p className="section-desc" style={{ marginBottom: "0.75rem" }}>
-        Choose your tickets, add-on experiences, and merch, all processed securely through Square. Your weekend pass includes 40+ sessions across three days.
+        Start with one day, come for Family Day, or take in the full three-day
+        gathering. Prices and availability below come directly from Square.
       </p>
-      <p className="section-desc" style={{ fontSize: "0.95rem", marginBottom: "0", opacity: 0.85 }}>
-        Fourth annual gathering, capacity 200. Intimate by design.
+      <p className="store-trust-line">
+        40+ scheduled sessions · capped at 200 guests · secure Square checkout
       </p>
       <div className="camping-urgency">
-        <span className="camping-urgency-badge">Limited Cabin Beds</span>
-        <span>Camping passes are sold out for 2026. A few on-site cabin beds remain; reserve yours before they&apos;re gone.</span>
+        <span className="camping-urgency-badge">Camping is sold out</span>
+        <span>Shared cabin, private cabin, and one-night bed options are listed separately below while available.</span>
       </div>
 
-      {/* Category Tabs */}
-      <div className="store-tabs">
-        {TABS.map((t) => (
-          <button
-            key={t.key}
-            className={`store-tab${activeTab === t.key ? " active" : ""}`}
-            onClick={() => setActiveTab(t.key)}
-          >
-            <t.Icon size={16} />
-            {t.label}
-          </button>
-        ))}
-      </div>
-
-      {/* Items Grid */}
       {error ? (
-        <div style={{ backgroundColor: "rgba(255, 100, 100, 0.1)", border: "1px solid rgba(255, 100, 100, 0.3)", padding: "2rem", borderRadius: "8px", margin: "2rem 0", color: "#b44040", textAlign: "center" }}>
-          <p style={{ fontFamily: "var(--font-display)", fontSize: "1.5rem", marginBottom: "0.5rem" }}>Catalog unavailable</p>
+        <div className="store-error" role="alert">
+          <p>Catalog unavailable</p>
           <p>We can&apos;t load tickets right now. Please refresh, or come back in a few minutes.</p>
         </div>
       ) : loading ? (
@@ -446,91 +507,72 @@ export default function Store() {
           <p>Loading catalog...</p>
         </div>
       ) : (
-        <div className="store-grid">
-          {filtered.map((item) => {
-            const soldOut = SOLD_OUT_PATTERNS.some((p) =>
-              item.name.toLowerCase().includes(p)
-            );
-            const featured = activeTab === "tickets" && !soldOut && /weekend/i.test(item.name);
-            return (
-            <div className={`store-card${soldOut ? " store-card-sold-out" : ""}${featured ? " store-card-featured" : ""}`} key={item.id}>
-              <div className="store-card-header">
-                <h3 className="store-card-name">
-                  {item.name}
-                  {soldOut && <span className="store-sold-out-badge">Sold Out</span>}
-                  {featured && <span className="store-featured-badge">Full Weekend</span>}
-                </h3>
-                {!soldOut && item.variations.length === 1 && (
-                  <span className="store-card-price">
-                    {formatPrice(item.variations[0].price)}
-                  </span>
-                )}
-              </div>
-              <p className="store-card-desc">{item.description}</p>
-              <div className="store-card-actions">
-                {soldOut ? (
-                  <button className="store-add-btn" disabled style={{ opacity: 0.4, cursor: "not-allowed" }}>
-                    Sold Out
-                  </button>
-                ) : item.variations.length === 1 ? (
-                  <button
-                    className="store-add-btn"
-                    onClick={() => addToCart(item, item.variations[0])}
-                    disabled={justAddedId === item.variations[0].id}
-                  >
-                    {justAddedId === item.variations[0].id ? "Added ✓" : "Add to Cart"}
-                  </button>
-                ) : (
-                  <div className="store-variants">
-                    {item.variations.map((v) => {
-                      const vFeatured = activeTab === "tickets" && /weekend/i.test(v.name);
-                      return (
-                      <button
-                        key={v.id}
-                        className={`store-variant-btn${vFeatured ? " store-variant-btn-featured" : ""}`}
-                        onClick={() => addToCart(item, v)}
-                        disabled={justAddedId === v.id}
-                      >
-                        <span className="variant-name">{justAddedId === v.id ? "Added ✓" : v.name}</span>
-                        <span className="variant-price">{formatPrice(v.price)}</span>
-                      </button>
-                      );
-                    })}
-                  </div>
-                )}
-              </div>
-            </div>
-            );
-          })}
-          {filtered.length === 0 && !loading && (
-            <p className="store-empty">No items in this category yet.</p>
-          )}
-        </div>
-      )}
+        <>
+          <div className="store-grid store-grid-primary">
+            {coreTicketItems.map((item) => renderCatalogItem(item, "admission"))}
+          </div>
 
-      {/* Rewards callout — one quiet line below the grid */}
-      <div
-        className="store-rewards-strip"
-        style={{
-          flexDirection: "row", flexWrap: "wrap", justifyContent: "center",
-          gap: "0.75rem 1rem", padding: "0.75rem 1.25rem",
-          background: "transparent", border: "1px solid var(--line-subtle)",
-        }}
-      >
-        <span className="store-rewards-earn" style={{ fontSize: "0.85rem" }}>
-          <span className="store-rewards-star">✦</span>
-          <span>Members earn 1 point per $1, redeemable toward add-ons and passes.</span>
-        </span>
-        <a href="/members" className="store-rewards-cta">Join the Circle →</a>
-      </div>
+          {coreTicketItems.length === 0 && (
+            <p className="store-empty">Admission passes are not available right now.</p>
+          )}
+
+          {lodgingItems.length > 0 && (
+            <details className="store-disclosure store-lodging">
+              <summary>
+                <span>
+                  <strong>Need a place to sleep?</strong>
+                  <small>See cabin and one-night bed options</small>
+                </span>
+              </summary>
+              <div className="store-grid store-grid-secondary">
+                {lodgingItems.map((item) => renderCatalogItem(item, "lodging"))}
+              </div>
+            </details>
+          )}
+
+          <details
+            className="store-disclosure store-extras"
+          >
+            <summary>
+              <span>
+                <strong>Already have your pass?</strong>
+                <small>Shop bodywork, experiences, cacao, and merch</small>
+              </span>
+            </summary>
+            <div className="store-tabs" aria-label="Extras categories">
+              {extrasTabs.map((tab) => (
+                <button
+                  type="button"
+                  key={tab.key}
+                  className={`store-tab${activeTab === tab.key ? " active" : ""}`}
+                  onClick={() => setActiveTab(tab.key)}
+                >
+                  <tab.Icon size={16} />
+                  {tab.label}
+                </button>
+              ))}
+            </div>
+            {activeTab === "tickets" ? (
+              <p className="store-empty">Choose a category above to see extras.</p>
+            ) : (
+              <div className="store-grid store-grid-secondary">
+                {filteredExtras.map((item) => renderCatalogItem(item, "extra"))}
+                {filteredExtras.length === 0 && (
+                  <p className="store-empty">Nothing is listed in this category yet.</p>
+                )}
+              </div>
+            )}
+          </details>
+        </>
+      )}
 
       {/* Floating Cart Bar */}
       {cartCount > 0 && (
-        <div className="cart-bar" onClick={() => setCartOpen(true)}>
+        <button type="button" className="cart-bar" onClick={() => setCartOpen(true)}>
           <span className="cart-bar-count">{cartCount} item{cartCount !== 1 ? "s" : ""}</span>
           <span className="cart-bar-label">View Cart</span>
           <span className="cart-bar-total">{formatPrice(cartTotal)}</span>
-        </div>
+        </button>
       )}
 
       {/* Cart Drawer */}
@@ -565,33 +607,29 @@ export default function Store() {
                         )}
                       </div>
                       <div className="cart-item-controls">
-                        <button className="qty-btn" onClick={() => updateQty(c.variationId, -1)}>−</button>
+                        <button
+                          type="button"
+                          className="qty-btn"
+                          onClick={() => updateQty(c.variationId, -1)}
+                          aria-label={`Remove one ${c.name}`}
+                        >
+                          −
+                        </button>
                         <span className="qty-num">{c.quantity}</span>
-                        <button className="qty-btn" onClick={() => updateQty(c.variationId, 1)}>+</button>
+                        <button
+                          type="button"
+                          className="qty-btn"
+                          onClick={() => updateQty(c.variationId, 1)}
+                          aria-label={`Add one more ${c.name}`}
+                        >
+                          +
+                        </button>
                       </div>
                       <div className="cart-item-price">{formatPrice(c.price * c.quantity)}</div>
                     </div>
                   ))}
                 </div>
                 <div className="cart-footer">
-                  {/* Cross-sell order bump — only once a ticket is in the cart */}
-                  {cartHasTicket && bumpItems.length > 0 && (
-                    <div className="cart-bump">
-                      <p className="cart-bump-heading">Complete your weekend</p>
-                      {bumpItems.map((bump) => (
-                        <div className="cart-bump-item" key={bump.id}>
-                          <span className="cart-bump-name">{bump.name}</span>
-                          <span className="cart-bump-price">{formatPrice(bump.variations[0].price)}</span>
-                          <button
-                            className="cart-bump-add"
-                            onClick={() => addToCart(bump, bump.variations[0])}
-                          >
-                            Add
-                          </button>
-                        </div>
-                      ))}
-                    </div>
-                  )}
                   {/* Promo code — collapsed by default, revealed on request */}
                   {showPromo || promoResult ? (
                     <div style={{ display: "flex", gap: "0.5rem", marginBottom: "0.75rem" }}>
@@ -696,14 +734,8 @@ export default function Store() {
                       {checkoutError}
                     </div>
                   )}
-                  <p style={{
-                    textAlign: "center", fontSize: "0.8rem", lineHeight: 1.5,
-                    color: "var(--ink-muted)", margin: "0 0 0.75rem",
-                  }}>
-                    Members earn {pointsToEarn} points on this order toward add-ons and passes.{" "}
-                    <a href="/members" style={{ color: "var(--aurora)", fontWeight: 600, textDecoration: "none" }}>Join the Circle</a>
-                  </p>
                   <button
+                    type="button"
                     className="cart-checkout-btn"
                     onClick={handleCheckout}
                     disabled={checkingOut}

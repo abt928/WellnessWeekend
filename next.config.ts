@@ -15,14 +15,6 @@ const nextConfig: NextConfig = {
   // Auto-memoize components — eliminates manual useMemo/useCallback
   reactCompiler: true,
 
-  // ── Build ─────────────────────────────────────────────────────────
-  typescript: { ignoreBuildErrors: true },
-
-  // ── Performance: CSS ─────────────────────────────────────────────
-  experimental: {
-    inlineCss: true,
-  },
-
   // ── Image Optimization ───────────────────────────────────────────
   images: {
     // Serve modern formats (AVIF first, then WebP fallback)

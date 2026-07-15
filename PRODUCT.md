@@ -22,7 +22,7 @@ Spiritually-curious millennials and Gen-X seekers (28–50), primarily women, wh
 - Generic yoga studio sites (stock photos, comic sans energy)
 
 ## Core Conversion Goals
-1. Email lead capture (newsletter + "Join the Tribe")
-2. Ticket/merch purchases via Square checkout
-3. Vendor/Volunteer/Sponsor applications
-4. Social proof → sharing → organic referral
+1. Ticket purchases via Square checkout
+2. Email capture as a fallback for visitors who are not ready to buy
+3. Travel, lodging, inclusion, and policy clarity that removes purchase risk
+4. Vendor, volunteer, sponsor, and affiliate paths as secondary routes

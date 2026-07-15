@@ -203,90 +203,179 @@ interface LineItemSummary {
   priceCents: number;
 }
 
+interface SquareOrderContext {
+  referralCode: string | null;
+  lineItems: LineItemSummary[];
+  memberId: number | null;
+  redemptionId: number | null;
+}
+
+type OrderInsertOutcome = "inserted" | "duplicate";
+
+const MAX_POINTS_PER_PAYMENT = 1500;
+
+function parseMetadataId(value: string | null | undefined): number | null {
+  if (value == null) return null;
+  if (!/^\d+$/.test(value)) return null;
+  const parsed = Number(value);
+  return Number.isSafeInteger(parsed) && parsed > 0 ? parsed : null;
+}
+
+async function getSquareOrderContext(
+  squareOrderId: string | undefined,
+): Promise<SquareOrderContext> {
+  if (!squareOrderId) {
+    return {
+      referralCode: null,
+      lineItems: [],
+      memberId: null,
+      redemptionId: null,
+    };
+  }
+
+  const client = getSquareClient();
+  const orderRes = await client.orders.get({ orderId: squareOrderId });
+  const order = orderRes.order;
+  if (!order) {
+    throw new Error(`Square order ${squareOrderId} was not found`);
+  }
+
+  const memberId = parseMetadataId(order.metadata?.member_id);
+  const redemptionId = parseMetadataId(order.metadata?.member_redemption_id);
+  if (order.metadata?.member_id != null && memberId == null) {
+    throw new Error("Square order has invalid member metadata");
+  }
+  if (order.metadata?.member_redemption_id != null && redemptionId == null) {
+    throw new Error("Square order has invalid redemption metadata");
+  }
+  if (redemptionId != null && memberId == null) {
+    throw new Error("Square order redemption is missing its member binding");
+  }
+
+  const referralCode = order.referenceId?.startsWith("ref:")
+    ? order.referenceId.slice(4)
+    : null;
+  const lineItems = (order.lineItems || []).map((lineItem) => ({
+    name: lineItem.name || "Unknown",
+    category: lineItem.catalogObjectId ? "item" : "custom",
+    quantity: Number(lineItem.quantity || 1),
+    priceCents: Number(lineItem.totalMoney?.amount || 0),
+  }));
+
+  return { referralCode, lineItems, memberId, redemptionId };
+}
+
 async function saveOrderToDB(
   squarePaymentId: string,
   squareOrderId: string | undefined,
   amountCents: number,
   currency: string,
   customerEmail: string | undefined,
-): Promise<{ inserted: boolean; referralCode: string | null }> {
+): Promise<OrderInsertOutcome> {
   const dbUrl = process.env.DATABASE_URL;
-  // Without a DB we cannot enforce idempotency, so report "not inserted" and
-  // let the caller skip conversion fires rather than risk double-counting.
-  if (!dbUrl) return { inserted: false, referralCode: null };
-
-  try {
-    const sql = neon(dbUrl);
-    let referralCode: string | null = null;
-    let lineItems: LineItemSummary[] = [];
-
-    // Fetch the Square order to get referenceId (referral code) and line items
-    if (squareOrderId) {
-      try {
-        const client = getSquareClient();
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        const orderRes = await (client as any).orders.get({ orderId: squareOrderId });
-        const order = orderRes?.order;
-
-        // Extract referral code from referenceId (format: "ref:CODE")
-        if (order?.referenceId?.startsWith("ref:")) {
-          referralCode = order.referenceId.slice(4);
-        }
-
-        // Summarize line items
-        if (order?.lineItems) {
-          // eslint-disable-next-line @typescript-eslint/no-explicit-any
-          lineItems = order.lineItems.map((li: any) => ({
-            name: li.name || "Unknown",
-            category: li.catalogObjectId ? "item" : "custom",
-            quantity: Number(li.quantity || 1),
-            priceCents: Number(li.totalMoney?.amount || 0),
-          }));
-        }
-      } catch (e) {
-        console.error("[Webhook] Failed to fetch Square order:", e);
-      }
-    }
-
-    // Insert the order record. ON CONFLICT ... DO NOTHING RETURNING id yields a
-    // row ONLY on the first delivery for this payment; retries and repeat
-    // payment.updated events conflict on the unique square_payment_id and
-    // return nothing. This "row created" signal is the idempotency gate the
-    // caller uses to fire conversions exactly once.
-    const insertedRows = await sql`
-      INSERT INTO orders (square_payment_id, square_order_id, amount_cents, currency, customer_email, referral_code, line_items, status)
-      VALUES (${squarePaymentId}, ${squareOrderId ?? null}, ${amountCents}, ${currency}, ${customerEmail ?? null}, ${referralCode}, ${JSON.stringify(lineItems)}, 'completed')
-      ON CONFLICT (square_payment_id) DO NOTHING
-      RETURNING id
-    `;
-    const inserted = insertedRows.length > 0;
-
-    // Record referral commission only when this delivery created the order, so
-    // retries do not book duplicate commissions. Isolated so a referral error
-    // cannot flip the inserted signal the conversion gate depends on.
-    if (inserted && referralCode) {
-      try {
-        const affiliateRows = await sql`
-          SELECT commission_pct FROM affiliates WHERE code = ${referralCode} AND status = 'active'
-        `;
-        if (affiliateRows.length > 0) {
-          const commissionPct = affiliateRows[0].commission_pct as number;
-          const commissionCents = Math.round(amountCents * commissionPct / 100);
-          await sql`
-            INSERT INTO referral_events (affiliate_code, event_type, order_id, order_amount_cents, commission_cents, email)
-            VALUES (${referralCode}, 'purchase', ${squareOrderId ?? null}, ${amountCents}, ${commissionCents}, ${customerEmail ?? null})
-          `;
-        }
-      } catch (e) {
-        console.error("[Webhook] Referral record error:", e);
-      }
-    }
-
-    return { inserted, referralCode };
-  } catch (e) {
-    console.error("[Webhook] DB save error:", e);
-    return { inserted: false, referralCode: null };
+  if (!dbUrl) {
+    throw new Error("DATABASE_URL is not set; webhook idempotency is unavailable");
   }
+
+  const sql = neon(dbUrl);
+  const { referralCode, lineItems, memberId, redemptionId } =
+    await getSquareOrderContext(squareOrderId);
+
+  // A redemption is merely reserved when the payment link is created. Only a
+  // signed COMPLETED payment may finalize it, and the order metadata binds the
+  // redemption to the same authenticated member that reserved it.
+  if (memberId != null && redemptionId != null) {
+    const redemptionRows = await sql`
+      UPDATE member_redemptions AS redemption
+      SET status = 'used', used_at = COALESCE(redemption.used_at, NOW())
+      FROM members AS member
+      WHERE redemption.id = ${redemptionId}
+        AND redemption.member_code = member.code
+        AND member.id = ${memberId}
+        AND redemption.status IN ('pending', 'reserved', 'used')
+      RETURNING redemption.id
+    `;
+    if (redemptionRows.length === 0) {
+      throw new Error("Completed payment redemption/member binding did not match");
+    }
+  }
+
+  // Loyalty credit is based only on Square's completed payment amount. A
+  // server-set member_id in Square order metadata establishes ownership, and a
+  // unique payment id makes retries idempotent.
+  const pointsToAward = Math.min(
+    Math.floor(amountCents / 100),
+    MAX_POINTS_PER_PAYMENT,
+  );
+  if (memberId != null && pointsToAward > 0) {
+    await sql`
+      CREATE TABLE IF NOT EXISTS member_square_purchase_events (
+        id SERIAL PRIMARY KEY,
+        member_id INTEGER NOT NULL,
+        square_payment_id VARCHAR(100) NOT NULL UNIQUE,
+        square_order_id VARCHAR(100),
+        points_awarded INTEGER NOT NULL,
+        earned_at TIMESTAMPTZ DEFAULT NOW() NOT NULL
+      )
+    `;
+    await sql`
+      WITH new_event AS (
+        INSERT INTO member_square_purchase_events (
+          member_id,
+          square_payment_id,
+          square_order_id,
+          points_awarded
+        )
+        SELECT id, ${squarePaymentId}, ${squareOrderId ?? null}, ${pointsToAward}
+        FROM members
+        WHERE id = ${memberId}
+        ON CONFLICT (square_payment_id) DO NOTHING
+        RETURNING member_id, points_awarded
+      )
+      UPDATE members AS member
+      SET points_balance = member.points_balance + new_event.points_awarded
+      FROM new_event
+      WHERE member.id = new_event.member_id
+    `;
+  }
+
+  // The order insert is the idempotency gate. If a referral applies, record it
+  // in the same statement/transaction so any DB failure rolls both writes back
+  // and reaches the route's 500 response rather than masquerading as a 200.
+  if (referralCode) {
+    const rows = await sql`
+      WITH inserted_order AS (
+        INSERT INTO orders (square_payment_id, square_order_id, amount_cents, currency, customer_email, referral_code, line_items, status)
+        VALUES (${squarePaymentId}, ${squareOrderId ?? null}, ${amountCents}, ${currency}, ${customerEmail ?? null}, ${referralCode}, ${JSON.stringify(lineItems)}, 'completed')
+        ON CONFLICT (square_payment_id) DO NOTHING
+        RETURNING id
+      ), inserted_referral AS (
+        INSERT INTO referral_events (affiliate_code, event_type, order_id, order_amount_cents, commission_cents, email)
+        SELECT
+          ${referralCode},
+          'purchase',
+          ${squareOrderId ?? null},
+          ${amountCents},
+          ROUND(${amountCents} * affiliate.commission_pct / 100.0)::integer,
+          ${customerEmail ?? null}
+        FROM affiliates AS affiliate
+        CROSS JOIN inserted_order
+        WHERE affiliate.code = ${referralCode}
+          AND affiliate.status = 'active'
+        RETURNING id
+      )
+      SELECT EXISTS (SELECT 1 FROM inserted_order) AS inserted
+    `;
+    return rows[0]?.inserted ? "inserted" : "duplicate";
+  }
+
+  const insertedRows = await sql`
+    INSERT INTO orders (square_payment_id, square_order_id, amount_cents, currency, customer_email, referral_code, line_items, status)
+    VALUES (${squarePaymentId}, ${squareOrderId ?? null}, ${amountCents}, ${currency}, ${customerEmail ?? null}, NULL, ${JSON.stringify(lineItems)}, 'completed')
+    ON CONFLICT (square_payment_id) DO NOTHING
+    RETURNING id
+  `;
+  return insertedRows.length > 0 ? "inserted" : "duplicate";
 }
 
 // ─── Route Handler ───────────────────────────────────────────────────
@@ -298,20 +387,34 @@ export async function POST(req: NextRequest) {
     const signatureKey = process.env.SQUARE_WEBHOOK_SIGNATURE_KEY;
     const notificationUrl = process.env.SQUARE_WEBHOOK_URL || "https://www.wellnessweekendak.com/api/square/webhook";
 
-    // Validate Square signature to ensure event authenticity
-    if (signatureKey && signature) {
-      const isValid = WebhooksHelper.verifySignature({
+    // Payment events must always be authenticated. A missing server key is a
+    // deployment error, never permission to accept unsigned order data.
+    if (!signatureKey) {
+      console.error("[Webhook] SQUARE_WEBHOOK_SIGNATURE_KEY is not configured");
+      return NextResponse.json(
+        { error: "Webhook verification is not configured" },
+        { status: 500 },
+      );
+    }
+    if (!signature) {
+      console.error("[Webhook] Missing Square signature");
+      return NextResponse.json({ error: "Invalid signature" }, { status: 403 });
+    }
+
+    let isValid = false;
+    try {
+      isValid = await WebhooksHelper.verifySignature({
         requestBody: rawBody,
         signatureHeader: signature,
         signatureKey,
-        notificationUrl
+        notificationUrl,
       });
-      if (!isValid) {
-        console.error("[Webhook] Invalid Square signature");
-        return NextResponse.json({ error: "Invalid signature" }, { status: 403 });
-      }
-    } else if (!signatureKey) {
-      console.warn("[Webhook] Missing SQUARE_WEBHOOK_SIGNATURE_KEY, skipping validation (unsafe)");
+    } catch (error) {
+      console.error("[Webhook] Square signature verification failed:", error);
+    }
+    if (!isValid) {
+      console.error("[Webhook] Invalid Square signature");
+      return NextResponse.json({ error: "Invalid signature" }, { status: 403 });
     }
 
     const payload: SquareWebhookPayload = JSON.parse(rawBody);
@@ -325,6 +428,9 @@ export async function POST(req: NextRequest) {
     const payment = payload.data?.object?.payment;
     if (!payment || payment.status !== "COMPLETED") {
       return NextResponse.json({ received: true });
+    }
+    if (!payment.id) {
+      throw new Error("Completed Square payment is missing its id");
     }
 
     const amountCents = payment.amount_money?.amount || 0;
@@ -355,8 +461,14 @@ export async function POST(req: NextRequest) {
     // this delivery actually created the row. Square retries deliveries and a
     // payment emits multiple payment.updated events; gating on the insert keeps
     // every Meta/TikTok/GA4 conversion to exactly one per order.
-    const { inserted } = await saveOrderToDB(payment.id!, orderId, amountCents, currency, email);
-    if (!inserted) {
+    const outcome = await saveOrderToDB(
+      payment.id,
+      orderId,
+      amountCents,
+      currency,
+      email,
+    );
+    if (outcome === "duplicate") {
       return NextResponse.json({ received: true, duplicate: true });
     }
 

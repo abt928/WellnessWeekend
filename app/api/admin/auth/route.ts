@@ -16,11 +16,11 @@ const ROLE_PASSWORDS: Array<{ env: string; role: AdminRole }> = [
 const VALID_ROLES = new Set<AdminRole>(["owner", "alice", "chris"]);
 
 function getAdminSessionSecret(): string {
-  return (
-    process.env.ADMIN_SESSION_SECRET ||
-    process.env.NEXTAUTH_SECRET ||
-    "ww-admin-secret"
-  );
+  const secret = process.env.ADMIN_SESSION_SECRET || process.env.NEXTAUTH_SECRET;
+  if (!secret) {
+    throw new Error("ADMIN_SESSION_SECRET is not configured");
+  }
+  return secret;
 }
 
 /**
@@ -90,35 +90,48 @@ export async function GET(req: NextRequest) {
 }
 
 export async function POST(req: NextRequest) {
+  let password: unknown;
   try {
-    const { password } = await req.json();
-
-    let role: AdminRole | null = null;
-
-    for (const entry of ROLE_PASSWORDS) {
-      const pw = process.env[entry.env];
-      if (pw && password === pw) {
-        role = entry.role;
-        break;
-      }
-    }
-
-    if (!role) {
-      return NextResponse.json({ error: "Invalid password" }, { status: 401 });
-    }
-
-    const res = NextResponse.json({ success: true, role });
-    res.cookies.set(COOKIE_NAME, buildAdminSession(role), {
-      httpOnly: true,
-      secure: process.env.NODE_ENV === "production",
-      sameSite: "lax",
-      path: "/",
-      maxAge: 60 * 60 * 24,
-    });
-    return res;
+    const body = (await req.json()) as { password?: unknown };
+    password = body?.password;
   } catch {
     return NextResponse.json({ error: "Bad request" }, { status: 400 });
   }
+
+  if (typeof password !== "string" || password.length === 0) {
+    return NextResponse.json({ error: "Bad request" }, { status: 400 });
+  }
+
+  try {
+    getAdminSessionSecret();
+  } catch (error) {
+    console.error("[admin/auth] Session configuration error:", error);
+    return NextResponse.json({ error: "Authentication unavailable" }, { status: 500 });
+  }
+
+  let role: AdminRole | null = null;
+
+  for (const entry of ROLE_PASSWORDS) {
+    const pw = process.env[entry.env];
+    if (pw && password === pw) {
+      role = entry.role;
+      break;
+    }
+  }
+
+  if (!role) {
+    return NextResponse.json({ error: "Invalid password" }, { status: 401 });
+  }
+
+  const res = NextResponse.json({ success: true, role });
+  res.cookies.set(COOKIE_NAME, buildAdminSession(role), {
+    httpOnly: true,
+    secure: process.env.NODE_ENV === "production",
+    sameSite: "lax",
+    path: "/",
+    maxAge: 60 * 60 * 24,
+  });
+  return res;
 }
 
 export async function DELETE() {

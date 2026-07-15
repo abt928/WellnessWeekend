@@ -1,7 +1,16 @@
 "use client";
-import { useEffect, useState, useCallback, useRef } from "react";
+
+import { useCallback, useEffect, useRef, useState } from "react";
 import { CloseIcon } from "@/components/Icons";
 import { useFocusTrap } from "@/lib/useFocusTrap";
+
+const links = [
+  { href: "#experience", label: "Experience" },
+  { href: "#store", label: "Passes" },
+  { href: "#schedule", label: "Schedule" },
+  { href: "#visit", label: "Plan your trip" },
+  { href: "#faq", label: "FAQ" },
+];
 
 export default function Navigation() {
   const [scrolled, setScrolled] = useState(false);
@@ -9,89 +18,99 @@ export default function Navigation() {
   const menuRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
-    const handler = () => setScrolled(window.scrollY > 50);
-    window.addEventListener("scroll", handler, { passive: true });
-    return () => window.removeEventListener("scroll", handler);
+    const update = () => setScrolled(window.scrollY > 28);
+    update();
+    window.addEventListener("scroll", update, { passive: true });
+    return () => window.removeEventListener("scroll", update);
   }, []);
 
   const closeMenu = useCallback(() => setMenuOpen(false), []);
-
-  // Trap focus and lock body scroll while the drawer is open
   useFocusTrap(menuOpen, menuRef);
 
-  // Escape closes the drawer
   useEffect(() => {
     if (!menuOpen) return;
-    const onKey = (e: KeyboardEvent) => { if (e.key === "Escape") closeMenu(); };
-    window.addEventListener("keydown", onKey);
-    return () => window.removeEventListener("keydown", onKey);
-  }, [menuOpen, closeMenu]);
+    const onKeyDown = (event: KeyboardEvent) => {
+      if (event.key === "Escape") closeMenu();
+    };
+    window.addEventListener("keydown", onKeyDown);
+    return () => window.removeEventListener("keydown", onKeyDown);
+  }, [closeMenu, menuOpen]);
 
   return (
-    <nav className={`nav${scrolled ? " scrolled" : ""}${menuOpen ? " menu-open" : ""}`}>
-      <div className="nav-logo">
-        Wellness Weekend
-      </div>
+    <nav
+      className={`ww-nav${scrolled ? " scrolled" : ""}${menuOpen ? " menu-open" : ""}`}
+      aria-label="Primary navigation"
+    >
+      <a className="ww-nav-brand" href="#main" aria-label="Wellness Weekend home">
+        <span>Wellness</span>
+        <span>Weekend</span>
+      </a>
 
-      {/* Desktop nav links */}
-      <ul className="nav-links">
-        <li><a href="#schedule">Schedule</a></li>
-        <li><a href="#gallery">Gallery</a></li>
-        <li><a href="#alaska">The Land</a></li>
-        <li><a href="#store">Tickets</a></li>
-        <li><a href="#faq">FAQ</a></li>
+      <ul className="ww-nav-links">
+        {links.map((link) => (
+          <li key={link.href}>
+            <a href={link.href}>{link.label}</a>
+          </li>
+        ))}
       </ul>
 
-      {/* Desktop CTA — surfaces only after first scroll past hero */}
-      {scrolled && (
-        <a href="#store" className="nav-cta-link">
-          <button className="nav-cta">Reserve Your Spot</button>
-        </a>
-      )}
+      <a className="ww-nav-cta" href="#store" data-cta="nav_choose_pass">
+        Choose a pass
+      </a>
 
-      {/* Mobile hamburger button */}
       <button
-        className="nav-hamburger"
-        onClick={() => setMenuOpen((prev) => !prev)}
-        aria-label={menuOpen ? "Close menu" : "Open menu"}
+        type="button"
+        className="ww-nav-menu-button"
+        onClick={() => setMenuOpen((open) => !open)}
+        aria-label={menuOpen ? "Close navigation" : "Open navigation"}
         aria-expanded={menuOpen}
-        aria-controls="mobile-nav-menu"
+        aria-controls="ww-mobile-menu"
       >
-        <span className="hamburger-line" />
-        <span className="hamburger-line" />
-        <span className="hamburger-line" />
+        <span />
+        <span />
       </button>
 
-      {/* Mobile slide-out menu */}
       {menuOpen && (
-        <div className="mobile-menu-overlay" onClick={closeMenu}>
+        <div className="ww-mobile-menu-overlay" onClick={closeMenu}>
           <div
-            id="mobile-nav-menu"
-            className="mobile-menu"
-            onClick={(e) => e.stopPropagation()}
+            id="ww-mobile-menu"
+            className="ww-mobile-menu"
             ref={menuRef}
             role="dialog"
             aria-modal="true"
             aria-label="Site navigation"
+            onClick={(event) => event.stopPropagation()}
           >
-            <div className="mobile-menu-header">
-              <div className="nav-logo">
-                Wellness Weekend
-              </div>
-              <button className="mobile-menu-close" onClick={closeMenu} aria-label="Close menu">
+            <div className="ww-mobile-menu-header">
+              <span className="ww-nav-brand" aria-hidden="true">
+                <span>Wellness</span>
+                <span>Weekend</span>
+              </span>
+              <button
+                type="button"
+                className="ww-mobile-menu-close"
+                onClick={closeMenu}
+                aria-label="Close navigation"
+              >
                 <CloseIcon size={20} />
               </button>
             </div>
-            <ul className="mobile-menu-links">
-              <li><a href="#schedule" onClick={closeMenu}>Schedule</a></li>
-              <li><a href="#store" onClick={closeMenu}>Tickets</a></li>
-              <li><a href="#gallery" onClick={closeMenu}>Gallery</a></li>
-              <li><a href="#alaska" onClick={closeMenu}>The Land</a></li>
-              <li><a href="#faq" onClick={closeMenu}>FAQ</a></li>
-              <li><a href="#get-involved" onClick={closeMenu}>Get Involved</a></li>
+            <ul className="ww-mobile-menu-links">
+              {links.map((link) => (
+                <li key={link.href}>
+                  <a href={link.href} onClick={closeMenu}>
+                    {link.label}
+                  </a>
+                </li>
+              ))}
             </ul>
-            <a href="#store" className="mobile-menu-cta" onClick={closeMenu}>
-              Reserve Your Spot
+            <a
+              className="ww-mobile-menu-cta"
+              href="#store"
+              onClick={closeMenu}
+              data-cta="menu_choose_pass"
+            >
+              Choose a pass
             </a>
           </div>
         </div>

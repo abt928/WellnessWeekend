@@ -85,11 +85,11 @@ export async function POST(req: NextRequest) {
 
   try {
     await sql`INSERT INTO class_reservations (class_key, attendee_name, attendee_email) VALUES (${classKey}, ${name}, ${email})`;
-  } catch (e: any) {
-    if (e?.message?.includes("unique")) {
+  } catch (error: unknown) {
+    if (error instanceof Error && error.message.includes("unique")) {
       return NextResponse.json({ error: "You already have a reservation for this slot" }, { status: 409 });
     }
-    throw e;
+    throw error;
   }
 
   return NextResponse.json({ success: true, label: CLASSES[classKey].label });

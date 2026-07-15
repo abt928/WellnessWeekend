@@ -22,6 +22,9 @@ export default function LeadCapture() {
       setStatus("success");
       setEmail("");
 
+      // Mirror the exit-intent modal's key so ConversionNudges won't re-ask a fresh subscriber
+      try { localStorage.setItem("ww-subscribed", "1"); } catch { /* noop */ }
+
       // Fire unified tracking: both pixels + server CAPI with email for matching
       trackLead({ email, description: "lead_capture" });
     } catch {
@@ -40,9 +43,9 @@ export default function LeadCapture() {
           Don&apos;t miss this year&apos;s gathering.
         </h2>
         <p className="lead-capture-desc">
-          Join 200+ seekers for three days of transformation, healing, and deep connection
-          under Alaska&apos;s midnight sun. Get early access to tickets, schedule announcements,
-          and exclusive updates.
+          Join a circle of up to 200 seekers for three days of ceremony, sound healing,
+          and deep connection under Alaska&apos;s midnight sun. Get early access to schedule
+          announcements and the final details.
         </p>
 
         {status === "success" ? (
@@ -55,6 +58,7 @@ export default function LeadCapture() {
             <input
               type="email"
               placeholder="Enter your email"
+              aria-label="Email address"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               required

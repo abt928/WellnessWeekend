@@ -24,6 +24,7 @@ interface TrackingPayload {
   hashedPhone?: string;
   phone?: string;
   description?: string;
+  transactionId?: string; // GA4 purchase dedup key (Square order id)
   url?: string;
   userAgent?: string;
   fbc?: string;
@@ -44,6 +45,80 @@ async function sha256(input: string): Promise<string> {
   const hashBuffer = await crypto.subtle.digest("SHA-256", data);
   const hashArray = Array.from(new Uint8Array(hashBuffer));
   return hashArray.map((b) => b.toString(16).padStart(2, "0")).join("");
+}
+
+/**
+ * Hash a value only if it is not already a SHA-256 hex digest. Newer clients
+ * pre-hash external_id so it matches the browser pixels; older clients still
+ * send it raw. A 64-char hex string is treated as already hashed.
+ */
+async function ensureHashed(value: string): Promise<string> {
+  return /^[a-f0-9]{64}$/i.test(value) ? value.toLowerCase() : await sha256(value);
+}
+
+// ─── Abuse controls ──────────────────────────────────────────────────
+
+/** Hosts permitted to POST events. sendBeacon may omit Origin/Referer, which
+ *  is handled separately in isAllowedOrigin (missing header = allowed). */
+const ALLOWED_HOSTS = new Set([
+  "wellnessweekendak.com",
+  "www.wellnessweekendak.com",
+  "localhost",
+  "127.0.0.1",
+]);
+
+/**
+ * Reject cross-origin abuse. Returns false ONLY when an Origin (or Referer
+ * fallback) is present and its host is not allow-listed. Requests with no
+ * Origin/Referer are allowed — sendBeacon can legitimately omit both, and
+ * dropping them would break real tracking. Fails open on unparseable headers.
+ */
+function isAllowedOrigin(req: NextRequest): boolean {
+  const source = req.headers.get("origin") || req.headers.get("referer");
+  if (!source) return true;
+  try {
+    return ALLOWED_HOSTS.has(new URL(source).hostname);
+  } catch {
+    return true;
+  }
+}
+
+// Light per-IP sliding-window limiter. Module-level Map survives across
+// invocations under Fluid Compute warm reuse; a cold start simply resets it.
+const RATE_LIMIT_MAX = 60;
+const RATE_LIMIT_WINDOW_MS = 60_000;
+const rateLimitHits = new Map<string, number[]>();
+
+/**
+ * Sliding-window per-IP limiter, 60 events/min. Returns true when the request
+ * is allowed. Fail-open by contract: any internal error returns true so a
+ * limiter bug can never block a real conversion event.
+ */
+function checkRateLimit(ip: string): boolean {
+  try {
+    const now = Date.now();
+    const windowStart = now - RATE_LIMIT_WINDOW_MS;
+
+    // Opportunistic sweep so the Map cannot grow without bound across many IPs.
+    if (rateLimitHits.size > 10_000) {
+      for (const [key, times] of rateLimitHits) {
+        if (times.length === 0 || times[times.length - 1] <= windowStart) {
+          rateLimitHits.delete(key);
+        }
+      }
+    }
+
+    const hits = (rateLimitHits.get(ip) || []).filter((t) => t > windowStart);
+    if (hits.length >= RATE_LIMIT_MAX) {
+      rateLimitHits.set(ip, hits);
+      return false;
+    }
+    hits.push(now);
+    rateLimitHits.set(ip, hits);
+    return true;
+  } catch {
+    return true;
+  }
 }
 
 // ─── TikTok Events API ──────────────────────────────────────────────
@@ -95,13 +170,18 @@ async function sendTikTokEvent(payload: TrackingPayload, ip: string) {
   }
 
   const ttHashedExternalId = payload.externalId
-    ? await sha256(payload.externalId) : undefined;
+    ? await ensureHashed(payload.externalId) : undefined;
 
   const body = {
     pixel_code: pixelId,
     event: tiktokEvent,
     event_id: payload.eventId,
     timestamp: new Date().toISOString(),
+    // Test Events mode: routes this event to the TikTok Events Manager test tab
+    // instead of live optimization when TIKTOK_TEST_EVENT_CODE is set.
+    ...(process.env.TIKTOK_TEST_EVENT_CODE
+      ? { test_event_code: process.env.TIKTOK_TEST_EVENT_CODE }
+      : {}),
     context: {
       user_agent: payload.userAgent || "",
       ip: ip,
@@ -186,7 +266,7 @@ async function sendMetaEvent(payload: TrackingPayload, ip: string) {
 
   // External ID for cross-device matching (Meta requires SHA-256 hash)
   if (payload.externalId) {
-    const hashedExternalId = await sha256(payload.externalId);
+    const hashedExternalId = await ensureHashed(payload.externalId);
     userData.external_id = [hashedExternalId];
   }
 
@@ -227,7 +307,14 @@ async function sendMetaEvent(payload: TrackingPayload, ip: string) {
       {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ data: [eventData] }),
+        // Test Events mode: routes this event to the Meta Events Manager test
+        // tab instead of live optimization when META_TEST_EVENT_CODE is set.
+        body: JSON.stringify({
+          data: [eventData],
+          ...(process.env.META_TEST_EVENT_CODE
+            ? { test_event_code: process.env.META_TEST_EVENT_CODE }
+            : {}),
+        }),
       }
     );
 
@@ -261,6 +348,12 @@ async function sendGA4Event(payload: TrackingPayload) {
 
   const gaEvent = gaEventMap[payload.event] || payload.event;
 
+  // Purchases are owned by the browser gtag and backstopped by the Square
+  // webhook's Measurement Protocol fire (both carry the same transaction_id).
+  // Skip the /api/tracking purchase relay so GA4 does not count the same order
+  // a third time.
+  if (gaEvent === "purchase") return;
+
   // Build items array for GA4 (required for ecommerce events)
   const items = payload.contents?.map((c) => ({
     item_id: c.contentId,
@@ -280,6 +373,9 @@ async function sendGA4Event(payload: TrackingPayload) {
   if (items) eventParams.items = items;
   if (payload.description) eventParams.event_category = payload.description;
   if (payload.contentName) eventParams.item_name = payload.contentName;
+  // GA4 dedupes purchases by transaction_id (Square order id). Purchase relays
+  // return early above, but the mapping stays so any GA4 fire carries the id.
+  if (payload.transactionId) eventParams.transaction_id = payload.transactionId;
 
   // Use externalId as client_id for cross-device, or generate one
   const clientId = payload.externalId || `server_${Date.now()}`;
@@ -322,13 +418,10 @@ async function sendGA4Event(payload: TrackingPayload) {
 
 export async function POST(req: NextRequest) {
   try {
-    const payload: TrackingPayload = await req.json();
-
-    if (!payload.event) {
-      return NextResponse.json(
-        { error: "Event name required" },
-        { status: 400 }
-      );
+    // Abuse control: reject events from a foreign Origin/Referer host. Missing
+    // headers are allowed so sendBeacon (which can omit them) still works.
+    if (!isAllowedOrigin(req)) {
+      return NextResponse.json({ error: "Forbidden" }, { status: 403 });
     }
 
     // Get client IP from Vercel/proxy headers
@@ -337,6 +430,21 @@ export async function POST(req: NextRequest) {
       req.headers.get("x-real-ip") ||
       req.headers.get("cf-connecting-ip") ||
       "0.0.0.0";
+
+    // Abuse control: light per-IP rate limit. checkRateLimit fails open on any
+    // internal error, so a limiter fault forwards the event rather than dropping it.
+    if (!checkRateLimit(ip)) {
+      return NextResponse.json({ error: "Rate limited" }, { status: 429 });
+    }
+
+    const payload: TrackingPayload = await req.json();
+
+    if (!payload.event) {
+      return NextResponse.json(
+        { error: "Event name required" },
+        { status: 400 }
+      );
+    }
 
     // Fan out to all 3 APIs concurrently
     await Promise.allSettled([

@@ -8,7 +8,7 @@ const faqs = [
   },
   {
     q: "What's the weather like in August?",
-    a: "Sutton, Alaska enjoys long summer days with temperatures between 55–75°F. Evenings can cool to 40–50°F. The midnight sun provides nearly 20 hours of daylight; bring an eye mask for sleeping!",
+    a: "Sutton, Alaska enjoys long summer days with temperatures between 55-75°F. Evenings can cool to 40-50°F. The midnight sun provides nearly 20 hours of daylight; bring an eye mask for sleeping!",
   },
   {
     q: "How do I get to the festival?",
@@ -24,7 +24,7 @@ const faqs = [
   },
   {
     q: "Is this suitable for beginners?",
-    a: "Absolutely. Wellness Weekend welcomes all experience levels. Our practitioners create safe, inclusive spaces for both seasoned practitioners and those just beginning their healing journey.",
+    a: "Absolutely. Wellness Weekend welcomes all experience levels. Our practitioners create safe, inclusive spaces for both seasoned practitioners and those just beginning their healing practice.",
   },
   {
     q: "Will there be cell service?",
@@ -44,7 +44,7 @@ const faqs = [
   },
   {
     q: "Where can I camp nearby if on-site is full?",
-    a: "On-site camping passes are nearly sold out. Nearby options include: King Mountain State Recreation Site (15 min east on Glenn Hwy — tent sites, pit toilets, river access), Matanuska River Park in Palmer (20 min west — full hookups available), Long Lake State Recreation Site (25 min — lakeside tent camping), and several private RV parks in Palmer and Wasilla (30–40 min). We recommend booking your site early — August in the Valley fills up fast.",
+    a: "On-site camping passes are sold out. Nearby options include: King Mountain State Recreation Site (15 min east on Glenn Hwy: tent sites, pit toilets, river access), Matanuska River Park in Palmer (20 min west: full hookups available), Long Lake State Recreation Site (25 min: lakeside tent camping), and several private RV parks in Palmer and Wasilla (30-40 min). We recommend booking your site early. August in the Valley fills up fast.",
   },
 ];
 

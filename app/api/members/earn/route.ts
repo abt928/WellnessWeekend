@@ -6,6 +6,12 @@ export const dynamic = "force-dynamic";
 
 // 1 point per dollar spent
 const POINTS_PER_DOLLAR = 1;
+// Abuse brakes: `value` arrives from the client (no server-side Square order
+// verification yet), so clamp what a single checkout can mint and how often.
+// The durable fix is awarding points from the Square webhook instead.
+const MAX_POINTS_PER_CHECKOUT = 1500;
+const MAX_EARN_EVENTS_PER_DAY = 2;
+const CHECKOUT_FRESHNESS_MS = 2 * 60 * 60 * 1000; // matches ThankYouTracker window
 
 export async function POST(req: NextRequest) {
   const memberId = getMemberIdFromRequest(req);
@@ -23,7 +29,18 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ ok: false, error: "Invalid payload" }, { status: 400 });
     }
 
-    const pointsToAward = Math.floor(value * POINTS_PER_DOLLAR);
+    const now = Date.now();
+    if (
+      checkoutTimestamp > now + 5 * 60 * 1000 ||
+      checkoutTimestamp < now - CHECKOUT_FRESHNESS_MS
+    ) {
+      return NextResponse.json({ ok: false, error: "Checkout expired" }, { status: 400 });
+    }
+
+    const pointsToAward = Math.min(
+      Math.floor(value * POINTS_PER_DOLLAR),
+      MAX_POINTS_PER_CHECKOUT
+    );
     if (pointsToAward <= 0) {
       return NextResponse.json({ ok: true, pointsAwarded: 0 });
     }
@@ -51,6 +68,16 @@ export async function POST(req: NextRequest) {
     `;
     if (existing.length > 0) {
       return NextResponse.json({ ok: true, pointsAwarded: 0, duplicate: true });
+    }
+
+    // Daily cap: a real shopper rarely completes more than a couple of
+    // checkouts in a day; this bounds replay with fabricated timestamps.
+    const recent = await sql`
+      SELECT COUNT(*)::int AS n FROM member_purchase_events
+      WHERE member_id = ${memberId} AND earned_at > NOW() - INTERVAL '24 hours'
+    `;
+    if ((recent[0]?.n ?? 0) >= MAX_EARN_EVENTS_PER_DAY) {
+      return NextResponse.json({ ok: true, pointsAwarded: 0, capped: true });
     }
 
     // Record the event

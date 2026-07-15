@@ -16,7 +16,7 @@ export const practitioners: Practitioner[] = [
     name: "Avalon Starling",
     role: "Master Sound Healer & Festival Director",
     offering: "Lionsgate Activation · Floating Sound Bath",
-    bio: "Avalon Starling is a master sound healer and the founder and director of Wellness Weekend. Her Lionsgate Activation on the morning of August 8th invites participants to float in an aerial silk hammock or on the lake by paddleboard — a ceremony of sound, embodied presence, and light held under the Alaskan sky.",
+    bio: "Avalon Starling is a master sound healer and the founder and director of Wellness Weekend. Her Lionsgate Activation on the morning of August 8th invites participants to float in an aerial silk hammock or on the lake by paddleboard: a ceremony of sound, embodied presence, and light held under the Alaskan sky.",
   },
   {
     slug: "ashleigh",
@@ -30,7 +30,7 @@ export const practitioners: Practitioner[] = [
     name: "Peace Pixy",
     role: "Handpan Artist & Sound Healer",
     offering: "Floating Sound Bath · Sound Journey",
-    bio: "Peace Pixy is a handpan musician and ambient sound healer whose performances blur the line between music and meditation. Their floating sound baths on the lake are a Wellness Weekend signature — healing tones carried across the water under the Alaskan sky.",
+    bio: "Peace Pixy is a handpan musician and ambient sound healer whose performances blur the line between music and meditation. Their floating sound baths on the lake are a Wellness Weekend signature: healing tones carried across the water under the Alaskan sky.",
   },
   {
     slug: "logan-forehand",
@@ -44,7 +44,7 @@ export const practitioners: Practitioner[] = [
     name: "Shawn",
     role: "Phototherapy & Quantum Wellness Practitioner",
     offering: "Quantum Light Activation",
-    bio: "Shawn is a biohacking and phototherapy specialist who works at the intersection of light, frequency, and cellular healing. His Quantum Light Activation session uses evidence-informed light protocols to support energy, recovery, and nervous system regulation.",
+    bio: "Shawn is a biohacking and phototherapy specialist who works where light, frequency, and cellular healing meet. His Quantum Light Activation session uses evidence-informed light protocols to support energy, recovery, and nervous system regulation.",
   },
   {
     slug: "alice",
@@ -58,7 +58,7 @@ export const practitioners: Practitioner[] = [
     name: "Jenni",
     role: "Yoga & Movement Instructor",
     offering: "Feel Good Flow",
-    bio: "Jenni's Feel Good Flow is exactly what it sounds like — a joyful, feel-good yoga class designed to get you out of your head and into your body. Open to all levels, her sessions blend fluid movement, breath, and music into a practice that leaves you lighter than when you arrived.",
+    bio: "Jenni's Feel Good Flow is exactly what it sounds like: a joyful, feel-good yoga class designed to get you out of your head and into your body. Open to all levels, her sessions blend fluid movement, breath, and music into a practice that leaves you lighter than when you arrived.",
   },
   {
     slug: "az",
@@ -72,14 +72,14 @@ export const practitioners: Practitioner[] = [
     name: "J Brave",
     role: "Sound Alchemist & Keys Artist",
     offering: "Keys to Kreation · Ecstatic Dance",
-    bio: "J Brave is a visionary keys artist and sonic alchemist who performs at the intersection of music, consciousness, and creative activation. Keys to Kreation is his signature immersive experience — two hours of live improvisation, frequencies, and presence designed to unlock the creative infinite within you.",
+    bio: "J Brave is a visionary keys artist and sonic alchemist who performs where music, consciousness, and creative activation meet. Keys to Kreation is his signature immersive experience: two hours of live improvisation, frequencies, and presence designed to open the creative infinite within you.",
   },
   {
     slug: "jon",
     name: "Jon",
     role: "Yoga Therapist & MFR Practitioner",
     offering: "Roots for Recovery",
-    bio: "Jon is a yoga therapist and myofascial release specialist whose Roots for Recovery class was built for people who carry their stress in their body — which is most of us. Long-held restorative poses, MFR props, and a closing Tibetan bowl sound bath make this one of the weekend's most deeply healing offerings.",
+    bio: "Jon is a yoga therapist and myofascial release specialist whose Roots for Recovery class was built for people who carry their stress in their body, which is most of us. Long-held restorative poses, MFR props, and a closing Tibetan bowl sound bath make this one of the weekend's most deeply healing offerings.",
   },
   {
     slug: "white-eagle",
@@ -117,7 +117,7 @@ export const practitioners: Practitioner[] = [
     name: "Shawn Zuke",
     role: "DJ & Music Producer",
     offering: "Live Music · Ecstatic Dance",
-    bio: "Shawn Zuke is a DJ and music producer known for blending deep electronic soundscapes with healing frequencies. His sets move seamlessly between ceremony and dancefloor, creating a sonic container where transformation feels inevitable.",
+    bio: "Shawn Zuke is a DJ and music producer known for blending deep electronic soundscapes with healing frequencies. His sets move fluidly between ceremony and dancefloor, creating a sonic container where transformation feels inevitable.",
     isMusician: true,
   },
   {
@@ -125,7 +125,7 @@ export const practitioners: Practitioner[] = [
     name: "S7ngrae",
     role: "Artist & Performer",
     offering: "Live Music · Wellness Weekend",
-    bio: "S7ngrae brings a unique voice to the Wellness Weekend stage — an artist whose performances sit at the intersection of music, movement, and conscious expression.",
+    bio: "S7ngrae brings a unique voice to the Wellness Weekend stage: an artist whose performances sit where music, movement, and conscious expression meet.",
     isMusician: true,
   },
   {
@@ -133,7 +133,7 @@ export const practitioners: Practitioner[] = [
     name: "Dixie",
     role: "Meditation Teacher & Somatic Guide",
     offering: "Guided Meditation · Labyrinth Garden",
-    bio: "Dixie is a certified meditation teacher specializing in somatic and bilateral techniques that guide the nervous system into deep, grounded stillness. Her labyrinth garden sessions are one of the weekend's most beloved offerings — arrive with a busy mind and leave with a quiet one.",
+    bio: "Dixie is a certified meditation teacher specializing in somatic and bilateral techniques that guide the nervous system into deep, grounded stillness. Her labyrinth garden sessions are one of the weekend's most beloved offerings: arrive with a busy mind and leave with a quiet one.",
   },
   {
     slug: "mary",
@@ -154,7 +154,7 @@ export const practitioners: Practitioner[] = [
     name: "Sarah",
     role: "Yogassage Practitioner",
     offering: "Yogassage",
-    bio: "Sarah offers Yogassage — a deeply restorative fusion of assisted yoga stretching and Thai massage that works on the whole body at once. Sessions are done fully clothed on a mat and leave participants in a state of physical ease that's hard to describe and easy to feel.",
+    bio: "Sarah offers Yogassage: a deeply restorative fusion of assisted yoga stretching and Thai massage that works on the whole body at once. Sessions are done fully clothed on a mat and leave participants in a state of physical ease that's hard to describe and easy to feel.",
   },
   {
     slug: "beth",

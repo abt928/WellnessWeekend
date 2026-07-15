@@ -45,7 +45,7 @@ export default function AffiliatePage() {
   const [copied, setCopied] = useState(false);
 
   const referralUrl = affiliate
-    ? `https://wellnessweekendak.com?ref=${affiliate.code}`
+    ? `https://www.wellnessweekendak.com?ref=${affiliate.code}`
     : "";
 
   const fetchStats = useCallback(async () => {
@@ -142,6 +142,9 @@ export default function AffiliatePage() {
             Not a partner yet?{" "}
             <Link href="/affiliates/apply" style={{ color: "var(--psyche-cyan)" }}>Apply here</Link>
           </p>
+          <p style={{ marginTop: "0.5rem", textAlign: "center", fontSize: "0.875rem" }}>
+            <Link href="/" style={{ color: "var(--ink-muted)" }}>← Back to site</Link>
+          </p>
         </div>
       </div>
     );
@@ -169,7 +172,7 @@ export default function AffiliatePage() {
 
       {affiliate?.status === "pending" && (
         <div className="admin-status-bar" style={{ background: "rgba(255,165,0,0.1)", color: "#FFB347", borderColor: "rgba(255,165,0,0.2)" }}>
-          ⏳ Your application is under review. You&apos;ll be approved within 1–2 business days. Contact us at support@thesoundspace.us with questions.
+          ⏳ Your application is under review. You&apos;ll be approved within 1 to 2 business days. Contact us at support@thesoundspace.us with questions.
         </div>
       )}
 
@@ -241,9 +244,9 @@ export default function AffiliatePage() {
                 <tr key={ev.id}>
                   <td>{new Date(ev.createdAt).toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" })}</td>
                   <td style={{ textTransform: "capitalize" }}>{ev.eventType}</td>
-                  <td>{ev.orderAmountCents ? centsToUSD(ev.orderAmountCents) : "—"}</td>
+                  <td>{ev.orderAmountCents ? centsToUSD(ev.orderAmountCents) : "-"}</td>
                   <td style={{ color: ev.commissionCents ? "#3DB8AF" : undefined }}>
-                    {ev.commissionCents ? centsToUSD(ev.commissionCents) : "—"}
+                    {ev.commissionCents ? centsToUSD(ev.commissionCents) : "-"}
                   </td>
                 </tr>
               ))}

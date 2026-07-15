@@ -1,26 +1,76 @@
 import { NextRequest, NextResponse } from "next/server";
 import { cookies } from "next/headers";
+import crypto from "crypto";
 
 const COOKIE_NAME = "admin-session";
-
-const ROLE_PASSWORDS: Array<{ env: string; token: string; role: AdminRole }> = [
-  { env: "ADMIN_PASSWORD", token: "ww-role-owner", role: "owner" },
-  { env: "ALICE_PASSWORD", token: "ww-role-alice", role: "alice" },
-  { env: "CHRIS_PASSWORD", token: "ww-role-chris", role: "chris" },
-];
+const SESSION_TTL_MS = 60 * 60 * 24 * 1000; // 24h
 
 export type AdminRole = "owner" | "alice" | "chris";
 
-const TOKEN_TO_ROLE: Record<string, AdminRole> = {
-  "ww-role-owner": "owner",
-  "ww-role-alice": "alice",
-  "ww-role-chris": "chris",
-};
+const ROLE_PASSWORDS: Array<{ env: string; role: AdminRole }> = [
+  { env: "ADMIN_PASSWORD", role: "owner" },
+  { env: "ALICE_PASSWORD", role: "alice" },
+  { env: "CHRIS_PASSWORD", role: "chris" },
+];
+
+const VALID_ROLES = new Set<AdminRole>(["owner", "alice", "chris"]);
+
+function getAdminSessionSecret(): string {
+  return (
+    process.env.ADMIN_SESSION_SECRET ||
+    process.env.NEXTAUTH_SECRET ||
+    "ww-admin-secret"
+  );
+}
+
+/**
+ * Parse and verify a signed admin session cookie.
+ * Cookie format: `${role}:${expiry}:${hmac}` where
+ * hmac = HMAC-SHA256(secret, `${role}:${expiry}`).
+ * Returns the role, or null if invalid/expired/tampered.
+ */
+function parseAdminSession(cookieValue: string | undefined): AdminRole | null {
+  if (!cookieValue) return null;
+  try {
+    const parts = cookieValue.split(":");
+    if (parts.length !== 3) return null;
+    const [role, expiryStr, hmac] = parts;
+    if (!VALID_ROLES.has(role as AdminRole)) return null;
+    const expiry = parseInt(expiryStr, 10);
+    if (isNaN(expiry) || Date.now() > expiry) return null;
+
+    const secret = getAdminSessionSecret();
+    const expected = crypto
+      .createHmac("sha256", secret)
+      .update(`${role}:${expiry}`)
+      .digest("hex");
+
+    // Timing-safe comparison
+    if (hmac.length !== expected.length) return null;
+    const hmacBuf = Buffer.from(hmac, "hex");
+    const expectedBuf = Buffer.from(expected, "hex");
+    if (hmacBuf.length !== expectedBuf.length) return null;
+    if (!crypto.timingSafeEqual(hmacBuf, expectedBuf)) return null;
+
+    return role as AdminRole;
+  } catch {
+    return null;
+  }
+}
+
+function buildAdminSession(role: AdminRole): string {
+  const secret = getAdminSessionSecret();
+  const expiry = Date.now() + SESSION_TTL_MS;
+  const hmac = crypto
+    .createHmac("sha256", secret)
+    .update(`${role}:${expiry}`)
+    .digest("hex");
+  return `${role}:${expiry}:${hmac}`;
+}
 
 /** Returns the role of the authenticated admin, or null if not authenticated */
 export function getAdminRole(req: NextRequest): AdminRole | null {
-  const cookie = req.cookies.get(COOKIE_NAME);
-  return TOKEN_TO_ROLE[cookie?.value ?? ""] ?? null;
+  return parseAdminSession(req.cookies.get(COOKIE_NAME)?.value);
 }
 
 export function isAdminAuthenticated(req: NextRequest): boolean {
@@ -29,8 +79,7 @@ export function isAdminAuthenticated(req: NextRequest): boolean {
 
 export async function isAdminFromCookies(): Promise<boolean> {
   const jar = await cookies();
-  const cookie = jar.get(COOKIE_NAME);
-  return TOKEN_TO_ROLE[cookie?.value ?? ""] !== undefined;
+  return parseAdminSession(jar.get(COOKIE_NAME)?.value) !== null;
 }
 
 /** GET — return current role (used by admin page on mount) */
@@ -44,24 +93,22 @@ export async function POST(req: NextRequest) {
   try {
     const { password } = await req.json();
 
-    let sessionToken: string | null = null;
     let role: AdminRole | null = null;
 
     for (const entry of ROLE_PASSWORDS) {
       const pw = process.env[entry.env];
       if (pw && password === pw) {
-        sessionToken = entry.token;
         role = entry.role;
         break;
       }
     }
 
-    if (!sessionToken || !role) {
+    if (!role) {
       return NextResponse.json({ error: "Invalid password" }, { status: 401 });
     }
 
     const res = NextResponse.json({ success: true, role });
-    res.cookies.set(COOKIE_NAME, sessionToken, {
+    res.cookies.set(COOKIE_NAME, buildAdminSession(role), {
       httpOnly: true,
       secure: process.env.NODE_ENV === "production",
       sameSite: "lax",

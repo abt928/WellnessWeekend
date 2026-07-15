@@ -22,11 +22,11 @@ export interface ScheduleDay {
 }
 
 export const LIONSGATE_GLOSS =
-  "Our gathering falls on August 8th — the Lion's Gate Portal. A day of heightened energy and intentional outdoor ceremony. We step outside together at 8:08 AM to meet the day with full presence — mountain air, open sky, and the earth beneath bare feet. Led by White Eagle Medicine Woman.";
+  "Our gathering falls on August 8th, the Lion's Gate Portal. A day of heightened energy and intentional outdoor ceremony. We step outside together at 8:08 AM to meet the day with full presence: mountain air, open sky, and the earth beneath bare feet. Led by White Eagle Medicine Woman.";
 export const AYNI_GLOSS =
   "An Andean ceremony of reciprocity. A small bundle of seeds, flowers, and offerings is built and given back to the mountain spirits.";
 export const CONTRAST_GLOSS =
-  "Alternating cold water immersion and heat activates circulation, reduces inflammation, and powerfully grounds the nervous system. Sessions run all day Friday–Sunday in 30-minute slots — sauna holds 4 people maximum. Must be booked in advance. Facilitated by Ashleigh Bicknell.";
+  "Alternating cold water immersion and heat activates circulation, reduces inflammation, and powerfully grounds the nervous system. Sessions run all day Friday-Sunday in 30-minute slots; sauna holds 4 people maximum. Must be booked in advance. Facilitated by Ashleigh Bicknell.";
 export const LABYRINTH_GLOSS =
   "One path in. One path out. The labyrinth garden is open throughout the weekend for silent walking, integration, and personal reflection between ceremonies.";
 
@@ -40,20 +40,20 @@ export const scheduleDays: ScheduleDay[] = [
       {
         time: "1:00 PM",
         event: "Opening Ceremony",
-        detail: "Land Acknowledgement · Dance Alchemy with Ashleigh — the movement medicine your soul has been craving",
+        detail: "Land Acknowledgement · Dance Alchemy with Ashleigh: the movement medicine your soul has been craving",
         element: "fire", location: "Main Stage",
         hosts: ["ashleigh"],
       },
       {
         time: "2:00 PM",
         event: "Past Life Guided Meditation",
-        detail: "For those ready to go deep — an epic cleanse focusing on past lives in the multidimensional world",
+        detail: "For those ready to go deep: an epic cleanse focusing on past lives in the multidimensional world",
         element: "fire", location: "Main Stage",
       },
       {
         time: "2:00 PM",
         event: "Paddleboard Yoga",
-        detail: "All levels, beginner flow — you might get wet!",
+        detail: "All levels, beginner flow. You might get wet!",
         element: "water", location: "Lakeside",
         limited: true,
         hosts: ["alice"],
@@ -94,20 +94,20 @@ export const scheduleDays: ScheduleDay[] = [
       {
         time: "4:00 PM",
         event: "Tea Lounge",
-        detail: "Come as you are. Community tea in the garden — a daily gathering to slow down, connect, and be.",
+        detail: "Come as you are. Community tea in the garden, a daily gathering to slow down, connect, and be.",
         element: "earth", location: "Labyrinth Garden",
       },
       {
         time: "5:00 PM",
         event: "Keys to Kreation",
-        detail: "Unlock your infinite potential of creative expression · 2 hours",
+        detail: "Open your infinite potential of creative expression · 2 hours",
         element: "fire", location: "Main Stage",
         hosts: ["j-brave"],
       },
       {
         time: "7:30 PM",
         event: "Sacred Heart Activation",
-        detail: "Cacao ceremony and heart activation — an opening of the sacred heart through ceremony, sound, and intention",
+        detail: "Cacao ceremony and heart activation: an opening of the sacred heart through ceremony, sound, and intention",
         element: "fire", location: "Main Stage",
         hosts: ["az", "avalon-starling"],
       },
@@ -135,7 +135,7 @@ export const scheduleDays: ScheduleDay[] = [
       {
         time: "8:00 AM",
         event: "Lionsgate Activation + Floating Sound Bath",
-        detail: "Float in an aerial silk hammock or on the lake on a paddleboard — ceremony at 8:08 AM",
+        detail: "Float in an aerial silk hammock or on the lake on a paddleboard, ceremony at 8:08 AM",
         element: "water", secondElement: "air",
         location: "Lake · Aerial",
         gloss: LIONSGATE_GLOSS,
@@ -151,7 +151,7 @@ export const scheduleDays: ScheduleDay[] = [
       {
         time: "9:30 AM",
         event: "Contrast Therapy",
-        detail: "30 min · Cold plunge + heat cycling — ground and reset at the midpoint of your day",
+        detail: "30 min · Cold plunge + heat cycling: ground and reset at the midpoint of your day",
         element: "water", secondElement: "fire",
         location: "Lakeside",
         gloss: CONTRAST_GLOSS,
@@ -182,7 +182,7 @@ export const scheduleDays: ScheduleDay[] = [
       {
         time: "12:00 PM",
         event: "Heartbeat of the Lion's Gate: Riding the Fire Horse into Your Destiny",
-        detail: "A Drumming Ceremony of Courage, Sovereignty and Sacred Purpose — bring your drum",
+        detail: "A Drumming Ceremony of Courage, Sovereignty and Sacred Purpose. Bring your drum",
         element: "fire", location: "Main Stage",
         hosts: ["white-eagle"],
       },
@@ -210,7 +210,7 @@ export const scheduleDays: ScheduleDay[] = [
       {
         time: "2:30 PM",
         event: "Yogassage",
-        detail: "A blend of yoga assists and massage — receive hands-on adjustments in restorative poses",
+        detail: "A blend of yoga assists and massage: receive hands-on adjustments in restorative poses",
         element: "earth",
         hosts: ["sarah"],
       },
@@ -237,13 +237,13 @@ export const scheduleDays: ScheduleDay[] = [
       {
         time: "4:00 PM",
         event: "Tea Lounge",
-        detail: "Come as you are. Community tea in the garden — a daily gathering to slow down, connect, and be.",
+        detail: "Come as you are. Community tea in the garden, a daily gathering to slow down, connect, and be.",
         element: "earth", location: "Labyrinth Garden",
       },
       {
         time: "5:30 PM",
         event: "Contrast Therapy",
-        detail: "30 min · Final session of the day — prepare your body for an evening of ceremony",
+        detail: "30 min · Final session of the day: prepare your body for an evening of ceremony",
         element: "water", secondElement: "fire",
         location: "Lakeside",
         gloss: CONTRAST_GLOSS,
@@ -280,7 +280,7 @@ export const scheduleDays: ScheduleDay[] = [
       {
         time: "9:00 AM",
         event: "Contrast Therapy",
-        detail: "30 min · Available all day — cold plunge + sauna cycling. Must be booked in advance.",
+        detail: "30 min · Available all day: cold plunge + sauna cycling. Must be booked in advance.",
         element: "water", secondElement: "fire",
         location: "Lakeside",
         gloss: CONTRAST_GLOSS,
@@ -290,13 +290,13 @@ export const scheduleDays: ScheduleDay[] = [
       {
         time: "10:00 AM",
         event: "Tai Chi Dance",
-        detail: "Flowing movement meditation — drawing from the traditions of Tai Chi to awaken the body with grace and presence",
+        detail: "Flowing movement meditation, drawing from the traditions of Tai Chi to awaken the body with grace and presence",
         element: "fire", location: "Main Stage",
       },
       {
         time: "10:00 AM",
         event: "Earthing Practice with Gail",
-        detail: "Barefoot connection to the land — grounding through breath, movement, and direct contact with the earth",
+        detail: "Barefoot connection to the land: grounding through breath, movement, and direct contact with the earth",
         element: "earth", location: "Outdoor Space",
         hosts: ["gail"],
       },
@@ -309,14 +309,14 @@ export const scheduleDays: ScheduleDay[] = [
       },
       {
         time: "11:11 AM",
-        event: "Message from the Bees — Ecstatic Dance",
+        event: "Message from the Bees: Ecstatic Dance",
         element: "earth", location: "Labyrinth Garden",
         hosts: ["mary"],
       },
       {
         time: "11:30 AM",
         event: "Contrast Therapy",
-        detail: "30 min · Invigorate and integrate — available all day, must be booked in advance",
+        detail: "30 min · Invigorate and integrate, available all day, must be booked in advance",
         element: "water", secondElement: "fire",
         location: "Lakeside",
         gloss: CONTRAST_GLOSS,
@@ -346,7 +346,7 @@ export const scheduleDays: ScheduleDay[] = [
       {
         time: "4:00 PM",
         event: "Tea Lounge",
-        detail: "Come as you are. Community tea in the garden — a daily gathering to slow down, connect, and be.",
+        detail: "Come as you are. Community tea in the garden, a daily gathering to slow down, connect, and be.",
         element: "earth", location: "Labyrinth Garden",
       },
       {
@@ -357,7 +357,7 @@ export const scheduleDays: ScheduleDay[] = [
       {
         time: "6:00 PM",
         event: "Ecstatic Dance",
-        detail: "6–8 PM · Close the weekend dancing",
+        detail: "6-8 PM · Close the weekend dancing",
         element: "fire", location: "Main Stage",
         hosts: ["flowscape"],
       },

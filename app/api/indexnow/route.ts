@@ -8,7 +8,7 @@ export const dynamic = "force-dynamic";
  *
  * Usage:
  *   POST /api/indexnow
- *   Body: { "urls": ["https://wellnessweekendak.com/privacy"] }
+ *   Body: { "urls": ["https://www.wellnessweekendak.com/privacy"] }
  *
  *   Or call with no body to submit all public pages.
  *

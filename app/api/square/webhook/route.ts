@@ -6,16 +6,21 @@ import { neon } from "@neondatabase/serverless";
 export const dynamic = "force-dynamic";
 
 /**
- * Square Webhook handler — listens for payment.completed events and fires
- * server-side conversion events to TikTok Events API and Meta Conversions API.
+ * Square Webhook handler — listens for payment.updated events (gated on
+ * payment.status === "COMPLETED") and fires server-side conversion events to
+ * TikTok Events API and Meta Conversions API.
+ *
+ * Square never emits a "payment.completed" event; a payment moves through
+ * status changes (APPROVED → COMPLETED) via payment.updated, so we subscribe
+ * to payment.updated and filter on the COMPLETED status.
  *
  * This is the failsafe: even if the user closes their browser after paying
  * on Square (and never hits /thank-you), this webhook still fires the
  * purchase conversion.
  *
  * Setup in Square Dashboard:
- *   Webhooks → Create Subscription → URL: https://wellnessweekendak.com/api/square/webhook
- *   Events: payment.completed
+ *   Webhooks → Create Subscription → URL: https://www.wellnessweekendak.com/api/square/webhook
+ *   Events: payment.updated
  */
 
 interface SquareWebhookPayload {
@@ -36,9 +41,24 @@ interface SquareWebhookPayload {
   };
 }
 
+// ─── Utilities ───────────────────────────────────────────────────────
+
+/**
+ * SHA-256 hash a string for server-side PII matching. Normalization
+ * (trim + lowercase before digest) mirrors app/api/tracking/route.ts so the
+ * webhook and the client relay produce identical hashes for the same email.
+ */
+async function sha256(input: string): Promise<string> {
+  const encoder = new TextEncoder();
+  const data = encoder.encode(input.trim().toLowerCase());
+  const hashBuffer = await crypto.subtle.digest("SHA-256", data);
+  const hashArray = Array.from(new Uint8Array(hashBuffer));
+  return hashArray.map((b) => b.toString(16).padStart(2, "0")).join("");
+}
+
 // ─── TikTok Events API ───────────────────────────────────────────────
 
-async function fireTikTokPurchase(value: number, currency: string, email?: string) {
+async function fireTikTokPurchase(value: number, currency: string, eventId: string, emailHash?: string) {
   const accessToken = process.env.TIKTOK_ACCESS_TOKEN;
   const pixelId = process.env.TIKTOK_PIXEL_ID;
   if (!accessToken || !pixelId) return;
@@ -53,11 +73,16 @@ async function fireTikTokPurchase(value: number, currency: string, email?: strin
       body: JSON.stringify({
         pixel_code: pixelId,
         event: "CompletePayment",
-        event_id: `webhook_purchase_${Date.now()}_${Math.random().toString(36).slice(2, 9)}`,
+        event_id: eventId,
         timestamp: new Date().toISOString(),
+        // Test Events mode: routes to the TikTok Events Manager test tab when
+        // TIKTOK_TEST_EVENT_CODE is set; omitted entirely otherwise (live).
+        ...(process.env.TIKTOK_TEST_EVENT_CODE
+          ? { test_event_code: process.env.TIKTOK_TEST_EVENT_CODE }
+          : {}),
         context: {
-          page: { url: "https://wellnessweekendak.com/thank-you" },
-          ...(email ? { user: { email } } : {}),
+          page: { url: "https://www.wellnessweekendak.com/thank-you" },
+          ...(emailHash ? { user: { email: emailHash } } : {}),
         },
         properties: {
           value,
@@ -81,7 +106,7 @@ async function fireTikTokPurchase(value: number, currency: string, email?: strin
 
 // ─── Meta Conversions API ────────────────────────────────────────────
 
-async function fireMetaPurchase(value: number, currency: string, email?: string) {
+async function fireMetaPurchase(value: number, currency: string, eventId: string, emailHash?: string) {
   const accessToken = process.env.META_ACCESS_TOKEN;
   const pixelId = process.env.META_PIXEL_ID;
   if (!accessToken || !pixelId) return;
@@ -97,11 +122,11 @@ async function fireMetaPurchase(value: number, currency: string, email?: string)
             {
               event_name: "Purchase",
               event_time: Math.floor(Date.now() / 1000),
-              event_id: `webhook_purchase_${Date.now()}_${Math.random().toString(36).slice(2, 9)}`,
-              event_source_url: "https://wellnessweekendak.com/thank-you",
+              event_id: eventId,
+              event_source_url: "https://www.wellnessweekendak.com/thank-you",
               action_source: "website",
               user_data: {
-                ...(email ? { em: [email] } : {}),
+                ...(emailHash ? { em: [emailHash] } : {}),
               },
               custom_data: {
                 value,
@@ -112,6 +137,11 @@ async function fireMetaPurchase(value: number, currency: string, email?: string)
               },
             },
           ],
+          // Test Events mode: routes to the Meta Events Manager test tab when
+          // META_TEST_EVENT_CODE is set; omitted entirely otherwise (live).
+          ...(process.env.META_TEST_EVENT_CODE
+            ? { test_event_code: process.env.META_TEST_EVENT_CODE }
+            : {}),
         }),
       }
     );
@@ -122,7 +152,7 @@ async function fireMetaPurchase(value: number, currency: string, email?: string)
 
 // ─── GA4 Measurement Protocol ────────────────────────────────────────
 
-async function fireGA4Purchase(value: number, currency: string) {
+async function fireGA4Purchase(value: number, currency: string, transactionId: string) {
   const measurementId = process.env.NEXT_PUBLIC_GA_ID || "G-1BNLVMK3HB";
   const apiSecret = process.env.GA4_API_SECRET;
   if (!apiSecret) return;
@@ -141,7 +171,10 @@ async function fireGA4Purchase(value: number, currency: string) {
               params: {
                 value,
                 currency,
-                transaction_id: `wh_${Date.now()}_${Math.random().toString(36).slice(2, 7)}`,
+                // GA4 dedupes purchases by transaction_id — carry the raw Square
+                // order id, which the client GA4 purchase sends too, so the
+                // browser and this server failsafe collapse to one purchase.
+                transaction_id: transactionId,
                 items: [{
                   item_id: "wellness-weekend-purchase",
                   item_name: "Wellness Weekend Tickets",
@@ -176,9 +209,11 @@ async function saveOrderToDB(
   amountCents: number,
   currency: string,
   customerEmail: string | undefined,
-) {
+): Promise<{ inserted: boolean; referralCode: string | null }> {
   const dbUrl = process.env.DATABASE_URL;
-  if (!dbUrl) return { referralCode: null };
+  // Without a DB we cannot enforce idempotency, so report "not inserted" and
+  // let the caller skip conversion fires rather than risk double-counting.
+  if (!dbUrl) return { inserted: false, referralCode: null };
 
   try {
     const sql = neon(dbUrl);
@@ -200,7 +235,8 @@ async function saveOrderToDB(
 
         // Summarize line items
         if (order?.lineItems) {
-          lineItems = order.lineItems.map((li) => ({
+          // eslint-disable-next-line @typescript-eslint/no-explicit-any
+          lineItems = order.lineItems.map((li: any) => ({
             name: li.name || "Unknown",
             category: li.catalogObjectId ? "item" : "custom",
             quantity: Number(li.quantity || 1),
@@ -212,32 +248,44 @@ async function saveOrderToDB(
       }
     }
 
-    // Upsert the order record
-    await sql`
+    // Insert the order record. ON CONFLICT ... DO NOTHING RETURNING id yields a
+    // row ONLY on the first delivery for this payment; retries and repeat
+    // payment.updated events conflict on the unique square_payment_id and
+    // return nothing. This "row created" signal is the idempotency gate the
+    // caller uses to fire conversions exactly once.
+    const insertedRows = await sql`
       INSERT INTO orders (square_payment_id, square_order_id, amount_cents, currency, customer_email, referral_code, line_items, status)
       VALUES (${squarePaymentId}, ${squareOrderId ?? null}, ${amountCents}, ${currency}, ${customerEmail ?? null}, ${referralCode}, ${JSON.stringify(lineItems)}, 'completed')
       ON CONFLICT (square_payment_id) DO NOTHING
+      RETURNING id
     `;
+    const inserted = insertedRows.length > 0;
 
-    // Record referral commission if applicable
-    if (referralCode) {
-      const affiliateRows = await sql`
-        SELECT commission_pct FROM affiliates WHERE code = ${referralCode} AND status = 'active'
-      `;
-      if (affiliateRows.length > 0) {
-        const commissionPct = affiliateRows[0].commission_pct as number;
-        const commissionCents = Math.round(amountCents * commissionPct / 100);
-        await sql`
-          INSERT INTO referral_events (affiliate_code, event_type, order_id, order_amount_cents, commission_cents, email)
-          VALUES (${referralCode}, 'purchase', ${squareOrderId ?? null}, ${amountCents}, ${commissionCents}, ${customerEmail ?? null})
+    // Record referral commission only when this delivery created the order, so
+    // retries do not book duplicate commissions. Isolated so a referral error
+    // cannot flip the inserted signal the conversion gate depends on.
+    if (inserted && referralCode) {
+      try {
+        const affiliateRows = await sql`
+          SELECT commission_pct FROM affiliates WHERE code = ${referralCode} AND status = 'active'
         `;
+        if (affiliateRows.length > 0) {
+          const commissionPct = affiliateRows[0].commission_pct as number;
+          const commissionCents = Math.round(amountCents * commissionPct / 100);
+          await sql`
+            INSERT INTO referral_events (affiliate_code, event_type, order_id, order_amount_cents, commission_cents, email)
+            VALUES (${referralCode}, 'purchase', ${squareOrderId ?? null}, ${amountCents}, ${commissionCents}, ${customerEmail ?? null})
+          `;
+        }
+      } catch (e) {
+        console.error("[Webhook] Referral record error:", e);
       }
     }
 
-    return { referralCode };
+    return { inserted, referralCode };
   } catch (e) {
     console.error("[Webhook] DB save error:", e);
-    return { referralCode: null };
+    return { inserted: false, referralCode: null };
   }
 }
 
@@ -248,7 +296,7 @@ export async function POST(req: NextRequest) {
     const rawBody = await req.text();
     const signature = req.headers.get("x-square-hmacsha256-signature");
     const signatureKey = process.env.SQUARE_WEBHOOK_SIGNATURE_KEY;
-    const notificationUrl = process.env.SQUARE_WEBHOOK_URL || "https://wellnessweekendak.com/api/square/webhook";
+    const notificationUrl = process.env.SQUARE_WEBHOOK_URL || "https://www.wellnessweekendak.com/api/square/webhook";
 
     // Validate Square signature to ensure event authenticity
     if (signatureKey && signature) {
@@ -268,8 +316,9 @@ export async function POST(req: NextRequest) {
 
     const payload: SquareWebhookPayload = JSON.parse(rawBody);
 
-    // Only process payment.completed events
-    if (payload.type !== "payment.completed") {
+    // Square emits payment.updated (not payment.completed); COMPLETED status is
+    // the completion filter within that event stream.
+    if (payload.type !== "payment.updated") {
       return NextResponse.json({ received: true });
     }
 
@@ -282,19 +331,42 @@ export async function POST(req: NextRequest) {
     const currency = payment.amount_money?.currency || "USD";
     const value = amountCents / 100;
     const email = payment.buyer_email_address;
+    const orderId = payment.order_id;
+
+    // Shared derivation rule — MUST stay byte-identical to the client side in
+    // app/thank-you/ThankYouTracker.tsx: event_id = `purchase_${squareOrderId}`.
+    // Identical ids let the browser Purchase and this server Purchase dedupe on
+    // Meta/TikTok. Random fallback only when Square omits order_id (no client
+    // id to match anyway), so the conversion still fires.
+    const purchaseEventId = orderId
+      ? `purchase_${orderId}`
+      : `webhook_purchase_${Date.now()}_${Math.random().toString(36).slice(2, 9)}`;
+    // GA4 dedupes by transaction_id — the raw Square order id, matching the
+    // client GA4 purchase.
+    const transactionId = orderId || `wh_${Date.now()}`;
 
     console.log(
-      `[Webhook] payment.completed — $${value} ${currency}`,
+      `[Webhook] payment.updated COMPLETED — $${value} ${currency}`,
       payment.id,
       email || "(no email)"
     );
 
-    // Save to DB and fire conversion events in parallel
+    // Idempotency gate: persist the order first and fire conversions ONLY when
+    // this delivery actually created the row. Square retries deliveries and a
+    // payment emits multiple payment.updated events; gating on the insert keeps
+    // every Meta/TikTok/GA4 conversion to exactly one per order.
+    const { inserted } = await saveOrderToDB(payment.id!, orderId, amountCents, currency, email);
+    if (!inserted) {
+      return NextResponse.json({ received: true, duplicate: true });
+    }
+
+    // Hash email for Meta/TikTok server-side matching (never send raw PII).
+    const emailHash = email ? await sha256(email) : undefined;
+
     await Promise.allSettled([
-      saveOrderToDB(payment.id!, payment.order_id, amountCents, currency, email),
-      fireTikTokPurchase(value, currency, email),
-      fireMetaPurchase(value, currency, email),
-      fireGA4Purchase(value, currency),
+      fireTikTokPurchase(value, currency, purchaseEventId, emailHash),
+      fireMetaPurchase(value, currency, purchaseEventId, emailHash),
+      fireGA4Purchase(value, currency, transactionId),
     ]);
 
     return NextResponse.json({ received: true, tracked: true });

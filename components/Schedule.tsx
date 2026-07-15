@@ -70,10 +70,10 @@ export default function Schedule() {
     <section id="schedule" className="section schedule">
       <p className="section-label">Three Days · Four Elements</p>
       <h2 className="section-title">
-        The Journey
+        The Flow
       </h2>
       <p className="section-desc">
-        From fire ceremonies to lakeside immersion, aerial arts to earth medicine — filter by element to find your path through the weekend.
+        From fire ceremonies to lakeside immersion, aerial arts to earth medicine: filter by element to find your path through the weekend.
       </p>
 
       {/* Element Legend */}
@@ -90,6 +90,7 @@ export default function Schedule() {
         <button
           className={`track-pill${elementFilter === null ? " active" : ""}`}
           onClick={() => setElementFilter(null)}
+          aria-pressed={elementFilter === null}
         >
           All
         </button>
@@ -99,6 +100,7 @@ export default function Schedule() {
             className={`track-pill${elementFilter === key ? " active" : ""}`}
             style={{ "--pill-color": meta.color } as React.CSSProperties}
             onClick={() => setElementFilter(elementFilter === key ? null : key)}
+            aria-pressed={elementFilter === key}
           >
             {meta.icon} {meta.label}
           </button>
@@ -112,6 +114,7 @@ export default function Schedule() {
             key={i}
             className={`schedule-day-btn${active === i ? " active" : ""}`}
             onClick={() => setActive(i)}
+            aria-pressed={active === i}
           >
             {d.label}
           </button>
@@ -186,7 +189,7 @@ export default function Schedule() {
           <div className="book-ahead-panel">
             <div className="book-ahead-header">
               <span className="book-ahead-badge">Reserve Your Spot</span>
-              <span className="book-ahead-note">These sessions have limited capacity — book ahead to secure your place</span>
+              <span className="book-ahead-note">These sessions have limited capacity; book ahead to secure your place</span>
             </div>
             <div className="book-ahead-list">
               {limited.map((e, i) => (
@@ -210,7 +213,7 @@ export default function Schedule() {
           <p className="family-day-subtitle">Wellness for All Ages · All Proceeds to Nonprofits</p>
           <p className="family-day-mission">
             The next generation of healers, leaders, and earth stewards is already here. Sunday Family Day
-            is our commitment to making wellness education accessible to children and families — planting
+            is our commitment to making wellness education accessible to children and families: planting
             seeds of breath, body awareness, and connection to the natural world that will carry forward
             long after the festival ends.
           </p>
@@ -222,7 +225,7 @@ export default function Schedule() {
                 {i < FAMILY_DAY_ACTIVITIES.length - 2 ? ", " : i === FAMILY_DAY_ACTIVITIES.length - 2 ? ", and " : ""}
               </span>
             ))}
-            {" "}— with more to be announced as we get closer to August.
+            , with more to be announced as we get closer to August.
           </p>
           <p className="family-day-subtitle" style={{ marginTop: "1rem", opacity: 0.7 }}>
             All Family Day proceeds support youth wellness nonprofits in the Matanuska-Susitna Valley.

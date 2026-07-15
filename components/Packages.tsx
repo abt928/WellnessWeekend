@@ -65,7 +65,7 @@ export default function Packages() {
         <p className="section-label">Curated Experiences</p>
         <h2 className="section-title">Weekend Packages.</h2>
         <p className="section-desc">
-          Immersive bundles crafted for the seeker who wants to go deeper — every
+          Immersive bundles crafted for the seeker who wants to go deeper, every
           detail tended to so you can arrive fully present.
         </p>
       </Reveal>

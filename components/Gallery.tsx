@@ -1,9 +1,10 @@
 "use client";
 
-import { useState, useCallback, useEffect } from "react";
+import { useState, useCallback, useEffect, useRef } from "react";
 import Image from "next/image";
 import Reveal from "@/components/Reveal";
 import { CloseIcon } from "@/components/Icons";
+import { useFocusTrap } from "@/lib/useFocusTrap";
 
 const IMAGES = [
   { src: "/images/gallery/2025-08-09_Festival_Wellness_Group-Dancing-Labyrinth.jpg", alt: "Group dancing labyrinth", w: 4000, h: 6000 },
@@ -23,6 +24,10 @@ const IMAGES = [
 
 export default function Gallery() {
   const [lightbox, setLightbox] = useState<number | null>(null);
+  const lightboxRef = useRef<HTMLDivElement>(null);
+
+  // Trap focus, autofocus, restore focus, and lock body scroll while the lightbox is open
+  useFocusTrap(lightbox !== null, lightboxRef);
 
   const openLightbox = useCallback((idx: number) => setLightbox(idx), []);
   const closeLightbox = useCallback(() => setLightbox(null), []);
@@ -70,7 +75,16 @@ export default function Gallery() {
                 key={idx}
                 className="masonry-item"
                 style={{ animationDelay: `${idx * 0.06}s` }}
+                role="button"
+                tabIndex={0}
+                aria-label={`Open image: ${img.alt}`}
                 onClick={() => openLightbox(idx)}
+                onKeyDown={(e) => {
+                  if (e.key === "Enter" || e.key === " ") {
+                    e.preventDefault();
+                    openLightbox(idx);
+                  }
+                }}
               >
                 <Image
                   src={img.src}
@@ -93,7 +107,14 @@ export default function Gallery() {
 
       {/* Lightbox */}
       {lightbox !== null && (
-        <div className="lightbox" onClick={closeLightbox}>
+        <div
+          className="lightbox"
+          ref={lightboxRef}
+          onClick={closeLightbox}
+          role="dialog"
+          aria-modal="true"
+          aria-label="Image gallery"
+        >
           <button className="lightbox-close" onClick={closeLightbox} aria-label="Close lightbox"><CloseIcon size={20} /></button>
           <button
             className="lightbox-nav lightbox-prev"

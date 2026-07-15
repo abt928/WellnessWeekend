@@ -2,10 +2,16 @@ import Link from "next/link";
 import PrintButton from "@/components/PrintButton";
 
 export const metadata = {
-  title: "Add-Ons & Bookable Experiences · Wellness Weekend 2026",
-  description: "Printable add-ons and bookable experiences for Wellness Weekend — August 7–9, 2026",
+  title: "Add-Ons & Bookable Experiences",
+  description: "Printable add-ons and bookable experiences for Wellness Weekend, August 7-9, 2026",
+  robots: { index: false, follow: true },
 };
 
+// NOTE: The schedule-overlapping rows below (Floating Sound Bath, Intro Aerial,
+// Paddleboard Yoga, Contrast Therapy, Ayni Despacho) restate times/hosts/fees that
+// also live in lib/schedule-data.ts. If you change a time, host, or fee there, update
+// it here too, they are not derived. The vendor-village-only rows (Craniosacral,
+// Chair Massage, Tarot, Acupuncture) are local to this page and have no schedule entry.
 const ADDONS = [
   {
     name: "Floating Sound Bath",
@@ -16,18 +22,18 @@ const ADDONS = [
     host: "Peace Pixy · Avalon Starling",
     price: "Add-on",
     limited: true,
-    notes: "Book in advance — limited hammock & paddleboard spots",
+    notes: "Book in advance, limited hammock & paddleboard spots",
   },
   {
     name: "Intro Aerial Silks",
     category: "Movement",
     description:
-      "A beginner-friendly aerial silks class — learn to float in fabric, build upper body strength, and feel the joy of leaving the ground. All bodies welcome.",
+      "A beginner-friendly aerial silks class: learn to float in fabric, build upper body strength, and feel the joy of leaving the ground. All bodies welcome.",
     when: "Friday 3 PM · Saturday 10 AM & 2 PM · Max 6 people per session",
     host: "Beth",
     price: "Add-on",
     limited: true,
-    notes: "Max 6 per class — book ahead",
+    notes: "Max 6 per class, book ahead",
   },
   {
     name: "Intro Aerial Silks for Kids",
@@ -38,25 +44,25 @@ const ADDONS = [
     host: "Beth",
     price: "Add-on",
     limited: true,
-    notes: "Limited spots — book ahead",
+    notes: "Limited spots, book ahead",
   },
   {
     name: "Paddleboard Yoga",
     category: "Movement",
     description:
-      "All-levels stand-up paddleboard yoga on the lake. Beginner flow — expect to get wet and to feel amazing. One of the most memorable experiences of the weekend.",
+      "All-levels stand-up paddleboard yoga on the lake. Beginner flow, expect to get wet and to feel amazing. One of the most memorable experiences of the weekend.",
     when: "Friday 2 PM · Saturday 1 PM · Lakeside",
     host: "Alice Sullivan · Ashleigh Bicknell",
     price: "Add-on",
     limited: true,
-    notes: "Limited boards — book ahead",
+    notes: "Limited boards, book ahead",
   },
   {
     name: "Contrast Therapy",
     category: "Recovery & Wellness",
     description:
       "Cold plunge + dry sauna cycling on the lakeshore. Activates circulation, reduces inflammation, and powerfully resets the nervous system. Facilitated sessions with breathwork coaching available. Sauna holds maximum 4 people.",
-    when: "All day Fri–Sun · 30-min sessions · Must be booked in advance",
+    when: "All day Fri-Sun · 30-min sessions · Must be booked in advance",
     host: "Ashleigh Bicknell",
     price: "Add-on",
     limited: true,
@@ -68,7 +74,7 @@ const ADDONS = [
     description:
       "An Andean ceremony of sacred reciprocity. A bundle of seeds, flowers, and offerings is built together with intention and given back to the mountain spirits. A profound practice of gratitude and release.",
     when: "Saturday · 2:00 PM · Lodge",
-    host: "—",
+    host: "-",
     price: "$75 materials fee",
     limited: false,
     notes: "Workshop materials fee · $75",
@@ -78,7 +84,7 @@ const ADDONS = [
     category: "Bodywork",
     description:
       "One-on-one craniosacral therapy session with Tundra Wellness. A deeply gentle, hands-on modality that works with the central nervous system to release tension and restore balance.",
-    when: "Available throughout the weekend — schedule at the Tundra Wellness booth",
+    when: "Available throughout the weekend, schedule at the Tundra Wellness booth",
     host: "Tundra Wellness",
     price: "Priced at booth",
     limited: true,
@@ -136,7 +142,7 @@ export default function AddOnsPrintPage() {
       <header className="print-header">
         <p className="print-eyebrow">4th Annual Healing Arts Gathering · Lion&apos;s Gate</p>
         <h1 className="print-title">Add-Ons & Bookable Experiences</h1>
-        <p className="print-subtitle">August 7–9, 2026 · Warrior Lodge · Sutton, Alaska</p>
+        <p className="print-subtitle">August 7-9, 2026 · Warrior Lodge · Sutton, Alaska</p>
         <p className="print-subtitle" style={{ fontSize: "0.8rem", opacity: 0.6, marginTop: "0.25rem" }}>
           Book at wellnessweekendak.com/#store · Questions: support@thesoundspace.us
         </p>
@@ -179,7 +185,7 @@ export default function AddOnsPrintPage() {
       })}
 
       <footer className="print-footer">
-        <p>Add-ons must be booked in advance through the store — limited spots fill quickly.</p>
+        <p>Add-ons must be booked in advance through the store, limited spots fill quickly.</p>
         <p style={{ marginTop: "0.25rem" }}>wellnessweekendak.com/#store · support@thesoundspace.us</p>
       </footer>
     </div>

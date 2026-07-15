@@ -152,7 +152,7 @@ export default function ConversionNudges() {
       {showWelcomeBack && !showExitIntent && (
         <div className="welcome-toast" role="status" aria-live="polite">
           <span className="welcome-toast-icon"><LeafIcon size={18} color="var(--sage-light)" /></span>
-          <span>Welcome back, seeker. Your journey continues.</span>
+          <span>Welcome back, seeker. The gathering awaits.</span>
         </div>
       )}
 
@@ -186,7 +186,7 @@ export default function ConversionNudges() {
                 </h3>
                 <p className="exit-desc">
                   We&apos;ll send gentle updates as the gathering draws near.
-                  Trust the timing of your journey.
+                  Trust the timing.
                 </p>
               </div>
             ) : (
@@ -196,8 +196,9 @@ export default function ConversionNudges() {
                   Before you go.
                 </h3>
                 <p className="exit-desc">
-                  Be first to know when early-bird tickets open and when the schedule drops.
-                  No noise. A few thoughtful updates as the gathering approaches.
+                  Camping is sold out and only a few cabin beds remain. Leave your email
+                  and we&apos;ll tell you the moment cabin beds open up or the final details land.
+                  A few thoughtful notes, nothing else.
                 </p>
                 <form className="exit-form" onSubmit={handleSubmit}>
                   <input

@@ -1,8 +1,9 @@
 "use client";
 import { useState, useEffect } from "react";
 import Link from "next/link";
+import { trackLead } from "@/lib/tracking";
 
-const BASE_URL = "https://wellnessweekendak.com";
+const BASE_URL = "https://www.wellnessweekendak.com";
 
 export default function JoinPage() {
   const [name, setName] = useState("");
@@ -74,6 +75,19 @@ export default function JoinPage() {
       }
 
       setMemberCode(data.code);
+
+      // Fire a Lead conversion for the member signup (TikTok CompleteRegistration
+      // + Meta Lead). Include the email so Advanced Matching updates.
+      try {
+        trackLead({
+          email: email.trim().toLowerCase(),
+          description: "member_signup",
+          contentName: "Circle Membership",
+        });
+      } catch {
+        // fail-open — never block the signup success state on tracking
+      }
+
       // Clear referral code from localStorage now that signup succeeded
       try {
         localStorage.removeItem("ww-ref");
@@ -193,9 +207,29 @@ export default function JoinPage() {
           Wellness Weekend
         </div>
         <h1 className="member-login-title">Create Your Account</h1>
-        <p style={{ fontSize: "0.9rem", color: "var(--sage)", marginBottom: "1.5rem", textAlign: "center" }}>
+        <p style={{ fontSize: "0.9rem", color: "var(--charcoal)", marginBottom: "1rem", textAlign: "center" }}>
           Earn points. Redeem rewards. Refer friends.
         </p>
+
+        {/* Concrete Circle Rewards value: numbers sourced from the REWARDS tiers
+            and referral bonus surfaced in app/members/page.tsx */}
+        <ul style={{
+          listStyle: "none",
+          margin: "0 0 1.5rem",
+          padding: "0.9rem 1.1rem",
+          background: "rgba(139,95,191,0.05)",
+          border: "1px solid rgba(139,95,191,0.15)",
+          borderRadius: "12px",
+          display: "grid",
+          gap: "0.5rem",
+          fontSize: "0.85rem",
+          color: "var(--charcoal)",
+        }}>
+          <li style={{ display: "flex", gap: "0.5rem" }}><span style={{ color: "var(--aurora)" }}>✦</span> Earn 50 points for every friend who signs up</li>
+          <li style={{ display: "flex", gap: "0.5rem" }}><span style={{ color: "var(--aurora)" }}>✦</span> 100 points = $10 off add-ons or merch</li>
+          <li style={{ display: "flex", gap: "0.5rem" }}><span style={{ color: "var(--aurora)" }}>✦</span> 500 points = a free Day Pass</li>
+          <li style={{ display: "flex", gap: "0.5rem" }}><span style={{ color: "var(--aurora)" }}>✦</span> 1,000 points = a free Weekend Pass</li>
+        </ul>
 
         {referralCode && (
           <div style={{
@@ -208,7 +242,7 @@ export default function JoinPage() {
             color: "var(--aurora)",
             textAlign: "center",
           }}>
-            You were referred by a friend — your referrer will earn 50 points when you sign up!
+            You were referred by a friend; your referrer will earn 50 points when you sign up!
           </div>
         )}
 

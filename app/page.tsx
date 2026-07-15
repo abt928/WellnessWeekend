@@ -8,12 +8,17 @@ import GetInvolved from "@/components/GetInvolved";
 import Store from "@/components/Store";
 import Packages from "@/components/Packages";
 import PhotoStrip from "@/components/PhotoStrip";
+import Instructors from "@/components/Instructors";
+import Musicians from "@/components/Musicians";
+import LeadCapture from "@/components/LeadCapture";
+import NewsletterForm from "@/components/NewsletterForm";
+import Gallery from "@/components/Gallery";
 import FloatingActions from "@/components/FloatingActions";
 import ConversionNudges from "@/components/ConversionNudges";
 import PartnerCard from "@/components/PartnerCard";
 import BuildYourWeekend from "@/components/BuildYourWeekend";
 import ContrastTherapy from "@/components/ContrastTherapy";
-import { PlaneIcon, MapPinIcon, LeafIcon, MoonIcon } from "@/components/Icons";
+import { PlaneIcon, MapPinIcon, LeafIcon, MoonIcon, WindIcon, DiamondIcon } from "@/components/Icons";
 
 /* ── static data ── */
 const partners = [
@@ -82,15 +87,15 @@ export default function Home() {
         addressCountry: "US",
       },
     },
-    image: ["https://wellnessweekendak.com/images/hero.png"],
+    image: ["https://www.wellnessweekendak.com/images/hero.png"],
     organizer: {
       "@type": "Organization",
       name: "Wellness Weekend",
-      url: "https://wellnessweekendak.com",
+      url: "https://www.wellnessweekendak.com",
     },
     offers: {
       "@type": "AggregateOffer",
-      url: "https://wellnessweekendak.com/#store",
+      url: "https://www.wellnessweekendak.com/#store",
       availability: "https://schema.org/InStock",
       priceCurrency: "USD",
     },
@@ -125,7 +130,7 @@ export default function Home() {
           <p className="hero-subtitle">
             A Healing Arts Gathering Under the Midnight Sun
           </p>
-          <p className="hero-date">August 7 – 9, 2026 · Sutton, Alaska</p>
+          <p className="hero-date">August 7-9, 2026 · Sutton, Alaska</p>
           <a href="#store" className="hero-cta">
             Get Your Tickets
           </a>
@@ -141,27 +146,23 @@ export default function Home() {
         </div>
       </section>
 
-      {/* ═══ MIDNIGHT SUN SALE ═══ */}
-      <div className="midnightsun-banner" role="complementary" aria-label="Midnight Sun Sale">
-        <div className="midnightsun-inner">
-          <span className="midnightsun-sun" aria-hidden="true">☀</span>
-          <span className="midnightsun-title">Midnight Sun Sale</span>
-          <span className="midnightsun-desc">
-            Use code <span className="midnightsun-code">MIDNIGHTSUN</span> for 50% off your 2nd ticket
-            <span className="midnightsun-ends"> · Active through July 7</span>
-          </span>
-          <a href="#store" className="midnightsun-cta">Claim Now →</a>
-        </div>
-      </div>
+      {/* ═══ PHOTO STRIP ═══ */}
+      <PhotoStrip />
+
+      {/* ═══ INSTRUCTORS ═══ */}
+      <Instructors />
+
+      {/* ═══ MUSICIANS ═══ */}
+      <Musicians />
 
       {/* ═══ SCHEDULE ═══ */}
       <Schedule />
 
-      {/* ═══ PHOTO STRIP ═══ */}
-      <PhotoStrip />
-
       {/* ═══ TICKETS STORE ═══ */}
       <Store />
+
+      {/* ═══ PACKAGES ═══ */}
+      <Packages />
 
       {/* ═══ BUILD YOUR WEEKEND ═══ */}
       <BuildYourWeekend />
@@ -169,32 +170,29 @@ export default function Home() {
       {/* ═══ CONTRAST THERAPY ═══ */}
       <ContrastTherapy />
 
-      {/* ═══ PACKAGES ═══ */}
-      <Packages />
-
       {/* ═══ FAMILY DAY ═══ */}
       <section className="family-day-section section">
         <Reveal>
           <p className="section-label">Sunday · August 9</p>
           <h2 className="section-title">Family Day.</h2>
           <p className="section-desc">
-            Wellness for all ages — Sunday is dedicated to families, children, and the next generation of earth stewards.
+            Wellness for all ages: Sunday is dedicated to families, children, and the next generation of earth stewards.
           </p>
         </Reveal>
         <Reveal>
           <div className="family-day-grid">
             <div className="family-day-feature">
-              <div className="family-day-icon">🪁</div>
+              <div className="family-day-icon" aria-hidden="true"><WindIcon size={28} color="var(--psyche-cyan)" /></div>
               <h3>Intro Aerial Silks for Kids</h3>
-              <p>Children discover the joy of movement in the air with a beginner-friendly aerial silks session. Limited spots — reserve ahead.</p>
+              <p>Children discover the joy of movement in the air with a beginner-friendly aerial silks session. Limited spots; reserve ahead.</p>
             </div>
             <div className="family-day-feature">
-              <div className="family-day-icon">🪨</div>
+              <div className="family-day-icon" aria-hidden="true"><DiamondIcon size={28} color="var(--psyche-cyan)" /></div>
               <h3>Crystal Scavenger Hunt</h3>
-              <p>A guided crystal hunt through the grounds — kids learn about the stones of the earth and keep what they find.</p>
+              <p>A guided crystal hunt through the grounds: kids learn about the stones of the earth and keep what they find.</p>
             </div>
             <div className="family-day-feature">
-              <div className="family-day-icon">🌿</div>
+              <div className="family-day-icon" aria-hidden="true"><LeafIcon size={28} color="var(--psyche-cyan)" /></div>
               <h3>Arts, Crafts & Nature Play</h3>
               <p>Needlefelting, nature art, and free play in the labyrinth garden. All materials provided.</p>
             </div>
@@ -225,7 +223,7 @@ export default function Home() {
               <p>
                 What began with a small circle of healers in the summer of 2023
                 has become one of Alaska&apos;s most quietly powerful gatherings.
-                Each year the community returns — different faces, deepening
+                Each year the community returns: different faces, deepening
                 roots. Teachers who came as students. First-timers who drove
                 through the night to make it. Families who camp together every
                 August.
@@ -241,6 +239,12 @@ export default function Home() {
         </div>
       </section>
 
+      {/* ═══ CTA BRIDGE (post-About) ═══ */}
+      <div className="camping-urgency" style={{ maxWidth: 760, margin: "2.5rem auto" }}>
+        <span className="camping-urgency-badge">4th Annual</span>
+        <span>Four years, and the circle keeps returning. <a href="#store">Reserve your place in the 2026 gathering -&gt;</a></span>
+      </div>
+
       {/* ═══ PLAN YOUR TRIP ═══ */}
       <section id="alaska" className="trip-section">
 
@@ -250,7 +254,7 @@ export default function Home() {
           <div className="trip-photo-overlay" />
           <div className="trip-photo-text">
             <Reveal>
-              <p className="section-label" style={{ color: "rgba(255,255,255,0.75)", textAlign: "left" }}>Sutton, Alaska · Aug 7–9</p>
+              <p className="section-label" style={{ color: "rgba(255,255,255,0.75)", textAlign: "left" }}>Sutton, Alaska · Aug 7-9</p>
               <h2 className="trip-photo-heading">Plan Your Trip</h2>
             </Reveal>
           </div>
@@ -262,21 +266,21 @@ export default function Home() {
             <div className="trip-card">
               <span className="trip-card-icon"><PlaneIcon size={20} color="var(--sage)" /></span>
               <h3 className="trip-card-title">Getting Here</h3>
-              <p className="trip-card-body">Fly into Ted Stevens Anchorage International Airport (ANC), then follow the Glenn Highway northeast to Sutton in the Matanuska-Susitna Valley — one of Alaska&apos;s most breathtaking drives.</p>
+              <p className="trip-card-body">Fly into Ted Stevens Anchorage International Airport (ANC), then follow the Glenn Highway northeast to Sutton in the Matanuska-Susitna Valley, one of Alaska&apos;s most breathtaking drives.</p>
             </div>
           </Reveal>
           <Reveal>
             <div className="trip-card">
               <span className="trip-card-icon"><MoonIcon size={20} color="var(--sage)" /></span>
               <h3 className="trip-card-title">August in Alaska</h3>
-              <p className="trip-card-body">Days stretch to nearly 19 hours of light around August 8. Temperatures run 55–70°F with cool mornings and evenings. Layers are essential — Alaskan weather is generous and unpredictable.</p>
+              <p className="trip-card-body">Days stretch to nearly 19 hours of light around August 8. Temperatures run 55-70°F with cool mornings and evenings. Layers are essential: Alaskan weather is generous and unpredictable.</p>
             </div>
           </Reveal>
           <Reveal>
             <div className="trip-card">
               <span className="trip-card-icon"><MapPinIcon size={20} color="var(--sage)" /></span>
-              <h3 className="trip-card-title">Camping On-Site</h3>
-              <p className="trip-card-body">On-site camping is included with your pass. Bring a cold-weather sleeping bag and a tent that can handle rain. Hotels and cabins in Palmer and Wasilla are 30–40 minutes away if you prefer a bed.</p>
+              <h3 className="trip-card-title">Where to Stay</h3>
+              <p className="trip-card-body">Camping passes for 2026 are sold out. A limited number of on-site cabin beds remain; reserve yours in <a href="#store">the store</a>. Prefer a hotel or cabin? Palmer and Wasilla are 30 to 40 minutes away.</p>
             </div>
           </Reveal>
           <Reveal>
@@ -295,10 +299,10 @@ export default function Home() {
               <p className="section-label" style={{ textAlign: "left" }}>Warrior Lodge · On-Site Accommodation</p>
               <h3 className="warrior-lodge-title">Stay warm. Stay dry. Dance all night.</h3>
               <p className="warrior-lodge-desc">
-                August in Alaska is wild — radiant summer days that stretch past midnight and cool, crisp nights perfect for gathering under the stars. The Warrior Lodge and on-site cabins were built for exactly this: a warm, dry sanctuary between ceremonies so you never have to leave the magic.
+                August in Alaska is wild: radiant summer days that stretch past midnight and cool, crisp nights perfect for gathering under the stars. The Warrior Lodge and on-site cabins were built for exactly this: a warm, dry sanctuary between ceremonies so you never have to leave the magic.
               </p>
               <p className="warrior-lodge-desc" style={{ marginTop: "0.75rem" }}>
-                Wake up steps from the lake. Walk to morning yoga. Come back to a real bed after the fire dies. On-site lodging is limited and fills every year — fewer than 10 camping passes remain.
+                Wake up steps from the lake. Walk to morning yoga. Come back to a real bed after the fire dies. On-site lodging is limited and fills every year; camping passes are sold out, but a few cabin beds remain.
               </p>
               <a href="#store" className="warrior-lodge-cta">Reserve Lodging →</a>
             </div>
@@ -328,8 +332,11 @@ export default function Home() {
         </Reveal>
         <Reveal>
           <div className="partner-row">
+            {/* logoReady=false: logo files are not yet uploaded to /logos/, so
+                render the partner name (avoids 404 requests for missing images).
+                Set logoReady once the corresponding PNG exists. */}
             {partners.map((p) => (
-              <PartnerCard key={p.name} {...p} />
+              <PartnerCard key={p.name} {...p} logoReady={false} />
             ))}
           </div>
         </Reveal>
@@ -341,7 +348,7 @@ export default function Home() {
           <p className="section-label">On-Site Vendors</p>
           <h2 className="section-title" style={{ marginBottom: "0.75rem" }}>Vendors.</h2>
           <p className="section-desc" style={{ marginBottom: "0.5rem" }}>
-            Vendor Village is full for 2026. Day vendor spots are available at $100/day — contact us to inquire.
+            Vendor Village is full for 2026. Day vendor spots are available from $75/day; contact us to inquire.
           </p>
         </Reveal>
         <Reveal>
@@ -371,8 +378,20 @@ export default function Home() {
         </Reveal>
       </section>
 
+      {/* ═══ GALLERY ═══ */}
+      <Gallery />
+
       {/* ═══ FAQ ═══ */}
       <FAQ />
+
+      {/* ═══ CTA BRIDGE (post-FAQ close) ═══ */}
+      <div className="camping-urgency" style={{ maxWidth: 760, margin: "2.5rem auto" }}>
+        <span className="camping-urgency-badge">Capped at 200</span>
+        <span>Questions answered? Camping is sold out and cabin beds are limited. <a href="#store">Reserve your pass for August 7-9 -&gt;</a></span>
+      </div>
+
+      {/* ═══ LEAD CAPTURE ═══ */}
+      <LeadCapture />
 
       {/* ═══ GET INVOLVED ═══ */}
       <GetInvolved />
@@ -384,7 +403,11 @@ export default function Home() {
         <h2 className="footer-title">
           See you under the <em>midnight sun</em>.
         </h2>
-        <p className="footer-text">Sutton, Alaska · August 7–9, 2026</p>
+        <p className="footer-text">Sutton, Alaska · August 7-9, 2026</p>
+        <div className="footer-newsletter">
+          <p className="footer-newsletter-heading">Stay in the loop.</p>
+          <NewsletterForm />
+        </div>
         <div className="footer-socials">
           <a href="https://www.instagram.com/wellnessweekendak" target="_blank" rel="noopener noreferrer">Instagram</a>
           <a href="https://www.facebook.com/wellnessweekendak" target="_blank" rel="noopener noreferrer">Facebook</a>

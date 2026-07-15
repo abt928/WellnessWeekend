@@ -1,18 +1,18 @@
 import { NextRequest, NextResponse } from "next/server";
-import { neon } from "@neondatabase/serverless";
+import { neon, type NeonQueryFunction } from "@neondatabase/serverless";
 import { getSquareClient, getLocationId } from "@/lib/square";
 import { randomUUID } from "crypto";
 
 export const dynamic = "force-dynamic";
 
 const SPACE_LABELS: Record<string, string> = {
-  "1day-10x10": "Vendor Space — 1 Day 10×10 ft",
-  "3day-10x10": "Vendor Space — 3 Days 10×10 ft",
-  "3day-10x20": "Vendor Space — 3 Days 10×20 ft",
+  "1day-10x10": "Vendor Space: 1 Day 10×10 ft",
+  "3day-10x10": "Vendor Space: 3 Days 10×10 ft",
+  "3day-10x20": "Vendor Space: 3 Days 10×20 ft",
   "sponsor":    "Sponsor / Partner Space",
 };
 
-async function ensureTable(sql: ReturnType<typeof neon>) {
+async function ensureTable(sql: NeonQueryFunction<false, false>) {
   await sql`
     CREATE TABLE IF NOT EXISTS vendor_agreements (
       id                SERIAL PRIMARY KEY,
@@ -89,7 +89,7 @@ export async function POST(req: NextRequest) {
     `;
 
     const agreementId = (rows[0]?.id ?? 0) as number;
-    const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || "https://wellnessweekendak.com";
+    const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || "https://www.wellnessweekendak.com";
 
     // Sponsor spaces — no payment needed
     if (priceCents === 0) {

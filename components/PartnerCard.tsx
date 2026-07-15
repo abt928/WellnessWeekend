@@ -8,15 +8,17 @@ interface PartnerCardProps {
   logo: string;
   logoWidth: number;
   logoHeight: number;
+  /** When false, skip the <Image> entirely and show the name (no 404 request). */
+  logoReady?: boolean;
 }
 
-export default function PartnerCard({ name, role, logo, logoWidth, logoHeight }: PartnerCardProps) {
+export default function PartnerCard({ name, role, logo, logoWidth, logoHeight, logoReady = true }: PartnerCardProps) {
   const [imgFailed, setImgFailed] = useState(false);
 
   return (
     <div className="partner-card partner-card-logo">
       <div className="partner-logo-img-wrap">
-        {imgFailed ? (
+        {!logoReady || imgFailed ? (
           <span className="partner-logo-text">{name}</span>
         ) : (
           <Image

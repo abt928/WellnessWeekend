@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import Link from "next/link";
 
 export const metadata: Metadata = {
-  title: "Privacy Policy — Wellness Weekend",
+  title: "Privacy Policy",
   description:
     "Learn how Wellness Weekend collects, uses, and protects your personal information, including our use of tracking technologies and third-party services.",
 };
@@ -160,7 +160,7 @@ export default function PrivacyPolicy() {
                 identifiable information.
               </p>
 
-              <h3>3.4 Cookies</h3>
+              <h3>3.5 Cookies</h3>
               <p>
                 Cookies are small data files placed on your device. We and our
                 third-party partners use cookies for:

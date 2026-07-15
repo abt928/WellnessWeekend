@@ -1,10 +1,12 @@
 "use client";
-import { useEffect, useState, useCallback } from "react";
+import { useEffect, useState, useCallback, useRef } from "react";
 import { CloseIcon } from "@/components/Icons";
+import { useFocusTrap } from "@/lib/useFocusTrap";
 
 export default function Navigation() {
   const [scrolled, setScrolled] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);
+  const menuRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     const handler = () => setScrolled(window.scrollY > 50);
@@ -12,17 +14,18 @@ export default function Navigation() {
     return () => window.removeEventListener("scroll", handler);
   }, []);
 
-  // Lock body scroll when menu is open
-  useEffect(() => {
-    if (menuOpen) {
-      document.body.style.overflow = "hidden";
-    } else {
-      document.body.style.overflow = "";
-    }
-    return () => { document.body.style.overflow = ""; };
-  }, [menuOpen]);
-
   const closeMenu = useCallback(() => setMenuOpen(false), []);
+
+  // Trap focus and lock body scroll while the drawer is open
+  useFocusTrap(menuOpen, menuRef);
+
+  // Escape closes the drawer
+  useEffect(() => {
+    if (!menuOpen) return;
+    const onKey = (e: KeyboardEvent) => { if (e.key === "Escape") closeMenu(); };
+    window.addEventListener("keydown", onKey);
+    return () => window.removeEventListener("keydown", onKey);
+  }, [menuOpen, closeMenu]);
 
   return (
     <nav className={`nav${scrolled ? " scrolled" : ""}${menuOpen ? " menu-open" : ""}`}>
@@ -52,6 +55,7 @@ export default function Navigation() {
         onClick={() => setMenuOpen((prev) => !prev)}
         aria-label={menuOpen ? "Close menu" : "Open menu"}
         aria-expanded={menuOpen}
+        aria-controls="mobile-nav-menu"
       >
         <span className="hamburger-line" />
         <span className="hamburger-line" />
@@ -61,7 +65,15 @@ export default function Navigation() {
       {/* Mobile slide-out menu */}
       {menuOpen && (
         <div className="mobile-menu-overlay" onClick={closeMenu}>
-          <div className="mobile-menu" onClick={(e) => e.stopPropagation()}>
+          <div
+            id="mobile-nav-menu"
+            className="mobile-menu"
+            onClick={(e) => e.stopPropagation()}
+            ref={menuRef}
+            role="dialog"
+            aria-modal="true"
+            aria-label="Site navigation"
+          >
             <div className="mobile-menu-header">
               <div className="nav-logo">
                 Wellness Weekend

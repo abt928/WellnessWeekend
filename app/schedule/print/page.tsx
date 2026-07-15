@@ -4,8 +4,9 @@ import { scheduleDays } from "@/lib/schedule-data";
 import { practitioners } from "@/lib/practitioners";
 
 export const metadata = {
-  title: "Full Schedule · Wellness Weekend 2026",
-  description: "Printable 3-day schedule for Wellness Weekend — August 7–9, 2026 · Sutton, Alaska",
+  title: "Full Schedule",
+  description: "Printable 3-day schedule for Wellness Weekend, August 7-9, 2026 · Sutton, Alaska",
+  robots: { index: false, follow: true },
 };
 
 const elementSymbol: Record<string, string> = {
@@ -34,7 +35,7 @@ export default function PrintSchedulePage() {
       <header className="print-header">
         <p className="print-eyebrow">4th Annual Healing Arts Gathering · Lion&apos;s Gate</p>
         <h1 className="print-title">Wellness Weekend</h1>
-        <p className="print-subtitle">August 7–9, 2026 · Warrior Lodge · Sutton, Alaska</p>
+        <p className="print-subtitle">August 7-9, 2026 · Warrior Lodge · Sutton, Alaska</p>
         <p className="print-subtitle" style={{ fontSize: "0.8rem", opacity: 0.6, marginTop: "0.25rem" }}>
           wellnessweekendak.com · support@thesoundspace.us
         </p>
@@ -81,9 +82,9 @@ export default function PrintSchedulePage() {
                     {e.event}
                     {e.detail && <div className="print-detail">{e.detail}</div>}
                   </td>
-                  <td className="print-location">{e.location ?? "—"}</td>
+                  <td className="print-location">{e.location ?? "-"}</td>
                   <td className="print-hosts">
-                    {e.hosts && e.hosts.length > 0 ? hostNames(e.hosts) : "—"}
+                    {e.hosts && e.hosts.length > 0 ? hostNames(e.hosts) : "-"}
                   </td>
                   <td className="print-notes">
                     {e.limited && <span className="print-badge-limited">⚑ Book</span>}
@@ -98,8 +99,8 @@ export default function PrintSchedulePage() {
 
       {/* Footer */}
       <footer className="print-footer">
-        <p>Contrast Therapy runs all day Fri–Sun in 30-min slots · Sauna max 4 people · Must be booked in advance · Facilitated by Ashleigh Bicknell</p>
-        <p style={{ marginTop: "0.25rem" }}>Camping is sold out — cabin beds still available · wellnessweekendak.com/#store</p>
+        <p>Contrast Therapy runs all day Fri-Sun in 30-min slots · Sauna max 4 people · Must be booked in advance · Facilitated by Ashleigh Bicknell</p>
+        <p style={{ marginTop: "0.25rem" }}>Camping is sold out, cabin beds still available · wellnessweekendak.com/#store</p>
       </footer>
     </div>
   );

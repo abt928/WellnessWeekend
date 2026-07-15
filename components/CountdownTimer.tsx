@@ -1,7 +1,8 @@
 "use client";
 import { useEffect, useState } from "react";
 
-const TARGET = new Date("2026-08-07T00:00:00-09:00").getTime();
+// Alaska observes daylight time (AKDT, UTC-8) in August, so local midnight Aug 7 is 08:00Z.
+const TARGET = new Date("2026-08-07T00:00:00-08:00").getTime();
 
 export default function CountdownTimer() {
   const [diff, setDiff] = useState<{ days: number; hours: number } | null>(null);

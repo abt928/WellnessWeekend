@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import Link from "next/link";
 
 export const metadata: Metadata = {
-  title: "Terms of Service — Wellness Weekend",
+  title: "Terms of Service",
   description:
     "Read the terms and conditions governing your use of the Wellness Weekend website, ticket purchases, and event attendance.",
 };
@@ -79,7 +79,7 @@ export default function TermsOfService() {
                   before the event date.
                 </li>
                 <li>
-                  <strong>50% refund:</strong> Requests made 30–60 days before the
+                  <strong>50% refund:</strong> Requests made 30-60 days before the
                   event date.
                 </li>
                 <li>

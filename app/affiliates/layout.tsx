@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 
 export const metadata: Metadata = {
-  title: "Partner Portal · Wellness Weekend",
+  title: "Partner Portal",
   description: "Affiliate partner portal",
   robots: { index: false, follow: false },
 };

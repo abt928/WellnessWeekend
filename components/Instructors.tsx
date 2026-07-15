@@ -1,18 +1,19 @@
 "use client";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import Image from "next/image";
 import { practitioners, type Practitioner } from "@/lib/practitioners";
 import Reveal from "@/components/Reveal";
+import { useFocusTrap } from "@/lib/useFocusTrap";
 
 function BioModal({ person, onClose }: { person: Practitioner; onClose: () => void }) {
+  const modalRef = useRef<HTMLDivElement>(null);
+  // Trap focus, autofocus, restore focus, and lock body scroll while open
+  useFocusTrap(true, modalRef);
+
   useEffect(() => {
-    document.body.style.overflow = "hidden";
     const onKey = (e: KeyboardEvent) => { if (e.key === "Escape") onClose(); };
     window.addEventListener("keydown", onKey);
-    return () => {
-      document.body.style.overflow = "";
-      window.removeEventListener("keydown", onKey);
-    };
+    return () => window.removeEventListener("keydown", onKey);
   }, [onClose]);
 
   const initials = person.name
@@ -30,7 +31,7 @@ function BioModal({ person, onClose }: { person: Practitioner; onClose: () => vo
       aria-label={`${person.name} bio`}
       onClick={onClose}
     >
-      <div className="bio-modal" onClick={(e) => e.stopPropagation()}>
+      <div className="bio-modal" ref={modalRef} onClick={(e) => e.stopPropagation()}>
         <button className="bio-close" onClick={onClose} aria-label="Close">✕</button>
         <div className="bio-avatar">
           {person.photo ? (

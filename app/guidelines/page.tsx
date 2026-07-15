@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import Link from "next/link";
 
 export const metadata: Metadata = {
-  title: "Community Guidelines — Wellness Weekend",
+  title: "Community Guidelines",
   description:
     "Peace, Love, Unity, Respect. Read the community guidelines for attending Wellness Weekend, Alaska's premier healing arts gathering.",
 };
@@ -31,6 +31,23 @@ export default function CommunityGuidelines() {
             </p>
           </header>
 
+          <nav className="legal-toc" aria-label="On this page">
+            <p className="legal-toc-label">On this page</p>
+            <ul>
+              <li><a href="#respect">1. Respect Every Being</a></li>
+              <li><a href="#consent">2. Consent Culture</a></li>
+              <li><a href="#leave-no-trace">3. Leave No Trace</a></li>
+              <li><a href="#prohibited-items">4. Prohibited Items</a></li>
+              <li><a href="#substance-policy">5. Substance Policy</a></li>
+              <li><a href="#sacred-space">6. Sacred Space &amp; Ceremony</a></li>
+              <li><a href="#quiet-hours">7. Sound &amp; Quiet Hours</a></li>
+              <li><a href="#safety">8. Safety &amp; Emergencies</a></li>
+              <li><a href="#photography">9. Photography &amp; Media</a></li>
+              <li><a href="#vendor-conduct">10. Vendor &amp; Instructor Conduct</a></li>
+              <li><a href="#accountability">11. Accountability</a></li>
+            </ul>
+          </nav>
+
           <article className="legal-body">
             <section className="legal-section">
               <h2>Our Values</h2>
@@ -48,7 +65,7 @@ export default function CommunityGuidelines() {
               </p>
             </section>
 
-            <section className="legal-section">
+            <section className="legal-section" id="respect">
               <h2>1. Respect Every Being</h2>
               <ul>
                 <li>
@@ -57,7 +74,7 @@ export default function CommunityGuidelines() {
                 </li>
                 <li>
                   Honor each person&rsquo;s boundaries, identity, background,
-                  and personal space — always ask before touching, photographing,
+                  and personal space; always ask before touching, photographing,
                   or recording.
                 </li>
                 <li>
@@ -71,7 +88,7 @@ export default function CommunityGuidelines() {
               </ul>
             </section>
 
-            <section className="legal-section">
+            <section className="legal-section" id="consent">
               <h2>2. Consent Culture</h2>
               <ul>
                 <li>
@@ -92,7 +109,7 @@ export default function CommunityGuidelines() {
               </ul>
             </section>
 
-            <section className="legal-section">
+            <section className="legal-section" id="leave-no-trace">
               <h2>3. Leave No Trace</h2>
               <ul>
                 <li>
@@ -106,7 +123,7 @@ export default function CommunityGuidelines() {
                   Use designated fire pits only. Fully extinguish all fires.
                 </li>
                 <li>
-                  Respect wildlife — do not feed, approach, or disturb animals.
+                  Respect wildlife; do not feed, approach, or disturb animals.
                 </li>
                 <li>
                   Stay on marked trails and designated areas to protect the
@@ -115,7 +132,7 @@ export default function CommunityGuidelines() {
               </ul>
             </section>
 
-            <section className="legal-section">
+            <section className="legal-section" id="prohibited-items">
               <h2>4. Prohibited Items</h2>
               <p>
                 The following items are <strong>strictly prohibited</strong> at
@@ -123,38 +140,38 @@ export default function CommunityGuidelines() {
               </p>
               <ul>
                 <li>
-                  <strong>Weapons</strong> — Firearms, knives (beyond basic
+                  <strong>Weapons</strong>: Firearms, knives (beyond basic
                   camping utility), pepper spray, or any item intended as a
                   weapon.
                 </li>
                 <li>
-                  <strong>Illegal substances</strong> — Possession, use, or
+                  <strong>Illegal substances</strong>: Possession, use, or
                   distribution of illegal drugs or controlled substances.
                 </li>
                 <li>
-                  <strong>Glass containers</strong> — For safety, use reusable
+                  <strong>Glass containers</strong>: For safety, use reusable
                   bottles and cans only.
                 </li>
                 <li>
-                  <strong>Fireworks &amp; explosives</strong> — Including
+                  <strong>Fireworks &amp; explosives</strong>: Including
                   sparklers and sky lanterns.
                 </li>
                 <li>
-                  <strong>Drones</strong> — Unauthorized aerial devices are not
+                  <strong>Drones</strong>: Unauthorized aerial devices are not
                   permitted.
                 </li>
                 <li>
-                  <strong>Amplified sound systems</strong> — Personal speakers
+                  <strong>Amplified sound systems</strong>: Personal speakers
                   and sound systems outside designated areas.
                 </li>
                 <li>
-                  <strong>Pets</strong> — Service animals only, with proper
+                  <strong>Pets</strong>: Service animals only, with proper
                   documentation.
                 </li>
               </ul>
             </section>
 
-            <section className="legal-section">
+            <section className="legal-section" id="substance-policy">
               <h2>5. Substance Policy</h2>
               <ul>
                 <li>
@@ -172,12 +189,12 @@ export default function CommunityGuidelines() {
                 </li>
                 <li>
                   If you or someone you know needs help, find any staff member
-                  immediately — we are here to support, not judge.
+                  immediately; we are here to support, not judge.
                 </li>
               </ul>
             </section>
 
-            <section className="legal-section">
+            <section className="legal-section" id="sacred-space">
               <h2>6. Sacred Space &amp; Ceremony</h2>
               <ul>
                 <li>
@@ -198,11 +215,11 @@ export default function CommunityGuidelines() {
               </ul>
             </section>
 
-            <section className="legal-section">
+            <section className="legal-section" id="quiet-hours">
               <h2>7. Sound &amp; Quiet Hours</h2>
               <ul>
                 <li>
-                  <strong>Quiet hours:</strong> 12:00 AM – 7:00 AM. Keep
+                  <strong>Quiet hours:</strong> 12:00 AM to 7:00 AM. Keep
                   conversations and activities at a low volume in camping areas.
                 </li>
                 <li>
@@ -216,7 +233,7 @@ export default function CommunityGuidelines() {
               </ul>
             </section>
 
-            <section className="legal-section">
+            <section className="legal-section" id="safety">
               <h2>8. Safety &amp; Emergencies</h2>
               <ul>
                 <li>
@@ -227,7 +244,7 @@ export default function CommunityGuidelines() {
                   staff immediately.
                 </li>
                 <li>
-                  Follow all fire safety rules — Alaska&rsquo;s dry conditions
+                  Follow all fire safety rules; Alaska&rsquo;s dry conditions
                   make fire prevention critical.
                 </li>
                 <li>
@@ -241,7 +258,7 @@ export default function CommunityGuidelines() {
               </ul>
             </section>
 
-            <section className="legal-section">
+            <section className="legal-section" id="photography">
               <h2>9. Photography &amp; Media</h2>
               <ul>
                 <li>
@@ -265,7 +282,7 @@ export default function CommunityGuidelines() {
               </ul>
             </section>
 
-            <section className="legal-section">
+            <section className="legal-section" id="vendor-conduct">
               <h2>10. Vendor &amp; Instructor Conduct</h2>
               <ul>
                 <li>
@@ -282,7 +299,7 @@ export default function CommunityGuidelines() {
               </ul>
             </section>
 
-            <section className="legal-section">
+            <section className="legal-section" id="accountability">
               <h2>11. Accountability</h2>
               <p>
                 We believe in <strong>restorative accountability</strong>.
@@ -303,7 +320,7 @@ export default function CommunityGuidelines() {
                 </li>
               </ul>
               <p>
-                Our goal is always healing and growth — but the safety of the
+                Our goal is always healing and growth, but the safety of the
                 community comes first.
               </p>
             </section>
@@ -311,14 +328,14 @@ export default function CommunityGuidelines() {
             <section className="legal-section">
               <h2>The Spirit of the Gathering</h2>
               <p>
-                Wellness Weekend is more than an event — it&rsquo;s a living,
+                Wellness Weekend is more than an event; it&rsquo;s a living,
                 breathing community. We come together to heal, grow, dance,
                 learn, and hold space for each other under the midnight sun. Be
                 the energy you want to experience. Lead with love. Leave with
                 gratitude.
               </p>
-              <p style={{ fontStyle: "italic", color: "var(--sage)" }}>
-                &ldquo;We are all here to support each other&rsquo;s journey.
+              <p style={{ fontStyle: "italic", color: "var(--forest)" }}>
+                &ldquo;We are all here to support each other&rsquo;s growth.
                 When we lift others, we rise together.&rdquo;
               </p>
             </section>

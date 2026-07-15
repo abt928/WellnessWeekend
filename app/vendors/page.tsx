@@ -1,29 +1,30 @@
 "use client";
 import { useRef, useState, useEffect, useCallback } from "react";
 import Link from "next/link";
+import { trackFormSubmit } from "@/lib/tracking";
 
 const SPACE_OPTIONS = [
-  { id: "1day-10x10",  label: "1 Day — 10×10 ft",                    price: 75,  days: 1 },
-  { id: "3day-10x10",  label: "3 Days — 10×10 ft",                   price: 200, days: 3 },
-  { id: "3day-10x20",  label: "3 Days — 10×20 ft",                   price: 300, days: 3 },
+  { id: "1day-10x10",  label: "1 Day, 10×10 ft",                     price: 75,  days: 1 },
+  { id: "3day-10x10",  label: "3 Days, 10×10 ft",                    price: 200, days: 3 },
+  { id: "3day-10x20",  label: "3 Days, 10×20 ft",                    price: 300, days: 3 },
   { id: "sponsor",     label: "Sponsor / Partner (Complimentary)",    price: 0,   days: 3 },
 ] as const;
 
 const EVENT_DAYS = ["Friday, August 7", "Saturday, August 8", "Sunday, August 9"];
 
-const TERMS = `WELLNESS WEEKEND 2026 — VENDOR AGREEMENT
+const TERMS = `WELLNESS WEEKEND 2026: VENDOR AGREEMENT
 Sound Healing Products LLC d/b/a Wellness Weekend
-Warrior Lodge · Sutton, Alaska · August 7–9, 2026
+Warrior Lodge · Sutton, Alaska · August 7-9, 2026
 
 By signing this agreement, the vendor acknowledges and agrees to the following terms and conditions:
 
 1. SPACE & SETUP
-Vendor spaces are assigned by festival management. Vendors are responsible for bringing their own tables, chairs, canopies, and display materials. Setup begins Friday, August 7 at 9:00 AM. All vendor structures must be secured and able to withstand wind and weather. Vendors operating in assigned spaces only — no encroachment into neighboring spaces or walkways.
+Vendor spaces are assigned by festival management. Vendors are responsible for bringing their own tables, chairs, canopies, and display materials. Setup begins Friday, August 7 at 9:00 AM. All vendor structures must be secured and able to withstand wind and weather. Vendors operating in assigned spaces only; no encroachment into neighboring spaces or walkways.
 
 2. FESTIVAL HOURS
-Friday, August 7: 12:00 PM – 10:00 PM
-Saturday, August 8: 9:00 AM – 11:00 PM
-Sunday, August 9: 10:00 AM – 7:00 PM
+Friday, August 7: 12:00 PM to 10:00 PM
+Saturday, August 8: 9:00 AM to 11:00 PM
+Sunday, August 9: 10:00 AM to 7:00 PM
 Vendors are expected to be open during all festival hours on their contracted days. Early breakdown is not permitted without prior written approval from festival management.
 
 3. FEES & PAYMENT
@@ -39,7 +40,7 @@ All vendors are required to carry general liability insurance with a minimum of 
 Electricity access (standard 120V outlet) is available for an additional fee where indicated. Vendors requiring electricity must declare their usage at the time of application. Vendors found using electricity without paying for access will be charged and may be asked to leave.
 
 7. WASTE & LEAVE NO TRACE
-Vendors are responsible for maintaining a clean space throughout the event and removing all waste, materials, and equipment at the close of the festival. Vendors generating food waste or excessive packaging are expected to provide their own trash solutions. The festival operates on a Leave No Trace ethic — any vendor found leaving waste or damaging the site will be invoiced for cleanup costs.
+Vendors are responsible for maintaining a clean space throughout the event and removing all waste, materials, and equipment at the close of the festival. Vendors generating food waste or excessive packaging are expected to provide their own trash solutions. The festival operates on a Leave No Trace ethic; any vendor found leaving waste or damaging the site will be invoiced for cleanup costs.
 
 8. INDEMNIFICATION
 The vendor agrees to indemnify, defend, and hold harmless Sound Healing Products LLC, its organizers, volunteers, staff, partners, and the property owner (Warrior Lodge) from any and all claims, damages, losses, costs, or expenses (including attorney's fees) arising out of or relating to the vendor's participation in the festival, the vendor's products or services, or any act or omission of the vendor or the vendor's employees, agents, or contractors.
@@ -171,6 +172,13 @@ export default function VendorAgreementPage() {
     e.preventDefault();
     setError("");
 
+    if (!vendorName.trim()) { setError("Please enter your vendor or business name."); return; }
+    if (!contactName.trim()) { setError("Please enter a contact person."); return; }
+    if (!email.trim()) { setError("Please enter your email address."); return; }
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email.trim())) { setError("Please enter a valid email address."); return; }
+    if (!phone.trim()) { setError("Please enter your phone number."); return; }
+    if (!category.trim()) { setError("Please enter the type of products or services you offer."); return; }
+    if (!description.trim()) { setError("Please add a brief description of your offerings."); return; }
     if (!spaceType) { setError("Please select a vendor space."); return; }
     if (isOneDay && selectedDays.length === 0) { setError("Please select which day you will be attending."); return; }
     if (!electricity) { setError("Please indicate whether you need electricity."); return; }
@@ -208,6 +216,22 @@ export default function VendorAgreementPage() {
 
       const data = await res.json();
       if (!res.ok) { setError(data.error || "Something went wrong. Please try again."); return; }
+
+      // Vendor agreement submitted — fire a SubmitForm conversion (TikTok
+      // SubmitForm + Meta Lead). Include email + phone so Advanced Matching
+      // updates. The client pixels fire synchronously before the redirect.
+      try {
+        trackFormSubmit({
+          email: email.trim(),
+          phone: phone.trim(),
+          description: "vendor_agreement",
+          contentName: "Vendor Agreement",
+          ...(selectedSpace?.price ? { value: selectedSpace.price, currency: "USD" } : {}),
+        });
+      } catch {
+        // fail-open — never block the vendor redirect on tracking
+      }
+
       window.location.href = data.redirectUrl;
     } catch {
       setError("Network error. Please check your connection and try again.");
@@ -233,7 +257,7 @@ export default function VendorAgreementPage() {
 
           {/* Header */}
           <header className="vendor-header">
-            <p className="section-label">August 7–9, 2026 · Sutton, Alaska</p>
+            <p className="section-label">August 7-9, 2026 · Sutton, Alaska</p>
             <h1 className="vendor-title">Vendor Agreement</h1>
             <p className="vendor-subtitle">
               Welcome to Wellness Weekend 2026. Complete this agreement to reserve your
@@ -553,9 +577,11 @@ export default function VendorAgreementPage() {
             >
               {submitting
                 ? "Submitting…"
-                : selectedSpace?.price === 0
+                : !selectedSpace
                 ? "Submit Agreement"
-                : `Submit & Pay $${selectedSpace?.price ?? "—"}`}
+                : selectedSpace.price === 0
+                ? "Submit Agreement"
+                : `Submit & Pay $${selectedSpace.price}`}
             </button>
 
           </form>

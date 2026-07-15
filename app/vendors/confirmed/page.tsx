@@ -2,7 +2,7 @@ import Link from "next/link";
 import type { Metadata } from "next";
 
 export const metadata: Metadata = {
-  title: "Agreement Received — Wellness Weekend Vendors",
+  title: "Agreement Received",
   description: "Your vendor agreement has been received. Welcome to Wellness Weekend 2026.",
 };
 

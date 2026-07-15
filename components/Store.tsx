@@ -2,7 +2,7 @@
 import { useState, useEffect, useCallback, useId, useRef } from "react";
 import { trackAddToCart, trackInitiateCheckout, trackViewContent } from "@/lib/tracking";
 import { useFocusTrap } from "@/lib/useFocusTrap";
-import { TicketIcon, SparkleIcon, CupIcon, ShirtIcon, LotusIcon, CloseIcon } from "@/components/Icons";
+import { TicketIcon, SparkleIcon, CupIcon, ShirtIcon, CloseIcon } from "@/components/Icons";
 
 interface Variation {
   id: string;
@@ -65,6 +65,7 @@ export default function Store() {
   const [cart, setCart] = useState<CartEntry[]>(readInitialCart);
   const [cartOpen, setCartOpen] = useState(false);
   const [checkingOut, setCheckingOut] = useState(false);
+  const [checkoutError, setCheckoutError] = useState<string | null>(null);
   const [pendingRedemption, setPendingRedemption] = useState<{
     id: number;
     rewardType: string;
@@ -72,6 +73,9 @@ export default function Store() {
   } | null>(null);
 
   const [error, setError] = useState<string | null>(null);
+  const [justAddedId, setJustAddedId] = useState<string | null>(null);
+  const justAddedTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const [showPromo, setShowPromo] = useState(false);
   const [promoInput, setPromoInput] = useState("");
   const [promoLoading, setPromoLoading] = useState(false);
   const [promoResult, setPromoResult] = useState<{
@@ -165,6 +169,18 @@ export default function Store() {
         }
         return [...prev, { variationId, name, variantName, price, quantity: 1 }];
       });
+      // Packages component only dispatches the event; fire the AddToCart
+      // conversion here so package add-to-carts match the in-store ones.
+      try {
+        trackAddToCart({
+          contentId: variationId,
+          contentName: name,
+          contentType: "product",
+          value: price / 100,
+          currency: "USD",
+          quantity: 1,
+        });
+      } catch { /* fail-open — never break the cart */ }
     };
     window.addEventListener("ww-add-to-cart", handler);
     return () => window.removeEventListener("ww-add-to-cart", handler);
@@ -200,6 +216,12 @@ export default function Store() {
     return () => window.removeEventListener("keydown", onKey);
   }, [cartOpen]);
 
+  // Promo field defaults collapsed each time the cart opens
+  useEffect(() => { if (cartOpen) setShowPromo(false); }, [cartOpen]);
+
+  // Clear the transient "just added" timer on unmount
+  useEffect(() => () => { if (justAddedTimer.current) clearTimeout(justAddedTimer.current); }, []);
+
   const addToCart = useCallback((item: CatalogItem, variation: Variation) => {
     setCart((prev) => {
       const existing = prev.find((c) => c.variationId === variation.id);
@@ -225,6 +247,9 @@ export default function Store() {
       currency: "USD",
       quantity: 1,
     });
+    setJustAddedId(variation.id);
+    if (justAddedTimer.current) clearTimeout(justAddedTimer.current);
+    justAddedTimer.current = setTimeout(() => setJustAddedId(null), 1200);
   }, []);
 
   const updateQty = useCallback((variationId: string, delta: number) => {
@@ -262,39 +287,60 @@ export default function Store() {
   const cartTotal = cart.reduce((sum, c) => sum + c.price * c.quantity, 0);
   const cartCount = cart.reduce((sum, c) => sum + c.quantity, 0);
 
+  // Cross-sell order bump: up to 3 add-on/cacao items not already in the cart,
+  // shown only once the cart holds at least one ticket.
+  const cartVariationIds = new Set(cart.map((c) => c.variationId));
+  const ticketVariationIds = new Set(
+    items.filter((i) => i.category === "tickets").flatMap((i) => i.variations.map((v) => v.id))
+  );
+  const cartHasTicket = cart.some((c) => ticketVariationIds.has(c.variationId));
+  const bumpItems = items
+    .filter((i) => (i.category === "addons" || i.category === "cacao") && i.variations.length > 0)
+    .filter((i) => !i.variations.some((v) => cartVariationIds.has(v.id)))
+    .slice(0, 3);
+
+  // Points earned on this order, using the same discounted total shown below.
+  const pointsToEarn = Math.max(
+    0,
+    Math.floor(
+      (cartTotal - (promoResult?.valid ? (promoResult.discountCents ?? 0) : 0) - (pendingRedemption?.discountCents ?? 0)) / 100
+    )
+  );
+
   const handleCheckout = async () => {
     if (cart.length === 0) return;
+    setCheckoutError(null);
     setCheckingOut(true);
+
+    // True paid value: cart total minus the valid promo and pending redemption
+    // discounts, floored at 0. This mirrors the discounted total shown in the
+    // cart and the Square order total, and it feeds both the InitiateCheckout
+    // value and the ww-checkout value the thank-you Purchase reads (which also
+    // auto-corrects the members/earn points award).
+    const discountedTotalCents = Math.max(
+      0,
+      cartTotal
+        - (promoResult?.valid ? (promoResult.discountCents ?? 0) : 0)
+        - (pendingRedemption?.discountCents ?? 0)
+    );
+    const paidValue = discountedTotalCents / 100;
+    const contents = cart.map((c) => ({
+      contentId: c.variationId,
+      quantity: c.quantity,
+      price: c.price / 100,
+      name: c.name,
+    }));
+
     trackInitiateCheckout({
-      value: cartTotal / 100,
+      value: paidValue,
       currency: "USD",
       quantity: cartCount,
       contentId: cart[0]?.variationId || "wellness-weekend-checkout",
       contentName: cart.map((c) => c.name).join(", "),
       contentType: "product",
       description: cart.map((c) => c.name).join(", "),
-      contents: cart.map((c) => ({
-        contentId: c.variationId,
-        quantity: c.quantity,
-        price: c.price / 100,
-        name: c.name,
-      })),
+      contents,
     });
-
-    // Save cart context for the thank-you page to fire purchase event with value
-    localStorage.setItem("ww-checkout", JSON.stringify({
-      value: cartTotal / 100,
-      currency: "USD",
-      quantity: cartCount,
-      items: cart.map((c) => c.name).join(", "),
-      contents: cart.map((c) => ({
-        contentId: c.variationId,
-        quantity: c.quantity,
-        price: c.price / 100,
-        name: c.name,
-      })),
-      timestamp: Date.now(),
-    }));
 
     // Read referral code from localStorage
     let referralCode: string | undefined;
@@ -317,17 +363,41 @@ export default function Store() {
           returnUrl: window.location.origin,
           ...(referralCode ? { referralCode } : {}),
           ...(pendingRedemption ? { redemptionId: pendingRedemption.id } : {}),
-          ...(promoResult?.valid && promoResult.discountCents ? { promoCents: promoResult.discountCents } : {}),
+          ...(promoResult?.valid && promoResult.code ? { promoCode: promoResult.code } : {}),
         }),
       });
       const data = await res.json();
-      if (data.checkoutUrl) {
-        // Clear the cart since checkout started
-        setCart([]);
-        window.location.href = data.checkoutUrl;
+      if (!res.ok || !data.checkoutUrl) {
+        // Keep the cart intact so the shopper can retry.
+        setCheckingOut(false);
+        setCheckoutError("Checkout is unavailable right now. Please try again.");
+        return;
       }
+
+      // Save cart context for the thank-you page to fire the Purchase event.
+      // orderId (the Square order id) lets thank-you + the Square webhook derive
+      // a byte-identical event_id (`purchase_${orderId}`) so the two Purchase
+      // fires dedupe; it is only known after the checkout link is created.
+      try {
+        localStorage.setItem("ww-checkout", JSON.stringify({
+          value: paidValue,
+          currency: "USD",
+          quantity: cartCount,
+          items: cart.map((c) => c.name).join(", "),
+          contents,
+          ...(data.orderId ? { orderId: data.orderId } : {}),
+          timestamp: Date.now(),
+        }));
+      } catch {
+        /* quota exceeded — Purchase still fires with a random event_id */
+      }
+
+      // Clear the cart since checkout started
+      setCart([]);
+      window.location.href = data.checkoutUrl;
     } catch {
       setCheckingOut(false);
+      setCheckoutError("Checkout is unavailable right now. Please try again.");
     }
   };
 
@@ -339,15 +409,15 @@ export default function Store() {
       <h2 className="section-title">
         We welcome all guests for a day or a weekend.
       </h2>
-      <p className="section-desc">
-        Choose your tickets, add-on experiences, and merch — all processed securely through Square.
+      <p className="section-desc" style={{ marginBottom: "0.75rem" }}>
+        Choose your tickets, add-on experiences, and merch, all processed securely through Square. Your weekend pass includes 40+ sessions across three days.
       </p>
-      <p className="store-capacity" style={{ display: "flex", alignItems: "center", justifyContent: "center", gap: "0.5rem" }}>
-        <LotusIcon size={16} color="var(--aurora)" /> Camping is sold out — cabin beds only <LotusIcon size={16} color="var(--aurora)" />
+      <p className="section-desc" style={{ fontSize: "0.95rem", marginBottom: "0", opacity: 0.85 }}>
+        Fourth annual gathering, capacity 200. Intimate by design.
       </p>
       <div className="camping-urgency">
-        <span className="camping-urgency-badge">Limited Cabins</span>
-        <span>Camping passes are sold out. On-site cabin beds are still available — <a href="#store">reserve yours before they&apos;re gone →</a></span>
+        <span className="camping-urgency-badge">Limited Cabin Beds</span>
+        <span>Camping passes are sold out for 2026. A few on-site cabin beds remain; reserve yours before they&apos;re gone.</span>
       </div>
 
       {/* Category Tabs */}
@@ -366,7 +436,7 @@ export default function Store() {
 
       {/* Items Grid */}
       {error ? (
-        <div style={{ backgroundColor: "rgba(255, 100, 100, 0.1)", border: "1px solid rgba(255, 100, 100, 0.3)", padding: "2rem", borderRadius: "8px", margin: "2rem 0", color: "#ff8888", textAlign: "center" }}>
+        <div style={{ backgroundColor: "rgba(255, 100, 100, 0.1)", border: "1px solid rgba(255, 100, 100, 0.3)", padding: "2rem", borderRadius: "8px", margin: "2rem 0", color: "#b44040", textAlign: "center" }}>
           <p style={{ fontFamily: "var(--font-display)", fontSize: "1.5rem", marginBottom: "0.5rem" }}>Catalog unavailable</p>
           <p>We can&apos;t load tickets right now. Please refresh, or come back in a few minutes.</p>
         </div>
@@ -381,12 +451,14 @@ export default function Store() {
             const soldOut = SOLD_OUT_PATTERNS.some((p) =>
               item.name.toLowerCase().includes(p)
             );
+            const featured = activeTab === "tickets" && !soldOut && /weekend/i.test(item.name);
             return (
-            <div className={`store-card${soldOut ? " store-card-sold-out" : ""}`} key={item.id}>
+            <div className={`store-card${soldOut ? " store-card-sold-out" : ""}${featured ? " store-card-featured" : ""}`} key={item.id}>
               <div className="store-card-header">
                 <h3 className="store-card-name">
                   {item.name}
                   {soldOut && <span className="store-sold-out-badge">Sold Out</span>}
+                  {featured && <span className="store-featured-badge">Full Weekend</span>}
                 </h3>
                 {!soldOut && item.variations.length === 1 && (
                   <span className="store-card-price">
@@ -404,21 +476,26 @@ export default function Store() {
                   <button
                     className="store-add-btn"
                     onClick={() => addToCart(item, item.variations[0])}
+                    disabled={justAddedId === item.variations[0].id}
                   >
-                    Add to Cart
+                    {justAddedId === item.variations[0].id ? "Added ✓" : "Add to Cart"}
                   </button>
                 ) : (
                   <div className="store-variants">
-                    {item.variations.map((v) => (
+                    {item.variations.map((v) => {
+                      const vFeatured = activeTab === "tickets" && /weekend/i.test(v.name);
+                      return (
                       <button
                         key={v.id}
-                        className="store-variant-btn"
+                        className={`store-variant-btn${vFeatured ? " store-variant-btn-featured" : ""}`}
                         onClick={() => addToCart(item, v)}
+                        disabled={justAddedId === v.id}
                       >
-                        <span className="variant-name">{v.name}</span>
+                        <span className="variant-name">{justAddedId === v.id ? "Added ✓" : v.name}</span>
                         <span className="variant-price">{formatPrice(v.price)}</span>
                       </button>
-                    ))}
+                      );
+                    })}
                   </div>
                 )}
               </div>
@@ -431,19 +508,19 @@ export default function Store() {
         </div>
       )}
 
-      {/* Rewards callout — below price boxes */}
-      <div className="store-rewards-strip">
-        <div className="store-rewards-earn">
+      {/* Rewards callout — one quiet line below the grid */}
+      <div
+        className="store-rewards-strip"
+        style={{
+          flexDirection: "row", flexWrap: "wrap", justifyContent: "center",
+          gap: "0.75rem 1rem", padding: "0.75rem 1.25rem",
+          background: "transparent", border: "1px solid var(--line-subtle)",
+        }}
+      >
+        <span className="store-rewards-earn" style={{ fontSize: "0.85rem" }}>
           <span className="store-rewards-star">✦</span>
-          <span><strong>Earn 1 point per $1 spent</strong> — plus 50 bonus points every time you refer a friend</span>
-        </div>
-        <div className="store-rewards-redeem">
-          <span className="store-rewards-tier"><strong>100 pts</strong> $10 off add-ons or merch</span>
-          <span className="store-rewards-sep">·</span>
-          <span className="store-rewards-tier"><strong>500 pts</strong> Free day pass</span>
-          <span className="store-rewards-sep">·</span>
-          <span className="store-rewards-tier"><strong>1,000 pts</strong> Free weekend pass</span>
-        </div>
+          <span>Members earn 1 point per $1, redeemable toward add-ons and passes.</span>
+        </span>
         <a href="/members" className="store-rewards-cta">Join the Circle →</a>
       </div>
 
@@ -497,41 +574,73 @@ export default function Store() {
                   ))}
                 </div>
                 <div className="cart-footer">
-                  {/* Promo code input */}
-                  <div style={{ display: "flex", gap: "0.5rem", marginBottom: "0.75rem" }}>
-                    <input
-                      type="text"
-                      value={promoInput}
-                      onChange={(e) => {
-                        setPromoInput(e.target.value.toUpperCase());
-                        if (promoResult) setPromoResult(null);
-                      }}
-                      onKeyDown={(e) => { if (e.key === "Enter") applyPromo(); }}
-                      placeholder="Promo code"
-                      aria-label="Promo code"
-                      style={{
-                        flex: 1, padding: "0.5rem 0.75rem", borderRadius: "8px",
-                        border: "1px solid rgba(107,127,96,0.3)",
-                        background: "var(--surface-elevated, #FEFCF8)",
-                        fontFamily: "var(--font-body)", fontSize: "0.875rem",
-                        color: "var(--charcoal)", letterSpacing: "0.05em",
-                      }}
-                    />
+                  {/* Cross-sell order bump — only once a ticket is in the cart */}
+                  {cartHasTicket && bumpItems.length > 0 && (
+                    <div className="cart-bump">
+                      <p className="cart-bump-heading">Complete your weekend</p>
+                      {bumpItems.map((bump) => (
+                        <div className="cart-bump-item" key={bump.id}>
+                          <span className="cart-bump-name">{bump.name}</span>
+                          <span className="cart-bump-price">{formatPrice(bump.variations[0].price)}</span>
+                          <button
+                            className="cart-bump-add"
+                            onClick={() => addToCart(bump, bump.variations[0])}
+                          >
+                            Add
+                          </button>
+                        </div>
+                      ))}
+                    </div>
+                  )}
+                  {/* Promo code — collapsed by default, revealed on request */}
+                  {showPromo || promoResult ? (
+                    <div style={{ display: "flex", gap: "0.5rem", marginBottom: "0.75rem" }}>
+                      <input
+                        type="text"
+                        value={promoInput}
+                        onChange={(e) => {
+                          setPromoInput(e.target.value.toUpperCase());
+                          if (promoResult) setPromoResult(null);
+                        }}
+                        onKeyDown={(e) => { if (e.key === "Enter") applyPromo(); }}
+                        placeholder="Promo code"
+                        aria-label="Promo code"
+                        style={{
+                          flex: 1, padding: "0.5rem 0.75rem", borderRadius: "8px",
+                          border: "1px solid rgba(107,127,96,0.3)",
+                          background: "var(--surface-elevated, #FEFCF8)",
+                          fontFamily: "var(--font-body)", fontSize: "0.875rem",
+                          color: "var(--charcoal)", letterSpacing: "0.05em",
+                        }}
+                      />
+                      <button
+                        onClick={applyPromo}
+                        disabled={promoLoading || !promoInput.trim()}
+                        style={{
+                          padding: "0.5rem 1rem", borderRadius: "8px",
+                          background: "var(--sage)", color: "white",
+                          border: "none", cursor: "pointer",
+                          fontSize: "0.875rem", fontWeight: 600,
+                          opacity: promoLoading || !promoInput.trim() ? 0.6 : 1,
+                          whiteSpace: "nowrap",
+                        }}
+                      >
+                        {promoLoading ? "..." : "Apply"}
+                      </button>
+                    </div>
+                  ) : (
                     <button
-                      onClick={applyPromo}
-                      disabled={promoLoading || !promoInput.trim()}
+                      type="button"
+                      onClick={() => setShowPromo(true)}
                       style={{
-                        padding: "0.5rem 1rem", borderRadius: "8px",
-                        background: "var(--sage)", color: "white",
-                        border: "none", cursor: "pointer",
-                        fontSize: "0.875rem", fontWeight: 600,
-                        opacity: promoLoading || !promoInput.trim() ? 0.6 : 1,
-                        whiteSpace: "nowrap",
+                        display: "block", background: "none", border: "none", padding: 0,
+                        marginBottom: "0.75rem", color: "var(--aurora)", fontSize: "0.8rem",
+                        fontWeight: 600, cursor: "pointer", fontFamily: "inherit", textDecoration: "underline",
                       }}
                     >
-                      {promoLoading ? "..." : "Apply"}
+                      Have a promo code?
                     </button>
-                  </div>
+                  )}
                   {promoResult && (
                     <div style={{
                       padding: "0.6rem 0.75rem", marginBottom: "0.75rem",
@@ -574,9 +683,26 @@ export default function Store() {
                       border: "1px solid rgba(139,95,191,0.2)",
                       fontSize: "0.875rem", color: "var(--aurora)", textAlign: "center",
                     }}>
-                      {pendingRedemption.rewardType === "day-pass" ? "Day Pass" : "Weekend Pass"} redemption pending — fulfilled after checkout
+                      {pendingRedemption.rewardType === "day-pass" ? "Day Pass" : "Weekend Pass"} redemption pending, fulfilled after checkout
                     </div>
                   )}
+                  {checkoutError && (
+                    <div role="alert" style={{
+                      padding: "0.6rem 0.75rem", marginBottom: "0.75rem",
+                      background: "rgba(220,80,80,0.08)", borderRadius: "8px",
+                      border: "1px solid rgba(220,80,80,0.25)",
+                      fontSize: "0.875rem", color: "#cc4444", textAlign: "center",
+                    }}>
+                      {checkoutError}
+                    </div>
+                  )}
+                  <p style={{
+                    textAlign: "center", fontSize: "0.8rem", lineHeight: 1.5,
+                    color: "var(--ink-muted)", margin: "0 0 0.75rem",
+                  }}>
+                    Members earn {pointsToEarn} points on this order toward add-ons and passes.{" "}
+                    <a href="/members" style={{ color: "var(--aurora)", fontWeight: 600, textDecoration: "none" }}>Join the Circle</a>
+                  </p>
                   <button
                     className="cart-checkout-btn"
                     onClick={handleCheckout}
@@ -585,6 +711,10 @@ export default function Store() {
                     {checkingOut ? "Redirecting to checkout..." : "Proceed to Checkout"}
                   </button>
                   <p className="cart-secure">🔒 Secure checkout powered by Square</p>
+                  <p className="cart-secure" style={{ marginTop: "0.35rem" }}>
+                    You&apos;ll finish payment on Square&apos;s secure page. Questions? See our{" "}
+                    <a href="/refunds" style={{ color: "var(--aurora)", fontWeight: 600, textDecoration: "none" }}>refund policy</a>.
+                  </p>
                 </div>
               </>
             )}

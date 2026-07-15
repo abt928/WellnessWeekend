@@ -46,7 +46,7 @@ export default function AffiliateApplyPage() {
             Application Received
           </h2>
           <p style={{ color: "var(--ink-muted)", lineHeight: "1.7", marginBottom: "1.5rem" }}>
-            We&apos;ll review your application and reach out within 1–2 business days.
+            We&apos;ll review your application and reach out within 1 to 2 business days.
             Once approved, you can log in with the email and password you set.
           </p>
           <Link href="/affiliates" style={{ color: "var(--psyche-cyan)", fontSize: "0.9rem" }}>
@@ -66,7 +66,7 @@ export default function AffiliateApplyPage() {
         <h1 className="admin-login-title">Become a Partner</h1>
         <p style={{ color: "var(--ink-muted)", fontSize: "0.875rem", textAlign: "center", marginBottom: "1.5rem", lineHeight: "1.6" }}>
           Earn {10}% commission on every ticket sold through your referral link.
-          Applications are reviewed within 1–2 business days.
+          Applications are reviewed within 1 to 2 business days.
         </p>
         <form onSubmit={handleSubmit} className="admin-login-form">
           <input type="text" placeholder="Your name *" value={form.name} onChange={set("name")} className="admin-input" required />
@@ -92,6 +92,9 @@ export default function AffiliateApplyPage() {
         <p style={{ marginTop: "1.25rem", textAlign: "center", fontSize: "0.875rem", color: "var(--ink-muted)" }}>
           Already a partner?{" "}
           <Link href="/affiliates" style={{ color: "var(--psyche-cyan)" }}>Sign in</Link>
+        </p>
+        <p style={{ marginTop: "0.5rem", textAlign: "center", fontSize: "0.875rem" }}>
+          <Link href="/" style={{ color: "var(--ink-muted)" }}>← Back to site</Link>
         </p>
       </div>
     </div>

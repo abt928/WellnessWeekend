@@ -37,6 +37,7 @@ export interface TrackingEventData {
   email?: string;        // for server-side matching + Advanced Matching
   phone?: string;        // for server-side matching
   description?: string;  // form type etc.
+  transactionId?: string; // GA4 purchase dedup key (Square order id)
   contents?: { contentId: string; quantity: number; price?: number; name?: string }[];
 }
 
@@ -122,7 +123,7 @@ function fireTikTok(event: string, eventId: string, data?: TrackingEventData) {
   // add email/phone when available
   try {
     const identifyParams: Record<string, unknown> = {
-      external_id: getExternalId(),
+      external_id: getHashedExternalIdSync(),
     };
     if (data?.email) identifyParams.email = data.email.trim().toLowerCase();
     if (data?.phone) {
@@ -185,7 +186,7 @@ function fireMeta(event: string, eventId: string, data?: TrackingEventData) {
       try {
         const amParams: Record<string, string> = {
           em: data.email.trim().toLowerCase(),
-          external_id: getExternalId(),
+          external_id: getHashedExternalIdSync(),
         };
         const e164 = formatPhoneE164(data.phone);
         if (e164) amParams.ph = e164.replace("+", ""); // Meta accepts numeric with or without +, but +1 format is best
@@ -238,6 +239,11 @@ function fireGA(event: string, eventId: string, data?: TrackingEventData) {
   if (data?.contentName) params.item_name = data.contentName;
   if (data?.quantity) params.quantity = data.quantity;
   if (data?.description) params.description = data.description;
+  // GA4 dedupes purchases by transaction_id — send the Square order id on the
+  // browser purchase so it collapses with the webhook Measurement Protocol fire.
+  if (event === "purchase" && data?.transactionId) {
+    params.transaction_id = data.transactionId;
+  }
 
   try {
     window.gtag("event", event, params);
@@ -257,6 +263,35 @@ function getExternalId(): string {
     localStorage.setItem("ww-eid", eid);
   }
   return eid;
+}
+
+// The server (/api/tracking) hashes external_id with SHA-256 before sending to
+// Meta/TikTok. The browser pixels must send the SAME hashed value or the two
+// identities never reconcile. We hash the raw eid once and cache it so both the
+// synchronous pixel fires and the async server payload use an identical value.
+let cachedHashedEid: string | undefined;
+
+/** SHA-256 of the external id, matching the server so external_id reconciles. Cached after first call. */
+async function getHashedExternalId(): Promise<string> {
+  if (cachedHashedEid) return cachedHashedEid;
+  const raw = getExternalId();
+  if (!raw) return "";
+  try {
+    cachedHashedEid = await sha256(raw);
+  } catch {
+    return raw; // crypto.subtle unavailable — fall back to raw (server tolerates both)
+  }
+  return cachedHashedEid;
+}
+
+/**
+ * Best-effort synchronous hashed external id for the pixel fires. Returns the
+ * cached hash once primed (see module-load prime below); before that it falls
+ * back to the raw eid, which the server also accepts (it only hashes values
+ * that are not already a 64-char hex string).
+ */
+function getHashedExternalIdSync(): string {
+  return cachedHashedEid || getExternalId();
 }
 
 /** Persist known user PII for cross-event matching */
@@ -307,7 +342,9 @@ async function fireServerEvent(
 
     const { fbc, fbp } = getMetaClickIds();
     const ttclid = getTtclid();
-    const externalId = getExternalId();
+    // Send the already-hashed external id so the server does not double-hash it
+    // (it only hashes values that are not already a 64-char hex string).
+    const externalId = await getHashedExternalId();
 
     // Capture fbclid and gclid from URL
     const urlParams = typeof window !== "undefined"
@@ -405,9 +442,11 @@ const GA_EVENT_MAP: Record<string, string> = {
 function trackEvent(
   internalEvent: string,
   data?: TrackingEventData,
-  options?: { skipServer?: boolean }
+  options?: { skipServer?: boolean; eventId?: string }
 ) {
-  const eventId = generateEventId(internalEvent);
+  // Deterministic override (e.g. `purchase_${orderId}`) so client + server
+  // fires share an id; random fallback when none is supplied.
+  const eventId = options?.eventId || generateEventId(internalEvent);
   const tiktokEvent = TIKTOK_EVENT_MAP[internalEvent] || internalEvent;
   const metaEvent = META_EVENT_MAP[internalEvent] || internalEvent;
   const gaEvent = GA_EVENT_MAP[internalEvent] || internalEvent;
@@ -456,12 +495,22 @@ export function trackInitiateCheckout(data?: TrackingEventData) {
   trackEvent("InitiateCheckout", data);
 }
 
-/** Track completed purchase (fires on thank-you page) */
-export function trackPurchase(data?: TrackingEventData) {
-  trackEvent("Purchase", data);
+/**
+ * Track completed purchase (fires on thank-you page). Pass the deterministic
+ * `purchase_${orderId}` event id so this browser Purchase dedupes with the
+ * Square webhook's server Purchase; omit it to fall back to a random id.
+ */
+export function trackPurchase(data?: TrackingEventData, eventId?: string) {
+  trackEvent("Purchase", data, eventId ? { eventId } : undefined);
 }
 
 /** Track content view */
 export function trackViewContent(data?: TrackingEventData) {
   trackEvent("ViewContent", { ...data }, { skipServer: true });
+}
+
+// Prime the hashed external id on module load so the synchronous pixel fires
+// (fireTikTok / fireMeta) can read the cached hash instead of the raw eid.
+if (typeof window !== "undefined") {
+  getHashedExternalId().catch(() => { /* fail-open */ });
 }

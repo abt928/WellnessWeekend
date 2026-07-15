@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
-import { neon } from "@neondatabase/serverless";
+import { neon, type NeonQueryFunction } from "@neondatabase/serverless";
 
 export const dynamic = "force-dynamic";
 
@@ -29,7 +29,7 @@ export const CLASSES: Record<string, {
   "paddle-sat-extra": { label: "Paddleboard Yoga · Sat 3:30 PM", day: "Saturday", time: "3:30 PM",  capacity: 7, hidden: true },
 };
 
-async function ensureTable(sql: ReturnType<typeof neon>) {
+async function ensureTable(sql: NeonQueryFunction<false, false>) {
   await sql`
     CREATE TABLE IF NOT EXISTS class_reservations (
       id SERIAL PRIMARY KEY,

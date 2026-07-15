@@ -1,8 +1,8 @@
 import type { Metadata } from "next";
 
 export const metadata: Metadata = {
-  title: "Member Portal · Wellness Weekend",
-  description: "Your Wellness Weekend member dashboard — points balance, referral link, and reward redemptions.",
+  title: "Member Portal",
+  description: "Your Wellness Weekend member dashboard: points balance, referral link, and reward redemptions.",
   robots: { index: false, follow: false },
 };
 

@@ -82,9 +82,9 @@ const sponsorActivationOptions = [
 
 const sponsorBudgetRanges = [
   "Under $1k",
-  "$1k–5k",
-  "$5k–15k",
-  "$15k–50k",
+  "$1k-5k",
+  "$5k-15k",
+  "$15k-50k",
   "$50k+",
   "Tell us",
 ];
@@ -95,6 +95,9 @@ export default function GetInvolved() {
   const [errorMsg, setErrorMsg] = useState<string | null>(null);
   const modalRef = useRef<HTMLDivElement>(null);
   const titleId = useId();
+  const fieldId = useId();
+  // Only one form renders at a time, so `${fieldId}-<name>` is unique in the DOM
+  const fid = (name: string) => `${fieldId}-${name}`;
 
   function openForm(form: NonNullable<FormType>) {
     setActiveForm(form);
@@ -220,7 +223,7 @@ export default function GetInvolved() {
           </p>
           <ul className="involve-perks">
             <li>Vendor Village is full for 2026</li>
-            <li>Day vendor spots: $100/day</li>
+            <li>Day vendor spots: $75/day</li>
             <li>Limited day spots remaining</li>
             <li>Contact us to inquire</li>
           </ul>
@@ -328,12 +331,12 @@ export default function GetInvolved() {
                 <form onSubmit={handleSubmit} className="modal-form">
                   <div className="form-row">
                     <div className="form-group">
-                      <label>Name *</label>
-                      <input name="name" required placeholder="Your full name" />
+                      <label htmlFor={fid("name")}>Name *</label>
+                      <input id={fid("name")} name="name" required placeholder="Your full name" />
                     </div>
                     <div className="form-group">
-                      <label>Email *</label>
-                      <input name="email" type="email" required placeholder="you@email.com" />
+                      <label htmlFor={fid("email")}>Email *</label>
+                      <input id={fid("email")} name="email" type="email" required placeholder="you@email.com" />
                     </div>
                   </div>
 
@@ -341,24 +344,24 @@ export default function GetInvolved() {
                     <>
                       <div className="form-row">
                         <div className="form-group">
-                          <label>Business Name *</label>
-                          <input name="business" required placeholder="Your business name" />
+                          <label htmlFor={fid("business")}>Business Name *</label>
+                          <input id={fid("business")} name="business" required placeholder="Your business name" />
                         </div>
                         <div className="form-group">
-                          <label>Category *</label>
-                          <select name="category" required>
+                          <label htmlFor={fid("category")}>Category *</label>
+                          <select id={fid("category")} name="category" required>
                             <option value="">Select category</option>
                             {vendorCategories.map((c) => <option key={c} value={c}>{c}</option>)}
                           </select>
                         </div>
                       </div>
                       <div className="form-group">
-                        <label>Website</label>
-                        <input name="website" placeholder="https://yoursite.com" />
+                        <label htmlFor={fid("vendor-website")}>Website</label>
+                        <input id={fid("vendor-website")} name="website" placeholder="https://yoursite.com" />
                       </div>
                       <div className="form-group">
-                        <label>Tell us about your offerings *</label>
-                        <textarea name="description" required rows={3} placeholder="Describe what you'd bring to the festival..." />
+                        <label htmlFor={fid("description")}>Tell us about your offerings *</label>
+                        <textarea id={fid("description")} name="description" required rows={3} placeholder="Describe what you'd bring to the festival..." />
                       </div>
                     </>
                   )}
@@ -367,27 +370,27 @@ export default function GetInvolved() {
                     <>
                       <div className="form-row">
                         <div className="form-group">
-                          <label>Phone</label>
-                          <input name="phone" placeholder="(555) 123-4567" />
+                          <label htmlFor={fid("volunteer-phone")}>Phone</label>
+                          <input id={fid("volunteer-phone")} name="phone" placeholder="(555) 123-4567" />
                         </div>
                         <div className="form-group">
-                          <label>Area of Interest *</label>
-                          <select name="interest" required>
+                          <label htmlFor={fid("interest")}>Area of Interest *</label>
+                          <select id={fid("interest")} name="interest" required>
                             <option value="">Select area</option>
                             {volunteerInterests.map((v) => <option key={v} value={v}>{v}</option>)}
                           </select>
                         </div>
                       </div>
                       <div className="form-group">
-                        <label>Availability *</label>
-                        <select name="availability" required>
+                        <label htmlFor={fid("availability")}>Availability *</label>
+                        <select id={fid("availability")} name="availability" required>
                           <option value="">Select availability</option>
                           {availabilityOptions.map((a) => <option key={a} value={a}>{a}</option>)}
                         </select>
                       </div>
                       <div className="form-group">
-                        <label>Relevant Experience</label>
-                        <textarea name="experience" rows={3} placeholder="Any relevant experience or skills..." />
+                        <label htmlFor={fid("experience")}>Relevant Experience</label>
+                        <textarea id={fid("experience")} name="experience" rows={3} placeholder="Any relevant experience or skills..." />
                       </div>
                     </>
                   )}
@@ -396,17 +399,17 @@ export default function GetInvolved() {
                     <>
                       <div className="form-row">
                         <div className="form-group">
-                          <label>Phone</label>
-                          <input name="phone" placeholder="(555) 123-4567" />
+                          <label htmlFor={fid("sponsor-phone")}>Phone</label>
+                          <input id={fid("sponsor-phone")} name="phone" placeholder="(555) 123-4567" />
                         </div>
                         <div className="form-group">
-                          <label>Company / Brand *</label>
-                          <input name="company" required placeholder="Your company name" />
+                          <label htmlFor={fid("company")}>Company / Brand *</label>
+                          <input id={fid("company")} name="company" required placeholder="Your company name" />
                         </div>
                       </div>
                       <div className="form-group">
-                        <label>Website</label>
-                        <input name="website" placeholder="https://yourbrand.com" />
+                        <label htmlFor={fid("sponsor-website")}>Website</label>
+                        <input id={fid("sponsor-website")} name="website" placeholder="https://yourbrand.com" />
                       </div>
                       <div className="form-group">
                         <label>Activation interests *</label>
@@ -420,15 +423,16 @@ export default function GetInvolved() {
                         </div>
                       </div>
                       <div className="form-group">
-                        <label>Budget range *</label>
-                        <select name="budgetRange" required>
+                        <label htmlFor={fid("budgetRange")}>Budget range *</label>
+                        <select id={fid("budgetRange")} name="budgetRange" required>
                           <option value="">Select range</option>
                           {sponsorBudgetRanges.map((b) => <option key={b} value={b}>{b}</option>)}
                         </select>
                       </div>
                       <div className="form-group">
-                        <label>Tell us about your brand and goals *</label>
+                        <label htmlFor={fid("goals")}>Tell us about your brand and goals *</label>
                         <textarea
+                          id={fid("goals")}
                           name="goals"
                           required
                           rows={4}
@@ -436,8 +440,8 @@ export default function GetInvolved() {
                         />
                       </div>
                       <div className="form-group">
-                        <label>How did you hear about us?</label>
-                        <input name="source" placeholder="Optional" />
+                        <label htmlFor={fid("source")}>How did you hear about us?</label>
+                        <input id={fid("source")} name="source" placeholder="Optional" />
                       </div>
                     </>
                   )}
@@ -446,12 +450,13 @@ export default function GetInvolved() {
                     <>
                       <div className="form-row">
                         <div className="form-group">
-                          <label>Phone</label>
-                          <input name="phone" placeholder="(555) 123-4567" />
+                          <label htmlFor={fid("instructor-phone")}>Phone</label>
+                          <input id={fid("instructor-phone")} name="phone" placeholder="(555) 123-4567" />
                         </div>
                         <div className="form-group">
-                          <label>Modality *</label>
+                          <label htmlFor={fid("modality")}>Modality *</label>
                           <input
+                            id={fid("modality")}
                             name="modality"
                             required
                             placeholder="Sound healing, breathwork, yoga, etc."
@@ -460,8 +465,9 @@ export default function GetInvolved() {
                       </div>
                       <div className="form-row">
                         <div className="form-group">
-                          <label>Years teaching</label>
+                          <label htmlFor={fid("yearsTeaching")}>Years teaching</label>
                           <input
+                            id={fid("yearsTeaching")}
                             name="yearsTeaching"
                             type="number"
                             min={0}
@@ -470,8 +476,8 @@ export default function GetInvolved() {
                           />
                         </div>
                         <div className="form-group">
-                          <label>Website / sample</label>
-                          <input name="website" placeholder="https://yoursite.com" />
+                          <label htmlFor={fid("instructor-website")}>Website / sample</label>
+                          <input id={fid("instructor-website")} name="website" placeholder="https://yoursite.com" />
                         </div>
                       </div>
                       <div className="form-group">
@@ -488,8 +494,9 @@ export default function GetInvolved() {
                         </div>
                       </div>
                       <div className="form-group">
-                        <label>Briefly describe what you&apos;d bring *</label>
+                        <label htmlFor={fid("offering")}>Briefly describe what you&apos;d bring *</label>
                         <textarea
+                          id={fid("offering")}
                           name="offering"
                           required
                           rows={4}

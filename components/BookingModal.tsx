@@ -1,5 +1,6 @@
 "use client";
 import { useState, useEffect, useRef } from "react";
+import { useFocusTrap } from "@/lib/useFocusTrap";
 
 type ClassType = "sauna" | "aerial" | "paddle";
 
@@ -32,7 +33,11 @@ export default function BookingModal({ classType, onClose }: { classType: ClassT
   const [submitting, setSubmitting] = useState(false);
   const [result, setResult] = useState<{ ok: boolean; message: string } | null>(null);
   const overlayRef = useRef<HTMLDivElement>(null);
+  const modalRef = useRef<HTMLDivElement>(null);
   const info = TYPE_INFO[classType];
+
+  // Trap focus, autofocus, restore focus, and lock body scroll while open
+  useFocusTrap(true, modalRef);
 
   useEffect(() => {
     fetch("/api/bookings")
@@ -50,7 +55,7 @@ export default function BookingModal({ classType, onClose }: { classType: ClassT
             );
             if (!primaryKey || !av[primaryKey].full) continue;
           }
-          list.push({ key, ...slot });
+          list.push({ ...slot, key });
         }
         list.sort((a, b) => (a.day + a.time).localeCompare(b.day + b.time));
         setSlots(list);
@@ -77,7 +82,7 @@ export default function BookingModal({ classType, onClose }: { classType: ClassT
       if (res.ok) {
         setResult({ ok: true, message: `You're reserved for ${data.label}! Check your email for a confirmation.` });
       } else if (res.status === 409 && data.overflow) {
-        setResult({ ok: false, message: `That slot is full — a new time has opened! Please select it above.` });
+        setResult({ ok: false, message: `That slot is full. A new time has opened! Please select it above.` });
         // Refresh slots to show overflow
         setSlots((prev) => prev.map((s) => s.key === selected ? { ...s, full: true } : s));
         // Re-fetch to get overflow slot
@@ -91,7 +96,7 @@ export default function BookingModal({ classType, onClose }: { classType: ClassT
               const primaryKey = Object.keys(av).find(k => k.startsWith(prefix) && !av[k].hidden && av[k].overflow === key);
               if (!primaryKey || !av[primaryKey].full) continue;
             }
-            list.push({ key, ...slot });
+            list.push({ ...slot, key });
           }
           list.sort((a, b) => (a.day + a.time).localeCompare(b.day + b.time));
           setSlots(list);
@@ -114,7 +119,7 @@ export default function BookingModal({ classType, onClose }: { classType: ClassT
       aria-modal="true"
       aria-label={`Reserve ${info.title}`}
     >
-      <div className="booking-modal">
+      <div className="booking-modal" ref={modalRef}>
         <button className="booking-close" onClick={onClose} aria-label="Close">✕</button>
 
         <div className="booking-header">
@@ -161,6 +166,8 @@ export default function BookingModal({ classType, onClose }: { classType: ClassT
                   className="booking-input"
                   type="text"
                   placeholder="Your name"
+                  aria-label="Your name"
+                  autoComplete="name"
                   value={name}
                   onChange={(e) => setName(e.target.value)}
                 />
@@ -168,6 +175,8 @@ export default function BookingModal({ classType, onClose }: { classType: ClassT
                   className="booking-input"
                   type="email"
                   placeholder="Email address"
+                  aria-label="Email address"
+                  autoComplete="email"
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
                 />
@@ -178,7 +187,7 @@ export default function BookingModal({ classType, onClose }: { classType: ClassT
                 >
                   {submitting ? "Reserving…" : "Reserve My Spot"}
                 </button>
-                <p className="booking-note">Reservations are free to hold. Your ticket purchase is separate in the store below.</p>
+                <p className="booking-note">Reservations are free to hold. Your ticket purchase is separate, in the <a href="#store" onClick={onClose}>store</a>.</p>
               </div>
             )}
           </>

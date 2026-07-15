@@ -3,7 +3,7 @@
 import { useState, useEffect, useCallback, useId, useRef } from "react";
 import { trackLead } from "@/lib/tracking";
 import { useFocusTrap } from "@/lib/useFocusTrap";
-import { CloseIcon, EnvelopeIcon } from "@/components/Icons";
+import { CloseIcon, EnvelopeIcon, TicketIcon } from "@/components/Icons";
 
 interface CartEntry {
   variationId: string;
@@ -73,6 +73,11 @@ export default function FloatingActions() {
     }
   }, [cartCount]);
 
+  // Tickets FAB (mobile funnel): same scroll-to-store as the empty-cart branch above.
+  const handleTicketsClick = useCallback(() => {
+    document.getElementById("store")?.scrollIntoView({ behavior: "smooth" });
+  }, []);
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setStatus("sending");
@@ -105,10 +110,26 @@ export default function FloatingActions() {
   // Cart FAB always shows once revealed AND there are items, since the cart bar handles 0-item case.
   // Hide cart FAB at 0 items so first-paint and pre-add states don't show a duplicate "view tickets" CTA.
   const showCartFab = revealed && cartCount > 0;
+  // Tickets FAB fills the empty-cart case: a persistent one-tap route to the store on mobile
+  // (nav CTA + cart FAB are display:none there). Hidden once cartCount>0 so it never coexists
+  // with the bottom cart-bar.
+  const showTicketsFab = revealed && cartCount === 0;
   const showMessageFab = revealed;
 
   return (
     <>
+      {/* Tickets FAB - Left, only when cart is empty (persistent mobile route to store) */}
+      {showTicketsFab && (
+        <button
+          className="fab fab-tickets"
+          onClick={handleTicketsClick}
+          aria-label="Get tickets"
+        >
+          <TicketIcon size={20} color="currentColor" />
+          <span className="fab-tickets-label">Get Tickets</span>
+        </button>
+      )}
+
       {/* Cart FAB - Left, only when items in cart */}
       {showCartFab && (
         <button

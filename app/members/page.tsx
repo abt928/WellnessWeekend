@@ -2,7 +2,7 @@
 import { useState, useEffect, useCallback } from "react";
 import Link from "next/link";
 
-const BASE_URL = "https://wellnessweekendak.com";
+const BASE_URL = "https://www.wellnessweekendak.com";
 
 interface MemberInfo {
   name: string;
@@ -343,8 +343,8 @@ export default function MembersPage() {
             <div>
               <strong>{rewardLabel(pendingRedemption.rewardType)}</strong> redemption pending
               {pendingRedemption.discountCents > 0
-                ? " — the discount will apply automatically when you proceed to checkout."
-                : " — our team will be in touch to fulfill your pass."}
+                ? ": the discount will apply automatically when you proceed to checkout."
+                : ": our team will be in touch to fulfill your pass."}
             </div>
             {pendingRedemption.discountCents > 0 && (
               <Link href="/#store" style={{
@@ -367,8 +367,8 @@ export default function MembersPage() {
         {/* Referral section */}
         <div className="member-section">
           <h2 className="member-section-title">Refer Friends, Earn Points</h2>
-          <p style={{ color: "var(--sage)", fontSize: "0.9rem", marginBottom: "1rem" }}>
-            Share your link — you earn <strong>50 points</strong> every time a friend creates an account.
+          <p style={{ color: "var(--charcoal)", fontSize: "0.9rem", marginBottom: "1rem" }}>
+            Share your link. You earn <strong>50 points</strong> every time a friend creates an account.
           </p>
           <div className="member-referral-box">
             <div style={{ display: "flex", gap: "0.5rem", alignItems: "center", flexWrap: "wrap" }}>
@@ -473,7 +473,7 @@ export default function MembersPage() {
         <div className="member-section">
           <h2 className="member-section-title">Referral History</h2>
           {referrals.length === 0 ? (
-            <p style={{ color: "var(--sage)", fontSize: "0.9rem", fontStyle: "italic" }}>
+            <p style={{ color: "var(--charcoal)", fontSize: "0.9rem", fontStyle: "italic" }}>
               No referrals yet. Share your link to get started!
             </p>
           ) : (
@@ -508,7 +508,7 @@ export default function MembersPage() {
         <div className="member-section">
           <h2 className="member-section-title">Redemption History</h2>
           {redemptions.length === 0 ? (
-            <p style={{ color: "var(--sage)", fontSize: "0.9rem", fontStyle: "italic" }}>
+            <p style={{ color: "var(--charcoal)", fontSize: "0.9rem", fontStyle: "italic" }}>
               No redemptions yet.
             </p>
           ) : (

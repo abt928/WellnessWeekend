@@ -9,7 +9,7 @@ interface CartEntry {
   quantity: number;
 }
 
-function isPromoActive(): boolean {
+export function isPromoActive(): boolean {
   const now = new Date();
   const parts = new Intl.DateTimeFormat("en-US", {
     timeZone: "America/Anchorage",

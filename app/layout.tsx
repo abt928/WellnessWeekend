@@ -5,6 +5,7 @@ import { Analytics } from "@vercel/analytics/next";
 import { SpeedInsights } from "@vercel/speed-insights/next";
 import ClarityTracker from "@/components/ClarityTracker";
 import RefCapture from "@/components/RefCapture";
+import RouteTracker from "@/components/RouteTracker";
 import "./globals.css";
 
 const spectral = Spectral({
@@ -23,14 +24,14 @@ const manrope = Manrope({
 });
 
 export const metadata: Metadata = {
-  metadataBase: new URL("https://wellnessweekendak.com"),
+  metadataBase: new URL("https://www.wellnessweekendak.com"),
   title: {
     default:
       "Wellness Weekend · 4th Annual Healing Arts Festival · Sutton, Alaska",
     template: "%s · Wellness Weekend",
   },
   description:
-    "Join 200+ seekers for a transformational weekend of sound healing, earth medicine, and movement under Alaska's midnight sun. August 7–9, 2026 in Sutton, Alaska.",
+    "Join an intimate circle of up to 200 seekers for a weekend of sound healing, earth medicine, and movement under Alaska's midnight sun. August 7-9, 2026 in Sutton, Alaska.",
   keywords: [
     "healing arts festival",
     "wellness retreat Alaska",
@@ -46,7 +47,8 @@ export const metadata: Metadata = {
     "Lions Gate portal",
   ],
   alternates: {
-    canonical: "https://wellnessweekendak.com",
+    // Relative self-canonical: Next resolves "./" against metadataBase per route
+    canonical: "./",
   },
   icons: {
     apple: "/apple-touch-icon.jpeg",
@@ -65,16 +67,16 @@ export const metadata: Metadata = {
   openGraph: {
     title: "Wellness Weekend · Healing Arts Festival Under the Midnight Sun",
     description:
-      "A once-in-a-lifetime transformational gathering in the Alaskan wilderness. Sound healing, earth medicine, movement & bodywork. August 7–9, 2026.",
+      "A once-in-a-lifetime transformational gathering in the Alaskan wilderness. Sound healing, earth medicine, movement & bodywork. August 7-9, 2026.",
     type: "website",
-    url: "https://wellnessweekendak.com",
+    url: "https://www.wellnessweekendak.com",
     siteName: "Wellness Weekend",
     locale: "en_US",
     images: [
       {
         url: "/images/hero.png",
-        width: 1200,
-        height: 630,
+        width: 1024,
+        height: 1024,
         alt: "Wellness Weekend, a healing arts festival in Sutton, Alaska under the midnight sun",
       },
     ],
@@ -83,7 +85,7 @@ export const metadata: Metadata = {
     card: "summary_large_image",
     title: "Wellness Weekend · Healing Arts Festival Under the Midnight Sun",
     description:
-      "Join 200+ seekers for sound healing, earth medicine, and movement under Alaska's midnight sun. August 7–9, 2026.",
+      "Join an intimate circle of up to 200 seekers for sound healing, earth medicine, and movement under Alaska's midnight sun. August 7-9, 2026.",
     images: ["/images/hero.png"],
   },
   other: {
@@ -103,54 +105,18 @@ export default function RootLayout({
       className={`${spectral.variable} ${manrope.variable}`}
     >
       <body>
+        {/* Scroll-reveal sections are hidden by default in CSS; force them
+            visible for no-JS visitors (React never hydrates noscript content). */}
+        <noscript>
+          <style>{`.reveal{opacity:1 !important;transform:none !important}`}</style>
+        </noscript>
         {children}
         <RefCapture />
+        <RouteTracker />
         <ClarityTracker />
 
-        {/* Schema.org JSON-LD for Meta Pixel Automatic Microdata (Event & Ticketing) */}
-        <Script
-          id="schema-event"
-          type="application/ld+json"
-          dangerouslySetInnerHTML={{
-            __html: JSON.stringify({
-              "@context": "https://schema.org",
-              "@type": "Festival",
-              name: "Wellness Weekend 2026",
-              description: "A once-in-a-lifetime transformational gathering in the Alaskan wilderness. Sound healing, earth medicine, movement & bodywork.",
-              startDate: "2026-08-07T12:00:00-08:00",
-              endDate: "2026-08-09T15:00:00-08:00",
-              eventAttendanceMode: "https://schema.org/OfflineEventAttendanceMode",
-              eventStatus: "https://schema.org/EventScheduled",
-              location: {
-                "@type": "Place",
-                name: "The Land",
-                address: {
-                  "@type": "PostalAddress",
-                  addressLocality: "Sutton",
-                  addressRegion: "AK",
-                  addressCountry: "US",
-                },
-              },
-              image: [
-                "https://wellnessweekendak.com/images/hero.png"
-              ],
-              offers: {
-                "@type": "Offer",
-                name: "General Admission Tier 1",
-                price: "444.00",
-                priceCurrency: "USD",
-                availability: "https://schema.org/InStock",
-                validFrom: "2026-01-01T00:00:00-08:00",
-                url: "https://wellnessweekendak.com/#tickets",
-              },
-              organizer: {
-                "@type": "Organization",
-                name: "Wellness Weekend",
-                url: "https://wellnessweekendak.com",
-              },
-            }),
-          }}
-        />
+        {/* Event JSON-LD lives on the homepage (app/page.tsx) as a single
+            canonical entity; a duplicate site-wide block was removed here. */}
 
         <Analytics />
         <SpeedInsights />
@@ -180,19 +146,30 @@ export default function RootLayout({
               ;n.type="text/javascript",n.async=!0,n.src=r+"?sdkid="+e+"&lib="+t;e=document.getElementsByTagName("script")[0];e.parentNode.insertBefore(n,e)};
               ttq.load('D7RCRM3C77U0A0BNAG00');
               ttq.page();
-              // Identify with external_id for cross-event matching
+              // Identify with external_id for cross-event matching. external_id
+              // is SHA-256 hashed to match the server relay (/api/tracking) so
+              // the browser + server identities reconcile.
               try {
                 var _ttEid = localStorage.getItem('ww-eid');
                 if (!_ttEid) {
                   _ttEid = 'ww_' + Date.now() + '_' + Math.random().toString(36).slice(2,11);
                   localStorage.setItem('ww-eid', _ttEid);
                 }
-                var _ttIdentify = { external_id: _ttEid };
                 var _ttEm = localStorage.getItem('ww-em');
-                if (_ttEm) _ttIdentify.email = _ttEm;
                 var _ttPh = localStorage.getItem('ww-ph');
-                if (_ttPh) _ttIdentify.phone_number = _ttPh;
-                ttq.identify(_ttIdentify);
+                var _ttSend = function(_eid) {
+                  var _ttIdentify = { external_id: _eid };
+                  if (_ttEm) _ttIdentify.email = _ttEm;
+                  if (_ttPh) _ttIdentify.phone_number = _ttPh;
+                  ttq.identify(_ttIdentify);
+                };
+                if (window.crypto && window.crypto.subtle) {
+                  window.crypto.subtle.digest('SHA-256', new TextEncoder().encode(_ttEid.trim().toLowerCase())).then(function(_buf){
+                    _ttSend(Array.from(new Uint8Array(_buf)).map(function(b){return b.toString(16).padStart(2,'0')}).join(''));
+                  }).catch(function(){ _ttSend(_ttEid); });
+                } else {
+                  _ttSend(_ttEid);
+                }
               } catch(e) {}
               // Persist ttclid from URL as first-party cookie
               try {
@@ -217,18 +194,35 @@ export default function RootLayout({
             s.parentNode.insertBefore(t,s)}(window, document,'script',
             'https://connect.facebook.net/en_US/fbevents.js');
             if('${process.env.NEXT_PUBLIC_META_PIXEL_ID || ""}') {
-              // Build Advanced Matching params for better Event Match Quality
+              // Build Advanced Matching params for better Event Match Quality.
+              // em/ph are sent plaintext (fbevents.js hashes them itself);
+              // external_id is SHA-256 hashed to match the server relay
+              // (/api/tracking) so browser + server identities reconcile.
               var _wwAm = {};
+              var _wwInit = function() {
+                fbq('init', '${process.env.NEXT_PUBLIC_META_PIXEL_ID || ""}', _wwAm);
+                fbq('track', 'PageView');
+              };
               try {
+                var _wwEm = localStorage.getItem('ww-em');
+                if (_wwEm) _wwAm.em = _wwEm;
+                var _wwPh = localStorage.getItem('ww-ph');
+                if (_wwPh) _wwAm.ph = _wwPh.replace('+', '');
                 var _eid = localStorage.getItem('ww-eid');
                 if (!_eid) {
                   _eid = 'ww_' + Date.now() + '_' + Math.random().toString(36).slice(2,11);
                   localStorage.setItem('ww-eid', _eid);
                 }
-                _wwAm.external_id = _eid;
-              } catch(e) {}
-              fbq('init', '${process.env.NEXT_PUBLIC_META_PIXEL_ID || ""}', _wwAm);
-              fbq('track', 'PageView');
+                if (window.crypto && window.crypto.subtle) {
+                  window.crypto.subtle.digest('SHA-256', new TextEncoder().encode(_eid.trim().toLowerCase())).then(function(_buf){
+                    _wwAm.external_id = Array.from(new Uint8Array(_buf)).map(function(b){return b.toString(16).padStart(2,'0')}).join('');
+                    _wwInit();
+                  }).catch(function(){ _wwAm.external_id = _eid; _wwInit(); });
+                } else {
+                  _wwAm.external_id = _eid;
+                  _wwInit();
+                }
+              } catch(e) { _wwInit(); }
             }
           `}
         </Script>

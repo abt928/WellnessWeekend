@@ -174,7 +174,7 @@ textarea:focus-visible {
 }
 .nav-links a:hover { color: var(--gold); }
 .nav-cta {
-  background: linear-gradient(135deg, var(--gold), var(--coral));
+  background: linear-gradient(135deg, var(--aurora), var(--gold));
   color: white; border: none; padding: 0.6rem 1.5rem;
   border-radius: 30px; font-size: 0.8rem; letter-spacing: 0.06em;
   text-transform: uppercase; cursor: pointer; font-weight: 600;
@@ -331,17 +331,17 @@ textarea:focus-visible {
 
 .hero-cta {
   display: inline-block; padding: 1rem 2.5rem;
-  background: linear-gradient(135deg, var(--aurora), var(--psyche-pink), var(--gold));
+  background: linear-gradient(135deg, #FF6B35, var(--gold), var(--coral));
   background-size: 200% 200%;
   animation: auroraShift 5s ease infinite;
   color: white; text-decoration: none; border-radius: 50px;
   font-size: 0.9rem; letter-spacing: 0.08em; text-transform: uppercase;
   font-weight: 600; transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.3s;
-  box-shadow: 0 8px 30px rgba(139,95,191,0.3);
+  box-shadow: 0 8px 30px rgba(201,152,63,0.4);
 }
 .hero-cta:hover {
   transform: translateY(-3px) scale(1.03);
-  box-shadow: 0 16px 50px rgba(139,95,191,0.5);
+  box-shadow: 0 16px 50px rgba(255,107,53,0.45);
 }
 .hero-cta:active {
   transform: translateY(0) scale(0.97);
@@ -1091,7 +1091,7 @@ textarea:focus-visible {
 }
 .camping-urgency a { color: var(--aurora, #8B5FBF); font-weight: 600; }
 .camping-urgency-badge {
-  background: var(--coral, #E8956A); color: #fff;
+  background: #B85431; color: #fff;
   font-size: 0.7rem; font-weight: 700; letter-spacing: 0.06em;
   padding: 0.2rem 0.5rem; border-radius: 4px; text-transform: uppercase; flex-shrink: 0;
 }
@@ -1264,13 +1264,9 @@ textarea:focus-visible {
 
 /* ========== SCHEDULE ========== */
 .schedule { background: linear-gradient(180deg, #0a0820 0%, #0d0b26 100%); }
-.schedule .section-label {
-  background: linear-gradient(90deg, #4ECDC4 0%, #c9a8ff 50%, #D4AF3C 100%);
-  -webkit-background-clip: text; -webkit-text-fill-color: transparent;
-  background-clip: text;
-}
-.schedule .section-title { color: #e8e0f8; }
-.schedule .section-title em { color: rgba(180,150,255,0.9); }
+.schedule .section-label { color: var(--gold-light); }
+.schedule .section-title { color: #fff; }
+.schedule .section-title em { color: var(--gold-light); }
 .schedule .section-desc { color: rgba(232,224,248,0.62); }
 
 /* Track filter pills */
@@ -1748,7 +1744,7 @@ textarea:focus-visible {
 .family-day-section {
   background: linear-gradient(180deg, #0c1a12 0%, #0e1f15 100%);
 }
-.family-day-section .section-label { color: rgba(110,210,140,0.7); }
+.family-day-section .section-label { color: var(--gold-light); }
 .family-day-section .section-title { color: #f0f8f2; }
 .family-day-section .section-desc  { color: rgba(240,248,242,0.65); }
 
@@ -2065,7 +2061,7 @@ textarea:focus-visible {
 .store-card-name { font-size: 1.15rem; color: var(--forest); font-weight: 400; }
 .store-card-price {
   font-size: 1.2rem; font-weight: 300; white-space: nowrap;
-  color: var(--aurora);
+  color: var(--psyche-indigo);
 }
 .store-card-desc {
   font-size: 0.95rem; color: rgba(43,43,43,0.68); line-height: 1.6; margin-bottom: 1.25rem;
@@ -2073,14 +2069,14 @@ textarea:focus-visible {
 }
 .store-card-actions { margin-top: auto; }
 .store-add-btn {
-  width: 100%; padding: 0.7rem; border: 1px solid var(--aurora); border-radius: 30px;
-  background: transparent; color: var(--aurora); font-size: 0.82rem;
+  width: 100%; padding: 0.7rem; border: 1px solid rgba(201,152,63,0.5); border-radius: 30px;
+  background: transparent; color: var(--gold); font-size: 0.82rem;
   letter-spacing: 0.04em; text-transform: uppercase; cursor: pointer;
   font-family: inherit; font-weight: 600;
   transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
 }
 .store-add-btn:hover {
-  background: linear-gradient(135deg, var(--aurora), var(--psyche-pink));
+  background: linear-gradient(135deg, #FF6B35, var(--gold));
   color: white; border-color: transparent;
 }
 .store-add-btn:active { transform: scale(0.96); transition-duration: 0.1s; }
@@ -2269,7 +2265,7 @@ textarea:focus-visible {
 }
 .package-badge {
   position: absolute; top: 1.25rem; right: 1.25rem;
-  background: linear-gradient(135deg, var(--gold), var(--coral));
+  background: linear-gradient(135deg, var(--aurora), var(--gold));
   color: white; font-size: 0.65rem; padding: 0.3rem 0.8rem;
   border-radius: 20px; letter-spacing: 0.06em; text-transform: uppercase;
   font-weight: 600;
@@ -2398,7 +2394,7 @@ textarea:focus-visible {
 .newsletter input::placeholder { color: rgba(255,255,255,0.3); }
 .newsletter button {
   padding: 0.85rem 2rem;
-  background: linear-gradient(135deg, var(--gold), var(--coral));
+  background: linear-gradient(135deg, var(--aurora), var(--gold));
   border: none; border-radius: 30px; color: white;
   font-size: 0.85rem; letter-spacing: 0.06em; text-transform: uppercase;
   cursor: pointer; font-weight: 600; font-family: inherit;
@@ -2531,7 +2527,7 @@ textarea:focus-visible {
 .lead-capture-input::placeholder { color: rgba(255,255,255,0.3); }
 .lead-capture-btn {
   padding: 0.95rem 2.5rem;
-  background: linear-gradient(135deg, var(--gold), var(--coral));
+  background: linear-gradient(135deg, var(--aurora), var(--gold));
   border: none;
   border-radius: 30px;
   color: white;
@@ -2566,7 +2562,7 @@ textarea:focus-visible {
   font-size: 1rem;
 }
 .lead-capture-error {
-  color: var(--coral);
+  color: #FF8C55;
   font-size: 0.85rem;
   margin-top: 0.75rem;
 }
@@ -3321,7 +3317,7 @@ textarea:focus-visible {
 .fab-badge {
   position: absolute; top: -4px; right: -4px;
   min-width: 20px; height: 20px; border-radius: 10px;
-  background: var(--coral); color: white; font-size: 0.7rem;
+  background: var(--gold); color: white; font-size: 0.7rem;
   display: flex; align-items: center; justify-content: center;
   font-weight: 700; padding: 0 5px;
   animation: floatGentle 2s ease-in-out infinite;
@@ -3373,7 +3369,7 @@ textarea:focus-visible {
 }
 .admin-login-btn {
   padding: 0.85rem; border: none; border-radius: 30px;
-  background: linear-gradient(135deg, var(--gold), var(--coral));
+  background: linear-gradient(135deg, var(--aurora), var(--gold));
   color: white; font-size: 0.9rem; letter-spacing: 0.1em;
   text-transform: uppercase; cursor: pointer; font-weight: 600;
   font-family: inherit; transition: all 0.3s;
@@ -3618,7 +3614,7 @@ textarea:focus-visible {
 .mobile-menu-cta {
   display: block; margin: 1rem 1.5rem 2rem;
   padding: 0.85rem 1.5rem; text-align: center;
-  background: linear-gradient(135deg, var(--gold), var(--coral));
+  background: linear-gradient(135deg, var(--aurora), var(--gold));
   color: white; text-decoration: none; border-radius: 30px;
   font-size: 0.85rem; letter-spacing: 0.1em; text-transform: uppercase;
   font-weight: 600;
@@ -3972,11 +3968,7 @@ body {
 
 /* Schedule — white text on dark indigo */
 .schedule .section-title  { color: #fff; }
-.schedule .section-label {
-  background: linear-gradient(90deg, #4ECDC4 0%, #c9a8ff 50%, #D4AF3C 100%);
-  -webkit-background-clip: text; -webkit-text-fill-color: transparent;
-  background-clip: text;
-}
+.schedule .section-label { color: var(--gold-light); }
 .schedule .section-desc   { color: rgba(255, 255, 255, 0.65); }
 .schedule-heading { color: #fff; }
 .schedule-theme-text { color: rgba(255, 255, 255, 0.5); }

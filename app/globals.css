@@ -5756,7 +5756,10 @@ body {
 .lineup-section {
   padding-top: 5rem;
   padding-bottom: 5rem;
+  background: var(--cream);
 }
+.lineup-section .section-label { color: var(--gold) !important; }
+.lineup-section .section-title { color: var(--charcoal); }
 
 .lineup-grid {
   display: grid;
@@ -5779,8 +5782,9 @@ body {
   gap: 0;
   border-radius: 12px;
   overflow: hidden;
-  background: rgba(255,255,255,0.04);
-  border: 1px solid rgba(255,255,255,0.08);
+  background: var(--warm-white);
+  border: 1px solid rgba(51,53,51,0.1);
+  box-shadow: 0 2px 16px rgba(51,53,51,0.08);
 }
 
 .lineup-artwork {
@@ -5799,20 +5803,20 @@ body {
 .lineup-name {
   font-size: 1rem;
   font-weight: 700;
-  color: #fff;
+  color: var(--charcoal);
   font-family: var(--font-display);
 }
 
 .lineup-role {
   font-size: 0.75rem;
-  color: var(--gold-light);
+  color: var(--gold);
   letter-spacing: 0.04em;
   text-transform: uppercase;
 }
 
 .lineup-detail {
   font-size: 0.78rem;
-  color: rgba(255,255,255,0.8);
+  color: rgba(51,53,51,0.7);
   line-height: 1.5;
   margin-top: 0.15rem;
 }
@@ -5821,16 +5825,18 @@ body {
 .dance-cta-section {
   padding-top: 2rem;
   padding-bottom: 5rem;
+  background: var(--cream);
 }
 
 .dance-cta-card {
-  background: linear-gradient(135deg, rgba(155,127,212,0.15) 0%, rgba(255,107,53,0.1) 100%);
-  border: 1px solid rgba(155,127,212,0.3);
+  background: var(--warm-white);
+  border: 1px solid rgba(201,152,63,0.3);
   border-radius: 16px;
   padding: 3rem 2.5rem;
   max-width: 680px;
   margin: 0 auto;
   text-align: center;
+  box-shadow: 0 2px 24px rgba(51,53,51,0.08);
 }
 
 .dance-cta-title {
@@ -5839,11 +5845,12 @@ body {
   font-weight: 700;
   line-height: 1.2;
   margin: 0.5rem 0 1rem;
+  color: var(--charcoal);
 }
 
 .dance-cta-desc {
   font-size: 1rem;
-  color: rgba(255,255,255,0.9);
+  color: rgba(51,53,51,0.72);
   line-height: 1.7;
   max-width: 500px;
   margin: 0 auto 1.5rem;
@@ -5861,12 +5868,12 @@ body {
   font-size: 3rem;
   font-weight: 800;
   font-family: var(--font-display);
-  color: var(--aurora);
+  color: #C9983F;
 }
 
 .dance-cta-per {
   font-size: 1.1rem;
-  color: rgba(255,255,255,0.85);
+  color: var(--charcoal);
 }
 
 .dance-cta-btn {

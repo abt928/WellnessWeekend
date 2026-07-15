@@ -12,7 +12,6 @@ import FloatingActions from "@/components/FloatingActions";
 import ConversionNudges from "@/components/ConversionNudges";
 import PartnerCard from "@/components/PartnerCard";
 import BuildYourWeekend from "@/components/BuildYourWeekend";
-import ContrastTherapy from "@/components/ContrastTherapy";
 import { PlaneIcon, MapPinIcon, LeafIcon, MoonIcon } from "@/components/Icons";
 
 /* ── static data ── */
@@ -141,19 +140,6 @@ export default function Home() {
         </div>
       </section>
 
-      {/* ═══ MIDNIGHT SUN SALE ═══ */}
-      <div className="midnightsun-banner" role="complementary" aria-label="Midnight Sun Sale">
-        <div className="midnightsun-inner">
-          <span className="midnightsun-sun" aria-hidden="true">☀</span>
-          <span className="midnightsun-title">Midnight Sun Sale</span>
-          <span className="midnightsun-desc">
-            Use code <span className="midnightsun-code">MIDNIGHTSUN</span> for 50% off your 2nd ticket
-            <span className="midnightsun-ends"> · Active through July 7</span>
-          </span>
-          <a href="#store" className="midnightsun-cta">Claim Now →</a>
-        </div>
-      </div>
-
       {/* ═══ SCHEDULE ═══ */}
       <Schedule />
 
@@ -166,8 +152,78 @@ export default function Home() {
       {/* ═══ BUILD YOUR WEEKEND ═══ */}
       <BuildYourWeekend />
 
-      {/* ═══ CONTRAST THERAPY ═══ */}
-      <ContrastTherapy />
+      {/* ═══ FEATURED LINEUP ═══ */}
+      <section className="section lineup-section">
+        <Reveal>
+          <p className="section-label">Featured in 2026</p>
+          <h2 className="section-title">People and practices worth circling.</h2>
+          <p className="section-desc">
+            Visiting artists and ceremony leaders shape a program that moves from quiet listening to full-room release.
+          </p>
+        </Reveal>
+        <Reveal>
+          <div className="lineup-grid">
+            {[
+              {
+                src: "/images/client-2026/j-brave-feature.webp",
+                name: "J Brave",
+                role: "Keys artist + sound alchemist",
+                detail: "Keys to Kreation · Friday / Ecstatic Dance · Saturday / Live Set · Sunday",
+              },
+              {
+                src: "/images/client-2026/white-eagle-medicine-woman-feature.webp",
+                name: "White Eagle Medicine Woman",
+                role: "Traditional ceremony leader",
+                detail: "Heartbeat of the Lion's Gate drumming ceremony · Saturday at noon",
+              },
+              {
+                src: "/images/client-2026/lakeside-paddleboard-practice.webp",
+                name: "Paddleboard Yoga",
+                role: "Lakeside movement practice",
+                detail: "All-levels SUP yoga on the lake · Friday 2 PM & Saturday 1 PM",
+              },
+              {
+                src: "/images/earth-medicine.webp",
+                name: "Earth Medicine",
+                role: "Plant spirit & sacred ceremony",
+                detail: "Ayni Despacho · Labyrinth walks · Tea Lounge · throughout the weekend",
+              },
+            ].map((item) => (
+              <figure key={item.name} className="lineup-card">
+                <div className="lineup-artwork">
+                  <Image src={item.src} alt={item.name} fill style={{ objectFit: "cover" }} sizes="(max-width: 600px) 90vw, (max-width: 1100px) 45vw, 24rem" />
+                </div>
+                <figcaption className="lineup-caption">
+                  <strong className="lineup-name">{item.name}</strong>
+                  <span className="lineup-role">{item.role}</span>
+                  <small className="lineup-detail">{item.detail}</small>
+                </figcaption>
+              </figure>
+            ))}
+          </div>
+        </Reveal>
+      </section>
+
+      {/* ═══ ECSTATIC DANCE TICKETS ═══ */}
+      <section className="section dance-cta-section">
+        <Reveal>
+          <div className="dance-cta-card">
+            <div className="dance-cta-text">
+              <p className="section-label">Music Only</p>
+              <h2 className="dance-cta-title">Can&apos;t stay all weekend?<br />Don&apos;t miss the music.</h2>
+              <p className="dance-cta-desc">
+                Join us for the ecstatic dance party — live sets, keys, and movement medicine under the Alaskan sky.
+                Now offering single-day music tickets so everyone can experience the magic.
+              </p>
+              <div className="dance-cta-price">
+                <span className="dance-cta-amount">$33</span>
+                <span className="dance-cta-per"> / day</span>
+              </div>
+              <a href="#store" className="dance-cta-btn">Get Music Tickets →</a>
+            </div>
+          </div>
+        </Reveal>
+      </section>
 
       {/* ═══ PACKAGES ═══ */}
       <Packages />

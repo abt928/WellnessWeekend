@@ -259,6 +259,13 @@ export const scheduleDays: ScheduleDay[] = [
         hosts: ["ashleigh"],
       },
       {
+        time: "6:00 PM",
+        event: "S7ngrae",
+        detail: "Live music",
+        element: "fire", location: "Main Stage",
+        hosts: ["s7ngrae"],
+      },
+      {
         time: "7:00 PM",
         event: "Cacao Ceremony",
         element: "fire", location: "Main Stage",
@@ -333,10 +340,10 @@ export const scheduleDays: ScheduleDay[] = [
       },
       {
         time: "12:00 PM",
-        event: "ÂKÅTÂLĖ · S7ngrae · Shawn Zuke",
+        event: "Shawn Zuke",
         detail: "Live music",
         element: "fire", location: "Main Stage",
-        hosts: ["akatale", "s7ngrae", "shawn-zuke"],
+        hosts: ["shawn-zuke"],
       },
       {
         time: "1:00 PM",
@@ -351,6 +358,13 @@ export const scheduleDays: ScheduleDay[] = [
         detail: "45 minutes",
         element: "fire", location: "Main Stage",
         hosts: ["j-brave"],
+      },
+      {
+        time: "4:00 PM",
+        event: "ÂKÅTÂLĖ",
+        detail: "Live music",
+        element: "fire", location: "Main Stage",
+        hosts: ["akatale"],
       },
       {
         time: "4:00 PM",

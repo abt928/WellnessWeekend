@@ -5760,16 +5760,16 @@ body {
 
 .lineup-grid {
   display: grid;
-  grid-template-columns: repeat(4, 1fr);
-  gap: 1.25rem;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 1.5rem;
   margin-top: 2.5rem;
+  max-width: 960px;
+  margin-left: auto;
+  margin-right: auto;
 }
 
-@media (max-width: 1000px) {
-  .lineup-grid { grid-template-columns: repeat(2, 1fr); }
-}
-@media (max-width: 560px) {
-  .lineup-grid { grid-template-columns: 1fr; }
+@media (max-width: 800px) {
+  .lineup-grid { grid-template-columns: 1fr; max-width: 420px; }
 }
 
 .lineup-card {
@@ -5805,14 +5805,14 @@ body {
 
 .lineup-role {
   font-size: 0.75rem;
-  color: var(--aurora);
+  color: var(--gold-light);
   letter-spacing: 0.04em;
   text-transform: uppercase;
 }
 
 .lineup-detail {
   font-size: 0.78rem;
-  color: rgba(255,255,255,0.55);
+  color: rgba(255,255,255,0.8);
   line-height: 1.5;
   margin-top: 0.15rem;
 }
@@ -5843,7 +5843,7 @@ body {
 
 .dance-cta-desc {
   font-size: 1rem;
-  color: rgba(255,255,255,0.7);
+  color: rgba(255,255,255,0.9);
   line-height: 1.7;
   max-width: 500px;
   margin: 0 auto 1.5rem;
@@ -5866,7 +5866,7 @@ body {
 
 .dance-cta-per {
   font-size: 1.1rem;
-  color: rgba(255,255,255,0.6);
+  color: rgba(255,255,255,0.85);
 }
 
 .dance-cta-btn {

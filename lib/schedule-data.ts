@@ -49,6 +49,7 @@ export const scheduleDays: ScheduleDay[] = [
         event: "Past Life Guided Meditation",
         detail: "For those ready to go deep — an epic cleanse focusing on past lives in the multidimensional world",
         element: "fire", location: "Main Stage",
+        hosts: ["akatale", "avalon-starling"],
       },
       {
         time: "2:00 PM",
@@ -178,6 +179,13 @@ export const scheduleDays: ScheduleDay[] = [
         event: "Feel Good Flow",
         element: "air",
         hosts: ["jenni"],
+      },
+      {
+        time: "11:00 AM",
+        event: "Dragon Stargates",
+        detail: "A multidimensional ceremony opening galactic portal energy — journey through cosmic lineage and dragon consciousness",
+        element: "fire", location: "Lodge",
+        hosts: ["akatale"],
       },
       {
         time: "12:00 PM",
@@ -322,6 +330,13 @@ export const scheduleDays: ScheduleDay[] = [
         gloss: CONTRAST_GLOSS,
         limited: true,
         hosts: ["ashleigh"],
+      },
+      {
+        time: "12:00 PM",
+        event: "ÂKÅTÂLĖ · S7ngrae · Shawn Zuke",
+        detail: "Live music",
+        element: "fire", location: "Main Stage",
+        hosts: ["akatale", "s7ngrae", "shawn-zuke"],
       },
       {
         time: "1:00 PM",

@@ -163,4 +163,12 @@ export const practitioners: Practitioner[] = [
     offering: "Aerial Silk · All Weekend",
     bio: "Beth is an aerial silk artist and movement educator who brings warmth, technical skill, and genuine joy to every session. Her beginner-friendly aerial classes create a safe, encouraging space for people of all backgrounds to discover what it feels like to leave the ground. Small groups of 6 ensure everyone gets hands-on attention.",
   },
+  {
+    slug: "akatale",
+    name: "ÂKÅTÂLĖ",
+    role: "Visiting Artist · Dragon Stargate Guide · Hawaii",
+    offering: "Dragon Stargates Workshop · Past Life Regression · Live Music",
+    bio: "GOLDEN DRAGGON MASTER ÂKÅTÂLĖ KUMARA ZORO REHU is a visiting artist from Hawaii whose work spans ceremony, multidimensional healing, and live music. At Wellness Weekend 2026 he will lead the Dragon Stargates workshop — a journey into cosmic lineage, galactic consciousness, and the opening of sacred portal energy — and co-facilitate the Past Life Guided Meditation with Avalon Starling.",
+    isMusician: true,
+  },
 ];

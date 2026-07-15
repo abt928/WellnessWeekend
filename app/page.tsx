@@ -140,26 +140,11 @@ export default function Home() {
         </div>
       </section>
 
-      {/* ═══ SCHEDULE ═══ */}
-      <Schedule />
-
-      {/* ═══ PHOTO STRIP ═══ */}
-      <PhotoStrip />
-
-      {/* ═══ TICKETS STORE ═══ */}
-      <Store />
-
-      {/* ═══ BUILD YOUR WEEKEND ═══ */}
-      <BuildYourWeekend />
-
       {/* ═══ FEATURED LINEUP ═══ */}
       <section className="section lineup-section">
         <Reveal>
           <p className="section-label">Featured in 2026</p>
-          <h2 className="section-title">People and practices worth circling.</h2>
-          <p className="section-desc">
-            Visiting artists and ceremony leaders shape a program that moves from quiet listening to full-room release.
-          </p>
+          <h2 className="section-title">Visiting Artists of 2026.</h2>
         </Reveal>
         <Reveal>
           <div className="lineup-grid">
@@ -167,7 +152,7 @@ export default function Home() {
               {
                 src: "/images/client-2026/j-brave-feature.webp",
                 name: "J Brave",
-                role: "Keys artist + sound alchemist",
+                role: "Headliner",
                 detail: "Keys to Kreation · Friday / Ecstatic Dance · Saturday / Live Set · Sunday",
               },
               {
@@ -181,12 +166,6 @@ export default function Home() {
                 name: "Paddleboard Yoga",
                 role: "Lakeside movement practice",
                 detail: "All-levels SUP yoga on the lake · Friday 2 PM & Saturday 1 PM",
-              },
-              {
-                src: "/images/earth-medicine.webp",
-                name: "Earth Medicine",
-                role: "Plant spirit & sacred ceremony",
-                detail: "Ayni Despacho · Labyrinth walks · Tea Lounge · throughout the weekend",
               },
             ].map((item) => (
               <figure key={item.name} className="lineup-card">
@@ -208,22 +187,32 @@ export default function Home() {
       <section className="section dance-cta-section">
         <Reveal>
           <div className="dance-cta-card">
-            <div className="dance-cta-text">
-              <p className="section-label">Music Only</p>
-              <h2 className="dance-cta-title">Can&apos;t stay all weekend?<br />Don&apos;t miss the music.</h2>
-              <p className="dance-cta-desc">
-                Join us for the ecstatic dance party — live sets, keys, and movement medicine under the Alaskan sky.
-                Now offering single-day music tickets so everyone can experience the magic.
-              </p>
-              <div className="dance-cta-price">
-                <span className="dance-cta-amount">$33</span>
-                <span className="dance-cta-per"> / day</span>
-              </div>
-              <a href="#store" className="dance-cta-btn">Get Music Tickets →</a>
+            <p className="section-label" style={{ color: "var(--gold-light)" }}>Music Only</p>
+            <h2 className="dance-cta-title">Can&apos;t stay all weekend?<br />Don&apos;t miss the music.</h2>
+            <p className="dance-cta-desc">
+              Join us for the ecstatic dance party — live sets, movement medicine, and music under the Alaskan sky.
+              Now offering single-day music tickets so everyone can experience the magic.
+            </p>
+            <div className="dance-cta-price">
+              <span className="dance-cta-amount">$33</span>
+              <span className="dance-cta-per"> / day</span>
             </div>
+            <a href="#store" className="dance-cta-btn">Get Music Tickets →</a>
           </div>
         </Reveal>
       </section>
+
+      {/* ═══ SCHEDULE ═══ */}
+      <Schedule />
+
+      {/* ═══ PHOTO STRIP ═══ */}
+      <PhotoStrip />
+
+      {/* ═══ TICKETS STORE ═══ */}
+      <Store />
+
+      {/* ═══ BUILD YOUR WEEKEND ═══ */}
+      <BuildYourWeekend />
 
       {/* ═══ PACKAGES ═══ */}
       <Packages />

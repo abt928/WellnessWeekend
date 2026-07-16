@@ -46,8 +46,8 @@ export const scheduleDays: ScheduleDay[] = [
       },
       {
         time: "2:00 PM",
-        event: "Past Life Guided Meditation",
-        detail: "For those ready to go deep — an epic cleanse focusing on past lives in the multidimensional world",
+        event: "Soul Coherence",
+        detail: "By entering a state of deep coherence, presence, and inner alignment — through guided meditation and multidimensional visualization — you'll be invited to release limiting energetic patterns, reconnect with your Higher Self, and cultivate a profound sense of unity within. Designed to help you arrive fully, set your intentions, and create the foundation for a transformative weekend.",
         element: "fire", location: "Main Stage",
         hosts: ["akatale", "avalon-starling"],
       },

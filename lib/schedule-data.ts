@@ -182,8 +182,8 @@ export const scheduleDays: ScheduleDay[] = [
       },
       {
         time: "11:00 AM",
-        event: "Dragon Stargates",
-        detail: "A multidimensional ceremony opening galactic portal energy — journey through cosmic lineage and dragon consciousness",
+        event: "Sacred Voice Activation",
+        detail: "Dragon Voice Singing Class — sacred toning, Waikara chanting, and Dragon breath techniques to unlock frequencies dormant within you since before this lifetime. This is not just a singing lesson. This is a dimensional activation.",
         element: "fire", location: "Lodge",
         hosts: ["akatale"],
       },

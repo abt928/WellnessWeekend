@@ -166,9 +166,10 @@ export const practitioners: Practitioner[] = [
   {
     slug: "akatale",
     name: "ÂKÅTÂLĖ",
-    role: "Visiting Artist · Dragon Stargate Guide · Hawaii",
-    offering: "Dragon Stargates Workshop · Past Life Regression · Live Music",
-    bio: "GOLDEN DRAGGON MASTER ÂKÅTÂLĖ KUMARA ZORO REHU is a visiting artist from Hawaii whose work spans ceremony, multidimensional healing, and live music. At Wellness Weekend 2026 he will lead the Dragon Stargates workshop — a journey into cosmic lineage, galactic consciousness, and the opening of sacred portal energy — and co-facilitate the Past Life Guided Meditation with Avalon Starling.",
+    role: "Visiting Artist · Lyran Dragon Warrior · Hawaii",
+    offering: "Sacred Voice Activation · Past Life Regression · Live Music",
+    bio: "GOLDEN DRAGGON MASTER ÂKÅTÂLĖ KUMARA ZORO REHU is a visiting artist from Hawaii and keeper of the Mâkâhâ lineage. Through sacred toning, Waikara chanting, and Dragon breath techniques, he unlocks frequencies dormant within us since before this lifetime. At Wellness Weekend 2026 he leads Sacred Voice Activation — a dimensional activation of the cosmic voice — and co-facilitates the Past Life Guided Meditation with Avalon Starling.",
+    website: "https://www.goldendraggon.com/",
     isMusician: true,
   },
 ];

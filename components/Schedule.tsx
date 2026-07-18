@@ -1,15 +1,16 @@
 "use client";
 import { useState, type ReactNode } from "react";
-import { LeafIcon, FlameIcon, WaterDropIcon, WindIcon, MoonIcon } from "@/components/Icons";
+import { LeafIcon, FlameIcon, WaterDropIcon, WindIcon, MoonIcon, SparklesIcon } from "@/components/Icons";
 import EventGloss from "@/components/EventGloss";
 import BioTrigger from "@/components/BioTrigger";
 import { scheduleDays, type Element, type ScheduleEvent } from "@/lib/schedule-data";
 
 const elementMeta: Record<Element, { icon: ReactNode; label: string; color: string; desc: string }> = {
-  fire:  { icon: <FlameIcon      size={14} color="#FF6B35" />, label: "Fire",  color: "#FF6B35", desc: "Main Stage · Ceremony" },
-  water: { icon: <WaterDropIcon  size={14} color="#3DB8AF" />, label: "Water", color: "#3DB8AF", desc: "Lakeside · Immersion" },
-  air:   { icon: <WindIcon       size={14} color="#9B7FD4" />, label: "Air",   color: "#9B7FD4", desc: "Aerial · Movement" },
-  earth: { icon: <LeafIcon       size={14} color="#5E8A6A" />, label: "Earth", color: "#5E8A6A", desc: "Garden · Nature" },
+  fire:    { icon: <FlameIcon      size={14} color="#FF6B35" />, label: "Fire",    color: "#FF6B35", desc: "Main Stage · Ceremony" },
+  water:   { icon: <WaterDropIcon  size={14} color="#3DB8AF" />, label: "Water",   color: "#3DB8AF", desc: "Lakeside · Immersion" },
+  air:     { icon: <WindIcon       size={14} color="#9B7FD4" />, label: "Air",     color: "#9B7FD4", desc: "Aerial · Movement" },
+  earth:   { icon: <LeafIcon       size={14} color="#5E8A6A" />, label: "Earth",   color: "#5E8A6A", desc: "Garden · Nature" },
+  quantum: { icon: <SparklesIcon   size={14} color="#C9983F" />, label: "Quantum", color: "#C9983F", desc: "Quantum Spirit · Sound" },
 };
 
 interface ScheduleBlock {
@@ -63,17 +64,17 @@ export default function Schedule() {
 
   const currentDay = days[active];
   const filteredEvents = elementFilter
-    ? currentDay.events.filter((e) => e.element === elementFilter || e.secondElement === elementFilter)
+    ? currentDay.events.filter((e) => e.element === elementFilter || e.secondElement === elementFilter || e.thirdElement === elementFilter)
     : currentDay.events;
 
   return (
     <section id="schedule" className="section schedule">
-      <p className="section-label">Three Days · Four Elements</p>
+      <p className="section-label">Three Days · Five Elements</p>
       <h2 className="section-title">
         The Journey
       </h2>
       <p className="section-desc">
-        From fire ceremonies to lakeside immersion, aerial arts to earth medicine — filter by element to find your path through the weekend.
+        From fire ceremonies to lakeside immersion, aerial arts to quantum sound — filter by element to find your path through the weekend.
       </p>
 
       {/* Element Legend */}
@@ -151,6 +152,11 @@ export default function Schedule() {
               {e.secondElement && (
                 <span className="schedule-track-icon" style={{ marginLeft: "-2px" }}>
                   {elementMeta[e.secondElement].icon}
+                </span>
+              )}
+              {e.thirdElement && (
+                <span className="schedule-track-icon" style={{ marginLeft: "-2px" }}>
+                  {elementMeta[e.thirdElement].icon}
                 </span>
               )}
               {e.gloss ? <EventGloss term={e.event} gloss={e.gloss} /> : e.event}

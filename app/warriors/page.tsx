@@ -86,7 +86,7 @@ export default function WarriorsPage() {
               Warriors Welcome.
             </h1>
             <p style={{ fontSize: "1.05rem", lineHeight: 1.75, color: C.muted, maxWidth: "500px", margin: "0 auto" }}>
-              We are partnering with Alaska Healing Hearts to offer 40 beds to veterans and their families as a gesture of gratitude from our artists, healers, and community. If you or someone you love has served, this is for you.
+              We are partnering with Alaska Healing Hearts. This program is for veterans and active duty families only.
             </p>
           </div>
 

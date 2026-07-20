@@ -381,11 +381,11 @@ export default function Home() {
       </section>
 
       {/* ═══ VENDORS ═══ */}
-      <section id="vendors" className="section" style={{ paddingTop: "3rem", paddingBottom: "3rem" }}>
+      <section id="vendors" className="section vendor-section" style={{ paddingTop: "3rem", paddingBottom: "3rem" }}>
         <Reveal>
-          <p className="section-label">On-Site Vendors</p>
-          <h2 className="section-title" style={{ marginBottom: "0.75rem" }}>Vendors.</h2>
-          <p className="section-desc" style={{ marginBottom: "0.5rem" }}>
+          <p className="section-label vendor-section-label">On-Site Vendors</p>
+          <h2 className="section-title vendor-section-title" style={{ marginBottom: "0.75rem" }}>Vendors.</h2>
+          <p className="section-desc vendor-section-desc" style={{ marginBottom: "0.5rem" }}>
             A curated village of wellness practitioners, makers, and mission-driven businesses. Day vendor spots are available at $75/day — <a href="mailto:support@thesoundspace.us" style={{ color: "var(--gold)" }}>contact us to inquire</a>.
           </p>
         </Reveal>
@@ -414,6 +414,25 @@ export default function Home() {
                 <span className="vendor-role">{v.role}</span>
               </div>
             ))}
+          </div>
+        </Reveal>
+        <Reveal>
+          <div className="vendor-perks">
+            <div className="vendor-perk-card">
+              <p className="vendor-perk-label">For Vendors</p>
+              <p className="vendor-perk-title">Join us for the full experience.</p>
+              <p className="vendor-perk-desc">
+                As a vendor you&apos;re part of our community — not just our marketplace. Sign up for classes and ceremonies alongside your customers, and make the most of the weekend.
+              </p>
+              <div className="vendor-perk-actions">
+                <a href="#schedule" className="vendor-perk-btn-primary">Browse the Schedule →</a>
+                <div className="vendor-perk-bed">
+                  <span className="vendor-perk-bed-label">On-site bed</span>
+                  <span className="vendor-perk-bed-price">$50 / night</span>
+                  <a href="mailto:support@thesoundspace.us" className="vendor-perk-bed-link">Reserve a bed →</a>
+                </div>
+              </div>
+            </div>
           </div>
         </Reveal>
       </section>

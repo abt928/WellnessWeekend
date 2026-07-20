@@ -403,7 +403,7 @@ textarea:focus-visible {
 .section-label {
   font-size: 0.75rem; letter-spacing: 0.3em; text-transform: uppercase;
   margin-bottom: 1.25rem; text-align: center;
-  background: linear-gradient(90deg, #4ECDC4 0%, #8B5FBF 45%, #D4AF3C 100%);
+  background: linear-gradient(90deg, #C9983F 0%, #FF6B35 55%, #C9983F 100%);
   -webkit-background-clip: text; -webkit-text-fill-color: transparent;
   background-clip: text;
   display: inline-block; width: 100%;
@@ -1144,6 +1144,95 @@ textarea:focus-visible {
   color: var(--muted);
   text-align: right;
   flex-shrink: 0;
+}
+
+/* ========== VENDOR SECTION — warm gold treatment ========== */
+.vendor-section {
+  background: var(--cream);
+}
+.vendor-section-label {
+  background: linear-gradient(90deg, #C9983F, #FF6B35) !important;
+  -webkit-background-clip: text !important;
+  -webkit-text-fill-color: transparent !important;
+  background-clip: text !important;
+}
+.vendor-section-title { color: var(--charcoal) !important; }
+.vendor-section-desc  { color: rgba(51,53,51,0.65) !important; }
+
+.vendor-list { border-top-color: rgba(51,53,51,0.12); }
+.vendor-row  { border-bottom-color: rgba(51,53,51,0.1); }
+.vendor-name { color: var(--charcoal); }
+.vendor-role { color: rgba(51,53,51,0.55); }
+
+.vendor-perks {
+  max-width: 680px;
+  margin: 2rem auto 0;
+}
+.vendor-perk-card {
+  background: var(--warm-white);
+  border: 1px solid rgba(201,152,63,0.3);
+  border-radius: 14px;
+  padding: 1.75rem 2rem;
+}
+.vendor-perk-label {
+  font-size: 0.68rem;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--gold);
+  font-weight: 700;
+  margin-bottom: 0.5rem;
+}
+.vendor-perk-title {
+  font-family: var(--font-display);
+  font-size: 1.3rem;
+  font-weight: 700;
+  color: var(--charcoal);
+  margin-bottom: 0.6rem;
+}
+.vendor-perk-desc {
+  font-size: 0.9rem;
+  color: rgba(51,53,51,0.65);
+  line-height: 1.65;
+  margin-bottom: 1.25rem;
+}
+.vendor-perk-actions {
+  display: flex;
+  align-items: center;
+  gap: 1.5rem;
+  flex-wrap: wrap;
+}
+.vendor-perk-btn-primary {
+  display: inline-block;
+  padding: 0.65rem 1.5rem;
+  background: linear-gradient(135deg, var(--gold), #FF6B35);
+  color: #fff;
+  font-weight: 700;
+  font-size: 0.9rem;
+  border-radius: 30px;
+  text-decoration: none;
+  letter-spacing: 0.02em;
+  white-space: nowrap;
+}
+.vendor-perk-bed {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  flex-wrap: wrap;
+}
+.vendor-perk-bed-label {
+  font-size: 0.8rem;
+  color: rgba(51,53,51,0.5);
+}
+.vendor-perk-bed-price {
+  font-size: 1rem;
+  font-weight: 700;
+  color: var(--charcoal);
+}
+.vendor-perk-bed-link {
+  font-size: 0.85rem;
+  color: var(--gold);
+  text-decoration: none;
+  font-weight: 600;
 }
 
 /* ========== MIDNIGHT SUN SALE BANNER ========== */

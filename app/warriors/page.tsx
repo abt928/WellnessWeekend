@@ -181,7 +181,31 @@ export default function WarriorsPage() {
               <p style={{ fontSize: "1rem", color: C.muted, lineHeight: 1.75 }}>
                 Thank you, {name.split(" ")[0]}. We&apos;ll be in touch at <strong style={{ color: C.charcoal }}>{email}</strong> with your confirmation and everything you need to know before arriving.
               </p>
-              <p style={{ fontSize: "0.85rem", color: C.faint, marginTop: "1.25rem" }}>
+              <div style={{ marginTop: "1.75rem", paddingTop: "1.75rem", borderTop: `1px solid ${C.border}` }}>
+                <p style={{ fontSize: "0.9rem", color: C.charcoal, fontWeight: 600, marginBottom: "0.5rem" }}>
+                  Ready to plan your weekend?
+                </p>
+                <p style={{ fontSize: "0.85rem", color: C.muted, marginBottom: "1.25rem" }}>
+                  Browse the full schedule and sign up for classes, workshops, and limited experiences.
+                </p>
+                <a
+                  href="/#schedule"
+                  style={{
+                    display: "inline-block",
+                    padding: "0.75rem 2rem",
+                    background: `linear-gradient(135deg, ${C.gold}, #FF6B35)`,
+                    color: "#fff",
+                    fontWeight: 700,
+                    fontSize: "0.95rem",
+                    borderRadius: "30px",
+                    textDecoration: "none",
+                    letterSpacing: "0.02em",
+                  }}
+                >
+                  View the Schedule →
+                </a>
+              </div>
+              <p style={{ fontSize: "0.8rem", color: C.faint, marginTop: "1.25rem" }}>
                 Questions? <a href="mailto:support@thesoundspace.us" style={{ color: C.gold }}>support@thesoundspace.us</a>
               </p>
             </div>

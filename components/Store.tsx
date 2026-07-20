@@ -343,8 +343,8 @@ export default function Store() {
         Choose your tickets, add-on experiences, and merch — all processed securely through Square.
       </p>
       <div className="camping-urgency">
-        <span className="camping-urgency-badge">Tent Camping Open</span>
-        <span>On-site tent camping is available at $345 for the full weekend — no RV hookups. Cabin beds also available while they last.</span>
+        <span className="camping-urgency-badge">Earth Pass · $345</span>
+        <span>Tent camping on-site — 25 spaces available. No RV hookups. Cabin beds also available while they last.</span>
       </div>
 
       {/* Category Tabs */}

@@ -193,14 +193,26 @@ export async function POST(req: NextRequest) {
       )
     `;
 
+    await sql`
+      CREATE TABLE IF NOT EXISTS warriors (
+        id SERIAL PRIMARY KEY,
+        name VARCHAR(255) NOT NULL,
+        email VARCHAR(255) NOT NULL,
+        family_size INTEGER NOT NULL,
+        beds_needed INTEGER NOT NULL,
+        created_at TIMESTAMPTZ DEFAULT NOW() NOT NULL
+      )
+    `;
+
     return NextResponse.json({
       success: true,
       tables: [
         "vendors", "volunteers", "newsletter", "leads", "sponsors",
         "instructor_waitlist", "affiliates", "referral_events", "orders",
         "budget_items", "members", "member_referrals", "member_redemptions",
+        "warriors",
       ],
-      message: "All 13 tables verified / created.",
+      message: "All 14 tables verified / created.",
     });
   } catch (e) {
     console.error("DB setup error:", e);

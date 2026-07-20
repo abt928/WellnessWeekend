@@ -342,12 +342,9 @@ export default function Store() {
       <p className="section-desc">
         Choose your tickets, add-on experiences, and merch — all processed securely through Square.
       </p>
-      <p className="store-capacity" style={{ display: "flex", alignItems: "center", justifyContent: "center", gap: "0.5rem" }}>
-        <LotusIcon size={16} color="var(--aurora)" /> Camping is sold out — cabin beds only <LotusIcon size={16} color="var(--aurora)" />
-      </p>
       <div className="camping-urgency">
-        <span className="camping-urgency-badge">Limited Cabins</span>
-        <span>Camping passes are sold out. On-site cabin beds are still available — <a href="#store">reserve yours before they&apos;re gone →</a></span>
+        <span className="camping-urgency-badge">Tent Camping Open</span>
+        <span>On-site tent camping is available at $345 for the full weekend — no RV hookups. Cabin beds also available while they last.</span>
       </div>
 
       {/* Category Tabs */}

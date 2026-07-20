@@ -133,6 +133,15 @@ export const memberReferrals = pgTable("member_referrals", {
   createdAt: timestamp("created_at", { withTimezone: true }).defaultNow().notNull(),
 });
 
+export const warriors = pgTable("warriors", {
+  id: serial("id").primaryKey(),
+  name: varchar("name", { length: 255 }).notNull(),
+  email: varchar("email", { length: 255 }).notNull(),
+  familySize: integer("family_size").notNull(),
+  bedsNeeded: integer("beds_needed").notNull(),
+  createdAt: timestamp("created_at", { withTimezone: true }).defaultNow().notNull(),
+});
+
 export const memberRedemptions = pgTable("member_redemptions", {
   id: serial("id").primaryKey(),
   memberCode: varchar("member_code", { length: 20 }).notNull(),

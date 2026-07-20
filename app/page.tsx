@@ -386,7 +386,7 @@ export default function Home() {
           <p className="section-label">On-Site Vendors</p>
           <h2 className="section-title" style={{ marginBottom: "0.75rem" }}>Vendors.</h2>
           <p className="section-desc" style={{ marginBottom: "0.5rem" }}>
-            Vendor Village is full for 2026. Day vendor spots are available at $100/day — contact us to inquire.
+            A curated village of wellness practitioners, makers, and mission-driven businesses. Day vendor spots are available at $75/day — <a href="mailto:support@thesoundspace.us" style={{ color: "var(--gold)" }}>contact us to inquire</a>.
           </p>
         </Reveal>
         <Reveal>
@@ -406,6 +406,8 @@ export default function Home() {
               { name: "Lifewave",                        role: "Wellness Products" },
               { name: "Arbonne",                         role: "Clean Beauty & Wellness" },
               { name: "Northern Messages",               role: "Psychic Readings" },
+              { name: "The Artery Girdwood",             role: "Tarot · Art" },
+              { name: "Sacred Seeds Foundation",         role: "Community Foundation" },
             ].map((v) => (
               <div key={v.name} className="vendor-row">
                 <span className="vendor-name">{v.name}</span>

@@ -20,11 +20,10 @@ const C = {
 };
 
 const REWARD_META: Record<string, { emoji: string; color: string; bg: string }> = {
-  lodging_meals:    { emoji: "🏡", color: "#8B5FBF", bg: "rgba(139,95,191,0.07)" },
+  lodging:          { emoji: "🏡", color: "#8B5FBF", bg: "rgba(139,95,191,0.07)" },
   weekend_pass:     { emoji: "🎟",  color: C.gold,    bg: "rgba(201,152,63,0.08)" },
   day_pass:         { emoji: "☀️",  color: C.orange,  bg: "rgba(255,107,53,0.07)" },
   lodging_discount: { emoji: "🛏",  color: C.green,   bg: C.greenBg },
-  tbd:              { emoji: "⏳",  color: C.faint,   bg: "rgba(51,53,51,0.04)" },
   none:             { emoji: "✦",   color: C.faint,   bg: "rgba(51,53,51,0.04)" },
 };
 
@@ -159,9 +158,9 @@ export default function VolunteerPage() {
           {/* Reward tiers */}
           <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit,minmax(155px,1fr))", gap: "0.75rem", marginBottom: "2.75rem" }}>
             {[
-              { key: "day_pass",         label: "Day Pass",             hours: "3+ hrs",  desc: "For the day you volunteer" },
-              { key: "weekend_pass",     label: "Weekend Pass",         hours: "8+ hrs",  desc: "Full 3-day pass" },
-              { key: "lodging_meals",    label: "Lodging + Meals",      hours: "12+ hrs", desc: "4+ hrs each day · Fri/Sat/Sun" },
+              { key: "day_pass",     label: "Day Pass",       hours: "3+ hrs",  desc: "For the day you volunteer" },
+              { key: "weekend_pass", label: "Weekend Pass",   hours: "8+ hrs",  desc: "Full 3-day pass" },
+              { key: "lodging",      label: "Comped Lodging", hours: "12+ hrs", desc: "4+ hrs on 3 of 4 days · Thu–Sun" },
             ].map((tier) => {
               const meta = REWARD_META[tier.key];
               return (
@@ -421,7 +420,7 @@ function ShiftCard({
         </p>
         <p style={{ fontSize: "0.75rem", color: C_local.muted }}>
           {shift.start_time ? `${shift.start_time}–${shift.end_time}` : "Time TBD"}
-          {shift.hours ? ` · ${shift.hours} hrs` : ""}
+          {" · "}{shift.hours} hrs
         </p>
       </div>
 

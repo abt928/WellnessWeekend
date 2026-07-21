@@ -87,7 +87,7 @@ export async function POST(req: NextRequest) {
         email: String(email).trim().toLowerCase(),
         phone: phone ? String(phone).trim() : null,
         shiftIds: shiftIds.join(","),
-        rewardEarned: reward.key !== "none" && reward.key !== "tbd" ? reward.key : null,
+        rewardEarned: reward.key !== "none" ? reward.key : null,
         agreedWaiver: true,
       })
       .returning({ id: volunteerRegistrations.id });

@@ -1,15 +1,16 @@
 "use client";
 import { useState, type ReactNode } from "react";
-import { LeafIcon, FlameIcon, WaterDropIcon, WindIcon, MoonIcon } from "@/components/Icons";
+import { LeafIcon, FlameIcon, WaterDropIcon, WindIcon, MoonIcon, SparklesIcon } from "@/components/Icons";
 import EventGloss from "@/components/EventGloss";
 import BioTrigger from "@/components/BioTrigger";
 import { scheduleDays, type Element, type ScheduleEvent } from "@/lib/schedule-data";
 
 const elementMeta: Record<Element, { icon: ReactNode; label: string; color: string; desc: string }> = {
-  fire:  { icon: <FlameIcon      size={14} color="#FF6B35" />, label: "Fire",  color: "#FF6B35", desc: "Main Stage · Ceremony" },
-  water: { icon: <WaterDropIcon  size={14} color="#3DB8AF" />, label: "Water", color: "#3DB8AF", desc: "Lakeside · Immersion" },
-  air:   { icon: <WindIcon       size={14} color="#9B7FD4" />, label: "Air",   color: "#9B7FD4", desc: "Aerial · Movement" },
-  earth: { icon: <LeafIcon       size={14} color="#5E8A6A" />, label: "Earth", color: "#5E8A6A", desc: "Garden · Nature" },
+  fire:    { icon: <FlameIcon      size={14} color="#FF6B35" />, label: "Fire",    color: "#FF6B35", desc: "Main Stage · Ceremony" },
+  water:   { icon: <WaterDropIcon  size={14} color="#3DB8AF" />, label: "Water",   color: "#3DB8AF", desc: "Lakeside · Immersion" },
+  air:     { icon: <WindIcon       size={14} color="#9B7FD4" />, label: "Air",     color: "#9B7FD4", desc: "Aerial · Movement" },
+  earth:   { icon: <LeafIcon       size={14} color="#5E8A6A" />, label: "Earth",   color: "#5E8A6A", desc: "Garden · Nature" },
+  quantum: { icon: <SparklesIcon   size={14} color="#D4AF3C" />, label: "Quantum", color: "#D4AF3C", desc: "Light · Frequency · Sound" },
 };
 
 interface ScheduleBlock {

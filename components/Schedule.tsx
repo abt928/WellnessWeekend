@@ -64,17 +64,17 @@ export default function Schedule() {
 
   const currentDay = days[active];
   const filteredEvents = elementFilter
-    ? currentDay.events.filter((e) => e.element === elementFilter || e.secondElement === elementFilter)
+    ? currentDay.events.filter((e) => e.element === elementFilter || e.secondElement === elementFilter || e.thirdElement === elementFilter)
     : currentDay.events;
 
   return (
     <section id="schedule" className="section schedule">
-      <p className="section-label">Three Days · Four Elements</p>
+      <p className="section-label">Three Days · Five Elements</p>
       <h2 className="section-title">
         The Journey
       </h2>
       <p className="section-desc">
-        From fire ceremonies to lakeside immersion, aerial arts to earth medicine — filter by element to find your path through the weekend.
+        From fire ceremonies to lakeside immersion, aerial arts to quantum sound — filter by element to find your path through the weekend.
       </p>
 
       {/* Element Legend */}
@@ -152,6 +152,11 @@ export default function Schedule() {
               {e.secondElement && (
                 <span className="schedule-track-icon" style={{ marginLeft: "-2px" }}>
                   {elementMeta[e.secondElement].icon}
+                </span>
+              )}
+              {e.thirdElement && (
+                <span className="schedule-track-icon" style={{ marginLeft: "-2px" }}>
+                  {elementMeta[e.thirdElement].icon}
                 </span>
               )}
               {e.gloss ? <EventGloss term={e.event} gloss={e.gloss} /> : e.event}

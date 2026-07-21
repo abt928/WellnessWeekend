@@ -71,7 +71,7 @@ function BioModal({ person, onClose }: { person: Practitioner; onClose: () => vo
 
 const PRIORITY_ORDER = [
   "j-brave",
-  "white-eagle",
+  "akatale",
   "gail",
   "avalon-starling",
   "alice",

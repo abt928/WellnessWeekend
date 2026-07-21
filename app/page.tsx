@@ -381,7 +381,7 @@ export default function Home() {
             {[
               { name: "Retro Roasters Coffee",          role: "Specialty Coffee" },
               { name: "Cacao Bar",                       role: "Ceremonial Cacao" },
-{ name: "Flow Massage",                    role: "Chair Massage" },
+              { name: "Flow Massage",                    role: "Chair Massage" },
               { name: "Echo and Sage",                   role: "Stained Glass Art" },
               { name: "Ecuadorian Products",             role: "Artisan Goods" },
               { name: "Tundra Wellness",                 role: "Massage · Craniosacral · Wellness Products" },

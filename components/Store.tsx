@@ -36,7 +36,7 @@ const TABS = [
 const MAX_QTY_PER_ITEM = 20;
 
 // Items whose name contains any of these strings (case-insensitive) are shown as sold out
-const SOLD_OUT_PATTERNS = ["earth pass"];
+const SOLD_OUT_PATTERNS: string[] = [];
 
 function formatPrice(cents: number) {
   return `$${(cents / 100).toFixed(cents % 100 === 0 ? 0 : 2)}`;

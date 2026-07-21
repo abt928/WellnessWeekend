@@ -426,11 +426,6 @@ export default function Home() {
               </p>
               <div className="vendor-perk-actions">
                 <a href="#schedule" className="vendor-perk-btn-primary">Browse the Schedule →</a>
-                <div className="vendor-perk-bed">
-                  <span className="vendor-perk-bed-label">On-site bed</span>
-                  <span className="vendor-perk-bed-price">$50 / night</span>
-                  <a href="mailto:support@thesoundspace.us" className="vendor-perk-bed-link">Reserve a bed →</a>
-                </div>
               </div>
             </div>
           </div>

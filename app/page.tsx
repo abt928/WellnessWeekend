@@ -140,6 +140,37 @@ export default function Home() {
         </div>
       </section>
 
+      {/* ═══ ECSTATIC DANCE TICKETS ═══ */}
+      <section className="section dance-cta-section">
+        <Reveal>
+          <div className="dance-cta-card">
+            <p className="section-label" style={{ color: "var(--gold-light)" }}>Music Only</p>
+            <h2 className="dance-cta-title">Can&apos;t stay all weekend?<br />Don&apos;t miss the music.</h2>
+            <p className="dance-cta-desc">
+              Join us for the ecstatic dance party — live sets, movement medicine, and music under the Alaskan sky.
+              Now offering single-day music tickets so everyone can experience the magic.
+            </p>
+            <div className="dance-cta-price">
+              <span className="dance-cta-amount">$33</span>
+              <span className="dance-cta-per"> / day</span>
+            </div>
+            <a href="#store" className="dance-cta-btn">Get Music Tickets →</a>
+          </div>
+        </Reveal>
+      </section>
+
+      {/* ═══ SCHEDULE ═══ */}
+      <Schedule />
+
+      {/* ═══ PHOTO STRIP ═══ */}
+      <PhotoStrip />
+
+      {/* ═══ TICKETS STORE ═══ */}
+      <Store />
+
+      {/* ═══ PACKAGES ═══ */}
+      <Packages />
+
       {/* ═══ FEATURED LINEUP ═══ */}
       <section className="section lineup-section">
         <Reveal>
@@ -183,39 +214,8 @@ export default function Home() {
         </Reveal>
       </section>
 
-      {/* ═══ ECSTATIC DANCE TICKETS ═══ */}
-      <section className="section dance-cta-section">
-        <Reveal>
-          <div className="dance-cta-card">
-            <p className="section-label" style={{ color: "var(--gold-light)" }}>Music Only</p>
-            <h2 className="dance-cta-title">Can&apos;t stay all weekend?<br />Don&apos;t miss the music.</h2>
-            <p className="dance-cta-desc">
-              Join us for the ecstatic dance party — live sets, movement medicine, and music under the Alaskan sky.
-              Now offering single-day music tickets so everyone can experience the magic.
-            </p>
-            <div className="dance-cta-price">
-              <span className="dance-cta-amount">$33</span>
-              <span className="dance-cta-per"> / day</span>
-            </div>
-            <a href="#store" className="dance-cta-btn">Get Music Tickets →</a>
-          </div>
-        </Reveal>
-      </section>
-
-      {/* ═══ SCHEDULE ═══ */}
-      <Schedule />
-
-      {/* ═══ PHOTO STRIP ═══ */}
-      <PhotoStrip />
-
-      {/* ═══ TICKETS STORE ═══ */}
-      <Store />
-
       {/* ═══ BUILD YOUR WEEKEND ═══ */}
       <BuildYourWeekend />
-
-      {/* ═══ PACKAGES ═══ */}
-      <Packages />
 
       {/* ═══ FAMILY DAY ═══ */}
       <section className="family-day-section section">

@@ -342,10 +342,7 @@ export default function Store() {
       <p className="section-desc">
         Choose your tickets, add-on experiences, and merch — all processed securely through Square.
       </p>
-      <div className="camping-urgency">
-        <span className="camping-urgency-badge">Earth Pass · $345</span>
-        <span>Tent camping on-site — 25 spaces available. No RV hookups. Cabin beds also available while they last.</span>
-      </div>
+
 
       {/* Category Tabs */}
       <div className="store-tabs">

@@ -142,6 +142,25 @@ export const warriors = pgTable("warriors", {
   createdAt: timestamp("created_at", { withTimezone: true }).defaultNow().notNull(),
 });
 
+export const volunteerRegistrations = pgTable("volunteer_registrations", {
+  id: serial("id").primaryKey(),
+  name: varchar("name", { length: 255 }).notNull(),
+  email: varchar("email", { length: 255 }).notNull(),
+  phone: varchar("phone", { length: 50 }),
+  shiftIds: text("shift_ids").notNull(),
+  rewardEarned: varchar("reward_earned", { length: 50 }),
+  agreedWaiver: boolean("agreed_waiver").notNull().default(true),
+  createdAt: timestamp("created_at", { withTimezone: true }).defaultNow().notNull(),
+});
+
+export const volunteerShiftClaims = pgTable("volunteer_shift_claims", {
+  id: serial("id").primaryKey(),
+  registrationId: integer("registration_id"),
+  shiftId: varchar("shift_id", { length: 20 }).notNull(),
+  email: varchar("email", { length: 255 }).notNull(),
+  createdAt: timestamp("created_at", { withTimezone: true }).defaultNow().notNull(),
+});
+
 export const memberRedemptions = pgTable("member_redemptions", {
   id: serial("id").primaryKey(),
   memberCode: varchar("member_code", { length: 20 }).notNull(),

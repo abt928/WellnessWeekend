@@ -438,6 +438,33 @@ export default function Home() {
       {/* ═══ GET INVOLVED ═══ */}
       <GetInvolved />
 
+      {/* ═══ DONATION ═══ */}
+      <section style={{ background: "var(--cream)", padding: "3rem 1.5rem", textAlign: "center", borderTop: "1px solid rgba(51,53,51,0.1)" }}>
+        <p style={{ fontSize: "0.7rem", letterSpacing: "0.13em", textTransform: "uppercase", color: "var(--gold)", fontWeight: 600, marginBottom: "0.6rem" }}>
+          Support the Event
+        </p>
+        <p style={{ fontSize: "1rem", color: "rgba(51,53,51,0.65)", lineHeight: 1.7, marginBottom: "1.4rem", maxWidth: "420px", margin: "0 auto 1.4rem" }}>
+          We appreciate any donations to support our event.
+        </p>
+        <a
+          href="#"
+          style={{
+            display: "inline-block",
+            padding: "0.75rem 2rem",
+            background: "transparent",
+            color: "var(--gold)",
+            fontWeight: 700,
+            fontSize: "0.95rem",
+            border: "1.5px solid rgba(201,152,63,0.4)",
+            borderRadius: "30px",
+            textDecoration: "none",
+            letterSpacing: "0.02em",
+          }}
+        >
+          Make a Donation →
+        </a>
+      </section>
+
       </main>
 
       {/* ═══ FOOTER ═══ */}

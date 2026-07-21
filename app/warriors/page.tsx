@@ -265,6 +265,33 @@ export default function WarriorsPage() {
             </form>
           )}
 
+          {/* Donation */}
+          <div style={{ textAlign: "center", marginTop: "3rem", paddingTop: "2.5rem", borderTop: `1px solid ${C.border}` }}>
+            <p style={{ fontSize: "0.7rem", letterSpacing: "0.12em", textTransform: "uppercase", color: C.gold, fontWeight: 600, marginBottom: "0.6rem" }}>
+              Support the Event
+            </p>
+            <p style={{ fontSize: "0.95rem", color: C.muted, lineHeight: 1.7, marginBottom: "1.25rem", maxWidth: "400px", margin: "0 auto 1.25rem" }}>
+              We appreciate any donations to support our event.
+            </p>
+            <a
+              href="#"
+              style={{
+                display: "inline-block",
+                padding: "0.75rem 2rem",
+                background: "transparent",
+                color: C.gold,
+                fontWeight: 700,
+                fontSize: "0.95rem",
+                border: `1.5px solid ${C.goldBorder}`,
+                borderRadius: "30px",
+                textDecoration: "none",
+                letterSpacing: "0.02em",
+              }}
+            >
+              Make a Donation →
+            </a>
+          </div>
+
         </div>
       </main>
     </>

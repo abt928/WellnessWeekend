@@ -174,7 +174,7 @@ textarea:focus-visible {
 }
 .nav-links a:hover { color: var(--gold); }
 .nav-cta {
-  background: linear-gradient(135deg, var(--gold), var(--coral));
+  background: linear-gradient(135deg, var(--aurora), var(--gold));
   color: white; border: none; padding: 0.6rem 1.5rem;
   border-radius: 30px; font-size: 0.8rem; letter-spacing: 0.06em;
   text-transform: uppercase; cursor: pointer; font-weight: 600;
@@ -331,17 +331,17 @@ textarea:focus-visible {
 
 .hero-cta {
   display: inline-block; padding: 1rem 2.5rem;
-  background: linear-gradient(135deg, var(--aurora), var(--psyche-pink), var(--gold));
+  background: linear-gradient(135deg, #FF6B35, var(--gold), var(--coral));
   background-size: 200% 200%;
   animation: auroraShift 5s ease infinite;
   color: white; text-decoration: none; border-radius: 50px;
   font-size: 0.9rem; letter-spacing: 0.08em; text-transform: uppercase;
   font-weight: 600; transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.3s;
-  box-shadow: 0 8px 30px rgba(139,95,191,0.3);
+  box-shadow: 0 8px 30px rgba(201,152,63,0.4);
 }
 .hero-cta:hover {
   transform: translateY(-3px) scale(1.03);
-  box-shadow: 0 16px 50px rgba(139,95,191,0.5);
+  box-shadow: 0 16px 50px rgba(255,107,53,0.45);
 }
 .hero-cta:active {
   transform: translateY(0) scale(0.97);
@@ -403,7 +403,7 @@ textarea:focus-visible {
 .section-label {
   font-size: 0.75rem; letter-spacing: 0.3em; text-transform: uppercase;
   margin-bottom: 1.25rem; text-align: center;
-  background: linear-gradient(90deg, #4ECDC4 0%, #8B5FBF 45%, #D4AF3C 100%);
+  background: linear-gradient(90deg, #C9983F 0%, #FF6B35 55%, #C9983F 100%);
   -webkit-background-clip: text; -webkit-text-fill-color: transparent;
   background-clip: text;
   display: inline-block; width: 100%;
@@ -1091,7 +1091,7 @@ textarea:focus-visible {
 }
 .camping-urgency a { color: var(--aurora, #8B5FBF); font-weight: 600; }
 .camping-urgency-badge {
-  background: var(--coral, #E8956A); color: #fff;
+  background: #B85431; color: #fff;
   font-size: 0.7rem; font-weight: 700; letter-spacing: 0.06em;
   padding: 0.2rem 0.5rem; border-radius: 4px; text-transform: uppercase; flex-shrink: 0;
 }
@@ -1144,6 +1144,95 @@ textarea:focus-visible {
   color: var(--muted);
   text-align: right;
   flex-shrink: 0;
+}
+
+/* ========== VENDOR SECTION — warm gold treatment ========== */
+.vendor-section {
+  background: var(--cream);
+}
+.vendor-section-label {
+  background: linear-gradient(90deg, #C9983F, #FF6B35) !important;
+  -webkit-background-clip: text !important;
+  -webkit-text-fill-color: transparent !important;
+  background-clip: text !important;
+}
+.vendor-section-title { color: var(--charcoal) !important; }
+.vendor-section-desc  { color: rgba(51,53,51,0.65) !important; }
+
+.vendor-list { border-top-color: rgba(51,53,51,0.12); }
+.vendor-row  { border-bottom-color: rgba(51,53,51,0.1); }
+.vendor-name { color: var(--charcoal); }
+.vendor-role { color: rgba(51,53,51,0.55); }
+
+.vendor-perks {
+  max-width: 680px;
+  margin: 2rem auto 0;
+}
+.vendor-perk-card {
+  background: var(--warm-white);
+  border: 1px solid rgba(201,152,63,0.3);
+  border-radius: 14px;
+  padding: 1.75rem 2rem;
+}
+.vendor-perk-label {
+  font-size: 0.68rem;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--gold);
+  font-weight: 700;
+  margin-bottom: 0.5rem;
+}
+.vendor-perk-title {
+  font-family: var(--font-display);
+  font-size: 1.3rem;
+  font-weight: 700;
+  color: var(--charcoal);
+  margin-bottom: 0.6rem;
+}
+.vendor-perk-desc {
+  font-size: 0.9rem;
+  color: rgba(51,53,51,0.65);
+  line-height: 1.65;
+  margin-bottom: 1.25rem;
+}
+.vendor-perk-actions {
+  display: flex;
+  align-items: center;
+  gap: 1.5rem;
+  flex-wrap: wrap;
+}
+.vendor-perk-btn-primary {
+  display: inline-block;
+  padding: 0.65rem 1.5rem;
+  background: linear-gradient(135deg, var(--gold), #FF6B35);
+  color: #fff;
+  font-weight: 700;
+  font-size: 0.9rem;
+  border-radius: 30px;
+  text-decoration: none;
+  letter-spacing: 0.02em;
+  white-space: nowrap;
+}
+.vendor-perk-bed {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  flex-wrap: wrap;
+}
+.vendor-perk-bed-label {
+  font-size: 0.8rem;
+  color: rgba(51,53,51,0.5);
+}
+.vendor-perk-bed-price {
+  font-size: 1rem;
+  font-weight: 700;
+  color: var(--charcoal);
+}
+.vendor-perk-bed-link {
+  font-size: 0.85rem;
+  color: var(--gold);
+  text-decoration: none;
+  font-weight: 600;
 }
 
 /* ========== MIDNIGHT SUN SALE BANNER ========== */
@@ -1264,13 +1353,9 @@ textarea:focus-visible {
 
 /* ========== SCHEDULE ========== */
 .schedule { background: linear-gradient(180deg, #0a0820 0%, #0d0b26 100%); }
-.schedule .section-label {
-  background: linear-gradient(90deg, #4ECDC4 0%, #c9a8ff 50%, #D4AF3C 100%);
-  -webkit-background-clip: text; -webkit-text-fill-color: transparent;
-  background-clip: text;
-}
-.schedule .section-title { color: #e8e0f8; }
-.schedule .section-title em { color: rgba(180,150,255,0.9); }
+.schedule .section-label { color: var(--gold-light); }
+.schedule .section-title { color: #fff; }
+.schedule .section-title em { color: var(--gold-light); }
 .schedule .section-desc { color: rgba(232,224,248,0.62); }
 
 /* Track filter pills */
@@ -1748,7 +1833,7 @@ textarea:focus-visible {
 .family-day-section {
   background: linear-gradient(180deg, #0c1a12 0%, #0e1f15 100%);
 }
-.family-day-section .section-label { color: rgba(110,210,140,0.7); }
+.family-day-section .section-label { color: var(--gold-light); }
 .family-day-section .section-title { color: #f0f8f2; }
 .family-day-section .section-desc  { color: rgba(240,248,242,0.65); }
 
@@ -2065,7 +2150,7 @@ textarea:focus-visible {
 .store-card-name { font-size: 1.15rem; color: var(--forest); font-weight: 400; }
 .store-card-price {
   font-size: 1.2rem; font-weight: 300; white-space: nowrap;
-  color: var(--aurora);
+  color: var(--psyche-indigo);
 }
 .store-card-desc {
   font-size: 0.95rem; color: rgba(43,43,43,0.68); line-height: 1.6; margin-bottom: 1.25rem;
@@ -2073,14 +2158,14 @@ textarea:focus-visible {
 }
 .store-card-actions { margin-top: auto; }
 .store-add-btn {
-  width: 100%; padding: 0.7rem; border: 1px solid var(--aurora); border-radius: 30px;
-  background: transparent; color: var(--aurora); font-size: 0.82rem;
+  width: 100%; padding: 0.7rem; border: 1px solid rgba(201,152,63,0.5); border-radius: 30px;
+  background: transparent; color: var(--gold); font-size: 0.82rem;
   letter-spacing: 0.04em; text-transform: uppercase; cursor: pointer;
   font-family: inherit; font-weight: 600;
   transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
 }
 .store-add-btn:hover {
-  background: linear-gradient(135deg, var(--aurora), var(--psyche-pink));
+  background: linear-gradient(135deg, #FF6B35, var(--gold));
   color: white; border-color: transparent;
 }
 .store-add-btn:active { transform: scale(0.96); transition-duration: 0.1s; }
@@ -2269,7 +2354,7 @@ textarea:focus-visible {
 }
 .package-badge {
   position: absolute; top: 1.25rem; right: 1.25rem;
-  background: linear-gradient(135deg, var(--gold), var(--coral));
+  background: linear-gradient(135deg, var(--aurora), var(--gold));
   color: white; font-size: 0.65rem; padding: 0.3rem 0.8rem;
   border-radius: 20px; letter-spacing: 0.06em; text-transform: uppercase;
   font-weight: 600;
@@ -2398,7 +2483,7 @@ textarea:focus-visible {
 .newsletter input::placeholder { color: rgba(255,255,255,0.3); }
 .newsletter button {
   padding: 0.85rem 2rem;
-  background: linear-gradient(135deg, var(--gold), var(--coral));
+  background: linear-gradient(135deg, var(--aurora), var(--gold));
   border: none; border-radius: 30px; color: white;
   font-size: 0.85rem; letter-spacing: 0.06em; text-transform: uppercase;
   cursor: pointer; font-weight: 600; font-family: inherit;
@@ -2531,7 +2616,7 @@ textarea:focus-visible {
 .lead-capture-input::placeholder { color: rgba(255,255,255,0.3); }
 .lead-capture-btn {
   padding: 0.95rem 2.5rem;
-  background: linear-gradient(135deg, var(--gold), var(--coral));
+  background: linear-gradient(135deg, var(--aurora), var(--gold));
   border: none;
   border-radius: 30px;
   color: white;
@@ -2566,7 +2651,7 @@ textarea:focus-visible {
   font-size: 1rem;
 }
 .lead-capture-error {
-  color: var(--coral);
+  color: #FF8C55;
   font-size: 0.85rem;
   margin-top: 0.75rem;
 }
@@ -3321,7 +3406,7 @@ textarea:focus-visible {
 .fab-badge {
   position: absolute; top: -4px; right: -4px;
   min-width: 20px; height: 20px; border-radius: 10px;
-  background: var(--coral); color: white; font-size: 0.7rem;
+  background: var(--gold); color: white; font-size: 0.7rem;
   display: flex; align-items: center; justify-content: center;
   font-weight: 700; padding: 0 5px;
   animation: floatGentle 2s ease-in-out infinite;
@@ -3373,7 +3458,7 @@ textarea:focus-visible {
 }
 .admin-login-btn {
   padding: 0.85rem; border: none; border-radius: 30px;
-  background: linear-gradient(135deg, var(--gold), var(--coral));
+  background: linear-gradient(135deg, var(--aurora), var(--gold));
   color: white; font-size: 0.9rem; letter-spacing: 0.1em;
   text-transform: uppercase; cursor: pointer; font-weight: 600;
   font-family: inherit; transition: all 0.3s;
@@ -3618,7 +3703,7 @@ textarea:focus-visible {
 .mobile-menu-cta {
   display: block; margin: 1rem 1.5rem 2rem;
   padding: 0.85rem 1.5rem; text-align: center;
-  background: linear-gradient(135deg, var(--gold), var(--coral));
+  background: linear-gradient(135deg, var(--aurora), var(--gold));
   color: white; text-decoration: none; border-radius: 30px;
   font-size: 0.85rem; letter-spacing: 0.1em; text-transform: uppercase;
   font-weight: 600;
@@ -3972,11 +4057,7 @@ body {
 
 /* Schedule — white text on dark indigo */
 .schedule .section-title  { color: #fff; }
-.schedule .section-label {
-  background: linear-gradient(90deg, #4ECDC4 0%, #c9a8ff 50%, #D4AF3C 100%);
-  -webkit-background-clip: text; -webkit-text-fill-color: transparent;
-  background-clip: text;
-}
+.schedule .section-label { color: var(--gold-light); }
 .schedule .section-desc   { color: rgba(255, 255, 255, 0.65); }
 .schedule-heading { color: #fff; }
 .schedule-theme-text { color: rgba(255, 255, 255, 0.5); }
@@ -5675,10 +5756,11 @@ body {
   border-bottom: none;
 }
 
-.print-row-fire   { background: rgba(255, 107, 53, 0.04); }
-.print-row-water  { background: rgba(61, 184, 175, 0.04); }
-.print-row-air    { background: rgba(155, 127, 212, 0.04); }
-.print-row-earth  { background: rgba(94, 138, 106, 0.04); }
+.print-row-fire    { background: rgba(255, 107, 53, 0.04); }
+.print-row-water   { background: rgba(61, 184, 175, 0.04); }
+.print-row-air     { background: rgba(155, 127, 212, 0.04); }
+.print-row-earth   { background: rgba(94, 138, 106, 0.04); }
+.print-row-quantum { background: rgba(201, 152, 63, 0.05); }
 
 .print-time {
   font-weight: 600;
@@ -5758,4 +5840,145 @@ body {
   .print-day { page-break-inside: avoid; }
   .print-row { page-break-inside: avoid; }
   .print-table { font-size: 0.75rem; }
+}
+
+/* ── Featured Lineup ── */
+.lineup-section {
+  padding-top: 5rem;
+  padding-bottom: 5rem;
+  background: var(--cream);
+}
+.lineup-section .section-label { color: var(--gold) !important; }
+.lineup-section .section-title { color: var(--charcoal); }
+
+.lineup-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 1.5rem;
+  margin-top: 2.5rem;
+  max-width: 960px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+@media (max-width: 800px) {
+  .lineup-grid { grid-template-columns: 1fr; max-width: 420px; }
+}
+
+.lineup-card {
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+  border-radius: 12px;
+  overflow: hidden;
+  background: var(--warm-white);
+  border: 1px solid rgba(51,53,51,0.1);
+  box-shadow: 0 2px 16px rgba(51,53,51,0.08);
+}
+
+.lineup-artwork {
+  position: relative;
+  width: 100%;
+  padding-bottom: 120%;
+}
+
+.lineup-caption {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+  padding: 1rem;
+}
+
+.lineup-name {
+  font-size: 1rem;
+  font-weight: 700;
+  color: var(--charcoal);
+  font-family: var(--font-display);
+}
+
+.lineup-role {
+  font-size: 0.75rem;
+  color: var(--gold);
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+
+.lineup-detail {
+  font-size: 0.78rem;
+  color: rgba(51,53,51,0.7);
+  line-height: 1.5;
+  margin-top: 0.15rem;
+}
+
+/* ── Ecstatic Dance CTA ── */
+.dance-cta-section {
+  padding-top: 2rem;
+  padding-bottom: 5rem;
+  background: var(--cream);
+}
+
+.dance-cta-card {
+  background: var(--warm-white);
+  border: 1px solid rgba(201,152,63,0.3);
+  border-radius: 16px;
+  padding: 3rem 2.5rem;
+  max-width: 680px;
+  margin: 0 auto;
+  text-align: center;
+  box-shadow: 0 2px 24px rgba(51,53,51,0.08);
+}
+
+.dance-cta-title {
+  font-size: clamp(1.6rem, 3vw, 2.4rem);
+  font-family: var(--font-display);
+  font-weight: 700;
+  line-height: 1.2;
+  margin: 0.5rem 0 1rem;
+  color: var(--charcoal);
+}
+
+.dance-cta-desc {
+  font-size: 1rem;
+  color: rgba(51,53,51,0.72);
+  line-height: 1.7;
+  max-width: 500px;
+  margin: 0 auto 1.5rem;
+}
+
+.dance-cta-price {
+  display: flex;
+  align-items: baseline;
+  justify-content: center;
+  gap: 0.25rem;
+  margin-bottom: 1.5rem;
+}
+
+.dance-cta-amount {
+  font-size: 3rem;
+  font-weight: 800;
+  font-family: var(--font-display);
+  color: #C9983F;
+}
+
+.dance-cta-per {
+  font-size: 1.1rem;
+  color: var(--charcoal);
+}
+
+.dance-cta-btn {
+  display: inline-block;
+  padding: 0.75rem 2rem;
+  background: linear-gradient(135deg, #9B7FD4 0%, #FF6B35 100%);
+  color: #fff;
+  font-weight: 700;
+  font-size: 1rem;
+  border-radius: 30px;
+  text-decoration: none;
+  letter-spacing: 0.02em;
+  transition: opacity 0.2s, transform 0.2s;
+}
+.dance-cta-btn:hover {
+  opacity: 0.9;
+  transform: translateY(-1px);
 }

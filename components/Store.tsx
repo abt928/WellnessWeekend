@@ -36,7 +36,7 @@ const TABS = [
 const MAX_QTY_PER_ITEM = 20;
 
 // Items whose name contains any of these strings (case-insensitive) are shown as sold out
-const SOLD_OUT_PATTERNS = ["earth pass"];
+const SOLD_OUT_PATTERNS: string[] = [];
 
 function formatPrice(cents: number) {
   return `$${(cents / 100).toFixed(cents % 100 === 0 ? 0 : 2)}`;
@@ -342,13 +342,7 @@ export default function Store() {
       <p className="section-desc">
         Choose your tickets, add-on experiences, and merch — all processed securely through Square.
       </p>
-      <p className="store-capacity" style={{ display: "flex", alignItems: "center", justifyContent: "center", gap: "0.5rem" }}>
-        <LotusIcon size={16} color="var(--aurora)" /> Camping is sold out — cabin beds only <LotusIcon size={16} color="var(--aurora)" />
-      </p>
-      <div className="camping-urgency">
-        <span className="camping-urgency-badge">Limited Cabins</span>
-        <span>Camping passes are sold out. On-site cabin beds are still available — <a href="#store">reserve yours before they&apos;re gone →</a></span>
-      </div>
+
 
       {/* Category Tabs */}
       <div className="store-tabs">

@@ -9,7 +9,7 @@ export const metadata = {
 };
 
 const elementSymbol: Record<string, string> = {
-  fire: "🔥", water: "💧", air: "🌬", earth: "🌿",
+  fire: "🔥", water: "💧", air: "🌬", earth: "🌿", quantum: "✨",
 };
 
 function hostNames(slugs: string[]): string {
@@ -77,6 +77,9 @@ export default function PrintSchedulePage() {
                     <span className="print-elem-sym">{elementSymbol[e.element]}</span>
                     {e.secondElement && (
                       <span className="print-elem-sym">{elementSymbol[e.secondElement]}</span>
+                    )}
+                    {e.thirdElement && (
+                      <span className="print-elem-sym">{elementSymbol[e.thirdElement]}</span>
                     )}
                     {e.event}
                     {e.detail && <div className="print-detail">{e.detail}</div>}

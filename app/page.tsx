@@ -12,7 +12,6 @@ import FloatingActions from "@/components/FloatingActions";
 import ConversionNudges from "@/components/ConversionNudges";
 import PartnerCard from "@/components/PartnerCard";
 import BuildYourWeekend from "@/components/BuildYourWeekend";
-import ContrastTherapy from "@/components/ContrastTherapy";
 import { PlaneIcon, MapPinIcon, LeafIcon, MoonIcon } from "@/components/Icons";
 
 /* ── static data ── */
@@ -52,13 +51,6 @@ const partners = [
     logoWidth: 200,
     logoHeight: 100,
   },
-  {
-    name: "Whirling Rainbow Foundation",
-    role: "Community Nonprofit",
-    logo: "/logos/whirling-rainbow.png",
-    logoWidth: 200,
-    logoHeight: 100,
-  },
 ];
 
 export default function Home() {
@@ -94,7 +86,7 @@ export default function Home() {
       availability: "https://schema.org/InStock",
       priceCurrency: "USD",
     },
-    performer: [{ "@type": "Person", name: "White Eagle Medicine Woman" }],
+    performer: [],
     typicalAgeRange: "18+",
     maximumAttendeeCapacity: 200,
   };
@@ -141,19 +133,6 @@ export default function Home() {
         </div>
       </section>
 
-      {/* ═══ MIDNIGHT SUN SALE ═══ */}
-      <div className="midnightsun-banner" role="complementary" aria-label="Midnight Sun Sale">
-        <div className="midnightsun-inner">
-          <span className="midnightsun-sun" aria-hidden="true">☀</span>
-          <span className="midnightsun-title">Midnight Sun Sale</span>
-          <span className="midnightsun-desc">
-            Use code <span className="midnightsun-code">MIDNIGHTSUN</span> for 50% off your 2nd ticket
-            <span className="midnightsun-ends"> · Active through July 7</span>
-          </span>
-          <a href="#store" className="midnightsun-cta">Claim Now →</a>
-        </div>
-      </div>
-
       {/* ═══ SCHEDULE ═══ */}
       <Schedule />
 
@@ -163,14 +142,67 @@ export default function Home() {
       {/* ═══ TICKETS STORE ═══ */}
       <Store />
 
-      {/* ═══ BUILD YOUR WEEKEND ═══ */}
-      <BuildYourWeekend />
-
-      {/* ═══ CONTRAST THERAPY ═══ */}
-      <ContrastTherapy />
+      {/* ═══ ECSTATIC DANCE TICKETS ═══ */}
+      <section className="section dance-cta-section">
+        <Reveal>
+          <div className="dance-cta-card">
+            <p className="section-label" style={{ color: "var(--gold-light)" }}>Music Only</p>
+            <h2 className="dance-cta-title">Can&apos;t stay all weekend?<br />Don&apos;t miss the music.</h2>
+            <p className="dance-cta-desc">
+              Join us for the ecstatic dance party — live sets, movement medicine, and music under the Alaskan sky.
+              Now offering single-day music tickets so everyone can experience the magic.
+            </p>
+            <div className="dance-cta-price">
+              <span className="dance-cta-amount">$33</span>
+              <span className="dance-cta-per"> / day</span>
+            </div>
+            <a href="#store" className="dance-cta-btn">Get Music Tickets →</a>
+          </div>
+        </Reveal>
+      </section>
 
       {/* ═══ PACKAGES ═══ */}
       <Packages />
+
+      {/* ═══ FEATURED LINEUP ═══ */}
+      <section className="section lineup-section">
+        <Reveal>
+          <p className="section-label">Featured in 2026</p>
+          <h2 className="section-title">Visiting Artists of 2026.</h2>
+        </Reveal>
+        <Reveal>
+          <div className="lineup-grid">
+            {[
+              {
+                src: "/images/client-2026/j-brave-feature.webp",
+                name: "J Brave",
+                role: "Headliner",
+                detail: "Keys to Kreation · Friday / Ecstatic Dance · Saturday / Live Set · Sunday",
+              },
+              {
+                src: "/images/client-2026/lakeside-paddleboard-practice.webp",
+                name: "Paddleboard Yoga",
+                role: "Lakeside movement practice",
+                detail: "All-levels SUP yoga on the lake · Friday 2 PM & Saturday 1 PM",
+              },
+            ].map((item) => (
+              <figure key={item.name} className="lineup-card">
+                <div className="lineup-artwork">
+                  <Image src={item.src} alt={item.name} fill style={{ objectFit: "cover" }} sizes="(max-width: 600px) 90vw, (max-width: 1100px) 45vw, 24rem" />
+                </div>
+                <figcaption className="lineup-caption">
+                  <strong className="lineup-name">{item.name}</strong>
+                  <span className="lineup-role">{item.role}</span>
+                  <small className="lineup-detail">{item.detail}</small>
+                </figcaption>
+              </figure>
+            ))}
+          </div>
+        </Reveal>
+      </section>
+
+      {/* ═══ BUILD YOUR WEEKEND ═══ */}
+      <BuildYourWeekend />
 
       {/* ═══ FAMILY DAY ═══ */}
       <section className="family-day-section section">
@@ -336,12 +368,12 @@ export default function Home() {
       </section>
 
       {/* ═══ VENDORS ═══ */}
-      <section id="vendors" className="section" style={{ paddingTop: "3rem", paddingBottom: "3rem" }}>
+      <section id="vendors" className="section vendor-section" style={{ paddingTop: "3rem", paddingBottom: "3rem" }}>
         <Reveal>
-          <p className="section-label">On-Site Vendors</p>
-          <h2 className="section-title" style={{ marginBottom: "0.75rem" }}>Vendors.</h2>
-          <p className="section-desc" style={{ marginBottom: "0.5rem" }}>
-            Vendor Village is full for 2026. Day vendor spots are available at $100/day — contact us to inquire.
+          <p className="section-label vendor-section-label">On-Site Vendors</p>
+          <h2 className="section-title vendor-section-title" style={{ marginBottom: "0.75rem" }}>Vendors.</h2>
+          <p className="section-desc vendor-section-desc" style={{ marginBottom: "0.5rem" }}>
+            A curated village of wellness practitioners, makers, and mission-driven businesses. Day vendor spots are available at $75/day — <a href="mailto:support@thesoundspace.us" style={{ color: "var(--gold)" }}>contact us to inquire</a>.
           </p>
         </Reveal>
         <Reveal>
@@ -349,8 +381,7 @@ export default function Home() {
             {[
               { name: "Retro Roasters Coffee",          role: "Specialty Coffee" },
               { name: "Cacao Bar",                       role: "Ceremonial Cacao" },
-              { name: "Whirling Rainbow Foundation",     role: "Community Nonprofit" },
-              { name: "Flow Massage",                    role: "Chair Massage" },
+{ name: "Flow Massage",                    role: "Chair Massage" },
               { name: "Echo and Sage",                   role: "Stained Glass Art" },
               { name: "Ecuadorian Products",             role: "Artisan Goods" },
               { name: "Tundra Wellness",                 role: "Massage · Craniosacral · Wellness Products" },
@@ -361,12 +392,28 @@ export default function Home() {
               { name: "Lifewave",                        role: "Wellness Products" },
               { name: "Arbonne",                         role: "Clean Beauty & Wellness" },
               { name: "Northern Messages",               role: "Psychic Readings" },
+              { name: "The Artery Girdwood",             role: "Tarot · Art" },
+              { name: "Sacred Seeds Foundation",         role: "Community Foundation" },
             ].map((v) => (
               <div key={v.name} className="vendor-row">
                 <span className="vendor-name">{v.name}</span>
                 <span className="vendor-role">{v.role}</span>
               </div>
             ))}
+          </div>
+        </Reveal>
+        <Reveal>
+          <div className="vendor-perks">
+            <div className="vendor-perk-card">
+              <p className="vendor-perk-label">For Vendors</p>
+              <p className="vendor-perk-title">Join us for the full experience.</p>
+              <p className="vendor-perk-desc">
+                As a vendor you&apos;re part of our community — not just our marketplace. Sign up for classes and ceremonies alongside your customers, and make the most of the weekend.
+              </p>
+              <div className="vendor-perk-actions">
+                <a href="#schedule" className="vendor-perk-btn-primary">Browse the Schedule →</a>
+              </div>
+            </div>
           </div>
         </Reveal>
       </section>
@@ -376,6 +423,33 @@ export default function Home() {
 
       {/* ═══ GET INVOLVED ═══ */}
       <GetInvolved />
+
+      {/* ═══ DONATION ═══ */}
+      <section style={{ background: "var(--cream)", padding: "3rem 1.5rem", textAlign: "center", borderTop: "1px solid rgba(51,53,51,0.1)" }}>
+        <p style={{ fontSize: "0.7rem", letterSpacing: "0.13em", textTransform: "uppercase", color: "var(--gold)", fontWeight: 600, marginBottom: "0.6rem" }}>
+          Support the Event
+        </p>
+        <p style={{ fontSize: "1rem", color: "rgba(51,53,51,0.65)", lineHeight: 1.7, marginBottom: "1.4rem", maxWidth: "420px", margin: "0 auto 1.4rem" }}>
+          We appreciate any donations to support our event.
+        </p>
+        <a
+          href="#"
+          style={{
+            display: "inline-block",
+            padding: "0.75rem 2rem",
+            background: "transparent",
+            color: "var(--gold)",
+            fontWeight: 700,
+            fontSize: "0.95rem",
+            border: "1.5px solid rgba(201,152,63,0.4)",
+            borderRadius: "30px",
+            textDecoration: "none",
+            letterSpacing: "0.02em",
+          }}
+        >
+          Make a Donation →
+        </a>
+      </section>
 
       </main>
 

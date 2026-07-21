@@ -4,17 +4,19 @@ import { cookies } from "next/headers";
 const COOKIE_NAME = "admin-session";
 
 const ROLE_PASSWORDS: Array<{ env: string; token: string; role: AdminRole }> = [
-  { env: "ADMIN_PASSWORD", token: "ww-role-owner", role: "owner" },
-  { env: "ALICE_PASSWORD", token: "ww-role-alice", role: "alice" },
-  { env: "CHRIS_PASSWORD", token: "ww-role-chris", role: "chris" },
+  { env: "ADMIN_PASSWORD",   token: "ww-role-owner",   role: "owner" },
+  { env: "ALICE_PASSWORD",   token: "ww-role-alice",   role: "alice" },
+  { env: "CHRIS_PASSWORD",   token: "ww-role-chris",   role: "chris" },
+  { env: "ASHLEIGH_PASSWORD", token: "ww-role-ashleigh", role: "ashleigh" },
 ];
 
-export type AdminRole = "owner" | "alice" | "chris";
+export type AdminRole = "owner" | "alice" | "chris" | "ashleigh";
 
 const TOKEN_TO_ROLE: Record<string, AdminRole> = {
-  "ww-role-owner": "owner",
-  "ww-role-alice": "alice",
-  "ww-role-chris": "chris",
+  "ww-role-owner":   "owner",
+  "ww-role-alice":   "alice",
+  "ww-role-chris":   "chris",
+  "ww-role-ashleigh": "ashleigh",
 };
 
 /** Returns the role of the authenticated admin, or null if not authenticated */

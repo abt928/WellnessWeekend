@@ -163,4 +163,20 @@ export const practitioners: Practitioner[] = [
     offering: "Aerial Silk · All Weekend",
     bio: "Beth is an aerial silk artist and movement educator who brings warmth, technical skill, and genuine joy to every session. Her beginner-friendly aerial classes create a safe, encouraging space for people of all backgrounds to discover what it feels like to leave the ground. Small groups of 6 ensure everyone gets hands-on attention.",
   },
+  {
+    slug: "mystical-moon-dance",
+    name: "Mystical Moon Dance",
+    role: "Tarot Reader & Ceremonial Space Holder",
+    offering: "Tarot + Tea Party · Daily 4 PM",
+    bio: "Mystical Moon Dance is a tarot reader and ceremonial space holder who weaves divination, community ritual, and the magic of gathering into her daily Tarot + Tea Party. Each afternoon session in the Labyrinth Garden is an invitation to slow down, pull a card, and let the mystery speak.",
+  },
+  {
+    slug: "akatale",
+    name: "ÂKÅTÂLĖ",
+    role: "Visiting Artist · Lyran Dragon Warrior · Hawaii",
+    offering: "Sacred Voice Activation · Past Life Regression · Live Music",
+    bio: "GOLDEN DRAGGON MASTER ÂKÅTÂLĖ KUMARA ZORO REHU is a visiting artist from Hawaii and keeper of the Mâkâhâ lineage. Through sacred toning, Waikara chanting, and Dragon breath techniques, he unlocks frequencies dormant within us since before this lifetime. At Wellness Weekend 2026 he leads Sacred Voice Activation — a dimensional activation of the cosmic voice — and co-facilitates the Past Life Guided Meditation with Avalon Starling.",
+    website: "https://www.goldendraggon.com/",
+    isMusician: true,
+  },
 ];

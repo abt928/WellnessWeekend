@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { getDb } from "@/lib/db";
-import { leads, newsletter, vendors, volunteers, sponsors, instructorWaitlist, affiliates, referralEvents } from "@/lib/schema";
+import { leads, newsletter, vendors, volunteers, sponsors, instructorWaitlist, affiliates, referralEvents, volunteerRegistrations } from "@/lib/schema";
 import { isAdminAuthenticated } from "@/app/api/admin/auth/route";
 import { desc, sql } from "drizzle-orm";
 
@@ -13,6 +13,7 @@ const TABLES = {
   instructor_waitlist: instructorWaitlist,
   affiliates,
   referral_events: referralEvents,
+  volunteer_registrations: volunteerRegistrations,
 } as const;
 
 type TableName = keyof typeof TABLES;

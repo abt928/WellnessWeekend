@@ -7,13 +7,14 @@ import type { AdminRole } from "@/app/api/admin/auth/route";
 
 type TableName =
   | "leads" | "newsletter" | "vendors" | "volunteers"
-  | "sponsors" | "instructor_waitlist" | "affiliates" | "referral_events";
+  | "sponsors" | "instructor_waitlist" | "affiliates" | "referral_events"
+  | "volunteer_registrations";
 
 type ActiveTab =
   | "overview" | "loyalty" | "budget"
   | "affiliates" | "referral_events" | "newsletter" | "leads"
   | "addons" | "vendor_agreements"
-  | "vendors" | "volunteers" | "instructor_waitlist" | "sponsors";
+  | "vendors" | "volunteers" | "volunteer_registrations" | "instructor_waitlist" | "sponsors";
 
 interface TabConfig {
   key: TableName;
@@ -1257,7 +1258,7 @@ export default function AdminPage() {
 
   const canSetupDb = role === "owner" || role === "chris";
   const canSeeFinancials = role === "owner" || role === "alice";
-  const roleLabel = role === "owner" ? "Owner" : role === "alice" ? "Alice" : role === "chris" ? "Chris" : "Staff";
+  const roleLabel = role === "owner" ? "Owner" : role === "alice" ? "Alice" : role === "chris" ? "Chris" : role === "ashleigh" ? "Ashleigh" : "Staff";
 
   const tab = (key: ActiveTab, label: string, restricted?: boolean) => {
     if (restricted && !canSeeFinancials) return null;
@@ -1307,7 +1308,8 @@ export default function AdminPage() {
         {tab("addons", "Add-Ons")}
         {tab("vendor_agreements", "Agreements")}
         {tab("vendors", "Vendors")}
-        {tab("volunteers", "Volunteers")}
+        {tab("volunteers", "Vol. Interest")}
+        {tab("volunteer_registrations", "Vol. Signups")}
         {tab("instructor_waitlist", "Instructors")}
         {tab("sponsors", "Sponsors")}
       </div>
@@ -1323,9 +1325,10 @@ export default function AdminPage() {
       {activeTab === "addons"              && <AddonsTab />}
       {activeTab === "vendor_agreements"   && <VendorAgreementsTab />}
       {activeTab === "vendors"             && <DataTab tableKey="vendors"             columns={["id","name","email","business","category","description","created_at"]} />}
-      {activeTab === "volunteers"          && <DataTab tableKey="volunteers"          columns={["id","name","email","phone","interest","experience","availability","created_at"]} />}
-      {activeTab === "instructor_waitlist" && <DataTab tableKey="instructor_waitlist" columns={["id","name","email","phone","modality","years_teaching","interested_in_2026","interested_in_2027","offering","created_at"]} />}
-      {activeTab === "sponsors"            && <DataTab tableKey="sponsors"            columns={["id","name","email","company","budget_range","interests","goals","created_at"]} />}
+      {activeTab === "volunteers"               && <DataTab tableKey="volunteers"               columns={["id","name","email","phone","interest","experience","availability","created_at"]} />}
+      {activeTab === "volunteer_registrations"  && <DataTab tableKey="volunteer_registrations"  columns={["id","name","email","phone","shift_ids","reward_earned","agreed_waiver","created_at"]} />}
+      {activeTab === "instructor_waitlist"      && <DataTab tableKey="instructor_waitlist"      columns={["id","name","email","phone","modality","years_teaching","interested_in_2026","interested_in_2027","offering","created_at"]} />}
+      {activeTab === "sponsors"                 && <DataTab tableKey="sponsors"                 columns={["id","name","email","company","budget_range","interests","goals","created_at"]} />}
     </div>
   );
 }

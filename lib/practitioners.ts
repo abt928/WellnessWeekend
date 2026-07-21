@@ -82,13 +82,6 @@ export const practitioners: Practitioner[] = [
     bio: "Jon is a yoga therapist and myofascial release specialist whose Roots for Recovery class was built for people who carry their stress in their body — which is most of us. Long-held restorative poses, MFR props, and a closing Tibetan bowl sound bath make this one of the weekend's most deeply healing offerings.",
   },
   {
-    slug: "white-eagle",
-    name: "White Eagle Medicine Woman",
-    role: "Traditional Ceremony Leader",
-    offering: "Lionsgate Drumming Ceremony",
-    bio: "White Eagle Medicine Woman is a keeper of traditional ceremony and holder of the sacred Grandmother Drum. Her guided drumming ceremonies create a bridge between the personal and the ancestral, inviting participants into the healing intelligence of rhythm, prayer, and collective intention. Bring your drum.",
-  },
-  {
     slug: "kuf-knotz",
     name: "Kuf Knotz",
     role: "Hip Hop Artist & Conscious Lyricist",

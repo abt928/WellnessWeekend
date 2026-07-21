@@ -13,7 +13,7 @@ type TableName =
 type ActiveTab =
   | "overview" | "loyalty" | "budget"
   | "affiliates" | "referral_events" | "newsletter" | "leads"
-  | "addons" | "vendor_agreements"
+  | "vendor_agreements"
   | "vendors" | "volunteers" | "volunteer_registrations" | "instructor_waitlist" | "sponsors";
 
 interface TabConfig {
@@ -131,40 +131,79 @@ function StatCard({ label, value, sub, accent }: { label: string; value: string 
 
 // ── Overview Tab ──────────────────────────────────────────────────────
 
+interface VolunteerSignupRow {
+  name: string; email: string; shift_ids: string; reward_earned: string; created_at: string;
+}
+
+interface VolunteerOverview {
+  count: number;
+  recentSignups: VolunteerSignupRow[];
+  byReward: { day_pass: number; weekend_pass: number; lodging: number; none: number };
+}
+
 function OverviewTab() {
   const [budget, setBudget] = useState<{ items: BudgetItem[]; totals: BudgetTotals } | null>(null);
   const [loyalty, setLoyalty] = useState<{ totals: LoyaltyTotals } | null>(null);
   const [communityData, setCommunityData] = useState<{
     leads: number; newsletter: number; affiliates: number;
   } | null>(null);
+  const [volunteerData, setVolunteerData] = useState<VolunteerOverview | null>(null);
+  const [vendorCount, setVendorCount] = useState<number | null>(null);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     const fetchAll = async () => {
       setLoading(true);
       try {
-        const [budgetRes, loyaltyRes, leadsRes, newsletterRes, affiliatesRes] = await Promise.all([
+        const [budgetRes, loyaltyRes, leadsRes, newsletterRes, affiliatesRes, volunteerRes, vendorRes] = await Promise.all([
           fetch("/api/admin/budget"),
           fetch("/api/admin/members"),
           fetch("/api/admin/data?table=leads"),
           fetch("/api/admin/data?table=newsletter"),
           fetch("/api/admin/data?table=affiliates"),
+          fetch("/api/admin/data?table=volunteer_registrations"),
+          fetch("/api/admin/vendor-agreements"),
         ]);
         if (budgetRes.ok) setBudget(await budgetRes.json());
         if (loyaltyRes.ok) {
           const d = await loyaltyRes.json();
           setLoyalty({ totals: d.totals });
         }
-        const [leadsData, newsletterData, affiliatesData] = await Promise.all([
+        const [leadsData, newsletterData, affiliatesData, volunteerRaw, vendorRaw] = await Promise.all([
           leadsRes.ok ? leadsRes.json() : null,
           newsletterRes.ok ? newsletterRes.json() : null,
           affiliatesRes.ok ? affiliatesRes.json() : null,
+          volunteerRes.ok ? volunteerRes.json() : null,
+          vendorRes.ok ? vendorRes.json() : null,
         ]);
         setCommunityData({
           leads: leadsData?.count ?? 0,
           newsletter: newsletterData?.count ?? 0,
           affiliates: affiliatesData?.count ?? 0,
         });
+        if (volunteerRaw?.rows) {
+          const rows = volunteerRaw.rows as Array<Record<string, unknown>>;
+          const byReward = { day_pass: 0, weekend_pass: 0, lodging: 0, none: 0 };
+          for (const r of rows) {
+            const rw = String(r.reward_earned ?? "");
+            if (rw === "day_pass") byReward.day_pass++;
+            else if (rw === "weekend_pass") byReward.weekend_pass++;
+            else if (rw === "lodging") byReward.lodging++;
+            else byReward.none++;
+          }
+          setVolunteerData({
+            count: volunteerRaw.count ?? 0,
+            recentSignups: rows.slice(0, 5).map(r => ({
+              name: String(r.name ?? ""), email: String(r.email ?? ""),
+              shift_ids: String(r.shift_ids ?? ""), reward_earned: String(r.reward_earned ?? ""),
+              created_at: String(r.created_at ?? ""),
+            })),
+            byReward,
+          });
+        }
+        if (vendorRaw?.rows) {
+          setVendorCount((vendorRaw.rows as Array<Record<string, unknown>>).filter(r => r.payment_status === "confirmed").length);
+        }
       } finally {
         setLoading(false);
       }
@@ -178,6 +217,11 @@ function OverviewTab() {
   const revenueTarget = budget?.totals.revenue_target_cents ?? 0;
   const goalPct = revenueTarget > 0 && budget ? Math.round((budget.totals.income_cents / revenueTarget) * 100) : null;
 
+  const rewardLabel = (r: string) =>
+    r === "lodging" ? "Lodging" : r === "weekend_pass" ? "Weekend Pass" : r === "day_pass" ? "Day Pass" : r || "—";
+  const rewardAccent = (r: string) =>
+    r === "lodging" ? "#D4AF3C" : r === "weekend_pass" ? "#3DB8AF" : "#8B5FBF";
+
   const section = (title: string, children: React.ReactNode) => (
     <section style={{ marginBottom: "2rem" }}>
       <h2 style={{ fontSize: "0.72rem", fontWeight: 700, color: "var(--ink-muted)", textTransform: "uppercase", letterSpacing: "0.09em", margin: "0 0 1rem" }}>
@@ -188,6 +232,9 @@ function OverviewTab() {
   );
 
   if (loading) return <div className="admin-loading">Loading…</div>;
+
+  const totalHeadcount =
+    (loyalty?.totals.total_members ?? 0) + (volunteerData?.count ?? 0) + (vendorCount ?? 0);
 
   return (
     <div style={{ padding: "1.75rem 2rem" }}>
@@ -214,6 +261,65 @@ function OverviewTab() {
           <span style={{ color: "rgba(255,255,255,0.45)", fontSize: "0.8rem" }}>4th Annual Healing Arts Festival</span>
         </div>
       </div>
+
+      {/* Master headcount */}
+      {section("Headcount", (
+        <div style={{ display: "flex", flexWrap: "wrap", gap: "1rem" }}>
+          <StatCard label="Registered Guests" value={loyalty?.totals.total_members ?? "—"} accent="#8B5FBF" sub="Loyalty program members" />
+          <StatCard label="Volunteers" value={volunteerData?.count ?? "—"} accent="#2a9d8f" sub="Signed up for shifts" />
+          <StatCard label="Confirmed Vendors" value={vendorCount ?? "—"} sub="Vendor agreements confirmed" />
+          <StatCard label="Total On-Site" value={totalHeadcount || "—"} accent="#D4AF3C" sub="Guests + volunteers + vendors" />
+        </div>
+      ))}
+
+      {/* Volunteer work schedule */}
+      {section("Volunteer Work Schedule", (
+        <div>
+          <div style={{ display: "flex", flexWrap: "wrap", gap: "1rem", marginBottom: "1.25rem" }}>
+            <StatCard label="Total Signed Up" value={volunteerData?.count ?? "—"} accent="#2a9d8f" />
+            <StatCard label="Comped Lodging" value={volunteerData?.byReward.lodging ?? "—"} accent="#D4AF3C" />
+            <StatCard label="Weekend Pass" value={volunteerData?.byReward.weekend_pass ?? "—"} accent="#3DB8AF" />
+            <StatCard label="Day Pass" value={volunteerData?.byReward.day_pass ?? "—"} accent="#8B5FBF" />
+          </div>
+          {volunteerData && volunteerData.recentSignups.length > 0 ? (
+            <div style={{ overflowX: "auto" }}>
+              <table style={{ width: "100%", borderCollapse: "collapse", background: "var(--surface-elevated)", borderRadius: "10px", overflow: "hidden" }}>
+                <thead>
+                  <tr>{["Name", "Email", "Shifts", "Reward", "Signed Up"].map(h => <th key={h} style={hcell}>{h}</th>)}</tr>
+                </thead>
+                <tbody>
+                  {volunteerData.recentSignups.map((r, i) => {
+                    const shiftCount = r.shift_ids ? r.shift_ids.split(",").filter(Boolean).length : 0;
+                    return (
+                      <tr key={i}>
+                        <td style={{ ...cell, fontWeight: 600 }}>{r.name || "—"}</td>
+                        <td style={cell}>{r.email}</td>
+                        <td style={{ ...cell, color: "var(--ink-muted)" }}>{shiftCount > 0 ? `${shiftCount} shift${shiftCount !== 1 ? "s" : ""}` : "—"}</td>
+                        <td style={cell}>
+                          {r.reward_earned ? (
+                            <span style={{
+                              fontSize: "0.72rem", padding: "0.15rem 0.5rem", borderRadius: "4px", fontWeight: 600,
+                              background: `${rewardAccent(r.reward_earned)}22`,
+                              color: rewardAccent(r.reward_earned),
+                            }}>
+                              {rewardLabel(r.reward_earned)}
+                            </span>
+                          ) : "—"}
+                        </td>
+                        <td style={{ ...cell, color: "var(--ink-muted)" }}>{fmtDate(r.created_at)}</td>
+                      </tr>
+                    );
+                  })}
+                </tbody>
+              </table>
+            </div>
+          ) : (
+            <div style={{ color: "var(--ink-muted)", fontSize: "0.85rem", padding: "0.5rem 0" }}>
+              No volunteers signed up yet — sign-ups will appear here.
+            </div>
+          )}
+        </div>
+      ))}
 
       {/* Community snapshot */}
       {section("Community", (
@@ -731,96 +837,6 @@ function AffiliatesTab() {
   );
 }
 
-// ── Add-Ons Tab ───────────────────────────────────────────────────────
-
-function AddonsTab() {
-  const [headers, setHeaders] = useState<string[]>([]);
-  const [rows, setRows] = useState<Record<string, string>[]>([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
-  const [needsSetup, setNeedsSetup] = useState(false);
-  const [search, setSearch] = useState("");
-
-  useEffect(() => {
-    fetch("/api/admin/addons")
-      .then(async (r) => {
-        const d = await r.json();
-        if (d.needsSetup) setNeedsSetup(true);
-        else if (d.error) setError(d.error);
-        else { setHeaders(d.headers || []); setRows(d.rows || []); }
-      })
-      .catch(() => setError("Failed to load add-ons sheet"))
-      .finally(() => setLoading(false));
-  }, []);
-
-  const filtered = search
-    ? rows.filter(row => Object.values(row).some(v => v.toLowerCase().includes(search.toLowerCase())))
-    : rows;
-
-  const exportCSV = () => {
-    if (rows.length === 0) return;
-    const csv = [headers.join(","), ...rows.map(row => headers.map(h => `"${(row[h] ?? "").replace(/"/g, '""')}"`).join(","))].join("\n");
-    const blob = new Blob([csv], { type: "text/csv" });
-    const a = document.createElement("a");
-    a.href = URL.createObjectURL(blob);
-    a.download = `add-ons-${new Date().toISOString().slice(0, 10)}.csv`;
-    a.click();
-  };
-
-  if (loading) return <div className="admin-loading">Loading add-ons…</div>;
-
-  if (needsSetup) return (
-    <div style={{ padding: "3rem 2rem", maxWidth: "560px" }}>
-      <p style={{ fontWeight: 600, fontSize: "1rem", marginBottom: "1rem", color: "var(--ink)" }}>
-        Add-Ons Sheet Not Connected
-      </p>
-      <p style={{ color: "var(--ink-muted)", fontSize: "0.875rem", marginBottom: "1.5rem", lineHeight: 1.7 }}>
-        Add your Google Sheet&apos;s published CSV URL as <code style={{ background: "rgba(0,0,0,0.06)", padding: "0.1em 0.4em", borderRadius: "4px" }}>ADDONS_SHEET_URL</code> in Vercel environment variables.
-      </p>
-    </div>
-  );
-
-  if (error) return <div className="admin-empty" style={{ color: "#c0392b" }}>{error}</div>;
-
-  return (
-    <>
-      <div className="admin-toolbar">
-        <div className="admin-toolbar-left">
-          <span className="admin-count">{filtered.length} of {rows.length} rows</span>
-          <input
-            type="text" value={search}
-            onChange={(e) => setSearch(e.target.value)}
-            placeholder="Search…" className="admin-search"
-          />
-        </div>
-        <div className="admin-toolbar-right">
-          <button onClick={exportCSV} className="admin-export-btn" disabled={rows.length === 0}>Export CSV</button>
-        </div>
-      </div>
-      <div className="admin-table-wrap">
-        {filtered.length === 0 ? (
-          <div className="admin-empty">No rows match your search</div>
-        ) : (
-          <table className="admin-table sheet-table">
-            <thead>
-              <tr>{headers.map((h, i) => <th key={i}>{h}</th>)}</tr>
-            </thead>
-            <tbody>
-              {filtered.map((row, i) => (
-                <tr key={i}>
-                  {headers.map((h, j) => (
-                    <td key={j} title={row[h] || ""}><span className="cell-truncate">{row[h] || "—"}</span></td>
-                  ))}
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        )}
-      </div>
-    </>
-  );
-}
-
 // ── Vendor Agreements Tab ─────────────────────────────────────────────
 
 interface VendorAgreement {
@@ -1305,7 +1321,6 @@ export default function AdminPage() {
 
         <span className="admin-tab-sep" />
 
-        {tab("addons", "Add-Ons")}
         {tab("vendor_agreements", "Agreements")}
         {tab("vendors", "Vendors")}
         {tab("volunteers", "Vol. Interest")}
@@ -1322,7 +1337,6 @@ export default function AdminPage() {
       {activeTab === "referral_events"     && <DataTab tableKey="referral_events"    columns={["id","affiliate_code","event_type","order_id","order_amount_cents","commission_cents","created_at"]} />}
       {activeTab === "newsletter"          && <DataTab tableKey="newsletter"          columns={["id","email","created_at"]} />}
       {activeTab === "leads"               && <DataTab tableKey="leads"               columns={["id","name","email","phone","message","source","created_at"]} />}
-      {activeTab === "addons"              && <AddonsTab />}
       {activeTab === "vendor_agreements"   && <VendorAgreementsTab />}
       {activeTab === "vendors"             && <DataTab tableKey="vendors"             columns={["id","name","email","business","category","description","created_at"]} />}
       {activeTab === "volunteers"               && <DataTab tableKey="volunteers"               columns={["id","name","email","phone","interest","experience","availability","created_at"]} />}

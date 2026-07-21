@@ -140,6 +140,15 @@ export default function Home() {
         </div>
       </section>
 
+      {/* ═══ SCHEDULE ═══ */}
+      <Schedule />
+
+      {/* ═══ PHOTO STRIP ═══ */}
+      <PhotoStrip />
+
+      {/* ═══ TICKETS STORE ═══ */}
+      <Store />
+
       {/* ═══ ECSTATIC DANCE TICKETS ═══ */}
       <section className="section dance-cta-section">
         <Reveal>
@@ -158,15 +167,6 @@ export default function Home() {
           </div>
         </Reveal>
       </section>
-
-      {/* ═══ SCHEDULE ═══ */}
-      <Schedule />
-
-      {/* ═══ PHOTO STRIP ═══ */}
-      <PhotoStrip />
-
-      {/* ═══ TICKETS STORE ═══ */}
-      <Store />
 
       {/* ═══ PACKAGES ═══ */}
       <Packages />

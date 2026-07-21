@@ -263,9 +263,9 @@ export default function GetInvolved() {
             <li>Free weekend pass</li>
             <li>Volunteer camping included</li>
           </ul>
-          <button className="involve-btn" onClick={() => openForm("volunteer")}>
-            Apply as Volunteer
-          </button>
+          <a href="/volunteer" className="involve-btn" style={{ display: "block", textAlign: "center", textDecoration: "none" }}>
+            Sign Up
+          </a>
         </div>
 
         {/* Instructor - Waitlist */}

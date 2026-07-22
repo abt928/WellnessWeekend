@@ -36,6 +36,11 @@ async function ensureTable(sql: ReturnType<typeof neon>) {
       created_at        TIMESTAMPTZ  NOT NULL DEFAULT NOW()
     )
   `;
+  // Add columns that may be missing if the table was created before they were introduced
+  await sql`ALTER TABLE vendor_agreements ADD COLUMN IF NOT EXISTS signature_data    TEXT`;
+  await sql`ALTER TABLE vendor_agreements ADD COLUMN IF NOT EXISTS price_cents       INTEGER NOT NULL DEFAULT 0`;
+  await sql`ALTER TABLE vendor_agreements ADD COLUMN IF NOT EXISTS payment_status    VARCHAR(20) NOT NULL DEFAULT 'pending'`;
+  await sql`ALTER TABLE vendor_agreements ADD COLUMN IF NOT EXISTS square_payment_id VARCHAR(100)`;
 }
 
 export async function POST(req: NextRequest) {
@@ -133,7 +138,15 @@ export async function POST(req: NextRequest) {
 
     return NextResponse.json({ redirectUrl: checkoutUrl });
   } catch (err) {
-    console.error("[vendor-agreement] Error:", err);
-    return NextResponse.json({ error: "Failed to save agreement. Please try again." }, { status: 500 });
+    const msg = err instanceof Error ? err.message : String(err);
+    console.error("[vendor-agreement] Error:", msg);
+    // Surface config errors clearly so they show up in Vercel logs and to the user
+    if (msg.includes("SQUARE_ACCESS_TOKEN") || msg.includes("SQUARE_LOCATION_ID")) {
+      return NextResponse.json({ error: "Payment system not configured. Contact support@thesoundspace.us to complete your registration." }, { status: 500 });
+    }
+    if (msg.includes("DATABASE_URL") || msg.includes("database") || msg.includes("relation")) {
+      return NextResponse.json({ error: `Database error: ${msg}` }, { status: 500 });
+    }
+    return NextResponse.json({ error: `Submission failed: ${msg}` }, { status: 500 });
   }
 }

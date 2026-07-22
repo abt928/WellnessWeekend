@@ -2,7 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { getDb } from "@/lib/db";
 import { volunteerRegistrations, volunteerShiftClaims } from "@/lib/schema";
 import { SHIFTS, SHIFT_MAP, calcReward } from "@/lib/volunteer-shifts";
-import { sql } from "drizzle-orm";
+import { count, inArray } from "drizzle-orm";
 
 export const dynamic = "force-dynamic";
 
@@ -11,13 +11,14 @@ export async function GET() {
   try {
     const db = getDb();
 
-    const rows = await db.execute(
-      sql`SELECT shift_id, COUNT(*) as claimed FROM volunteer_shift_claims GROUP BY shift_id`
-    );
+    const rows = await db
+      .select({ shiftId: volunteerShiftClaims.shiftId, claimed: count() })
+      .from(volunteerShiftClaims)
+      .groupBy(volunteerShiftClaims.shiftId);
 
     const claimedByShift: Record<string, number> = {};
-    for (const row of rows.rows as { shift_id: string; claimed: string }[]) {
-      claimedByShift[row.shift_id] = parseInt(row.claimed, 10);
+    for (const row of rows) {
+      claimedByShift[row.shiftId] = Number(row.claimed);
     }
 
     const availability = SHIFTS.map((s) => ({
@@ -55,13 +56,16 @@ export async function POST(req: NextRequest) {
 
     const db = getDb();
 
-    // Check capacity for each requested shift
-    const claimRows = await db.execute(
-      sql`SELECT shift_id, COUNT(*) as claimed FROM volunteer_shift_claims WHERE shift_id = ANY(${shiftIds}) GROUP BY shift_id`
-    );
+    // Check capacity for each requested shift using Drizzle ORM (avoids raw SQL array issues)
+    const claimRows = await db
+      .select({ shiftId: volunteerShiftClaims.shiftId, claimed: count() })
+      .from(volunteerShiftClaims)
+      .where(inArray(volunteerShiftClaims.shiftId, shiftIds))
+      .groupBy(volunteerShiftClaims.shiftId);
+
     const claimedMap: Record<string, number> = {};
-    for (const row of claimRows.rows as { shift_id: string; claimed: string }[]) {
-      claimedMap[row.shift_id] = parseInt(row.claimed, 10);
+    for (const row of claimRows) {
+      claimedMap[row.shiftId] = Number(row.claimed);
     }
 
     const fullShifts = shiftIds.filter((id: string) => {
@@ -103,7 +107,8 @@ export async function POST(req: NextRequest) {
 
     return NextResponse.json({ success: true, reward });
   } catch (error) {
-    console.error("Volunteer signup error:", error);
-    return NextResponse.json({ error: "Failed to submit signup" }, { status: 500 });
+    const msg = error instanceof Error ? error.message : String(error);
+    console.error("Volunteer signup error:", msg);
+    return NextResponse.json({ error: `Signup failed: ${msg}` }, { status: 500 });
   }
 }

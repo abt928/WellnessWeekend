@@ -2,6 +2,7 @@
 
 import { useState, useEffect, useCallback } from "react";
 import type { AdminRole } from "@/app/api/admin/auth/route";
+import { SHIFT_MAP } from "@/lib/volunteer-shifts";
 
 // ── Types ─────────────────────────────────────────────────────────────
 
@@ -1182,6 +1183,169 @@ function DataTab({ tableKey, columns }: { tableKey: TableName; columns: string[]
   );
 }
 
+// ── Volunteer Registrations Tab ───────────────────────────────────────
+
+function VolunteerRegistrationsTab() {
+  const [rows, setRows] = useState<Record<string, unknown>[]>([]);
+  const [count, setCount] = useState(0);
+  const [loading, setLoading] = useState(false);
+  const [search, setSearch] = useState("");
+  const [selectedRow, setSelectedRow] = useState<Record<string, unknown> | null>(null);
+
+  const fetchData = useCallback(async (searchQuery?: string) => {
+    setLoading(true);
+    try {
+      const params = new URLSearchParams({ table: "volunteer_registrations" });
+      if (searchQuery) params.set("search", searchQuery);
+      const res = await fetch(`/api/admin/data?${params}`);
+      if (res.ok) {
+        const data = await res.json();
+        setRows(data.rows || []);
+        setCount(data.count || 0);
+      }
+    } catch { setRows([]); }
+    setLoading(false);
+  }, []);
+
+  useEffect(() => { fetchData(); }, [fetchData]);
+  useEffect(() => { const t = setTimeout(() => fetchData(search), 300); return () => clearTimeout(t); }, [search, fetchData]);
+
+  const exportCSV = () => {
+    if (!rows.length) return;
+    const cols = ["id","name","email","phone","shifts","reward_earned","agreed_waiver","created_at"];
+    const csv = [cols.join(","), ...rows.map(r => {
+      const shiftNames = String(r.shift_ids ?? "").split(",").filter(Boolean)
+        .map((id: string) => { const s = SHIFT_MAP[id.trim()]; return s ? `${s.role} (${s.day})` : id; }).join(" | ");
+      return cols.map(c => {
+        if (c === "shifts") return `"${shiftNames.replace(/"/g, '""')}"`;
+        return `"${String(r[c] ?? "").replace(/"/g, '""')}"`;
+      }).join(",");
+    })].join("\n");
+    const a = document.createElement("a"); a.href = URL.createObjectURL(new Blob([csv], { type: "text/csv" }));
+    a.download = `volunteer_registrations_${new Date().toISOString().slice(0,10)}.csv`; a.click();
+  };
+
+  const resolveShifts = (shiftIdsStr: string) =>
+    String(shiftIdsStr ?? "").split(",").filter(Boolean).map((id: string) => {
+      const s = SHIFT_MAP[id.trim()];
+      return s ? { id: id.trim(), label: `${s.role}`, day: s.day, hours: s.hours } : { id: id.trim(), label: id.trim(), day: "?", hours: 0 };
+    });
+
+  const rewardLabel = (r: string) =>
+    r === "lodging" ? "Comped Lodging" : r === "weekend_pass" ? "Weekend Pass" : r === "day_pass" ? "Day Pass" : r || "—";
+  const rewardAccent = (r: string) =>
+    r === "lodging" ? "#D4AF3C" : r === "weekend_pass" ? "#3DB8AF" : "#8B5FBF";
+
+  return (
+    <>
+      <div className="admin-toolbar">
+        <div className="admin-toolbar-left">
+          <span className="admin-count">{count} records</span>
+          <input type="text" value={search} onChange={e => setSearch(e.target.value)} placeholder="Search by email…" className="admin-search" />
+        </div>
+        <div className="admin-toolbar-right">
+          <button onClick={() => fetchData(search)} className="admin-refresh-btn">Refresh</button>
+          <button onClick={exportCSV} className="admin-export-btn" disabled={!rows.length}>Export CSV</button>
+        </div>
+      </div>
+
+      <div className="admin-table-wrap">
+        {loading ? (
+          <div className="admin-loading">Loading…</div>
+        ) : rows.length === 0 ? (
+          <div className="admin-empty">No volunteer registrations yet</div>
+        ) : (
+          <table className="admin-table">
+            <thead>
+              <tr>
+                <th>Name</th><th>Email</th><th>Phone</th>
+                <th>Shifts</th><th>Reward</th><th>Signed Up</th>
+              </tr>
+            </thead>
+            <tbody>
+              {rows.map((row, i) => {
+                const shifts = resolveShifts(String(row.shift_ids ?? ""));
+                const reward = String(row.reward_earned ?? "");
+                const isSelected = selectedRow === row;
+                return (
+                  <tr key={i} onClick={() => setSelectedRow(isSelected ? null : row)}
+                    style={{ cursor: "pointer", background: isSelected ? "rgba(139,95,191,0.07)" : undefined }}>
+                    <td style={{ fontWeight: 600 }}>{String(row.name ?? "—")}</td>
+                    <td>{String(row.email ?? "—")}</td>
+                    <td>{String(row.phone ?? "—")}</td>
+                    <td>
+                      <div style={{ display: "flex", flexDirection: "column", gap: "2px" }}>
+                        {shifts.map(s => (
+                          <span key={s.id} style={{ fontSize: "0.75rem", whiteSpace: "nowrap" }}>
+                            <span style={{ color: "var(--ink-muted)", marginRight: "4px" }}>{s.id}</span>
+                            {s.label}
+                            <span style={{ color: "var(--ink-muted)", marginLeft: "4px" }}>({s.day}, {s.hours}h)</span>
+                          </span>
+                        ))}
+                      </div>
+                    </td>
+                    <td>
+                      {reward ? (
+                        <span style={{
+                          fontSize: "0.72rem", padding: "0.15rem 0.5rem", borderRadius: "4px", fontWeight: 600,
+                          background: `${rewardAccent(reward)}22`, color: rewardAccent(reward),
+                        }}>
+                          {rewardLabel(reward)}
+                        </span>
+                      ) : "—"}
+                    </td>
+                    <td style={{ color: "var(--ink-muted)" }}>{fmtDate(row.created_at)}</td>
+                  </tr>
+                );
+              })}
+            </tbody>
+          </table>
+        )}
+      </div>
+
+      {selectedRow && (() => {
+        const shifts = resolveShifts(String(selectedRow.shift_ids ?? ""));
+        const reward = String(selectedRow.reward_earned ?? "");
+        const totalHours = shifts.reduce((sum, s) => sum + s.hours, 0);
+        return (
+          <div className="admin-detail-panel">
+            <div className="admin-detail-header">
+              <span className="admin-detail-title">{String(selectedRow.name ?? selectedRow.email ?? `Record #${selectedRow.id}`)}</span>
+              <button className="admin-detail-close" onClick={() => setSelectedRow(null)}>✕ Close</button>
+            </div>
+            <div className="admin-detail-grid">
+              <div className="admin-detail-field"><div className="admin-detail-label">email</div><div className="admin-detail-value">{String(selectedRow.email ?? "—")}</div></div>
+              {selectedRow.phone && <div className="admin-detail-field"><div className="admin-detail-label">phone</div><div className="admin-detail-value">{String(selectedRow.phone)}</div></div>}
+              <div className="admin-detail-field" style={{ gridColumn: "1 / -1" }}>
+                <div className="admin-detail-label">shifts ({shifts.length} · {totalHours}h total)</div>
+                <div className="admin-detail-value" style={{ display: "flex", flexDirection: "column", gap: "4px", marginTop: "4px" }}>
+                  {shifts.map(s => (
+                    <div key={s.id} style={{ display: "flex", gap: "8px", alignItems: "baseline" }}>
+                      <span style={{ fontFamily: "monospace", fontSize: "0.78rem", color: "var(--psyche-cyan)", minWidth: "52px" }}>{s.id}</span>
+                      <span>{s.label}</span>
+                      <span style={{ color: "var(--ink-muted)", fontSize: "0.8rem" }}>{s.day} · {s.hours}h</span>
+                    </div>
+                  ))}
+                </div>
+              </div>
+              {reward && (
+                <div className="admin-detail-field">
+                  <div className="admin-detail-label">reward</div>
+                  <div className="admin-detail-value">
+                    <span style={{ fontWeight: 600, color: rewardAccent(reward) }}>{rewardLabel(reward)}</span>
+                  </div>
+                </div>
+              )}
+              <div className="admin-detail-field"><div className="admin-detail-label">agreed waiver</div><div className="admin-detail-value">{selectedRow.agreed_waiver ? "Yes" : "No"}</div></div>
+              <div className="admin-detail-field"><div className="admin-detail-label">submitted</div><div className="admin-detail-value">{fmtDate(selectedRow.created_at)}</div></div>
+            </div>
+          </div>
+        );
+      })()}
+    </>
+  );
+}
+
 // ── Main Admin Page ───────────────────────────────────────────────────
 
 export default function AdminPage() {
@@ -1341,7 +1505,7 @@ export default function AdminPage() {
       {activeTab === "vendor_agreements"   && <VendorAgreementsTab />}
       {activeTab === "vendors"             && <DataTab tableKey="vendors"             columns={["id","name","email","business","category","description","created_at"]} />}
       {activeTab === "volunteers"               && <DataTab tableKey="volunteers"               columns={["id","name","email","phone","interest","experience","availability","created_at"]} />}
-      {activeTab === "volunteer_registrations"  && <DataTab tableKey="volunteer_registrations"  columns={["id","name","email","phone","shift_ids","reward_earned","agreed_waiver","created_at"]} />}
+      {activeTab === "volunteer_registrations"  && <VolunteerRegistrationsTab />}
       {activeTab === "warriors"                 && <DataTab tableKey="warriors"                 columns={["id","name","email","family_size","beds_needed","created_at"]} />}
       {activeTab === "instructor_waitlist"      && <DataTab tableKey="instructor_waitlist"      columns={["id","name","email","phone","modality","years_teaching","interested_in_2026","interested_in_2027","offering","created_at"]} />}
       {activeTab === "sponsors"                 && <DataTab tableKey="sponsors"                 columns={["id","name","email","company","budget_range","interests","goals","created_at"]} />}

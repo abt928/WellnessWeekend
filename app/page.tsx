@@ -185,12 +185,6 @@ export default function Home() {
                 role: "Visiting Artist · Hawaii",
                 detail: "Dragon Stargates · Friday / The Expression of the Soul · Saturday",
               },
-              {
-                src: "/images/client-2026/lakeside-paddleboard-practice.webp",
-                name: "Paddleboard Yoga",
-                role: "Lakeside movement practice",
-                detail: "All-levels SUP yoga on the lake · Friday 2 PM & Saturday 1 PM",
-              },
             ].map((item) => (
               <figure key={item.name} className="lineup-card">
                 <div className="lineup-artwork">

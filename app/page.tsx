@@ -180,6 +180,12 @@ export default function Home() {
                 detail: "Keys to Kreation · Friday / Ecstatic Dance · Saturday / Live Set · Sunday",
               },
               {
+                src: "/images/client-2026/akatale-feature.jpg",
+                name: "ÂKÅTÂLĖ",
+                role: "Visiting Artist · Hawaii",
+                detail: "Dragon Stargates · Friday / The Expression of the Soul · Saturday",
+              },
+              {
                 src: "/images/client-2026/lakeside-paddleboard-practice.webp",
                 name: "Paddleboard Yoga",
                 role: "Lakeside movement practice",

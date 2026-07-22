@@ -196,7 +196,8 @@ function OverviewTab() {
             count: volunteerRaw.count ?? 0,
             recentSignups: rows.slice(0, 5).map(r => ({
               name: String(r.name ?? ""), email: String(r.email ?? ""),
-              shift_ids: String(r.shift_ids ?? ""), reward_earned: String(r.reward_earned ?? ""),
+              shift_ids: String(r.shift_ids ?? ""),
+              reward_earned: String(r.reward_earned ?? ""),
               created_at: String(r.created_at ?? ""),
             })),
             byReward,

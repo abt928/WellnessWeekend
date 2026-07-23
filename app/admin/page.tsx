@@ -1192,6 +1192,7 @@ function VolunteerRegistrationsTab() {
   const [loading, setLoading] = useState(false);
   const [search, setSearch] = useState("");
   const [selectedRow, setSelectedRow] = useState<Record<string, unknown> | null>(null);
+  const [view, setView] = useState<"by-person" | "by-shift">("by-person");
 
   const fetchData = useCallback(async (searchQuery?: string) => {
     setLoading(true);
@@ -1213,23 +1214,24 @@ function VolunteerRegistrationsTab() {
 
   const exportCSV = () => {
     if (!rows.length) return;
-    const cols = ["id","name","email","phone","shifts","reward_earned","agreed_waiver","created_at"];
-    const csv = [cols.join(","), ...rows.map(r => {
-      const shiftNames = String(r.shift_ids ?? "").split(",").filter(Boolean)
-        .map((id: string) => { const s = SHIFT_MAP[id.trim()]; return s ? `${s.role} (${s.day})` : id; }).join(" | ");
-      return cols.map(c => {
-        if (c === "shifts") return `"${shiftNames.replace(/"/g, '""')}"`;
-        return `"${String(r[c] ?? "").replace(/"/g, '""')}"`;
-      }).join(",");
-    })].join("\n");
+    const csv = ["Name,Email,Phone,Shifts,Total Hours,Reward,Signed Up",
+      ...rows.map(r => {
+        const shifts = resolveShifts(String(r.shift_ids ?? ""));
+        const shiftStr = shifts.map(s => `${s.label} (${s.day})`).join(" | ");
+        const totalHours = shifts.reduce((sum, s) => sum + s.hours, 0);
+        return [r.name, r.email, r.phone ?? "", shiftStr, totalHours,
+          rewardLabel(String(r.reward_earned ?? "")), r.created_at]
+          .map(v => `"${String(v ?? "").replace(/"/g, '""')}"`).join(",");
+      })].join("\n");
     const a = document.createElement("a"); a.href = URL.createObjectURL(new Blob([csv], { type: "text/csv" }));
-    a.download = `volunteer_registrations_${new Date().toISOString().slice(0,10)}.csv`; a.click();
+    a.download = `volunteers_${new Date().toISOString().slice(0,10)}.csv`; a.click();
   };
 
   const resolveShifts = (shiftIdsStr: string) =>
     String(shiftIdsStr ?? "").split(",").filter(Boolean).map((id: string) => {
       const s = SHIFT_MAP[id.trim()];
-      return s ? { id: id.trim(), label: `${s.role}`, day: s.day, hours: s.hours } : { id: id.trim(), label: id.trim(), day: "?", hours: 0 };
+      return s ? { id: id.trim(), label: s.role, day: s.day, date: s.date, hours: s.hours, phase: s.phase }
+               : { id: id.trim(), label: id.trim(), day: "?", date: "", hours: 0, phase: "during" as const };
     });
 
   const rewardLabel = (r: string) =>
@@ -1237,112 +1239,197 @@ function VolunteerRegistrationsTab() {
   const rewardAccent = (r: string) =>
     r === "lodging" ? "#D4AF3C" : r === "weekend_pass" ? "#3DB8AF" : "#8B5FBF";
 
+  // Build shift-roster: map each shift to the volunteers signed up for it
+  const shiftRoster = (() => {
+    const byShift: Record<string, { shift: ReturnType<typeof resolveShifts>[0]; volunteers: Array<{ name: string; email: string; phone: string }> }> = {};
+    for (const row of rows) {
+      const shifts = resolveShifts(String(row.shift_ids ?? ""));
+      for (const s of shifts) {
+        if (!byShift[s.id]) byShift[s.id] = { shift: s, volunteers: [] };
+        byShift[s.id].volunteers.push({ name: String(row.name ?? ""), email: String(row.email ?? ""), phone: String(row.phone ?? "") });
+      }
+    }
+    // Sort by date then shift_id
+    return Object.values(byShift).sort((a, b) => {
+      const dateCmp = a.shift.date.localeCompare(b.shift.date);
+      return dateCmp !== 0 ? dateCmp : a.shift.id.localeCompare(b.shift.id);
+    });
+  })();
+
+  const subTabStyle = (active: boolean): React.CSSProperties => ({
+    padding: "0.4rem 1rem", borderRadius: "8px", border: "none", cursor: "pointer",
+    fontSize: "0.8rem", fontFamily: "inherit", fontWeight: active ? 600 : 400,
+    background: active ? "rgba(42,157,143,0.15)" : "transparent",
+    color: active ? "#2a9d8f" : "var(--ink-muted)",
+  });
+
+  const dayColor: Record<string, string> = {
+    Thursday: "#7a52b0", Friday: "#2a9d8f", Saturday: "#C9983F", Sunday: "#3b82f6",
+  };
+
   return (
     <>
-      <div className="admin-toolbar">
+      {/* Screen-only toolbar */}
+      <div className="admin-toolbar no-print">
         <div className="admin-toolbar-left">
-          <span className="admin-count">{count} records</span>
-          <input type="text" value={search} onChange={e => setSearch(e.target.value)} placeholder="Search by email…" className="admin-search" />
+          <span className="admin-count">{count} volunteers</span>
+          <button style={subTabStyle(view === "by-person")} onClick={() => setView("by-person")}>By Person</button>
+          <button style={subTabStyle(view === "by-shift")}  onClick={() => setView("by-shift")}>By Shift</button>
+          {view === "by-person" && (
+            <input type="text" value={search} onChange={e => setSearch(e.target.value)} placeholder="Search by email…" className="admin-search" />
+          )}
         </div>
         <div className="admin-toolbar-right">
           <button onClick={() => fetchData(search)} className="admin-refresh-btn">Refresh</button>
           <button onClick={exportCSV} className="admin-export-btn" disabled={!rows.length}>Export CSV</button>
+          <button onClick={() => window.print()} className="admin-refresh-btn" style={{ borderColor: "#7a52b0", color: "#7a52b0" }}>Print</button>
         </div>
       </div>
 
-      <div className="admin-table-wrap">
-        {loading ? (
-          <div className="admin-loading">Loading…</div>
-        ) : rows.length === 0 ? (
-          <div className="admin-empty">No volunteer registrations yet</div>
-        ) : (
-          <table className="admin-table">
-            <thead>
-              <tr>
-                <th>Name</th><th>Email</th><th>Phone</th>
-                <th>Shifts</th><th>Reward</th><th>Signed Up</th>
-              </tr>
-            </thead>
-            <tbody>
-              {rows.map((row, i) => {
-                const shifts = resolveShifts(String(row.shift_ids ?? ""));
-                const reward = String(row.reward_earned ?? "");
-                const isSelected = selectedRow === row;
-                return (
-                  <tr key={i} onClick={() => setSelectedRow(isSelected ? null : row)}
-                    style={{ cursor: "pointer", background: isSelected ? "rgba(139,95,191,0.07)" : undefined }}>
-                    <td style={{ fontWeight: 600 }}>{String(row.name ?? "—")}</td>
-                    <td>{String(row.email ?? "—")}</td>
-                    <td>{String(row.phone ?? "—")}</td>
-                    <td>
-                      <div style={{ display: "flex", flexDirection: "column", gap: "2px" }}>
-                        {shifts.map(s => (
-                          <span key={s.id} style={{ fontSize: "0.75rem", whiteSpace: "nowrap" }}>
-                            <span style={{ color: "var(--ink-muted)", marginRight: "4px" }}>{s.id}</span>
-                            {s.label}
-                            <span style={{ color: "var(--ink-muted)", marginLeft: "4px" }}>({s.day}, {s.hours}h)</span>
+      {loading ? (
+        <div className="admin-loading">Loading…</div>
+      ) : rows.length === 0 ? (
+        <div className="admin-empty">No volunteer registrations yet</div>
+      ) : view === "by-person" ? (
+        /* ── BY PERSON VIEW ── */
+        <>
+          <div className="print-header">
+            <strong>Wellness Weekend 2026 · Volunteer Roster</strong>
+            <span>{count} volunteers · Printed {new Date().toLocaleDateString()}</span>
+          </div>
+          <div className="admin-table-wrap">
+            <table className="admin-table volunteer-print-table">
+              <thead>
+                <tr>
+                  <th>#</th><th>Name</th><th>Phone</th><th>Email</th>
+                  <th>Assigned Shifts</th><th>Total Hrs</th><th>Reward</th>
+                </tr>
+              </thead>
+              <tbody>
+                {rows.map((row, i) => {
+                  const shifts = resolveShifts(String(row.shift_ids ?? ""));
+                  const totalHours = shifts.reduce((sum, s) => sum + s.hours, 0);
+                  const reward = String(row.reward_earned ?? "");
+                  const isSelected = selectedRow === row;
+                  return (
+                    <tr key={i} onClick={() => setSelectedRow(isSelected ? null : row)}
+                      style={{ cursor: "pointer", background: isSelected ? "rgba(139,95,191,0.07)" : undefined }}>
+                      <td style={{ color: "var(--ink-muted)", width: "2rem" }}>{i + 1}</td>
+                      <td style={{ fontWeight: 600 }}>{String(row.name ?? "—")}</td>
+                      <td>{String(row.phone ?? "—")}</td>
+                      <td style={{ fontSize: "0.78rem" }}>{String(row.email ?? "—")}</td>
+                      <td>
+                        <div style={{ display: "flex", flexDirection: "column", gap: "1px" }}>
+                          {shifts.map(s => (
+                            <span key={s.id} style={{ fontSize: "0.78rem" }}>
+                              <span style={{ color: dayColor[s.day] ?? "var(--ink-muted)", fontWeight: 600, marginRight: "4px" }}>{s.day}</span>
+                              {s.label}
+                              <span style={{ color: "var(--ink-muted)", marginLeft: "4px" }}>({s.hours}h)</span>
+                            </span>
+                          ))}
+                        </div>
+                      </td>
+                      <td style={{ fontWeight: 700, textAlign: "center" }}>{totalHours}h</td>
+                      <td>
+                        {reward ? (
+                          <span style={{
+                            fontSize: "0.72rem", padding: "0.15rem 0.5rem", borderRadius: "4px", fontWeight: 600,
+                            background: `${rewardAccent(reward)}22`, color: rewardAccent(reward),
+                          }}>
+                            {rewardLabel(reward)}
                           </span>
-                        ))}
-                      </div>
-                    </td>
-                    <td>
-                      {reward ? (
-                        <span style={{
-                          fontSize: "0.72rem", padding: "0.15rem 0.5rem", borderRadius: "4px", fontWeight: 600,
-                          background: `${rewardAccent(reward)}22`, color: rewardAccent(reward),
-                        }}>
-                          {rewardLabel(reward)}
-                        </span>
-                      ) : "—"}
-                    </td>
-                    <td style={{ color: "var(--ink-muted)" }}>{fmtDate(row.created_at)}</td>
-                  </tr>
-                );
-              })}
-            </tbody>
-          </table>
-        )}
-      </div>
-
-      {selectedRow && (() => {
-        const shifts = resolveShifts(String(selectedRow.shift_ids ?? ""));
-        const reward = String(selectedRow.reward_earned ?? "");
-        const totalHours = shifts.reduce((sum, s) => sum + s.hours, 0);
-        return (
-          <div className="admin-detail-panel">
-            <div className="admin-detail-header">
-              <span className="admin-detail-title">{String(selectedRow.name ?? selectedRow.email ?? `Record #${selectedRow.id}`)}</span>
-              <button className="admin-detail-close" onClick={() => setSelectedRow(null)}>✕ Close</button>
-            </div>
-            <div className="admin-detail-grid">
-              <div className="admin-detail-field"><div className="admin-detail-label">email</div><div className="admin-detail-value">{String(selectedRow.email ?? "—")}</div></div>
-              {selectedRow.phone && <div className="admin-detail-field"><div className="admin-detail-label">phone</div><div className="admin-detail-value">{String(selectedRow.phone)}</div></div>}
-              <div className="admin-detail-field" style={{ gridColumn: "1 / -1" }}>
-                <div className="admin-detail-label">shifts ({shifts.length} · {totalHours}h total)</div>
-                <div className="admin-detail-value" style={{ display: "flex", flexDirection: "column", gap: "4px", marginTop: "4px" }}>
-                  {shifts.map(s => (
-                    <div key={s.id} style={{ display: "flex", gap: "8px", alignItems: "baseline" }}>
-                      <span style={{ fontFamily: "monospace", fontSize: "0.78rem", color: "var(--psyche-cyan)", minWidth: "52px" }}>{s.id}</span>
-                      <span>{s.label}</span>
-                      <span style={{ color: "var(--ink-muted)", fontSize: "0.8rem" }}>{s.day} · {s.hours}h</span>
+                        ) : "—"}
+                      </td>
+                    </tr>
+                  );
+                })}
+              </tbody>
+            </table>
+          </div>
+          {selectedRow && (() => {
+            const shifts = resolveShifts(String(selectedRow.shift_ids ?? ""));
+            const reward = String(selectedRow.reward_earned ?? "");
+            const totalHours = shifts.reduce((sum, s) => sum + s.hours, 0);
+            return (
+              <div className="admin-detail-panel no-print">
+                <div className="admin-detail-header">
+                  <span className="admin-detail-title">{String(selectedRow.name ?? selectedRow.email ?? `Record #${selectedRow.id}`)}</span>
+                  <button className="admin-detail-close" onClick={() => setSelectedRow(null)}>✕ Close</button>
+                </div>
+                <div className="admin-detail-grid">
+                  <div className="admin-detail-field"><div className="admin-detail-label">email</div><div className="admin-detail-value">{String(selectedRow.email ?? "—")}</div></div>
+                  {selectedRow.phone && <div className="admin-detail-field"><div className="admin-detail-label">phone</div><div className="admin-detail-value">{String(selectedRow.phone)}</div></div>}
+                  <div className="admin-detail-field" style={{ gridColumn: "1 / -1" }}>
+                    <div className="admin-detail-label">shifts ({shifts.length} · {totalHours}h total)</div>
+                    <div className="admin-detail-value" style={{ display: "flex", flexDirection: "column", gap: "6px", marginTop: "6px" }}>
+                      {shifts.map(s => (
+                        <div key={s.id} style={{ display: "flex", gap: "8px", alignItems: "baseline" }}>
+                          <span style={{ fontWeight: 700, color: dayColor[s.day] ?? "var(--ink)", minWidth: "72px" }}>{s.day}</span>
+                          <span style={{ fontWeight: 600 }}>{s.label}</span>
+                          <span style={{ color: "var(--ink-muted)", fontSize: "0.82rem" }}>{s.hours}h</span>
+                        </div>
+                      ))}
                     </div>
-                  ))}
+                  </div>
+                  {reward && (
+                    <div className="admin-detail-field">
+                      <div className="admin-detail-label">reward</div>
+                      <div className="admin-detail-value"><span style={{ fontWeight: 700, color: rewardAccent(reward) }}>{rewardLabel(reward)}</span></div>
+                    </div>
+                  )}
+                  <div className="admin-detail-field"><div className="admin-detail-label">waiver signed</div><div className="admin-detail-value">{selectedRow.agreed_waiver ? "Yes" : "No"}</div></div>
+                  <div className="admin-detail-field"><div className="admin-detail-label">submitted</div><div className="admin-detail-value">{fmtDate(selectedRow.created_at)}</div></div>
                 </div>
               </div>
-              {reward && (
-                <div className="admin-detail-field">
-                  <div className="admin-detail-label">reward</div>
-                  <div className="admin-detail-value">
-                    <span style={{ fontWeight: 600, color: rewardAccent(reward) }}>{rewardLabel(reward)}</span>
-                  </div>
-                </div>
-              )}
-              <div className="admin-detail-field"><div className="admin-detail-label">agreed waiver</div><div className="admin-detail-value">{selectedRow.agreed_waiver ? "Yes" : "No"}</div></div>
-              <div className="admin-detail-field"><div className="admin-detail-label">submitted</div><div className="admin-detail-value">{fmtDate(selectedRow.created_at)}</div></div>
-            </div>
+            );
+          })()}
+        </>
+      ) : (
+        /* ── BY SHIFT VIEW ── */
+        <div style={{ padding: "1.5rem 2rem" }}>
+          <div className="print-header">
+            <strong>Wellness Weekend 2026 · Volunteer Schedule by Shift</strong>
+            <span>Printed {new Date().toLocaleDateString()}</span>
           </div>
-        );
-      })()}
+          {shiftRoster.length === 0 ? (
+            <div className="admin-empty">No shifts claimed yet</div>
+          ) : (
+            <div style={{ display: "flex", flexDirection: "column", gap: "1.25rem" }}>
+              {shiftRoster.map(({ shift, volunteers: vols }) => (
+                <div key={shift.id} style={{
+                  border: "1px solid var(--line-medium)", borderRadius: "10px",
+                  overflow: "hidden", breakInside: "avoid",
+                }}>
+                  <div style={{
+                    padding: "0.6rem 1rem", display: "flex", alignItems: "center", gap: "1rem",
+                    background: `${dayColor[shift.day] ?? "#888"}18`,
+                    borderBottom: `2px solid ${dayColor[shift.day] ?? "#888"}`,
+                  }}>
+                    <span style={{ fontWeight: 700, color: dayColor[shift.day] ?? "var(--ink)", fontSize: "0.85rem" }}>{shift.day}</span>
+                    <span style={{ fontWeight: 700, fontSize: "0.95rem" }}>{shift.label}</span>
+                    <span style={{ color: "var(--ink-muted)", fontSize: "0.8rem" }}>{shift.hours}h</span>
+                    <span style={{ marginLeft: "auto", fontSize: "0.75rem", color: "var(--ink-muted)" }}>
+                      {vols.length} / {SHIFT_MAP[shift.id]?.capacity ?? "?"} filled
+                    </span>
+                  </div>
+                  <table style={{ width: "100%", borderCollapse: "collapse" }}>
+                    <tbody>
+                      {vols.map((v, vi) => (
+                        <tr key={vi} style={{ borderBottom: "1px solid var(--line-subtle)" }}>
+                          <td style={{ padding: "0.45rem 1rem", width: "2rem", color: "var(--ink-muted)", fontSize: "0.78rem" }}>{vi + 1}</td>
+                          <td style={{ padding: "0.45rem 0.5rem", fontWeight: 600, fontSize: "0.88rem" }}>{v.name}</td>
+                          <td style={{ padding: "0.45rem 0.5rem", fontSize: "0.82rem" }}>{v.phone || "—"}</td>
+                          <td style={{ padding: "0.45rem 1rem", fontSize: "0.78rem", color: "var(--ink-muted)" }}>{v.email}</td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
+              ))}
+            </div>
+          )}
+        </div>
+      )}
     </>
   );
 }

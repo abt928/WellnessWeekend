@@ -15,7 +15,7 @@ export const SHIFTS: Shift[] = [
   // ── Setup · Thursday Aug 6 — all 4-hour shifts ──
   { shift_id: "SU-01", phase: "setup", role: "Pavilion setup",                   day: "Thursday", date: "2026-08-06", start_time: null, end_time: null, hours: 4, capacity: 2, notes: null },
   { shift_id: "SU-02", phase: "setup", role: "Lodge staging",                    day: "Thursday", date: "2026-08-06", start_time: null, end_time: null, hours: 4, capacity: 2, notes: null },
-  { shift_id: "SU-03", phase: "setup", role: "Labyrinth garden",                 day: "Thursday", date: "2026-08-06", start_time: null, end_time: null, hours: 4, capacity: 2, notes: null },
+  { shift_id: "SU-03", phase: "setup", role: "Labyrinth garden",                 day: "Thursday", date: "2026-08-06", start_time: null, end_time: null, hours: 4, capacity: 4, notes: null },
   { shift_id: "SU-04", phase: "setup", role: "Kitchen / grills",                 day: "Thursday", date: "2026-08-06", start_time: null, end_time: null, hours: 4, capacity: 2, notes: null },
   { shift_id: "SU-05", phase: "setup", role: "Silks, paddleboards & docks",      day: "Thursday", date: "2026-08-06", start_time: null, end_time: null, hours: 4, capacity: 2, notes: null },
   { shift_id: "SU-06", phase: "setup", role: "Tents – tea lounge & guest svc",  day: "Thursday", date: "2026-08-06", start_time: null, end_time: null, hours: 4, capacity: 2, notes: null },

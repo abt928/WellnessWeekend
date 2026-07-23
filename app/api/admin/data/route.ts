@@ -54,12 +54,19 @@ export async function GET(req: NextRequest) {
         .limit(500);
     }
 
+    // Drizzle returns camelCase JS keys; normalise to snake_case so every admin tab
+    // can address columns by their database names (shift_ids, reward_earned, etc.)
+    const toSnake = (s: string) => s.replace(/[A-Z]/g, c => `_${c.toLowerCase()}`);
+    let normalised = (rows as Record<string, unknown>[]).map(row =>
+      Object.fromEntries(Object.entries(row).map(([k, v]) => [toSnake(k), v]))
+    );
+
     // Strip passwordHash from affiliates before sending
     if (table === "affiliates") {
-      rows = (rows as Record<string, unknown>[]).map(({ passwordHash: _ph, ...rest }) => rest);
+      normalised = normalised.map(({ password_hash: _ph, ...rest }) => rest);
     }
 
-    return NextResponse.json({ rows, count: rows.length });
+    return NextResponse.json({ rows: normalised, count: normalised.length });
   } catch (e) {
     console.error("Admin data fetch error:", e);
     return NextResponse.json({ error: "Failed to fetch data" }, { status: 500 });

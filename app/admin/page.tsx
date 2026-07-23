@@ -2,20 +2,21 @@
 
 import { useState, useEffect, useCallback } from "react";
 import type { AdminRole } from "@/app/api/admin/auth/route";
-import { SHIFT_MAP } from "@/lib/volunteer-shifts";
+import { SHIFT_MAP, SHIFTS } from "@/lib/volunteer-shifts";
 
 // ── Types ─────────────────────────────────────────────────────────────
 
 type TableName =
   | "leads" | "newsletter" | "vendors" | "volunteers"
   | "sponsors" | "instructor_waitlist" | "affiliates" | "referral_events"
-  | "volunteer_registrations" | "warriors";
+  | "volunteer_registrations" | "warriors" | "members";
 
 type ActiveTab =
   | "overview" | "loyalty" | "budget"
   | "affiliates" | "referral_events" | "newsletter" | "leads"
   | "vendor_agreements"
-  | "vendors" | "volunteers" | "volunteer_registrations" | "warriors" | "instructor_waitlist" | "sponsors";
+  | "vendors" | "volunteers" | "volunteer_registrations" | "warriors" | "instructor_waitlist" | "sponsors"
+  | "confirmations";
 
 interface TabConfig {
   key: TableName;
@@ -1071,6 +1072,8 @@ function DataTab({ tableKey, columns }: { tableKey: TableName; columns: string[]
   const [loading, setLoading] = useState(false);
   const [search, setSearch] = useState("");
   const [selectedRow, setSelectedRow] = useState<Record<string, unknown> | null>(null);
+  const [deleteConfirm, setDeleteConfirm] = useState<number | null>(null);
+  const [deleting, setDeleting] = useState(false);
 
   const fetchData = useCallback(async (searchQuery?: string) => {
     setLoading(true);
@@ -1083,25 +1086,34 @@ function DataTab({ tableKey, columns }: { tableKey: TableName; columns: string[]
         setRows(data.rows || []);
         setCount(data.count || 0);
       }
-    } catch {
-      setRows([]);
-    }
+    } catch { setRows([]); }
     setLoading(false);
   }, [tableKey]);
 
   useEffect(() => { fetchData(); }, [fetchData]);
-
   useEffect(() => {
     const t = setTimeout(() => fetchData(search), 300);
     return () => clearTimeout(t);
   }, [search, fetchData]);
 
+  const deleteRow = async (id: number) => {
+    setDeleting(true);
+    await fetch("/api/admin/data", {
+      method: "DELETE",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ table: tableKey, id }),
+    });
+    setDeleting(false);
+    setDeleteConfirm(null);
+    setSelectedRow(null);
+    fetchData(search);
+  };
+
   const exportCSV = () => {
     if (rows.length === 0) return;
     const csv = [columns.join(","), ...rows.map(row => columns.map(c => `"${String(row[c] ?? "").replace(/"/g, '""')}"`).join(","))].join("\n");
-    const blob = new Blob([csv], { type: "text/csv" });
     const a = document.createElement("a");
-    a.href = URL.createObjectURL(blob);
+    a.href = URL.createObjectURL(new Blob([csv], { type: "text/csv" }));
     a.download = `${tableKey}_${new Date().toISOString().slice(0, 10)}.csv`;
     a.click();
   };
@@ -1111,11 +1123,7 @@ function DataTab({ tableKey, columns }: { tableKey: TableName; columns: string[]
       <div className="admin-toolbar">
         <div className="admin-toolbar-left">
           <span className="admin-count">{count} records</span>
-          <input
-            type="text" value={search}
-            onChange={e => setSearch(e.target.value)}
-            placeholder="Search by email…" className="admin-search"
-          />
+          <input type="text" value={search} onChange={e => setSearch(e.target.value)} placeholder="Search by email…" className="admin-search" />
         </div>
         <div className="admin-toolbar-right">
           <button onClick={() => fetchData(search)} className="admin-refresh-btn">Refresh</button>
@@ -1131,20 +1139,41 @@ function DataTab({ tableKey, columns }: { tableKey: TableName; columns: string[]
         ) : (
           <table className="admin-table">
             <thead>
-              <tr>{columns.map(col => <th key={col}>{col.replace(/_/g, " ")}</th>)}</tr>
+              <tr>
+                {columns.map(col => <th key={col}>{col.replace(/_/g, " ")}</th>)}
+                <th style={{ width: "80px" }}>Delete</th>
+              </tr>
             </thead>
             <tbody>
               {rows.map((row, i) => {
+                const id = Number(row.id);
                 const isSelected = selectedRow === row;
                 return (
-                  <tr
-                    key={i}
-                    onClick={() => setSelectedRow(isSelected ? null : row)}
-                    style={{ cursor: "pointer", background: isSelected ? "rgba(139,95,191,0.07)" : undefined }}
-                  >
+                  <tr key={i} onClick={() => { setSelectedRow(isSelected ? null : row); setDeleteConfirm(null); }}
+                    style={{ cursor: "pointer", background: isSelected ? "rgba(139,95,191,0.07)" : undefined }}>
                     {columns.map(col => (
                       <td key={col}>{col === "created_at" ? fmtDate(row[col]) : String(row[col] ?? "—")}</td>
                     ))}
+                    <td onClick={e => e.stopPropagation()} style={{ textAlign: "center" }}>
+                      {deleteConfirm === id ? (
+                        <span style={{ display: "flex", gap: "4px", justifyContent: "center" }}>
+                          <button onClick={() => deleteRow(id)} disabled={deleting}
+                            style={{ fontSize: "0.7rem", padding: "0.15rem 0.4rem", background: "#dc5050", color: "#fff", border: "none", borderRadius: "4px", cursor: "pointer" }}>
+                            {deleting ? "…" : "Yes"}
+                          </button>
+                          <button onClick={() => setDeleteConfirm(null)}
+                            style={{ fontSize: "0.7rem", padding: "0.15rem 0.4rem", background: "transparent", color: "var(--ink-muted)", border: "1px solid var(--line-medium)", borderRadius: "4px", cursor: "pointer" }}>
+                            No
+                          </button>
+                        </span>
+                      ) : (
+                        <button onClick={() => setDeleteConfirm(id)}
+                          style={{ fontSize: "0.75rem", color: "#dc5050", background: "none", border: "none", cursor: "pointer", padding: "0.1rem 0.3rem" }}
+                          title="Delete">
+                          ✕
+                        </button>
+                      )}
+                    </td>
                   </tr>
                 );
               })}
@@ -1156,15 +1185,12 @@ function DataTab({ tableKey, columns }: { tableKey: TableName; columns: string[]
       {selectedRow && (
         <div className="admin-detail-panel">
           <div className="admin-detail-header">
-            <span className="admin-detail-title">
-              {String(selectedRow.name ?? selectedRow.email ?? `Record #${selectedRow.id}`)}
-            </span>
+            <span className="admin-detail-title">{String(selectedRow.name ?? selectedRow.email ?? `Record #${selectedRow.id}`)}</span>
             <button className="admin-detail-close" onClick={() => setSelectedRow(null)}>✕ Close</button>
           </div>
           <div className="admin-detail-grid">
             {columns.filter(col => col !== "id" && col !== "created_at").map(col => {
-              const val = selectedRow[col];
-              const display = String(val ?? "—");
+              const display = String(selectedRow[col] ?? "—");
               if (!display || display === "—") return null;
               return (
                 <div key={col} className="admin-detail-field">
@@ -1177,6 +1203,26 @@ function DataTab({ tableKey, columns }: { tableKey: TableName; columns: string[]
               <div className="admin-detail-label">submitted</div>
               <div className="admin-detail-value">{fmtDate(selectedRow.created_at)}</div>
             </div>
+          </div>
+          <div style={{ padding: "0.75rem 1.25rem", borderTop: "1px solid var(--line-subtle)" }}>
+            {deleteConfirm === Number(selectedRow.id) ? (
+              <span style={{ display: "flex", gap: "0.5rem", alignItems: "center" }}>
+                <span style={{ fontSize: "0.8rem", color: "#dc5050" }}>Delete this record permanently?</span>
+                <button onClick={() => deleteRow(Number(selectedRow.id))} disabled={deleting}
+                  style={{ fontSize: "0.8rem", padding: "0.3rem 0.8rem", background: "#dc5050", color: "#fff", border: "none", borderRadius: "6px", cursor: "pointer" }}>
+                  {deleting ? "…" : "Yes, delete"}
+                </button>
+                <button onClick={() => setDeleteConfirm(null)}
+                  style={{ fontSize: "0.8rem", padding: "0.3rem 0.8rem", background: "transparent", border: "1px solid var(--line-medium)", borderRadius: "6px", cursor: "pointer", color: "var(--ink-muted)" }}>
+                  Cancel
+                </button>
+              </span>
+            ) : (
+              <button onClick={() => setDeleteConfirm(Number(selectedRow.id))}
+                style={{ fontSize: "0.8rem", color: "#dc5050", background: "none", border: "none", cursor: "pointer", padding: 0 }}>
+                Delete record
+              </button>
+            )}
           </div>
         </div>
       )}
@@ -1350,37 +1396,21 @@ function VolunteerRegistrationsTab() {
             const shifts = resolveShifts(String(selectedRow.shift_ids ?? ""));
             const reward = String(selectedRow.reward_earned ?? "");
             const totalHours = shifts.reduce((sum, s) => sum + s.hours, 0);
+            const regId = Number(selectedRow.id);
             return (
-              <div className="admin-detail-panel no-print">
-                <div className="admin-detail-header">
-                  <span className="admin-detail-title">{String(selectedRow.name ?? selectedRow.email ?? `Record #${selectedRow.id}`)}</span>
-                  <button className="admin-detail-close" onClick={() => setSelectedRow(null)}>✕ Close</button>
-                </div>
-                <div className="admin-detail-grid">
-                  <div className="admin-detail-field"><div className="admin-detail-label">email</div><div className="admin-detail-value">{String(selectedRow.email ?? "—")}</div></div>
-                  {selectedRow.phone && <div className="admin-detail-field"><div className="admin-detail-label">phone</div><div className="admin-detail-value">{String(selectedRow.phone)}</div></div>}
-                  <div className="admin-detail-field" style={{ gridColumn: "1 / -1" }}>
-                    <div className="admin-detail-label">shifts ({shifts.length} · {totalHours}h total)</div>
-                    <div className="admin-detail-value" style={{ display: "flex", flexDirection: "column", gap: "6px", marginTop: "6px" }}>
-                      {shifts.map(s => (
-                        <div key={s.id} style={{ display: "flex", gap: "8px", alignItems: "baseline" }}>
-                          <span style={{ fontWeight: 700, color: dayColor[s.day] ?? "var(--ink)", minWidth: "72px" }}>{s.day}</span>
-                          <span style={{ fontWeight: 600 }}>{s.label}</span>
-                          <span style={{ color: "var(--ink-muted)", fontSize: "0.82rem" }}>{s.hours}h</span>
-                        </div>
-                      ))}
-                    </div>
-                  </div>
-                  {reward && (
-                    <div className="admin-detail-field">
-                      <div className="admin-detail-label">reward</div>
-                      <div className="admin-detail-value"><span style={{ fontWeight: 700, color: rewardAccent(reward) }}>{rewardLabel(reward)}</span></div>
-                    </div>
-                  )}
-                  <div className="admin-detail-field"><div className="admin-detail-label">waiver signed</div><div className="admin-detail-value">{selectedRow.agreed_waiver ? "Yes" : "No"}</div></div>
-                  <div className="admin-detail-field"><div className="admin-detail-label">submitted</div><div className="admin-detail-value">{fmtDate(selectedRow.created_at)}</div></div>
-                </div>
-              </div>
+              <VolunteerDetailPanel
+                key={regId}
+                row={selectedRow}
+                shifts={shifts}
+                reward={reward}
+                totalHours={totalHours}
+                dayColor={dayColor}
+                rewardLabel={rewardLabel}
+                rewardAccent={rewardAccent}
+                onClose={() => setSelectedRow(null)}
+                onDeleted={() => { setSelectedRow(null); fetchData(search); }}
+                onUpdated={() => fetchData(search)}
+              />
             );
           })()}
         </>
@@ -1431,6 +1461,366 @@ function VolunteerRegistrationsTab() {
         </div>
       )}
     </>
+  );
+}
+
+// ── Volunteer Detail Panel ────────────────────────────────────────────
+
+interface VolunteerDetailPanelProps {
+  row: Record<string, unknown>;
+  shifts: Array<{ id: string; label: string; day: string; date: string; hours: number; phase: string }>;
+  reward: string;
+  totalHours: number;
+  dayColor: Record<string, string>;
+  rewardLabel: (r: string) => string;
+  rewardAccent: (r: string) => string;
+  onClose: () => void;
+  onDeleted: () => void;
+  onUpdated: () => void;
+}
+
+function VolunteerDetailPanel({ row, shifts, reward, totalHours, dayColor, rewardLabel, rewardAccent, onClose, onDeleted, onUpdated }: VolunteerDetailPanelProps) {
+  const [editing, setEditing] = useState(false);
+  const [editShiftSet, setEditShiftSet] = useState<Set<string>>(() => new Set(shifts.map(s => s.id)));
+  const [saving, setSaving] = useState(false);
+  const [deleting, setDeleting] = useState(false);
+  const [deleteConfirm, setDeleteConfirm] = useState(false);
+
+  const toggleShift = (id: string) => {
+    setEditShiftSet(prev => {
+      const next = new Set(prev);
+      if (next.has(id)) next.delete(id); else next.add(id);
+      return next;
+    });
+  };
+
+  const saveShifts = async () => {
+    setSaving(true);
+    await fetch("/api/admin/data", {
+      method: "PATCH",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ table: "volunteer_registrations", id: row.id, shiftIds: Array.from(editShiftSet) }),
+    });
+    setSaving(false);
+    setEditing(false);
+    onUpdated();
+  };
+
+  const deleteReg = async () => {
+    setDeleting(true);
+    await fetch("/api/admin/data", {
+      method: "DELETE",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ table: "volunteer_registrations", id: row.id }),
+    });
+    onDeleted();
+  };
+
+  const shiftGroups = [
+    { label: "Thursday · Setup", color: "#7a52b0", shifts: SHIFTS.filter(s => s.day === "Thursday") },
+    { label: "Friday · Aug 7", color: "#2a9d8f", shifts: SHIFTS.filter(s => s.day === "Friday") },
+    { label: "Saturday · Aug 8", color: "#C9983F", shifts: SHIFTS.filter(s => s.day === "Saturday") },
+    { label: "Sunday · During", color: "#3b82f6", shifts: SHIFTS.filter(s => s.day === "Sunday" && s.phase === "during") },
+    { label: "Sunday Evening · Teardown", color: "#dc5050", shifts: SHIFTS.filter(s => s.phase === "sunday_evening") },
+  ];
+
+  const editHours = SHIFTS.filter(s => editShiftSet.has(s.shift_id)).reduce((sum, s) => sum + s.hours, 0);
+
+  return (
+    <div className="admin-detail-panel">
+      <div className="admin-detail-header">
+        <span className="admin-detail-title">{String(row.name ?? row.email ?? "Volunteer")}</span>
+        <div style={{ display: "flex", gap: "0.75rem", alignItems: "center" }}>
+          <button
+            onClick={() => { setEditing(e => !e); setEditShiftSet(new Set(shifts.map(s => s.id))); }}
+            style={{ fontSize: "0.78rem", color: editing ? "var(--ink-muted)" : "var(--psyche-cyan)", background: "none", border: "none", cursor: "pointer", padding: 0 }}
+          >
+            {editing ? "Cancel edit" : "Edit shifts"}
+          </button>
+          <button className="admin-detail-close" onClick={onClose}>✕ Close</button>
+        </div>
+      </div>
+
+      <div className="admin-detail-grid">
+        {([["name", "Name"], ["email", "Email"], ["phone", "Phone"]] as [string, string][]).map(([key, label]) => {
+          const v = String(row[key] ?? "—");
+          if (v === "—") return null;
+          return (
+            <div key={key} className="admin-detail-field">
+              <div className="admin-detail-label">{label}</div>
+              <div className="admin-detail-value">{v}</div>
+            </div>
+          );
+        })}
+        <div className="admin-detail-field">
+          <div className="admin-detail-label">Reward</div>
+          <div className="admin-detail-value">
+            {reward ? (
+              <span style={{ fontSize: "0.78rem", padding: "0.15rem 0.5rem", borderRadius: "4px", fontWeight: 600,
+                background: `${rewardAccent(reward)}22`, color: rewardAccent(reward) }}>
+                {rewardLabel(reward)}
+              </span>
+            ) : "—"}
+          </div>
+        </div>
+        <div className="admin-detail-field">
+          <div className="admin-detail-label">Total Hours</div>
+          <div className="admin-detail-value" style={{ fontWeight: 700 }}>{totalHours}h</div>
+        </div>
+      </div>
+
+      <div style={{ padding: "1rem 1.25rem", borderTop: "1px solid var(--line-subtle)" }}>
+        {!editing ? (
+          <>
+            <div style={{ fontSize: "0.72rem", color: "var(--ink-muted)", textTransform: "uppercase", letterSpacing: "0.07em", marginBottom: "0.6rem" }}>Assigned Shifts</div>
+            {shifts.length === 0 ? (
+              <div style={{ color: "var(--ink-muted)", fontSize: "0.85rem" }}>No shifts assigned</div>
+            ) : (
+              <div style={{ display: "flex", flexDirection: "column", gap: "4px" }}>
+                {shifts.map(s => (
+                  <div key={s.id} style={{ display: "flex", alignItems: "center", gap: "8px", fontSize: "0.85rem" }}>
+                    <span style={{ color: dayColor[s.day] ?? "var(--ink-muted)", fontWeight: 600, minWidth: "72px" }}>{s.day}</span>
+                    <span>{s.label}</span>
+                    <span style={{ color: "var(--ink-muted)", fontSize: "0.75rem" }}>({s.hours}h)</span>
+                  </div>
+                ))}
+              </div>
+            )}
+          </>
+        ) : (
+          <>
+            <div style={{ fontSize: "0.72rem", color: "var(--ink-muted)", textTransform: "uppercase", letterSpacing: "0.07em", marginBottom: "0.75rem" }}>
+              Edit Shifts — {editHours}h selected
+            </div>
+            <div style={{ display: "flex", flexDirection: "column", gap: "1rem" }}>
+              {shiftGroups.map(group => (
+                <div key={group.label}>
+                  <div style={{ fontSize: "0.72rem", fontWeight: 700, color: group.color, textTransform: "uppercase", letterSpacing: "0.06em", marginBottom: "0.35rem" }}>
+                    {group.label}
+                  </div>
+                  <div style={{ display: "flex", flexDirection: "column", gap: "3px" }}>
+                    {group.shifts.map(s => (
+                      <label key={s.shift_id} style={{ display: "flex", alignItems: "center", gap: "8px", cursor: "pointer", fontSize: "0.85rem" }}>
+                        <input type="checkbox" checked={editShiftSet.has(s.shift_id)} onChange={() => toggleShift(s.shift_id)}
+                          style={{ accentColor: group.color, width: "15px", height: "15px" }} />
+                        <span>{s.role}</span>
+                        <span style={{ color: "var(--ink-muted)", fontSize: "0.75rem" }}>({s.hours}h · cap {s.capacity})</span>
+                      </label>
+                    ))}
+                  </div>
+                </div>
+              ))}
+            </div>
+            <div style={{ marginTop: "1rem", display: "flex", gap: "0.5rem" }}>
+              <button onClick={saveShifts} disabled={saving}
+                style={{ fontSize: "0.82rem", padding: "0.4rem 1.1rem", background: "rgba(61,184,175,0.15)", border: "1px solid #3DB8AF", borderRadius: "7px", color: "#3DB8AF", cursor: "pointer", fontFamily: "inherit" }}>
+                {saving ? "Saving…" : "Save shifts"}
+              </button>
+              <button onClick={() => { setEditing(false); setEditShiftSet(new Set(shifts.map(s => s.id))); }}
+                style={{ fontSize: "0.82rem", padding: "0.4rem 0.9rem", background: "transparent", border: "1px solid var(--line-medium)", borderRadius: "7px", color: "var(--ink-muted)", cursor: "pointer", fontFamily: "inherit" }}>
+                Cancel
+              </button>
+            </div>
+          </>
+        )}
+      </div>
+
+      <div style={{ padding: "0.75rem 1.25rem", borderTop: "1px solid var(--line-subtle)" }}>
+        {deleteConfirm ? (
+          <span style={{ display: "flex", gap: "0.5rem", alignItems: "center" }}>
+            <span style={{ fontSize: "0.8rem", color: "#dc5050" }}>Delete this registration permanently?</span>
+            <button onClick={deleteReg} disabled={deleting}
+              style={{ fontSize: "0.8rem", padding: "0.3rem 0.8rem", background: "#dc5050", color: "#fff", border: "none", borderRadius: "6px", cursor: "pointer" }}>
+              {deleting ? "…" : "Yes, delete"}
+            </button>
+            <button onClick={() => setDeleteConfirm(false)}
+              style={{ fontSize: "0.8rem", padding: "0.3rem 0.8rem", background: "transparent", border: "1px solid var(--line-medium)", borderRadius: "6px", cursor: "pointer", color: "var(--ink-muted)" }}>
+              Cancel
+            </button>
+          </span>
+        ) : (
+          <button onClick={() => setDeleteConfirm(true)}
+            style={{ fontSize: "0.8rem", color: "#dc5050", background: "none", border: "none", cursor: "pointer", padding: 0 }}>
+            Delete registration
+          </button>
+        )}
+      </div>
+    </div>
+  );
+}
+
+// ── Comms / Confirmations Tab ─────────────────────────────────────────
+
+interface AdminTask {
+  id: number;
+  category: string;
+  entity_email: string;
+  entity_name: string | null;
+  task_label: string;
+  completed: boolean;
+  completed_at: string | null;
+  notes: string | null;
+  created_at: string;
+}
+
+const COMM_CATEGORIES = [
+  { key: "vendor" as const,     label: "Vendors",      table: "vendors",                  nameCol: "name",  emailCol: "email" },
+  { key: "volunteer" as const,  label: "Volunteers",   table: "volunteer_registrations",   nameCol: "name",  emailCol: "email" },
+  { key: "instructor" as const, label: "Instructors",  table: "instructor_waitlist",       nameCol: "name",  emailCol: "email" },
+  { key: "guest" as const,      label: "Guests",       table: "members",                   nameCol: "name",  emailCol: "email" },
+];
+
+type CommCatKey = typeof COMM_CATEGORIES[number]["key"];
+
+function CommsTab() {
+  const [activeCat, setActiveCat] = useState<CommCatKey>("vendor");
+  const [rows, setRows] = useState<Record<string, unknown>[]>([]);
+  const [tasks, setTasks] = useState<AdminTask[]>([]);
+  const [loading, setLoading] = useState(false);
+  const [toggling, setToggling] = useState<string | null>(null);
+
+  const cat = COMM_CATEGORIES.find(c => c.key === activeCat)!;
+
+  const loadAll = useCallback(async () => {
+    setLoading(true);
+    try {
+      const [rowsRes, tasksRes] = await Promise.all([
+        fetch(`/api/admin/data?table=${cat.table}`),
+        fetch("/api/admin/tasks"),
+      ]);
+      if (rowsRes.ok) { const d = await rowsRes.json(); setRows(d.rows || []); }
+      if (tasksRes.ok) setTasks(await tasksRes.json());
+    } finally {
+      setLoading(false);
+    }
+  }, [cat.table]);
+
+  useEffect(() => { loadAll(); }, [loadAll]);
+
+  const toggle = async (email: string, name: string, currentlyDone: boolean) => {
+    setToggling(email);
+    await fetch("/api/admin/tasks", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        category: activeCat,
+        entity_email: email,
+        entity_name: name,
+        task_label: "confirmation_email",
+        completed: !currentlyDone,
+      }),
+    });
+    setToggling(null);
+    setTasks(prev => {
+      const existing = prev.find(t => t.category === activeCat && t.entity_email === email && t.task_label === "confirmation_email");
+      if (existing) {
+        return prev.map(t => t === existing ? { ...t, completed: !currentlyDone, completed_at: !currentlyDone ? new Date().toISOString() : null } : t);
+      }
+      return [...prev, {
+        id: Date.now(), category: activeCat, entity_email: email, entity_name: name,
+        task_label: "confirmation_email", completed: !currentlyDone,
+        completed_at: !currentlyDone ? new Date().toISOString() : null,
+        notes: null, created_at: new Date().toISOString(),
+      }];
+    });
+  };
+
+  const getTask = (email: string) =>
+    tasks.find(t => t.category === activeCat && t.entity_email === email && t.task_label === "confirmation_email");
+
+  const sentCount = rows.filter(r => getTask(String(r[cat.emailCol] ?? ""))?.completed).length;
+
+  const subTabStyle = (active: boolean): React.CSSProperties => ({
+    padding: "0.4rem 1rem", borderRadius: "8px", border: "none", cursor: "pointer",
+    fontSize: "0.8rem", fontFamily: "inherit", fontWeight: active ? 600 : 400,
+    background: active ? "rgba(212,175,60,0.15)" : "transparent",
+    color: active ? "#D4AF3C" : "var(--ink-muted)",
+  });
+
+  return (
+    <div style={{ padding: "1.5rem 2rem" }}>
+      <div style={{ marginBottom: "1.25rem" }}>
+        <h2 style={{ fontSize: "0.72rem", fontWeight: 700, color: "var(--ink-muted)", textTransform: "uppercase", letterSpacing: "0.09em", margin: "0 0 0.5rem" }}>
+          Confirmation Emails
+        </h2>
+        <p style={{ fontSize: "0.85rem", color: "var(--ink-muted)", margin: "0 0 1rem" }}>
+          Check the box when a confirmation email is sent. This is saved to the database so you can track across sessions.
+        </p>
+        <div style={{ display: "flex", gap: "0.5rem", flexWrap: "wrap", alignItems: "center" }}>
+          {COMM_CATEGORIES.map(c => (
+            <button key={c.key} style={subTabStyle(activeCat === c.key)} onClick={() => setActiveCat(c.key)}>
+              {c.label}
+            </button>
+          ))}
+          <button onClick={loadAll} style={{ marginLeft: "auto", fontSize: "0.78rem", color: "var(--ink-muted)", background: "none", border: "none", cursor: "pointer" }}>
+            Refresh
+          </button>
+        </div>
+      </div>
+
+      {loading ? (
+        <div className="admin-loading">Loading…</div>
+      ) : rows.length === 0 ? (
+        <div className="admin-empty">No {cat.label.toLowerCase()} found</div>
+      ) : (
+        <>
+          <div style={{ fontSize: "0.82rem", color: "var(--ink-muted)", marginBottom: "0.75rem", display: "flex", alignItems: "center", gap: "0.75rem" }}>
+            <span>{sentCount} / {rows.length} confirmation emails sent</span>
+            {sentCount === rows.length && rows.length > 0 && (
+              <span style={{ color: "#2a9d8f", fontWeight: 600 }}>✓ All done!</span>
+            )}
+            {sentCount < rows.length && (
+              <span style={{ color: "#C9983F", fontWeight: 600 }}>{rows.length - sentCount} remaining</span>
+            )}
+          </div>
+          <div style={{ overflowX: "auto" }}>
+            <table style={{ width: "100%", borderCollapse: "collapse", background: "var(--surface-elevated)", borderRadius: "10px", overflow: "hidden" }}>
+              <thead>
+                <tr>
+                  <th style={hcell}>Name</th>
+                  <th style={hcell}>Email</th>
+                  <th style={{ ...hcell, textAlign: "center" }}>Confirmation Email Sent</th>
+                  <th style={hcell}>Sent At</th>
+                </tr>
+              </thead>
+              <tbody>
+                {rows.map((row, i) => {
+                  const email = String(row[cat.emailCol] ?? "");
+                  const name = String(row[cat.nameCol] ?? "");
+                  const task = getTask(email);
+                  const done = task?.completed ?? false;
+                  const sentAt = task?.completed_at;
+                  const isToggling = toggling === email;
+                  return (
+                    <tr key={i} style={{ background: done ? "rgba(42,157,143,0.04)" : undefined }}>
+                      <td style={{ ...cell, fontWeight: 600 }}>{name || "—"}</td>
+                      <td style={cell}>{email}</td>
+                      <td style={{ ...cell, textAlign: "center" }}>
+                        <label style={{ display: "inline-flex", alignItems: "center", gap: "6px", cursor: "pointer" }}>
+                          <input
+                            type="checkbox"
+                            checked={done}
+                            disabled={isToggling}
+                            onChange={() => toggle(email, name, done)}
+                            style={{ width: "16px", height: "16px", accentColor: "#2a9d8f", cursor: "pointer" }}
+                          />
+                          <span style={{ fontSize: "0.78rem", color: done ? "#2a9d8f" : "var(--ink-muted)", fontWeight: done ? 600 : 400 }}>
+                            {isToggling ? "…" : done ? "Sent" : "Not sent"}
+                          </span>
+                        </label>
+                      </td>
+                      <td style={{ ...cell, color: "var(--ink-muted)", fontSize: "0.78rem" }}>
+                        {sentAt ? fmtDate(sentAt) : "—"}
+                      </td>
+                    </tr>
+                  );
+                })}
+              </tbody>
+            </table>
+          </div>
+        </>
+      )}
+    </div>
   );
 }
 
@@ -1580,6 +1970,10 @@ export default function AdminPage() {
         {tab("warriors", "Warriors")}
         {tab("instructor_waitlist", "Instructors")}
         {tab("sponsors", "Sponsors")}
+
+        <span className="admin-tab-sep" />
+
+        {tab("confirmations", "Confirmations")}
       </div>
 
       {/* Tab content */}
@@ -1597,6 +1991,7 @@ export default function AdminPage() {
       {activeTab === "warriors"                 && <DataTab tableKey="warriors"                 columns={["id","name","email","family_size","beds_needed","created_at"]} />}
       {activeTab === "instructor_waitlist"      && <DataTab tableKey="instructor_waitlist"      columns={["id","name","email","phone","modality","years_teaching","interested_in_2026","interested_in_2027","offering","created_at"]} />}
       {activeTab === "sponsors"                 && <DataTab tableKey="sponsors"                 columns={["id","name","email","company","budget_range","interests","goals","created_at"]} />}
+      {activeTab === "confirmations"            && <CommsTab />}
     </div>
   );
 }

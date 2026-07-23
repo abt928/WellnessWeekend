@@ -73,6 +73,7 @@ export const practitioners: Practitioner[] = [
     role: "Artist · Producer · Songwriter · Guide",
     offering: "Keys of Kreation · Ecstatic Dance",
     bio: "J Brave is the visionary founder of Keys of Kreation — an artist, producer, songwriter, and guide dedicated to the intersection of music and personal transformation. Through his coaching programs and retreats under Actualize Music, J Brave helps others step into their creative power and live in full expression.",
+    photo: "/images/practitioners/j-brave.jpg",
   },
   {
     slug: "jon",

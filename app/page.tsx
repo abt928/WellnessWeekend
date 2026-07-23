@@ -174,7 +174,7 @@ export default function Home() {
           <div className="lineup-grid">
             {[
               {
-                src: "/images/client-2026/j-brave-feature.webp",
+                src: "/images/client-2026/j-brave-feature-cropped.jpg",
                 name: "J Brave",
                 role: "Headliner",
                 detail: "Keys of Kreation · Friday / Ecstatic Dance · Saturday / Live Set · Sunday",

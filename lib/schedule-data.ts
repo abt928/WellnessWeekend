@@ -109,7 +109,7 @@ export const scheduleDays: ScheduleDay[] = [
       },
       {
         time: "5:00 PM",
-        event: "Keys to Kreation",
+        event: "Keys of Kreation",
         detail: "Unlock your infinite potential of creative expression in this 2-hour immersive workshop.",
         element: "fire", location: "Main Stage",
         hosts: ["j-brave"],

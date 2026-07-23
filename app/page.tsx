@@ -177,7 +177,7 @@ export default function Home() {
                 src: "/images/client-2026/j-brave-feature.webp",
                 name: "J Brave",
                 role: "Headliner",
-                detail: "Keys to Kreation · Friday / Ecstatic Dance · Saturday / Live Set · Sunday",
+                detail: "Keys of Kreation · Friday / Ecstatic Dance · Saturday / Live Set · Sunday",
               },
               {
                 src: "/images/client-2026/akatale-feature.jpg",

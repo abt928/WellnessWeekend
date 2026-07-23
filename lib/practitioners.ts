@@ -70,9 +70,9 @@ export const practitioners: Practitioner[] = [
   {
     slug: "j-brave",
     name: "J Brave",
-    role: "Sound Alchemist & Keys Artist",
+    role: "Artist · Producer · Songwriter · Guide",
     offering: "Keys of Kreation · Ecstatic Dance",
-    bio: "J Brave is a visionary keys artist and sonic alchemist who performs at the intersection of music, consciousness, and creative activation. Keys of Kreation is his signature immersive experience — two hours of live improvisation, frequencies, and presence designed to unlock the creative infinite within you.",
+    bio: "J Brave is the visionary founder of Keys of Kreation — an artist, producer, songwriter, and guide dedicated to the intersection of music and personal transformation. Through his coaching programs and retreats under Actualize Music, J Brave helps others step into their creative power and live in full expression.",
   },
   {
     slug: "jon",

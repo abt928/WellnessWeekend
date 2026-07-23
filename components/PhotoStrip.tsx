@@ -11,7 +11,9 @@ const PHOTOS = [
   { src: "/images/gallery/2024-08-01_Festival_Wellness_Woman-Playing-Drum-Gong.jpg",       alt: "Drum and gong ceremony" },
   { src: "/images/gallery/2025-08-09_Festival_Wellness_Woman-Dancing-Laughing.jpg",        alt: "Joyful dancing" },
   { src: "/images/gallery/2025-08-10_Festival_Wellness_Woman-Dancing-Barefoot.jpg",        alt: "Barefoot dancing on the land" },
-  { src: "/images/client-2026/lakeside-paddleboard-practice.webp",                         alt: "Paddleboard yoga on the lake" },
+  { src: "/images/client-2026/floating-sound-bath.jpg",                                    alt: "Floating sound bath on the lake" },
+  { src: "/images/client-2026/lakeside-sup-yoga-class.jpg",                                alt: "SUP yoga class on the lake" },
+  { src: "/images/client-2026/lakeside-aerial-silks-setup.jpg",                            alt: "Aerial silks at the lakeside" },
 ];
 
 const DURATION = 5000;

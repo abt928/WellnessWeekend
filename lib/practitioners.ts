@@ -140,8 +140,9 @@ export const practitioners: Practitioner[] = [
     slug: "meghan",
     name: "Meghan Ilguth",
     role: "Self-Defense & Embodiment Educator",
-    offering: "Split Second Survival",
-    bio: "Meghan Ilguth brings a rare combination of advanced practical self-defense training and somatic intelligence to her work. Her Split Second Survival workshop teaches real skills for real situations — while also exploring nervous system regulation, boundary setting, and how to move from fear into confidence. Empowerment that lives in the body, not just the mind.",
+    offering: "A Trauma-Informed Approach to Self-Defense",
+    bio: "Meghan Ilguth brings a rare combination of advanced practical self-defense training and somatic intelligence to her work. Her workshop teaches real skills for real situations — while also exploring nervous system regulation, boundary setting, and how to move from fear into confidence. Empowerment that lives in the body, not just the mind.",
+    photo: "/images/practitioners/meghan.jpg",
   },
   {
     slug: "sarah",

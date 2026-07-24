@@ -215,8 +215,8 @@ export const scheduleDays: ScheduleDay[] = [
       },
       {
         time: "2:00 PM",
-        event: "Split Second Survival",
-        detail: "Advanced practical self-defense skills combined with nervous system regulation, boundary setting, and responding from confidence rather than fear.",
+        event: "A Trauma-Informed Approach to Self-Defense",
+        detail: "Advanced practical self-defense skills combined with nervous system regulation, boundary setting, and how to respond from confidence rather than fear.",
         element: "earth", location: "Lodge",
         hosts: ["meghan"],
       },

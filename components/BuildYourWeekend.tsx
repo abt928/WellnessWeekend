@@ -29,14 +29,6 @@ const ADDONS: { type: ClassType | null; icon: string; title: string; subtitle: s
     desc: "All-levels flow on the lake under the Alaskan sun. You might get wet — that's part of the magic. Limited to 7 per session.",
     cta: "Reserve a Spot",
   },
-  {
-    type: null,
-    icon: "🛡️",
-    title: "Split Second Survival",
-    subtitle: "Self-Defense · Confidence · Embodiment",
-    desc: "Advanced practical self-defense skills meets somatic intelligence. Learn nervous system regulation, boundary setting, and how to respond from confidence rather than fear. Saturday 2 PM in the Lodge.",
-    cta: "Included with weekend pass",
-  },
 ];
 
 export default function BuildYourWeekend() {

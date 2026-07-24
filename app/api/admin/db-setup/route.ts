@@ -242,6 +242,21 @@ export async function POST(req: NextRequest) {
       )
     `;
 
+    await sql`
+      CREATE TABLE IF NOT EXISTS staff_registrations (
+        id SERIAL PRIMARY KEY,
+        name VARCHAR(255) NOT NULL,
+        email VARCHAR(255) NOT NULL,
+        phone VARCHAR(50),
+        role VARCHAR(100) NOT NULL,
+        emergency_contact_name VARCHAR(255),
+        emergency_contact_phone VARCHAR(50),
+        dietary_needs TEXT,
+        ticket_code VARCHAR(20) NOT NULL UNIQUE,
+        created_at TIMESTAMPTZ DEFAULT NOW() NOT NULL
+      )
+    `;
+
     return NextResponse.json({
       success: true,
       tables: [
@@ -249,9 +264,9 @@ export async function POST(req: NextRequest) {
         "instructor_waitlist", "affiliates", "referral_events", "orders",
         "budget_items", "members", "member_referrals", "member_redemptions",
         "warriors", "volunteer_registrations", "volunteer_shift_claims",
-        "admin_tasks",
+        "admin_tasks", "staff_registrations",
       ],
-      message: "All 17 tables verified / created.",
+      message: "All 18 tables verified / created.",
     });
   } catch (e) {
     console.error("DB setup error:", e);

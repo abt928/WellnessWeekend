@@ -171,3 +171,16 @@ export const memberRedemptions = pgTable("member_redemptions", {
   createdAt: timestamp("created_at", { withTimezone: true }).defaultNow().notNull(),
   usedAt: timestamp("used_at", { withTimezone: true }),
 });
+
+export const staffRegistrations = pgTable("staff_registrations", {
+  id: serial("id").primaryKey(),
+  name: varchar("name", { length: 255 }).notNull(),
+  email: varchar("email", { length: 255 }).notNull(),
+  phone: varchar("phone", { length: 50 }),
+  role: varchar("role", { length: 100 }).notNull(),
+  emergencyContactName: varchar("emergency_contact_name", { length: 255 }),
+  emergencyContactPhone: varchar("emergency_contact_phone", { length: 50 }),
+  dietaryNeeds: text("dietary_needs"),
+  ticketCode: varchar("ticket_code", { length: 20 }).notNull().unique(),
+  createdAt: timestamp("created_at", { withTimezone: true }).defaultNow().notNull(),
+});

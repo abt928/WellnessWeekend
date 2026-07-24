@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { getDb } from "@/lib/db";
-import { leads, newsletter, vendors, volunteers, sponsors, instructorWaitlist, affiliates, referralEvents, volunteerRegistrations, volunteerShiftClaims, warriors, members } from "@/lib/schema";
+import { leads, newsletter, vendors, volunteers, sponsors, instructorWaitlist, affiliates, referralEvents, volunteerRegistrations, volunteerShiftClaims, warriors, members, staffRegistrations } from "@/lib/schema";
 import { isAdminAuthenticated } from "@/app/api/admin/auth/route";
 import { desc, eq, sql } from "drizzle-orm";
 import { SHIFT_MAP, calcReward } from "@/lib/volunteer-shifts";
@@ -17,6 +17,7 @@ const TABLES = {
   volunteer_registrations: volunteerRegistrations,
   warriors,
   members,
+  staff_registrations: staffRegistrations,
 } as const;
 
 type TableName = keyof typeof TABLES;

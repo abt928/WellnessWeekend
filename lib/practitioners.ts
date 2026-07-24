@@ -137,11 +137,11 @@ export const practitioners: Practitioner[] = [
     bio: "Mary is a yin yoga teacher and sound healer whose slow, intentional classes work deep into the connective tissue while her soundscapes carry you further than stretching alone ever could. Expect long holds, deep release, and a savasana you won't want to leave.",
   },
   {
-    slug: "gail",
-    name: "Gail Jackson",
-    role: "Founder of CreativeRhythms · Earth-Based Educator",
-    offering: "Earth Awareness Practice",
-    bio: "Gail Jackson is the owner of CreativeRhythms and an earth-based wellness educator whose Earth Awareness Practice guides participants into deep sensory relationship with the living landscape. Her sessions draw on indigenous ecology, nature therapy, and the simple, radical act of paying attention to the world around you.",
+    slug: "meghan",
+    name: "Meghan Ilguth",
+    role: "Self-Defense & Embodiment Educator",
+    offering: "Split Second Survival",
+    bio: "Meghan Ilguth brings a rare combination of advanced practical self-defense training and somatic intelligence to her work. Her Split Second Survival workshop teaches real skills for real situations — while also exploring nervous system regulation, boundary setting, and how to move from fear into confidence. Empowerment that lives in the body, not just the mind.",
   },
   {
     slug: "sarah",

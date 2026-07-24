@@ -24,8 +24,6 @@ export interface ScheduleDay {
 
 export const LIONSGATE_GLOSS =
   "Our gathering falls on August 8th — the Lion's Gate Portal. A day of heightened energy and intentional outdoor ceremony. We step outside together at 8:08 AM to meet the day with full presence — mountain air, open sky, and the earth beneath bare feet.";
-export const AYNI_GLOSS =
-  "An Andean ceremony of reciprocity. A small bundle of seeds, flowers, and offerings is built and given back to the mountain spirits.";
 export const CONTRAST_GLOSS =
   "Alternating cold water immersion and heat activates circulation, reduces inflammation, and powerfully grounds the nervous system. Sessions run all day Friday–Sunday in 30-minute slots — sauna holds 4 people maximum. Must be booked in advance. Facilitated by Ashleigh Bicknell.";
 export const LABYRINTH_GLOSS =
@@ -217,11 +215,10 @@ export const scheduleDays: ScheduleDay[] = [
       },
       {
         time: "2:00 PM",
-        event: "Ayni Despacho Ceremony",
-        detail: "An Andean gratitude ceremony — weave prayers and offerings into a despacho bundle in sacred reciprocity with the land.",
-        element: "fire", location: "Lodge",
-        gloss: AYNI_GLOSS,
-        fee: "Workshop materials fee · $75",
+        event: "Split Second Survival",
+        detail: "Advanced practical self-defense skills combined with nervous system regulation, boundary setting, and responding from confidence rather than fear.",
+        element: "earth", location: "Lodge",
+        hosts: ["meghan"],
       },
       {
         time: "2:00 PM",
@@ -338,13 +335,6 @@ export const scheduleDays: ScheduleDay[] = [
         element: "water", secondElement: "air", thirdElement: "quantum",
         location: "Lakeside",
         hosts: ["avalon-starling"],
-      },
-      {
-        time: "10:00 AM",
-        event: "Earthing Practice",
-        detail: "Barefoot connection to the land — grounding through breath, movement, and direct contact with the earth.",
-        element: "earth", location: "Labyrinth Garden",
-        hosts: ["gail"],
       },
       {
         time: "10:30 AM",

@@ -63,17 +63,6 @@ const ADDONS = [
     notes: "Sauna max 4 · Book your slot in advance",
   },
   {
-    name: "Ayni Despacho Ceremony",
-    category: "Sacred Ceremony",
-    description:
-      "An Andean ceremony of sacred reciprocity. A bundle of seeds, flowers, and offerings is built together with intention and given back to the mountain spirits. A profound practice of gratitude and release.",
-    when: "Saturday · 2:00 PM · Lodge",
-    host: "—",
-    price: "$75 materials fee",
-    limited: false,
-    notes: "Workshop materials fee · $75",
-  },
-  {
     name: "Craniosacral Session",
     category: "Bodywork",
     description:

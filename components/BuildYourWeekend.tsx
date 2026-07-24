@@ -31,12 +31,11 @@ const ADDONS: { type: ClassType | null; icon: string; title: string; subtitle: s
   },
   {
     type: null,
-    icon: "🌿",
-    title: "Ayni Despacho",
-    subtitle: "Ceremony · Offering · Reciprocity",
-    desc: "An Andean ceremony of sacred reciprocity — a bundle of seeds, flowers, and offerings built together and given back to the mountain spirits. Saturday 11 AM in the Lodge.",
-    cta: "Workshop materials fee · $75",
-    fee: true,
+    icon: "🛡️",
+    title: "Split Second Survival",
+    subtitle: "Self-Defense · Confidence · Embodiment",
+    desc: "Advanced practical self-defense skills meets somatic intelligence. Learn nervous system regulation, boundary setting, and how to respond from confidence rather than fear. Saturday 2 PM in the Lodge.",
+    cta: "Included with weekend pass",
   },
 ];
 

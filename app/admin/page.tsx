@@ -728,6 +728,12 @@ function AffiliatesTab() {
   const [edits, setEdits] = useState<Record<number, { status?: string; commissionPct?: string; notes?: string; code?: string }>>({});
   const [saving, setSaving] = useState<number | null>(null);
   const [selectedRow, setSelectedRow] = useState<Record<string, unknown> | null>(null);
+  const [activating, setActivating] = useState(false);
+  const [activateMsg, setActivateMsg] = useState<string | null>(null);
+  const [showCreate, setShowCreate] = useState(false);
+  const [newCode, setNewCode] = useState({ code: "", name: "", commissionPct: "10", company: "", notes: "" });
+  const [creating, setCreating] = useState(false);
+  const [createMsg, setCreateMsg] = useState<string | null>(null);
 
   const fetchData = useCallback(async (searchQuery?: string) => {
     setLoading(true);
@@ -750,6 +756,28 @@ function AffiliatesTab() {
     fetchData(search);
   };
 
+  const activateAll = async () => {
+    setActivating(true); setActivateMsg(null);
+    try {
+      const res = await fetch("/api/admin/affiliates", { method: "PUT" });
+      const d = await res.json();
+      if (d.success) { setActivateMsg(`✓ Activated ${d.activated} code${d.activated !== 1 ? "s" : ""}`); fetchData(search); }
+      else setActivateMsg("Error: " + d.error);
+    } catch { setActivateMsg("Network error"); }
+    setActivating(false);
+  };
+
+  const createCode = async (e: React.FormEvent) => {
+    e.preventDefault(); setCreating(true); setCreateMsg(null);
+    try {
+      const res = await fetch("/api/admin/affiliates", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(newCode) });
+      const d = await res.json();
+      if (d.success) { setCreateMsg(`✓ Created ${d.code}`); setNewCode({ code: "", name: "", commissionPct: "10", company: "", notes: "" }); fetchData(search); }
+      else setCreateMsg("Error: " + d.error);
+    } catch { setCreateMsg("Network error"); }
+    setCreating(false);
+  };
+
   const exportCSV = () => {
     if (!rows.length) return;
     const csv = [COLS.join(","), ...rows.map(r => COLS.map(c => `"${String(r[c] ?? "").replace(/"/g, '""')}"`).join(","))].join("\n");
@@ -768,10 +796,45 @@ function AffiliatesTab() {
           <input type="text" value={search} onChange={e => setSearch(e.target.value)} placeholder="Search by email…" className="admin-search" />
         </div>
         <div className="admin-toolbar-right">
+          <button onClick={activateAll} disabled={activating} style={{ background: "rgba(212,175,60,0.12)", border: "1px solid #D4AF3C", borderRadius: "6px", color: "#D4AF3C", padding: "0.3rem 0.85rem", cursor: "pointer", fontSize: "0.8rem", fontFamily: "inherit" }}>
+            {activating ? "Activating…" : "Activate All Pending"}
+          </button>
+          {activateMsg && <span style={{ fontSize: "0.8rem", color: activateMsg.startsWith("✓") ? "#3DB8AF" : "#f87171" }}>{activateMsg}</span>}
+          <button onClick={() => { setShowCreate(v => !v); setCreateMsg(null); }} style={{ background: "rgba(139,95,191,0.12)", border: "1px solid #8b5fbf", borderRadius: "6px", color: "#8b5fbf", padding: "0.3rem 0.85rem", cursor: "pointer", fontSize: "0.8rem", fontFamily: "inherit" }}>
+            {showCreate ? "Cancel" : "+ Create Code"}
+          </button>
           <button onClick={() => fetchData(search)} className="admin-refresh-btn">Refresh</button>
           <button onClick={exportCSV} className="admin-export-btn" disabled={!rows.length}>Export CSV</button>
         </div>
       </div>
+      {showCreate && (
+        <form onSubmit={createCode} style={{ padding: "1rem 1.5rem", borderBottom: "1px solid var(--line-subtle)", background: "rgba(139,95,191,0.04)", display: "flex", flexWrap: "wrap", gap: "0.75rem", alignItems: "flex-end" }}>
+          <div style={{ display: "flex", flexDirection: "column", gap: "0.25rem" }}>
+            <label style={{ fontSize: "0.7rem", color: "var(--ink-muted)", textTransform: "uppercase", letterSpacing: "0.05em" }}>Code *</label>
+            <input required value={newCode.code} onChange={e => setNewCode(p => ({ ...p, code: e.target.value.toUpperCase() }))} placeholder="VALDEZ" style={{ width: "110px", background: "var(--surface-elevated)", border: "1px solid var(--line-medium)", borderRadius: "6px", color: "var(--ink)", padding: "0.3rem 0.5rem", fontSize: "0.85rem", fontFamily: "monospace", textTransform: "uppercase" }} />
+          </div>
+          <div style={{ display: "flex", flexDirection: "column", gap: "0.25rem" }}>
+            <label style={{ fontSize: "0.7rem", color: "var(--ink-muted)", textTransform: "uppercase", letterSpacing: "0.05em" }}>Name *</label>
+            <input required value={newCode.name} onChange={e => setNewCode(p => ({ ...p, name: e.target.value }))} placeholder="Partner name" style={{ width: "150px", background: "var(--surface-elevated)", border: "1px solid var(--line-medium)", borderRadius: "6px", color: "var(--ink)", padding: "0.3rem 0.5rem", fontSize: "0.85rem" }} />
+          </div>
+          <div style={{ display: "flex", flexDirection: "column", gap: "0.25rem" }}>
+            <label style={{ fontSize: "0.7rem", color: "var(--ink-muted)", textTransform: "uppercase", letterSpacing: "0.05em" }}>Commission %</label>
+            <input type="number" min={0} max={100} value={newCode.commissionPct} onChange={e => setNewCode(p => ({ ...p, commissionPct: e.target.value }))} style={{ width: "70px", background: "var(--surface-elevated)", border: "1px solid var(--line-medium)", borderRadius: "6px", color: "var(--ink)", padding: "0.3rem 0.5rem", fontSize: "0.85rem" }} />
+          </div>
+          <div style={{ display: "flex", flexDirection: "column", gap: "0.25rem" }}>
+            <label style={{ fontSize: "0.7rem", color: "var(--ink-muted)", textTransform: "uppercase", letterSpacing: "0.05em" }}>Company</label>
+            <input value={newCode.company} onChange={e => setNewCode(p => ({ ...p, company: e.target.value }))} placeholder="Optional" style={{ width: "130px", background: "var(--surface-elevated)", border: "1px solid var(--line-medium)", borderRadius: "6px", color: "var(--ink)", padding: "0.3rem 0.5rem", fontSize: "0.85rem" }} />
+          </div>
+          <div style={{ display: "flex", flexDirection: "column", gap: "0.25rem" }}>
+            <label style={{ fontSize: "0.7rem", color: "var(--ink-muted)", textTransform: "uppercase", letterSpacing: "0.05em" }}>Notes</label>
+            <input value={newCode.notes} onChange={e => setNewCode(p => ({ ...p, notes: e.target.value }))} placeholder="Optional" style={{ width: "130px", background: "var(--surface-elevated)", border: "1px solid var(--line-medium)", borderRadius: "6px", color: "var(--ink)", padding: "0.3rem 0.5rem", fontSize: "0.85rem" }} />
+          </div>
+          <button type="submit" disabled={creating} style={{ background: "rgba(139,95,191,0.2)", border: "1px solid #8b5fbf", borderRadius: "6px", color: "#8b5fbf", padding: "0.35rem 1rem", cursor: "pointer", fontSize: "0.85rem", fontFamily: "inherit", fontWeight: 600 }}>
+            {creating ? "Creating…" : "Create & Activate"}
+          </button>
+          {createMsg && <span style={{ fontSize: "0.8rem", color: createMsg.startsWith("✓") ? "#3DB8AF" : "#f87171", alignSelf: "center" }}>{createMsg}</span>}
+        </form>
+      )}
       <div className="admin-table-wrap">
         {loading ? <div className="admin-loading">Loading…</div> : rows.length === 0 ? <div className="admin-empty">No affiliates yet</div> : (
           <table className="admin-table">

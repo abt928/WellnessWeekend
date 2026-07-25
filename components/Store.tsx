@@ -315,7 +315,10 @@ export default function Store() {
             name: c.name,
           })),
           returnUrl: window.location.origin,
-          ...(referralCode ? { referralCode } : {}),
+          // Affiliate promo code takes priority over URL referral for tracking
+          ...((promoResult?.valid && (promoResult as Record<string, unknown>).isAffiliate && promoResult.code)
+            ? { referralCode: promoResult.code }
+            : referralCode ? { referralCode } : {}),
           ...(pendingRedemption ? { redemptionId: pendingRedemption.id } : {}),
           ...(promoResult?.valid && promoResult.discountCents ? { promoCents: promoResult.discountCents } : {}),
         }),

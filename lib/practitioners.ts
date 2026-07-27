@@ -148,8 +148,8 @@ export const practitioners: Practitioner[] = [
     slug: "sarah",
     name: "Sarah",
     role: "Yogassage Practitioner",
-    offering: "Yogassage",
-    bio: "Sarah offers Yogassage — a deeply restorative fusion of assisted yoga stretching and Thai massage that works on the whole body at once. Sessions are done fully clothed on a mat and leave participants in a state of physical ease that's hard to describe and easy to feel.",
+    offering: "Flow & Touch — A Partner Yogassage Experience",
+    bio: "Sarah offers Flow & Touch — a partner Yogassage experience blending mindful movement, supportive touch, and breath. Through simple partner techniques you'll release tension, improve mobility, and cultivate meaningful connection. Sessions are done fully clothed on a mat.",
   },
   {
     slug: "beth",

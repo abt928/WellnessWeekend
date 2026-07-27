@@ -12,6 +12,8 @@ const ROLES = [
   "Transportation",
   "Check-In / Gate",
   "Healing Arts Liaison",
+  "Sponsor",
+  "Guest Registration",
   "General Staff",
 ];
 

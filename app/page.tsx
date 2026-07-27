@@ -45,9 +45,9 @@ const partners = [
     logoHeight: 100,
   },
   {
-    name: "Alaska Meal Prep",
-    role: "Nourishment · Clean Eating",
-    logo: "/logos/alaska-meal-prep.png",
+    name: "The Goods Sustainable Grocery",
+    role: "Wholesome Foods · Food Vendor",
+    logo: "/logos/the-goods.jpg",
     logoWidth: 200,
     logoHeight: 100,
   },

@@ -172,6 +172,16 @@ export const memberRedemptions = pgTable("member_redemptions", {
   usedAt: timestamp("used_at", { withTimezone: true }),
 });
 
+export const staffGuests = pgTable("staff_guests", {
+  id: serial("id").primaryKey(),
+  staffTicketCode: varchar("staff_ticket_code", { length: 20 }).notNull(),
+  staffName: varchar("staff_name", { length: 255 }),
+  guestName: varchar("guest_name", { length: 255 }).notNull(),
+  guestEmail: varchar("guest_email", { length: 255 }),
+  ticketCode: varchar("ticket_code", { length: 20 }).notNull().unique(),
+  createdAt: timestamp("created_at", { withTimezone: true }).defaultNow().notNull(),
+});
+
 export const staffRegistrations = pgTable("staff_registrations", {
   id: serial("id").primaryKey(),
   name: varchar("name", { length: 255 }).notNull(),

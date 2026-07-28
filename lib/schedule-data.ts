@@ -151,9 +151,17 @@ export const scheduleDays: ScheduleDay[] = [
         hosts: ["avalon-starling"],
       },
       {
+        time: "8:30 AM",
+        event: "Pranayama Breathwork",
+        detail: "30 min · A guided breathing session from the Isha Foundation to ground and energize before yoga.",
+        element: "air", secondElement: "earth",
+        location: "Main Stage",
+        hosts: ["logan-forehand"],
+      },
+      {
         time: "9:00 AM",
         event: "Yoga for Health",
-        detail: "An energizing embodiment practice weaving sound, breath, and asana.",
+        detail: "90 min · An energizing embodiment practice weaving sound, breath, and asana to build genuine health from the inside out.",
         element: "earth", location: "Main Stage",
         hosts: ["logan-forehand"],
       },
@@ -193,7 +201,7 @@ export const scheduleDays: ScheduleDay[] = [
       {
         time: "11:00 AM",
         event: "Miracle of Mind",
-        detail: "Beginner-friendly guided meditation and open discussion on the power of the mind.",
+        detail: "30 min · Beginner-friendly guided meditation and open discussion on the power of the mind.",
         element: "earth", location: "Labyrinth Garden",
         hosts: ["logan-forehand"],
       },
@@ -319,6 +327,14 @@ export const scheduleDays: ScheduleDay[] = [
         gloss: CONTRAST_GLOSS,
         limited: true,
         hosts: ["ashleigh"],
+      },
+      {
+        time: "9:30 AM",
+        event: "Pranayama Breathwork",
+        detail: "30 min · A guided breathing session from the Isha Foundation to ground and open before the day's ceremonies.",
+        element: "air", secondElement: "earth",
+        location: "Main Stage",
+        hosts: ["logan-forehand"],
       },
       {
         time: "10:00 AM",

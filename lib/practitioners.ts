@@ -34,10 +34,10 @@ export const practitioners: Practitioner[] = [
   },
   {
     slug: "logan-forehand",
-    name: "Logan Forehand",
-    role: "Yoga Instructor & Meditation Teacher",
-    offering: "Yoga for Health · Miracle of Mind",
-    bio: "Logan Forehand brings a science-meets-spirit approach to yoga and meditation. His sessions integrate breathwork, sound, and asanas to build genuine health from the inside out. Miracle of Mind is a beginner-friendly exploration of the meditation research that's changing how we understand the human brain.",
+    name: "Isha Foundation",
+    role: "Yoga & Meditation",
+    offering: "Yoga for Health · Pranayama Breathwork · Miracle of Mind",
+    bio: "The Isha Foundation brings its signature offerings to Wellness Weekend — represented by Logan Forehand. Yoga for Health is a 90-minute practice weaving breath, sound, and asana to build genuine health from the inside out. Pranayama Breathwork is a 30-minute guided breathing session held each morning after the sound baths. Miracle of Mind is a 30-minute beginner-friendly guided meditation drawing from Isha's evidence-informed approach to inner wellbeing.",
   },
   {
     slug: "shawn",

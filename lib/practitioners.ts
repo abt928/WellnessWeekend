@@ -166,6 +166,13 @@ export const practitioners: Practitioner[] = [
     bio: "Mystical Moon Dance is a tarot reader and ceremonial space holder who weaves divination, community ritual, and the magic of gathering into her daily Tarot + Tea Party. Each afternoon session in the Labyrinth Garden is an invitation to slow down, pull a card, and let the mystery speak.",
   },
   {
+    slug: "jing-xi-kang",
+    name: "Jing Xi Kang（江靖晞）",
+    role: "Guzheng Performer",
+    offering: "Five Elements Sound Healing · Guzheng",
+    bio: "Jing Xi Kang（江靖晞）is a guzheng performer whose program draws from the ancient Chinese tradition of the five musical tones — Gong, Shang, Jue, Zhi, and Yu (宫、商、角、徵、羽) — each associated with the Five Elements and different organ systems of the body. Her performance is designed to promote relaxation, mindfulness, and a sense of balance through music.",
+  },
+  {
     slug: "akatale",
     name: "ÂKÅTÂLĖ",
     role: "Visiting Artist · Lyran Dragon Warrior · Hawaii",

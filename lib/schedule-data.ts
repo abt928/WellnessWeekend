@@ -264,6 +264,14 @@ export const scheduleDays: ScheduleDay[] = [
         hosts: ["logan-forehand"],
       },
       {
+        time: "5:00 PM",
+        event: "Guzheng · Five Elements Sound Healing",
+        detail: "A live guzheng performance drawing from the ancient Chinese tradition of five musical tones — Gong, Shang, Jue, Zhi, and Yu — each resonating with the Five Elements and organ systems of the body. Designed to promote relaxation, mindfulness, and balance through music.",
+        element: "quantum", secondElement: "earth",
+        location: "Main Stage",
+        hosts: ["jing-xi-kang"],
+      },
+      {
         time: "5:30 PM",
         event: "Contrast Therapy",
         detail: "30 min · Final session of the day — prepare your body for an evening of ceremony.",

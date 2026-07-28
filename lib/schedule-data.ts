@@ -289,14 +289,6 @@ export const scheduleDays: ScheduleDay[] = [
         hosts: ["peace-pixy"],
       },
       {
-        time: "9:00 AM",
-        event: "Upa Yoga",
-        detail: "30 min · A gentle Isha Foundation practice for all ages 7+ — Yoga Namaskar, arm and neck sequences, and Nadi Shuddhi breathing to ground and open the body before the day unfolds.",
-        element: "earth", secondElement: "air",
-        location: "Main Stage",
-        hosts: ["logan-forehand"],
-      },
-      {
         time: "9:30 AM",
         event: "Isha Kriya",
         detail: "30 min · A guided meditation using breath, thought, and awareness to align the mind and body. Ages 12+.",
@@ -351,6 +343,14 @@ export const scheduleDays: ScheduleDay[] = [
         element: "air", location: "Aerial Rig",
         limited: true,
         hosts: ["beth"],
+      },
+      {
+        time: "2:30 PM",
+        event: "Upa Yoga",
+        detail: "30 min · A gentle Isha Foundation practice for all ages 7+ — Yoga Namaskar, arm and neck sequences, and Nadi Shuddhi breathing to ground and integrate the afternoon.",
+        element: "earth", secondElement: "air",
+        location: "Main Stage",
+        hosts: ["logan-forehand"],
       },
       {
         time: "3:00 PM",

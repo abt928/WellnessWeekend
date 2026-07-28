@@ -275,10 +275,10 @@ export const scheduleDays: ScheduleDay[] = [
       },
       {
         time: "6:00 PM",
-        event: "S7INGRAE & Brackish · Live Music",
+        event: "S7INGRAE & Brackish",
         detail: "A live set to carry the community from afternoon practice into the evening's ceremony.",
         element: "air", secondElement: "quantum",
-        location: "Main Stage",
+        location: "Main Stage · Live Music",
         hosts: ["s7ngrae"],
       },
       {
@@ -371,18 +371,18 @@ export const scheduleDays: ScheduleDay[] = [
       },
       {
         time: "12:00 PM",
-        event: "Shawn Zuke · Live Music",
+        event: "Shawn Zuke",
         detail: "Soulful live music to open the family-day afternoon.",
         element: "air", secondElement: "quantum",
-        location: "Main Stage",
+        location: "Main Stage · Live Music",
         hosts: ["shawn-zuke"],
       },
       {
         time: "1:00 PM",
-        event: "Kuf Knotz + Christine Elise · Live Music",
+        event: "Kuf Knotz + Christine Elise",
         detail: "Conscious hip-hop meets raw folk — an uplifting 2-hour live collaboration.",
         element: "air", secondElement: "quantum",
-        location: "Main Stage",
+        location: "Main Stage · Live Music",
         hosts: ["kuf-knotz", "christine-elise"],
       },
       {
@@ -411,18 +411,18 @@ export const scheduleDays: ScheduleDay[] = [
       },
       {
         time: "3:15 PM",
-        event: "J Brave · Live Set",
+        event: "J Brave",
         detail: "45 minutes of conscious lyricism and heart-forward music.",
         element: "air", secondElement: "quantum",
-        location: "Main Stage",
+        location: "Main Stage · Live Music",
         hosts: ["j-brave"],
       },
       {
         time: "4:00 PM",
-        event: "ÂKÅTÂLĖ · Live Music",
+        event: "ÂKÅTÂLĖ",
         detail: "A live sonic journey to gather the community toward closing.",
         element: "air", secondElement: "quantum",
-        location: "Main Stage",
+        location: "Main Stage · Live Music",
         hosts: ["akatale"],
       },
       {

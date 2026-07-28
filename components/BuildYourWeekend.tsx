@@ -8,6 +8,15 @@ type ClassType = "aerial" | "paddle";
 const ADDONS: { type: ClassType | null; href?: string; icon: string; title: string; subtitle: string; desc: string; cta: string; fee?: boolean }[] = [
   {
     type: null,
+    href: "/massage",
+    icon: "🌿",
+    title: "Massage",
+    subtitle: "Flow Massage · Alaska Massage Band",
+    desc: "Book a therapeutic massage session with Flow Massage or Alaska Massage Band — available throughout the weekend. 30 or 60 minute sessions.",
+    cta: "Book a Session",
+  },
+  {
+    type: null,
     href: "/contrast-therapy",
     icon: "🔥",
     title: "Contrast Therapy",

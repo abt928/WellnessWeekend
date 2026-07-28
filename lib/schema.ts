@@ -182,6 +182,18 @@ export const staffGuests = pgTable("staff_guests", {
   createdAt: timestamp("created_at", { withTimezone: true }).defaultNow().notNull(),
 });
 
+export const massageBookings = pgTable("massage_bookings", {
+  id: serial("id").primaryKey(),
+  name: varchar("name", { length: 255 }).notNull(),
+  email: varchar("email", { length: 255 }).notNull(),
+  phone: varchar("phone", { length: 50 }),
+  practitioner: varchar("practitioner", { length: 100 }).notNull(),
+  slot: varchar("slot", { length: 50 }).notNull(),
+  sessionType: varchar("session_type", { length: 50 }),
+  notes: text("notes"),
+  createdAt: timestamp("created_at", { withTimezone: true }).defaultNow().notNull(),
+});
+
 export const contrastBookings = pgTable("contrast_bookings", {
   id: serial("id").primaryKey(),
   name: varchar("name", { length: 255 }).notNull(),

@@ -108,8 +108,27 @@ export default function Home() {
       {/* ═══ HERO ═══ */}
       <section className="hero">
         <div className="hero-overlay" />
-        <span className="hero-fire-horse-ghost" aria-hidden="true">🐎</span>
-        <div className="hero-content">
+        {/* Fire horse + Flower of Life — transparent PNG floats on the dark hero */}
+        <Image
+          src="/images/logo-fire-horse.png"
+          alt=""
+          aria-hidden="true"
+          width={700}
+          height={933}
+          priority
+          style={{
+            position: "absolute",
+            right: "-5%",
+            bottom: "0",
+            width: "clamp(280px, 55vw, 620px)",
+            height: "auto",
+            opacity: 0.22,
+            pointerEvents: "none",
+            zIndex: 1,
+            mixBlendMode: "screen",
+          }}
+        />
+        <div className="hero-content" style={{ position: "relative", zIndex: 2 }}>
           <span className="hero-badge">⚡ Final Days — August 7 is Almost Here</span>
           <h1 className="hero-title">
             Wellness <em>Weekend</em>
@@ -149,13 +168,39 @@ export default function Home() {
       <Packages />
 
       {/* ═══ FEATURED LINEUP ═══ */}
-      <section className="section lineup-section">
+      <section className="section lineup-section" style={{
+        background:
+          "radial-gradient(ellipse at 10% 20%, rgba(212,99,159,0.28) 0%, transparent 45%)," +
+          "radial-gradient(ellipse at 90% 15%, rgba(79,54,130,0.32) 0%, transparent 45%)," +
+          "radial-gradient(ellipse at 80% 80%, rgba(61,184,175,0.22) 0%, transparent 45%)," +
+          "radial-gradient(ellipse at 20% 85%, rgba(229,156,50,0.25) 0%, transparent 45%)," +
+          "radial-gradient(ellipse at 50% 50%, rgba(139,95,191,0.15) 0%, transparent 65%)," +
+          "#0f0f1a",
+        borderRadius: 0,
+        padding: "4rem 1.5rem",
+      }}>
         <Reveal>
-          <p className="section-label">Featured in 2026</p>
-          <h2 className="section-title">Visiting Artists of 2026.</h2>
+          <p className="section-label" style={{ color: "rgba(255,255,255,0.5)" }}>Music Lineup · August 2026</p>
+          <h2 className="section-title" style={{ color: "#fff" }}>The Music.</h2>
         </Reveal>
         <Reveal>
-          <div className="lineup-grid">
+          <div style={{ display: "flex", justifyContent: "center", marginTop: "2rem" }}>
+            <Image
+              src="/images/lineup-2026.png"
+              alt="2026 Music Lineup — J Brave, ÂKÅTÂLĖ, Kuf Knotz + Christine Elise, Flowscape, S7INGRAE & Brackish, peacepixy, Shawn Zuke, Jing Xi Kang, High Vibration Mary"
+              width={860}
+              height={1160}
+              style={{
+                width: "min(520px, 92vw)",
+                height: "auto",
+                borderRadius: 16,
+                mixBlendMode: "screen",
+              }}
+            />
+          </div>
+        </Reveal>
+        <Reveal>
+          <div className="lineup-grid" style={{ marginTop: "3rem" }}>
             {[
               {
                 src: "/images/client-2026/j-brave-feature-cropped.jpg",
@@ -167,7 +212,7 @@ export default function Home() {
                 src: "/images/client-2026/akatale-feature.jpg",
                 name: "ÂKÅTÂLĖ",
                 role: "Visiting Artist · Hawaii",
-                detail: "Dragon Stargates · Friday / The Expression of the Soul · Saturday",
+                detail: "Draggon Stargates · Friday / The Expression of the Soul · Saturday",
               },
             ].map((item) => (
               <figure key={item.name} className="lineup-card">

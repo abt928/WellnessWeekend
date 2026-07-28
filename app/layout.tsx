@@ -72,10 +72,10 @@ export const metadata: Metadata = {
     locale: "en_US",
     images: [
       {
-        url: "/images/hero.png",
-        width: 1200,
-        height: 630,
-        alt: "Wellness Weekend, a healing arts festival in Sutton, Alaska under the midnight sun",
+        url: "/images/og-thumbnail.jpg",
+        width: 1080,
+        height: 1080,
+        alt: "Wellness Weekend · Healing Arts Festival · Sutton, Alaska",
       },
     ],
   },
@@ -84,7 +84,7 @@ export const metadata: Metadata = {
     title: "Wellness Weekend · Healing Arts Festival Under the Midnight Sun",
     description:
       "Join 200+ seekers for sound healing, earth medicine, and movement under Alaska's midnight sun. August 7–9, 2026.",
-    images: ["/images/hero.png"],
+    images: ["/images/og-thumbnail.jpg"],
   },
   other: {
     "theme-color": "#2D3A2E",
@@ -132,7 +132,7 @@ export default function RootLayout({
                 },
               },
               image: [
-                "https://wellnessweekendak.com/images/hero.png"
+                "https://wellnessweekendak.com/images/og-thumbnail.jpg"
               ],
               offers: {
                 "@type": "Offer",

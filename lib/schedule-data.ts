@@ -258,13 +258,6 @@ export const scheduleDays: ScheduleDay[] = [
       },
       {
         time: "5:00 PM",
-        event: "Miracle of Mind",
-        detail: "30 min · Beginner-friendly guided meditation and open discussion on the power of the mind.",
-        element: "earth", location: "Labyrinth Garden",
-        hosts: ["logan-forehand"],
-      },
-      {
-        time: "5:00 PM",
         event: "Guzheng · Five Elements Sound Healing",
         detail: "A live guzheng performance drawing from the ancient Chinese tradition of five musical tones — Gong, Shang, Jue, Zhi, and Yu — each resonating with the Five Elements and organ systems of the body. Designed to promote relaxation, mindfulness, and balance through music.",
         element: "quantum", secondElement: "earth",

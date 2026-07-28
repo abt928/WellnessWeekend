@@ -392,17 +392,17 @@ export const scheduleDays: ScheduleDay[] = [
       },
       {
         time: "5:00 PM",
-        event: "Closing Ceremony",
-        detail: "Led by Avalon Starling — we will make a love bridge to send you home with a full heart.",
+        event: "Closing & Integration Circle",
+        detail: "Led by Avalon Starling — a closing circle to integrate the weekend's medicine, share gratitude, and send you home with a full heart.",
         element: "fire", location: "Main Stage",
         hosts: ["avalon-starling"],
       },
       {
         time: "6:00 PM",
-        event: "Band Jam",
-        detail: "The weekend's musicians take the stage together for a live collaborative jam — one last wave of sound as a community.",
-        element: "air", secondElement: "quantum",
-        location: "Main Stage",
+        event: "Community Drumming",
+        detail: "An open community drumming circle at the fire — everyone is invited to play, move, and sound together as the weekend comes to a close.",
+        element: "fire", secondElement: "earth",
+        location: "Bonfire",
       },
       {
         time: "7:00 PM",

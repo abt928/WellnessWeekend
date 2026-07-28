@@ -217,7 +217,7 @@ export default function Home() {
               <p>Shawn Zuke opens at noon, followed by Kuf Knotz + Christine Elise, J Brave, and ÂKÅTÂLĖ — a full afternoon of conscious live music on the main stage. No tickets required beyond your weekend pass.</p>
             </div>
           </div>
-          <p className="family-day-note">The weekend closes at 5 PM with a group ceremony led by Avalon Starling — and the musicians take the stage together for one final Band Jam as the community gathers to say goodbye.</p>
+          <p className="family-day-note">The weekend closes at 5 PM with a Closing &amp; Integration Circle led by Avalon Starling — followed by Community Drumming at the bonfire where everyone is invited to play, move, and sound together one last time.</p>
         </Reveal>
       </section>
 

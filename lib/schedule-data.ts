@@ -176,7 +176,7 @@ export const scheduleDays: ScheduleDay[] = [
         hosts: ["ashleigh"],
       },
       {
-        time: "10:00 AM",
+        time: "10:30 AM",
         event: "Quantum Light Activation",
         detail: "Activate your healing with phototherapy — harness quantum light to renew the body and brighten the field.",
         element: "quantum", location: "Main Stage",
@@ -197,13 +197,6 @@ export const scheduleDays: ScheduleDay[] = [
         element: "earth", secondElement: "air",
         location: "Main Stage",
         hosts: ["jenni"],
-      },
-      {
-        time: "5:00 PM",
-        event: "Miracle of Mind",
-        detail: "30 min · Beginner-friendly guided meditation and open discussion on the power of the mind.",
-        element: "earth", location: "Labyrinth Garden",
-        hosts: ["logan-forehand"],
       },
       {
         time: "12:00 PM",
@@ -262,6 +255,13 @@ export const scheduleDays: ScheduleDay[] = [
         event: "Tarot + Tea Party",
         detail: "Daily gathering of readers and seekers in the garden — tea, cards, and connection.",
         element: "earth", location: "Labyrinth Garden",
+      },
+      {
+        time: "5:00 PM",
+        event: "Miracle of Mind",
+        detail: "30 min · Beginner-friendly guided meditation and open discussion on the power of the mind.",
+        element: "earth", location: "Labyrinth Garden",
+        hosts: ["logan-forehand"],
       },
       {
         time: "5:30 PM",

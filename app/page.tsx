@@ -110,7 +110,7 @@ export default function Home() {
         <div className="hero-overlay" />
         <span className="hero-fire-horse-ghost" aria-hidden="true">🐎</span>
         <div className="hero-content">
-          <span className="hero-badge">4th Annual Gathering · Lion's Gate</span>
+          <span className="hero-badge">⚡ Final Days — August 7 is Almost Here</span>
           <h1 className="hero-title">
             Wellness <em>Weekend</em>
           </h1>
@@ -119,8 +119,11 @@ export default function Home() {
           </p>
           <p className="hero-date">August 7 – 9, 2026 · Sutton, Alaska</p>
           <a href="#store" className="hero-cta">
-            Get Your Tickets
+            Last Call — Secure Your Spot →
           </a>
+          <p style={{ fontSize: "0.78rem", color: "rgba(255,255,255,0.5)", letterSpacing: "0.08em", textTransform: "uppercase", marginTop: "0.75rem" }}>
+            Final spots available · Don&apos;t miss it
+          </p>
           <CountdownTimer />
         </div>
         <div className="scroll-indicator">
@@ -133,11 +136,11 @@ export default function Home() {
         </div>
       </section>
 
-      {/* ═══ SCHEDULE ═══ */}
-      <Schedule />
-
       {/* ═══ PHOTO STRIP ═══ */}
       <PhotoStrip />
+
+      {/* ═══ SCHEDULE ═══ */}
+      <Schedule />
 
       {/* ═══ TICKETS STORE ═══ */}
       <Store />

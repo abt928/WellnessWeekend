@@ -152,7 +152,7 @@ export default function ConversionNudges() {
       {showWelcomeBack && !showExitIntent && (
         <div className="welcome-toast" role="status" aria-live="polite">
           <span className="welcome-toast-icon"><LeafIcon size={18} color="var(--sage-light)" /></span>
-          <span>Welcome back, seeker. Your journey continues.</span>
+          <span>Welcome back — August 7 is almost here. Final spots available.</span>
         </div>
       )}
 
@@ -193,11 +193,11 @@ export default function ConversionNudges() {
               <>
                 <div className="exit-icon"><SparklesIcon size={36} color="var(--gold)" /></div>
                 <h3 id={exitTitleId} className="exit-title">
-                  Before you go.
+                  August 7 is 9 days away.
                 </h3>
                 <p className="exit-desc">
-                  Be first to know when early-bird tickets open and when the schedule drops.
-                  No noise. A few thoughtful updates as the gathering approaches.
+                  Final spots are going fast. Drop your email and we&apos;ll send you everything you need
+                  to know before we head to Sutton — last-call details, what to bring, and how to find us.
                 </p>
                 <form className="exit-form" onSubmit={handleSubmit}>
                   <input

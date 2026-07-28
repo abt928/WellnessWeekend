@@ -9,14 +9,14 @@ import { SHIFT_MAP, SHIFTS } from "@/lib/volunteer-shifts";
 type TableName =
   | "leads" | "newsletter" | "vendors" | "volunteers"
   | "sponsors" | "instructor_waitlist" | "affiliates" | "referral_events"
-  | "volunteer_registrations" | "warriors" | "members" | "staff_registrations" | "staff_guests";
+  | "volunteer_registrations" | "warriors" | "members" | "staff_registrations" | "staff_guests" | "contrast_bookings";
 
 type ActiveTab =
   | "overview" | "loyalty" | "budget"
   | "affiliates" | "referral_events" | "newsletter" | "leads"
   | "vendor_agreements"
   | "vendors" | "volunteers" | "volunteer_registrations" | "warriors" | "instructor_waitlist" | "sponsors"
-  | "staff_registrations" | "staff_guests"
+  | "staff_registrations" | "staff_guests" | "contrast_bookings"
   | "confirmations";
 
 interface TabConfig {
@@ -2034,6 +2034,7 @@ export default function AdminPage() {
         {tab("warriors", "Warriors")}
         {tab("staff_registrations", "Staff")}
         {tab("staff_guests", "Staff Guests")}
+        {tab("contrast_bookings", "Contrast Therapy")}
         {tab("instructor_waitlist", "Instructors")}
         {tab("sponsors", "Sponsors")}
 
@@ -2057,6 +2058,7 @@ export default function AdminPage() {
       {activeTab === "warriors"                 && <DataTab tableKey="warriors"                 columns={["id","name","email","family_size","beds_needed","created_at"]} />}
       {activeTab === "staff_registrations"      && <DataTab tableKey="staff_registrations"      columns={["id","name","email","phone","role","emergency_contact_name","emergency_contact_phone","dietary_needs","ticket_code","created_at"]} />}
       {activeTab === "staff_guests"             && <DataTab tableKey="staff_guests"             columns={["id","staff_ticket_code","staff_name","guest_name","guest_email","ticket_code","created_at"]} />}
+      {activeTab === "contrast_bookings"        && <DataTab tableKey="contrast_bookings"        columns={["id","name","email","phone","slots","notes","created_at"]} />}
       {activeTab === "instructor_waitlist"      && <DataTab tableKey="instructor_waitlist"      columns={["id","name","email","phone","modality","years_teaching","interested_in_2026","interested_in_2027","offering","created_at"]} />}
       {activeTab === "sponsors"                 && <DataTab tableKey="sponsors"                 columns={["id","name","email","company","budget_range","interests","goals","created_at"]} />}
       {activeTab === "confirmations"            && <CommsTab />}

@@ -182,6 +182,16 @@ export const staffGuests = pgTable("staff_guests", {
   createdAt: timestamp("created_at", { withTimezone: true }).defaultNow().notNull(),
 });
 
+export const contrastBookings = pgTable("contrast_bookings", {
+  id: serial("id").primaryKey(),
+  name: varchar("name", { length: 255 }).notNull(),
+  email: varchar("email", { length: 255 }).notNull(),
+  phone: varchar("phone", { length: 50 }),
+  slots: text("slots").notNull(),
+  notes: text("notes"),
+  createdAt: timestamp("created_at", { withTimezone: true }).defaultNow().notNull(),
+});
+
 export const staffRegistrations = pgTable("staff_registrations", {
   id: serial("id").primaryKey(),
   name: varchar("name", { length: 255 }).notNull(),

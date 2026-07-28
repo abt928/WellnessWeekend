@@ -24,8 +24,6 @@ export interface ScheduleDay {
 
 export const LIONSGATE_GLOSS =
   "Our gathering falls on August 8th — the Lion's Gate Portal. A day of heightened energy and intentional outdoor ceremony. We step outside together at 8:08 AM to meet the day with full presence — mountain air, open sky, and the earth beneath bare feet.";
-export const CONTRAST_GLOSS =
-  "Alternating cold water immersion and heat activates circulation, reduces inflammation, and powerfully grounds the nervous system. Sessions run all day Friday–Sunday in 30-minute slots — sauna holds 4 people maximum. Must be booked in advance. Facilitated by Ashleigh Bicknell.";
 export const LABYRINTH_GLOSS =
   "One path in. One path out. The labyrinth garden is open throughout the weekend for silent walking, integration, and personal reflection between ceremonies.";
 
@@ -79,16 +77,6 @@ export const scheduleDays: ScheduleDay[] = [
         element: "air", location: "Aerial Rig",
         limited: true,
         hosts: ["beth"],
-      },
-      {
-        time: "3:00 PM",
-        event: "Contrast Therapy",
-        detail: "30 min · Cold plunge + heat cycling to activate circulation, reduce inflammation, and ground your nervous system.",
-        element: "water", secondElement: "fire",
-        location: "Lakeside",
-        gloss: CONTRAST_GLOSS,
-        limited: true,
-        hosts: ["ashleigh"],
       },
       {
         time: "4:00 PM",
@@ -164,16 +152,6 @@ export const scheduleDays: ScheduleDay[] = [
         detail: "90 min · An energizing embodiment practice weaving sound, breath, and asana to build genuine health from the inside out.",
         element: "earth", location: "Main Stage",
         hosts: ["logan-forehand"],
-      },
-      {
-        time: "9:30 AM",
-        event: "Contrast Therapy",
-        detail: "30 min · Cold plunge + heat cycling — ground and reset before the day unfolds.",
-        element: "water", secondElement: "fire",
-        location: "Lakeside",
-        gloss: CONTRAST_GLOSS,
-        limited: true,
-        hosts: ["ashleigh"],
       },
       {
         time: "10:30 AM",
@@ -265,16 +243,6 @@ export const scheduleDays: ScheduleDay[] = [
         hosts: ["jing-xi-kang"],
       },
       {
-        time: "5:30 PM",
-        event: "Contrast Therapy",
-        detail: "30 min · Final session of the day — prepare your body for an evening of ceremony.",
-        element: "water", secondElement: "fire",
-        location: "Lakeside",
-        gloss: CONTRAST_GLOSS,
-        limited: true,
-        hosts: ["ashleigh"],
-      },
-      {
         time: "6:00 PM",
         event: "S7INGRAE & Brackish",
         detail: "A live set to carry the community from afternoon practice into the evening's ceremony.",
@@ -321,16 +289,6 @@ export const scheduleDays: ScheduleDay[] = [
       },
       {
         time: "9:00 AM",
-        event: "Contrast Therapy",
-        detail: "30 min · Cold plunge + sauna cycling, available all day. Must be booked in advance.",
-        element: "water", secondElement: "fire",
-        location: "Lakeside",
-        gloss: CONTRAST_GLOSS,
-        limited: true,
-        hosts: ["ashleigh"],
-      },
-      {
-        time: "9:00 AM",
         event: "Pranayama Breathwork",
         detail: "30 min · A guided breathing session from the Isha Foundation to ground and open before the day's ceremonies.",
         element: "air", secondElement: "earth",
@@ -359,16 +317,6 @@ export const scheduleDays: ScheduleDay[] = [
         element: "earth", secondElement: "fire", thirdElement: "quantum",
         location: "Labyrinth Garden",
         hosts: ["mary"],
-      },
-      {
-        time: "11:30 AM",
-        event: "Contrast Therapy",
-        detail: "30 min · Invigorate and integrate — book in advance.",
-        element: "water", secondElement: "fire",
-        location: "Lakeside",
-        gloss: CONTRAST_GLOSS,
-        limited: true,
-        hosts: ["ashleigh"],
       },
       {
         time: "12:00 PM",

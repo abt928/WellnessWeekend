@@ -131,10 +131,10 @@ export const practitioners: Practitioner[] = [
   },
   {
     slug: "mary",
-    name: "High Vibration Mary",
+    name: "High Vibin Mary",
     role: "Yin Yoga & Sound Healing Teacher",
     offering: "Yin Yoga & Sound Savasana",
-    bio: "High Vibration Mary is a yin yoga teacher and sound healer whose slow, intentional classes work deep into the connective tissue while her soundscapes carry you further than stretching alone ever could. Expect long holds, deep release, and a savasana you won't want to leave.",
+    bio: "High Vibin Mary is a yin yoga teacher and sound healer whose slow, intentional classes work deep into the connective tissue while her soundscapes carry you further than stretching alone ever could. Expect long holds, deep release, and a savasana you won't want to leave.",
   },
   {
     slug: "meghan",

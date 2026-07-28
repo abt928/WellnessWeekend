@@ -74,7 +74,7 @@ export default function Home() {
         addressCountry: "US",
       },
     },
-    image: ["https://wellnessweekendak.com/images/hero.png"],
+    image: ["https://wellnessweekendak.com/images/og-thumbnail.jpg"],
     organizer: {
       "@type": "Organization",
       name: "Wellness Weekend",
@@ -145,25 +145,6 @@ export default function Home() {
       {/* ═══ TICKETS STORE ═══ */}
       <Store />
 
-      {/* ═══ ECSTATIC DANCE TICKETS ═══ */}
-      <section className="section dance-cta-section">
-        <Reveal>
-          <div className="dance-cta-card">
-            <p className="section-label" style={{ color: "var(--gold-light)" }}>Music Only</p>
-            <h2 className="dance-cta-title">Can&apos;t stay all weekend?<br />Don&apos;t miss the music.</h2>
-            <p className="dance-cta-desc">
-              Join us for the ecstatic dance party — live sets, movement medicine, and music under the Alaskan sky.
-              Now offering single-day music tickets so everyone can experience the magic.
-            </p>
-            <div className="dance-cta-price">
-              <span className="dance-cta-amount">$33</span>
-              <span className="dance-cta-per"> / day</span>
-            </div>
-            <a href="#store" className="dance-cta-btn">Get Music Tickets →</a>
-          </div>
-        </Reveal>
-      </section>
-
       {/* ═══ PACKAGES ═══ */}
       <Packages />
 
@@ -213,28 +194,30 @@ export default function Home() {
           <p className="section-label">Sunday · August 9</p>
           <h2 className="section-title">Family Day.</h2>
           <p className="section-desc">
-            Wellness for all ages — Sunday is dedicated to families, children, and the next generation of earth stewards.
+            Sunday is a soft landing — the most open, most alive day of the weekend.
+            Morning practices for little ones, live music on the main stage all afternoon,
+            and a closing ceremony that sends every family home full.
           </p>
         </Reveal>
         <Reveal>
           <div className="family-day-grid">
             <div className="family-day-feature">
-              <div className="family-day-icon">🪁</div>
-              <h3>Intro Aerial Silks for Kids</h3>
-              <p>Children discover the joy of movement in the air with a beginner-friendly aerial silks session. Limited spots — reserve ahead.</p>
+              <div className="family-day-icon">🧘</div>
+              <h3>Yoga & Meditation for All Ages</h3>
+              <p>Upa Yoga at 9 AM welcomes ages 7+ into gentle movement and breathwork. Isha Kriya at 9:30 AM offers a guided meditation for ages 12+ — two Isha Foundation practices designed to ground young minds before the day opens up.</p>
             </div>
             <div className="family-day-feature">
-              <div className="family-day-icon">🪨</div>
-              <h3>Crystal Scavenger Hunt</h3>
-              <p>A guided crystal hunt through the grounds — kids learn about the stones of the earth and keep what they find.</p>
+              <div className="family-day-icon">🌊</div>
+              <h3>Kids on the Water & in the Air</h3>
+              <p>Kids Paddleboard at 1 PM and Intro Aerial Silks for Kids at 2 PM — two of the weekend&apos;s most loved spots for young adventurers. Limited spaces; family passes include both.</p>
             </div>
             <div className="family-day-feature">
-              <div className="family-day-icon">🌿</div>
-              <h3>Arts, Crafts & Nature Play</h3>
-              <p>Needlefelting, nature art, and free play in the labyrinth garden. All materials provided.</p>
+              <div className="family-day-icon">🎶</div>
+              <h3>Live Music All Afternoon</h3>
+              <p>Shawn Zuke opens at noon, followed by Kuf Knotz + Christine Elise, J Brave, and ÂKÅTÂLĖ — a full afternoon of conscious live music on the main stage. No tickets required beyond your weekend pass.</p>
             </div>
           </div>
-          <p className="family-day-note">All Family Day proceeds support youth wellness nonprofits in the Matanuska-Susitna Valley.</p>
+          <p className="family-day-note">The weekend closes at 5 PM with a group ceremony led by Avalon Starling — and the musicians take the stage together for one final Band Jam as the community gathers to say goodbye.</p>
         </Reveal>
       </section>
 

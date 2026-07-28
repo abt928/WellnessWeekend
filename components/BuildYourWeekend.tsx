@@ -1,17 +1,19 @@
 "use client";
 import { useState } from "react";
+import Link from "next/link";
 import BookingModal from "@/components/BookingModal";
 
-type ClassType = "sauna" | "aerial" | "paddle";
+type ClassType = "aerial" | "paddle";
 
-const ADDONS: { type: ClassType | null; icon: string; title: string; subtitle: string; desc: string; cta: string; fee?: boolean }[] = [
+const ADDONS: { type: ClassType | null; href?: string; icon: string; title: string; subtitle: string; desc: string; cta: string; fee?: boolean }[] = [
   {
-    type: "sauna" as ClassType,
+    type: null,
+    href: "/contrast-therapy",
     icon: "🔥",
     title: "Contrast Therapy",
     subtitle: "Hot · Cold · Reset",
     desc: "Alternating sauna heat and cold plunge to activate circulation, reduce inflammation, and ground your nervous system. 30-minute facilitated sessions at Lakeside.",
-    cta: "Reserve a Session",
+    cta: "Book a Session",
   },
   {
     type: "aerial" as ClassType,
@@ -53,6 +55,10 @@ export default function BuildYourWeekend() {
               </div>
               {a.fee ? (
                 <span className="build-card-fee">{a.cta}</span>
+              ) : a.href ? (
+                <Link href={a.href} className="build-card-cta">
+                  {a.cta}
+                </Link>
               ) : (
                 <button
                   className={`build-card-cta${a.type ? "" : " no-book"}`}

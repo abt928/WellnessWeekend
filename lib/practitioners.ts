@@ -36,8 +36,8 @@ export const practitioners: Practitioner[] = [
     slug: "logan-forehand",
     name: "Isha Foundation",
     role: "Yoga & Meditation",
-    offering: "Yoga for Health · Pranayama Breathwork · Miracle of Mind",
-    bio: "The Isha Foundation brings its signature offerings to Wellness Weekend — represented by Logan Forehand. Yoga for Health is a 90-minute practice weaving breath, sound, and asana to build genuine health from the inside out. Pranayama Breathwork is a 30-minute guided breathing session held each morning after the sound baths. Miracle of Mind is a 30-minute beginner-friendly guided meditation drawing from Isha's evidence-informed approach to inner wellbeing.",
+    offering: "Yoga for Health · Isha Kriya · Upa Yoga",
+    bio: "The Isha Foundation brings its signature offerings to Wellness Weekend — represented by Logan Forehand. On Saturday morning, Yoga for Health (8:30–9:45 AM) is a 75-minute practice weaving Yoga Namaskar, Nadi Shuddhi breathing — a technique that cleanses the nadis and restores psychological balance — and Miracle of Mind meditation into a single flowing session. Isha Kriya (9:45–10:30 AM) is a guided meditation using breath, thought, and awareness to align the mind and body. On Sunday, Upa Yoga (9:00 AM, ages 7+) offers a gentle 30-minute practice of Yoga Namaskar and Nadi Shuddhi, followed by Isha Kriya (9:30 AM, ages 12+).",
   },
   {
     slug: "shawn",

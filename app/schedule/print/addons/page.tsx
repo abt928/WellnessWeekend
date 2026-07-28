@@ -34,7 +34,7 @@ const ADDONS = [
     category: "Family Day",
     description:
       "Children discover the joy of movement in the air. Beginner-friendly and fully supervised. Sunday Family Day.",
-    when: "Sunday · 10:30 AM",
+    when: "Sunday · 2:00 PM",
     host: "Beth",
     price: "Add-on",
     limited: true,
@@ -45,7 +45,7 @@ const ADDONS = [
     category: "Movement",
     description:
       "All-levels stand-up paddleboard yoga on the lake. Beginner flow — expect to get wet and to feel amazing. One of the most memorable experiences of the weekend.",
-    when: "Friday 2 PM · Saturday 1 PM · Lakeside",
+    when: "Friday 2 PM · Saturday 1 PM · Sunday 3 PM · Lakeside",
     host: "Alice Sullivan · Ashleigh Bicknell",
     price: "Add-on",
     limited: true,

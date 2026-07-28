@@ -168,7 +168,7 @@ export const scheduleDays: ScheduleDay[] = [
       {
         time: "9:30 AM",
         event: "Contrast Therapy",
-        detail: "30 min · Cold plunge + heat cycling — ground and reset at the midpoint of your day.",
+        detail: "30 min · Cold plunge + heat cycling — ground and reset before the day unfolds.",
         element: "water", secondElement: "fire",
         location: "Lakeside",
         gloss: CONTRAST_GLOSS,
@@ -199,7 +199,7 @@ export const scheduleDays: ScheduleDay[] = [
         hosts: ["jenni"],
       },
       {
-        time: "11:00 AM",
+        time: "5:00 PM",
         event: "Miracle of Mind",
         detail: "30 min · Beginner-friendly guided meditation and open discussion on the power of the mind.",
         element: "earth", location: "Labyrinth Garden",
@@ -215,7 +215,7 @@ export const scheduleDays: ScheduleDay[] = [
       {
         time: "1:00 PM",
         event: "Paddleboard Yoga",
-        detail: "A midday flow on the water — all levels welcome.",
+        detail: "An afternoon flow on the water — all levels welcome.",
         element: "water", location: "Lakeside",
         limited: true,
         hosts: ["ashleigh"],
@@ -224,7 +224,7 @@ export const scheduleDays: ScheduleDay[] = [
         time: "2:00 PM",
         event: "A Trauma-Informed Approach to Self-Defense",
         detail: "Advanced practical self-defense skills combined with nervous system regulation, boundary setting, and how to respond from confidence rather than fear.",
-        element: "earth", location: "Lodge",
+        element: "earth", location: "Main Stage",
         hosts: ["meghan"],
       },
       {
@@ -236,7 +236,7 @@ export const scheduleDays: ScheduleDay[] = [
         hosts: ["beth"],
       },
       {
-        time: "2:30 PM",
+        time: "3:00 PM",
         event: "Flow & Touch — A Partner Yogassage Experience",
         detail: "Experience the healing combination of mindful movement, supportive touch, and breath. Learn simple partner techniques to release tension, improve mobility, and cultivate meaningful connection.",
         element: "earth", location: "Main Stage",
@@ -310,7 +310,7 @@ export const scheduleDays: ScheduleDay[] = [
     theme: "Soft Landing · Heart Opening · Family Day · Future",
     events: [
       {
-        time: "9:00 AM",
+        time: "8:00 AM",
         event: "Sound Journey",
         detail: "Handpan music and ambient sound bath nestled in the labyrinth garden.",
         element: "earth", secondElement: "air", thirdElement: "quantum",
@@ -329,11 +329,18 @@ export const scheduleDays: ScheduleDay[] = [
         hosts: ["ashleigh"],
       },
       {
-        time: "9:30 AM",
+        time: "9:00 AM",
         event: "Pranayama Breathwork",
         detail: "30 min · A guided breathing session from the Isha Foundation to ground and open before the day's ceremonies.",
         element: "air", secondElement: "earth",
         location: "Main Stage",
+        hosts: ["logan-forehand"],
+      },
+      {
+        time: "9:30 AM",
+        event: "Miracle of Mind",
+        detail: "30 min · Beginner-friendly guided meditation and open discussion on the power of the mind.",
+        element: "earth", location: "Labyrinth Garden",
         hosts: ["logan-forehand"],
       },
       {

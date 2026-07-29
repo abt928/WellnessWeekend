@@ -3,10 +3,10 @@ import { useRef, useState, useEffect, useCallback } from "react";
 import Link from "next/link";
 
 const SPACE_OPTIONS = [
-  { id: "1day-10x10",  label: "1 Day — 10×10 ft",                    price: 75,  days: 1 },
-  { id: "3day-10x10",  label: "3 Days — 10×10 ft",                   price: 200, days: 3 },
-  { id: "3day-10x20",  label: "3 Days — 10×20 ft",                   price: 300, days: 3 },
-  { id: "sponsor",     label: "Sponsor / Partner (Complimentary)",    price: 0,   days: 3 },
+  { id: "1day-10x10",  label: "1 Day — 10×10 ft",                    price: 100, days: 1, badge: "" },
+  { id: "3day-10x10",  label: "3 Days — 10×10 ft",                   price: 300, days: 3, badge: "" },
+  { id: "3day-10x20",  label: "3 Days — 10×20 ft (Premium)",         price: 400, days: 3, badge: "Only 1 left" },
+  { id: "sponsor",     label: "Sponsor / Partner (Complimentary)",    price: 0,   days: 3, badge: "" },
 ] as const;
 
 const EVENT_DAYS = ["Friday, August 7", "Saturday, August 8", "Sunday, August 9"];
@@ -241,6 +241,31 @@ export default function VendorAgreementPage() {
             </p>
           </header>
 
+          {/* Sponsor callout */}
+          <div style={{
+            background: "linear-gradient(135deg, #2d1f4e 0%, #1a2f4e 100%)",
+            border: "1.5px solid rgba(201,152,63,0.45)",
+            borderRadius: 14,
+            padding: "1.25rem 1.5rem",
+            marginBottom: "2rem",
+            display: "flex",
+            alignItems: "flex-start",
+            gap: "1rem",
+          }}>
+            <span style={{ fontSize: "1.5rem", flexShrink: 0 }}>✨</span>
+            <div>
+              <p style={{ fontWeight: 700, color: "#C9983F", marginBottom: "0.3rem", fontSize: "0.95rem" }}>
+                Looking for more reach? The $500 Sponsor level is an exceptional deal.
+              </p>
+              <p style={{ color: "rgba(255,255,255,0.75)", fontSize: "0.85rem", lineHeight: 1.6, margin: 0 }}>
+                Sponsors receive complimentary vendor space plus prominent branding, a dedicated feature in our marketing, and direct access to all festival guests.{" "}
+                <Link href="/sponsors" style={{ color: "#C9983F", fontWeight: 600 }}>
+                  View sponsor packages →
+                </Link>
+              </p>
+            </div>
+          </div>
+
           <form onSubmit={handleSubmit} className="vendor-form" noValidate>
 
             {/* ── Section 1: Contact Info ── */}
@@ -358,7 +383,20 @@ export default function VendorAgreementPage() {
                       onChange={() => { setSpaceType(opt.id); setSelectedDays([]); }}
                       className="vendor-radio-hidden"
                     />
-                    <div className="vendor-space-label">{opt.label}</div>
+                    <div className="vendor-space-label">
+                      {opt.label}
+                      {opt.badge && (
+                        <span style={{
+                          display: "inline-block", marginLeft: "0.5rem",
+                          background: "#B84A2B", color: "#fff",
+                          fontSize: "0.65rem", fontWeight: 700,
+                          padding: "0.15rem 0.5rem", borderRadius: 20,
+                          letterSpacing: "0.04em", textTransform: "uppercase", verticalAlign: "middle",
+                        }}>
+                          {opt.badge}
+                        </span>
+                      )}
+                    </div>
                     <div className="vendor-space-price">
                       {opt.price === 0 ? "Complimentary" : `$${opt.price}`}
                     </div>

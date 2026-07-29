@@ -34,10 +34,10 @@ export const practitioners: Practitioner[] = [
   },
   {
     slug: "logan-forehand",
-    name: "Isha Foundation",
-    role: "Yoga & Meditation",
+    name: "Isha instructor",
+    role: "Yoga & Meditation · Isha Foundation",
     offering: "Yoga for Health · Isha Kriya · Upa Yoga",
-    bio: "The Isha Foundation brings its signature offerings to Wellness Weekend — represented by Logan Forehand. On Saturday morning, Yoga for Health (8:30–9:45 AM) is a 75-minute practice weaving Yoga Namaskar, Nadi Shuddhi breathing — a technique that cleanses the nadis and restores psychological balance — and Miracle of Mind meditation into a single flowing session. Isha Kriya (9:45–10:30 AM) is a guided meditation using breath, thought, and awareness to align the mind and body. On Sunday, Upa Yoga (9:00 AM, ages 7+) offers a gentle 30-minute practice of Yoga Namaskar and Nadi Shuddhi, followed by Isha Kriya (9:30 AM, ages 12+).",
+    bio: "The Isha Foundation, founded by Sadhguru, has been raising human consciousness and cultivating human well-being through the yogic sciences for over 40 years. They are happy to bring several offerings from the science of yoga to Wellness Weekend. All sessions are accessible to all (age 12+) and do not require any prior yoga or meditation experience. In Meditation for Mental Health you will learn practices that promote a balanced system and psychological well-being, decrease stress & anxiety, and enhance mental clarity. You will cleanse the nadis (pranic pathways), and learn the Isha Kriya meditation for inner well-being. Yoga for Health includes cleansing of the nadis, a simple but powerful practice to stretch and activate the spine, and the guided Miracle of Mind meditation to enhance mental clarity and bring dynamism and emotional balance. Whether you are a beginner or an experienced yogi, these practices designed by Sadhguru are valuable tools for every human being.",
   },
   {
     slug: "shawn",

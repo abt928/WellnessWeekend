@@ -190,6 +190,7 @@ export const massageBookings = pgTable("massage_bookings", {
   practitioner: varchar("practitioner", { length: 100 }).notNull(),
   slot: varchar("slot", { length: 50 }).notNull(),
   sessionType: varchar("session_type", { length: 50 }),
+  hands: varchar("hands", { length: 20 }),
   notes: text("notes"),
   createdAt: timestamp("created_at", { withTimezone: true }).defaultNow().notNull(),
 });

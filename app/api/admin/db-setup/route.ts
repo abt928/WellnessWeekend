@@ -266,10 +266,12 @@ export async function POST(req: NextRequest) {
         practitioner VARCHAR(100) NOT NULL,
         slot VARCHAR(50) NOT NULL,
         session_type VARCHAR(50),
+        hands VARCHAR(20),
         notes TEXT,
         created_at TIMESTAMPTZ DEFAULT NOW() NOT NULL
       )
     `;
+    await sql`ALTER TABLE massage_bookings ADD COLUMN IF NOT EXISTS hands VARCHAR(20)`;
 
     await sql`
       CREATE TABLE IF NOT EXISTS contrast_bookings (

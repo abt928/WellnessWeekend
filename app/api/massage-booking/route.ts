@@ -4,7 +4,7 @@ import { massageBookings } from "@/lib/schema";
 
 export async function POST(req: NextRequest) {
   try {
-    const { name, email, phone, practitioner, slot, sessionType, notes } = await req.json();
+    const { name, email, phone, practitioner, slot, sessionType, hands, notes } = await req.json();
 
     if (!name?.trim() || !email?.trim() || !practitioner?.trim() || !slot?.trim()) {
       return NextResponse.json(
@@ -21,6 +21,7 @@ export async function POST(req: NextRequest) {
       practitioner: practitioner.trim(),
       slot: slot.trim(),
       sessionType: sessionType?.trim() || null,
+      hands: hands?.trim() || null,
       notes: notes?.trim() || null,
     });
 

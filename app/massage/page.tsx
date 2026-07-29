@@ -21,14 +21,14 @@ const PRACTITIONERS = [
   {
     key: "flow-massage",
     name: "Flow Massage",
-    role: "Licensed Massage Therapy · Chair & Table",
-    desc: "Flow Massage brings skilled therapeutic touch to the festival — specializing in relaxation, tension release, and nervous system support.",
+    role: "Licensed Massage Therapy · Chair Sessions",
+    desc: "Flow Massage offers 20-minute chair massage sessions throughout the weekend — perfect for tension release, nervous system support, and a quick reset between sessions.",
   },
   {
     key: "alaska-massage-band",
     name: "Alaska Massage Band",
-    role: "Therapeutic Massage · Bodywork",
-    desc: "The Alaska Massage Band offers deep therapeutic bodywork tailored to meet you where you are in the weekend — whether you need to open up, recover, or integrate.",
+    role: "Therapeutic Bodywork · 2 Hands or 4 Hands",
+    desc: "The Alaska Massage Band offers deep therapeutic bodywork in 30, 60, or 90-minute sessions. Choose 2 Hands (one therapist) or 4 Hands (two therapists working in sync) — price doubles for the 4-hands experience.",
   },
   {
     key: "no-preference",
@@ -36,6 +36,12 @@ const PRACTITIONERS = [
     role: "First available",
     desc: "We'll match you with the next available therapist.",
   },
+];
+
+const AMB_DURATIONS = ["30 minutes", "60 minutes", "90 minutes", "No preference"];
+const HANDS_OPTIONS = [
+  { key: "2-hands", label: "2 Hands", sub: "1 therapist" },
+  { key: "4-hands", label: "4 Hands", sub: "2 therapists · price doubles" },
 ];
 
 type DaySlot = {
@@ -96,7 +102,14 @@ export default function MassagePage() {
   const [practitioner, setPractitioner] = useState("");
   const [slot, setSlot] = useState("");
   const [sessionType, setSessionType] = useState("");
+  const [hands, setHands] = useState("");
   const [name, setName] = useState("");
+
+  function selectPractitioner(key: string) {
+    setPractitioner(key);
+    setSessionType(key === "flow-massage" ? "20 minutes (Chair)" : "");
+    setHands("");
+  }
   const [email, setEmail] = useState("");
   const [phone, setPhone] = useState("");
   const [notes, setNotes] = useState("");
@@ -114,7 +127,7 @@ export default function MassagePage() {
       const res = await fetch("/api/massage-booking", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ name: name.trim(), email: email.trim(), phone: phone.trim(), practitioner, slot, sessionType, notes: notes.trim() }),
+        body: JSON.stringify({ name: name.trim(), email: email.trim(), phone: phone.trim(), practitioner, slot, sessionType, hands, notes: notes.trim() }),
       });
       if (res.ok) {
         setStatus("sent");
@@ -178,7 +191,7 @@ export default function MassagePage() {
                 <button
                   key={p.key}
                   type="button"
-                  onClick={() => setPractitioner(p.key)}
+                  onClick={() => selectPractitioner(p.key)}
                   style={{
                     display: "flex", alignItems: "flex-start", gap: "1rem",
                     padding: "1rem 1.25rem",
@@ -207,30 +220,78 @@ export default function MassagePage() {
             })}
           </div>
 
-          {/* Step 2 — Session length */}
-          <h2 style={sectionHead}>2. Session length</h2>
-          <div style={{ display: "flex", gap: "0.6rem", flexWrap: "wrap", marginBottom: "2rem" }}>
-            {SESSION_TYPES.map(s => {
-              const active = sessionType === s;
-              return (
-                <button
-                  key={s}
-                  type="button"
-                  onClick={() => setSessionType(s)}
-                  style={{
+          {/* Step 2 — Session length (conditional by practitioner) */}
+          <h2 style={sectionHead}>2. Session type</h2>
+
+          {/* Flow Massage — fixed 20-min chair, just show a confirmation badge */}
+          {practitioner === "flow-massage" && (
+            <div style={{ display: "flex", alignItems: "center", gap: "0.75rem", marginBottom: "2rem", padding: "0.9rem 1.1rem", background: C.goldLight, border: `2px solid ${C.gold}`, borderRadius: 12 }}>
+              <span style={{ fontSize: "1.25rem" }}>💺</span>
+              <span>
+                <span style={{ display: "block", fontWeight: 700, color: C.charcoal, fontSize: "0.95rem" }}>20-Minute Chair Massage</span>
+                <span style={{ display: "block", color: C.muted, fontSize: "0.82rem", marginTop: 2 }}>Flow Massage offers chair sessions only — 20 minutes each.</span>
+              </span>
+            </div>
+          )}
+
+          {/* Alaska Massage Band — duration + hands */}
+          {practitioner === "alaska-massage-band" && (
+            <div style={{ marginBottom: "2rem" }}>
+              <p style={{ color: C.muted, fontSize: "0.83rem", marginBottom: "0.75rem" }}>Session length</p>
+              <div style={{ display: "flex", gap: "0.6rem", flexWrap: "wrap", marginBottom: "1.25rem" }}>
+                {AMB_DURATIONS.map(s => {
+                  const active = sessionType === s;
+                  return (
+                    <button key={s} type="button" onClick={() => setSessionType(s)} style={{
+                      padding: "0.6rem 1.2rem",
+                      background: active ? C.goldLight : C.card,
+                      border: `2px solid ${active ? C.gold : C.border}`,
+                      borderRadius: 30, cursor: "pointer", fontSize: "0.9rem",
+                      color: active ? C.charcoal : C.muted, fontWeight: active ? 700 : 400,
+                      transition: "all 0.15s ease",
+                    }}>{s}</button>
+                  );
+                })}
+              </div>
+              <p style={{ color: C.muted, fontSize: "0.83rem", marginBottom: "0.75rem" }}>Hands</p>
+              <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "0.6rem" }}>
+                {HANDS_OPTIONS.map(h => {
+                  const active = hands === h.key;
+                  return (
+                    <button key={h.key} type="button" onClick={() => setHands(h.key)} style={{
+                      padding: "0.75rem 1rem", textAlign: "left",
+                      background: active ? C.goldLight : C.card,
+                      border: `2px solid ${active ? C.gold : C.border}`,
+                      borderRadius: 12, cursor: "pointer",
+                      transition: "all 0.15s ease",
+                    }}>
+                      <span style={{ display: "block", fontWeight: 700, color: C.charcoal, fontSize: "0.95rem" }}>{h.label}</span>
+                      <span style={{ display: "block", color: C.muted, fontSize: "0.78rem", marginTop: 2 }}>{h.sub}</span>
+                    </button>
+                  );
+                })}
+              </div>
+            </div>
+          )}
+
+          {/* No preference — general options */}
+          {(practitioner === "no-preference" || practitioner === "") && (
+            <div style={{ display: "flex", gap: "0.6rem", flexWrap: "wrap", marginBottom: "2rem" }}>
+              {["30 minutes", "60 minutes", "90 minutes", "No preference"].map(s => {
+                const active = sessionType === s;
+                return (
+                  <button key={s} type="button" onClick={() => setSessionType(s)} style={{
                     padding: "0.6rem 1.2rem",
                     background: active ? C.goldLight : C.card,
                     border: `2px solid ${active ? C.gold : C.border}`,
                     borderRadius: 30, cursor: "pointer", fontSize: "0.9rem",
                     color: active ? C.charcoal : C.muted, fontWeight: active ? 700 : 400,
                     transition: "all 0.15s ease",
-                  }}
-                >
-                  {s}
-                </button>
-              );
-            })}
-          </div>
+                  }}>{s}</button>
+                );
+              })}
+            </div>
+          )}
 
           {/* Step 3 — Time slot */}
           <h2 style={sectionHead}>3. Choose a time</h2>

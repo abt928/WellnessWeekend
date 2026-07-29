@@ -105,6 +105,34 @@ export default function Home() {
 
       <main id="main">
 
+      {/* ═══ BRAND BANNER ═══ */}
+      <div style={{
+        background: "#fff",
+        display: "flex",
+        alignItems: "center",
+        justifyContent: "center",
+        gap: "clamp(1rem, 4vw, 3rem)",
+        padding: "2.5rem clamp(1rem, 5vw, 4rem)",
+        flexWrap: "wrap",
+      }}>
+        <Image
+          src="/images/brand-logo.png"
+          alt="Alaska's Healing Arts Festival — Wellness Weekend logo with fire horse and Flower of Life"
+          width={560}
+          height={720}
+          priority
+          style={{ width: "clamp(200px, 38vw, 420px)", height: "auto" }}
+        />
+        <Image
+          src="/images/lineup-2026-white.png"
+          alt="2026 Music Lineup — J Brave, ÂKÅTÂLĖ, Kuf Knotz + Christine Elise, Flowscape, S7INGRAE & BRACKISH, peacepixy, Shawn Zuke, Jing Xi Kang, High Vibin Mary"
+          width={560}
+          height={780}
+          priority
+          style={{ width: "clamp(180px, 34vw, 380px)", height: "auto" }}
+        />
+      </div>
+
       {/* ═══ HERO ═══ */}
       <section className="hero">
         <div className="hero-overlay" />

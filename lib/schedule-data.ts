@@ -149,7 +149,7 @@ export const scheduleDays: ScheduleDay[] = [
       {
         time: "9:45 AM",
         event: "Isha Kriya",
-        detail: "45 min · A powerful guided meditation from the Isha Foundation that uses breath, thought, and awareness to align the mind and body. Suitable for all levels.",
+        detail: "45 min · A meditation process from Sadhguru to help you get in touch with the source of existence.",
         element: "quantum", secondElement: "earth",
         location: "Main Stage",
         hosts: ["logan-forehand"],
@@ -291,7 +291,7 @@ export const scheduleDays: ScheduleDay[] = [
       {
         time: "9:30 AM",
         event: "Isha Kriya",
-        detail: "30 min · A guided meditation using breath, thought, and awareness to align the mind and body. Ages 12+.",
+        detail: "30 min · A meditation process from Sadhguru to help you get in touch with the source of existence.",
         element: "quantum", secondElement: "earth",
         location: "Main Stage",
         hosts: ["logan-forehand"],

@@ -88,6 +88,7 @@ export const practitioners: Practitioner[] = [
     role: "Hip Hop Artist & Conscious Lyricist",
     offering: "Live Music · Sunday Main Stage",
     bio: "Kuf Knotz is an award-winning hip hop artist, producer, and poet whose music has been described as soul medicine in rhyme form. His live performances weave conscious lyricism with groove-heavy production into something that moves the body and the spirit simultaneously.",
+    photo: "/images/practitioners/kuf-knotz-christine-elise.jpg",
     isMusician: true,
   },
   {
@@ -96,6 +97,7 @@ export const practitioners: Practitioner[] = [
     role: "Singer-Songwriter & Multi-Instrumentalist",
     offering: "Live Music · Sunday Main Stage",
     bio: "Christine Elise is a singer-songwriter and multi-instrumentalist whose intimate performances are powered by raw honesty and melodic precision. She performs alongside Kuf Knotz for a Sunday afternoon set that will leave you sitting in silence for a moment before you remember to applaud.",
+    photo: "/images/practitioners/kuf-knotz-christine-elise.jpg",
     isMusician: true,
   },
   {

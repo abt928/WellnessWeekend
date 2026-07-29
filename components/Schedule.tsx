@@ -163,6 +163,9 @@ export default function Schedule() {
               {e.limited && (
                 <a href="#store" className="schedule-limited">Limited · Book ahead</a>
               )}
+              {e.link && (
+                <a href={e.link} className="schedule-limited">Register →</a>
+              )}
               {e.fee && (
                 <span className="schedule-fee">{e.fee}</span>
               )}

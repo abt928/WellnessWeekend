@@ -11,6 +11,7 @@ export interface ScheduleEvent {
   gloss?: string;
   limited?: boolean;
   fee?: string;
+  link?: string;
   hosts?: string[];
 }
 
@@ -145,6 +146,14 @@ export const scheduleDays: ScheduleDay[] = [
         element: "earth", secondElement: "air",
         location: "Main Stage",
         hosts: ["logan-forehand"],
+      },
+      {
+        time: "9:00 AM",
+        event: "Sauna · Contrast Therapy",
+        detail: "Hot sauna + cold plunge — 30-minute facilitated sessions open all day at Lakeside. Register ahead to secure your slot.",
+        element: "fire", secondElement: "water",
+        location: "Lakeside",
+        link: "/contrast-therapy",
       },
       {
         time: "9:45 AM",
@@ -287,6 +296,14 @@ export const scheduleDays: ScheduleDay[] = [
         location: "Labyrinth Garden",
         gloss: LABYRINTH_GLOSS,
         hosts: ["peace-pixy"],
+      },
+      {
+        time: "9:00 AM",
+        event: "Sauna · Contrast Therapy",
+        detail: "Hot sauna + cold plunge — 30-minute facilitated sessions open all day at Lakeside. Register ahead to secure your slot.",
+        element: "fire", secondElement: "water",
+        location: "Lakeside",
+        link: "/contrast-therapy",
       },
       {
         time: "9:30 AM",

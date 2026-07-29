@@ -22,7 +22,7 @@ const ADDONS: { type: ClassType | null; href?: string; icon: string; title: stri
     title: "Contrast Therapy",
     subtitle: "Hot · Cold · Reset",
     desc: "Alternating sauna heat and cold plunge to activate circulation, reduce inflammation, and ground your nervous system. 30-minute facilitated sessions at Lakeside.",
-    cta: "Book a Session",
+    cta: "View Sessions",
   },
   {
     type: "aerial" as ClassType,

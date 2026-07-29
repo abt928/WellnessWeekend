@@ -17,6 +17,7 @@ export const practitioners: Practitioner[] = [
     role: "Master Sound Healer & Festival Director",
     offering: "Lionsgate Activation · Floating Sound Bath",
     bio: "Avalon Starling is a master sound healer and the founder and director of Wellness Weekend. Her Lionsgate Activation on the morning of August 8th invites participants to float in an aerial silk hammock or on the lake by paddleboard — a ceremony of sound, embodied presence, and light held under the Alaskan sky.",
+    photo: "/images/practitioners/avalon-starling.jpg",
   },
   {
     slug: "ashleigh",

@@ -3,6 +3,7 @@ import Image from "next/image";
 import { useState, useEffect, useCallback } from "react";
 
 const PHOTOS = [
+  { src: "/images/gallery/2026_Avalon-Starling-Drum-Ceremony.jpg",                        alt: "Avalon Starling leading drum ceremony" },
   { src: "/images/gallery/2025-08-09_Festival_Wellness_Group-Circle-Arms-Raised.jpg",     alt: "Community circle, arms raised" },
   { src: "/images/gallery/2025-08-09_Festival_Wellness_Woman-Dancing-Colorful-Dress.jpg", alt: "Dancer in colorful dress" },
   { src: "/images/gallery/2023-08-06_Festival_Wellness_Crystal-Bowls-Sound-Healing.jpg",  alt: "Crystal bowl sound healing" },

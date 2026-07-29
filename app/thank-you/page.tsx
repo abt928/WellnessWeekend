@@ -7,6 +7,41 @@ export const metadata = {
   description: "Your order has been confirmed. See you under the midnight sun!",
 };
 
+const ADDONS = [
+  {
+    icon: "🌿",
+    title: "Massage",
+    desc: "Flow Massage · Alaska Massage Band — 30 or 60 min therapeutic sessions all weekend.",
+    cta: "Book Your Session",
+    href: "/massage",
+    accent: "#5E8A6A",
+  },
+  {
+    icon: "🔥",
+    title: "Contrast Therapy",
+    desc: "Hot sauna + cold plunge — 30-minute facilitated sessions at Lakeside. Limited slots.",
+    cta: "View Sessions",
+    href: "/contrast-therapy",
+    accent: "#C9983F",
+  },
+  {
+    icon: "🎋",
+    title: "Aerial Silk",
+    desc: "Beginner silks flow with instructor Beth — groups of 6. Reserve your spot ahead.",
+    cta: "Reserve a Spot",
+    href: "/#build",
+    accent: "#9B7FD4",
+  },
+  {
+    icon: "🏄",
+    title: "Paddleboard Yoga",
+    desc: "All-levels flow on the lake. You might get wet — that's part of the magic. 7 per session.",
+    cta: "Reserve a Spot",
+    href: "/#build",
+    accent: "#3DB8AF",
+  },
+];
+
 export default function ThankYou() {
   return (
     <main className="thankyou">
@@ -31,7 +66,46 @@ export default function ThankYou() {
             <span>Warrior Lodge, Sutton, Alaska</span>
           </div>
         </div>
-        <Link href="/" className="hero-cta" style={{ marginTop: "2rem" }}>
+
+        {/* Add-on booking prompt */}
+        <div style={{ marginTop: "2.5rem", width: "100%", maxWidth: 560, textAlign: "left" }}>
+          <p style={{ fontSize: "0.75rem", letterSpacing: "0.12em", textTransform: "uppercase", color: "var(--gold)", fontWeight: 700, marginBottom: "0.5rem" }}>
+            One more step
+          </p>
+          <h2 style={{ fontFamily: "var(--font-display)", fontSize: "clamp(1.3rem, 3.5vw, 1.8rem)", marginBottom: "0.5rem" }}>
+            Book Your Add-Ons
+          </h2>
+          <p style={{ color: "rgba(255,255,255,0.65)", fontSize: "0.9rem", lineHeight: 1.6, marginBottom: "1.5rem" }}>
+            Massage, contrast therapy, aerial silk, and paddleboard yoga all have limited availability — secure your spots now while they&apos;re open.
+          </p>
+          <div style={{ display: "grid", gap: "0.75rem" }}>
+            {ADDONS.map((a) => (
+              <Link
+                key={a.title}
+                href={a.href}
+                style={{
+                  display: "flex", alignItems: "center", gap: "1rem",
+                  background: "rgba(255,255,255,0.05)",
+                  border: "1.5px solid rgba(255,255,255,0.1)",
+                  borderRadius: 12, padding: "0.9rem 1.1rem",
+                  textDecoration: "none", color: "inherit",
+                  transition: "border-color 0.15s ease, background 0.15s ease",
+                }}
+              >
+                <span style={{ fontSize: "1.6rem", flexShrink: 0 }}>{a.icon}</span>
+                <span style={{ flex: 1 }}>
+                  <span style={{ display: "block", fontWeight: 700, fontSize: "0.95rem", color: "#fff", marginBottom: "0.15rem" }}>{a.title}</span>
+                  <span style={{ display: "block", fontSize: "0.8rem", color: "rgba(255,255,255,0.55)", lineHeight: 1.4 }}>{a.desc}</span>
+                </span>
+                <span style={{ flexShrink: 0, fontSize: "0.8rem", fontWeight: 700, color: a.accent, whiteSpace: "nowrap" }}>
+                  {a.cta} →
+                </span>
+              </Link>
+            ))}
+          </div>
+        </div>
+
+        <Link href="/" className="hero-cta" style={{ marginTop: "2.5rem" }}>
           Back to Home
         </Link>
       </div>

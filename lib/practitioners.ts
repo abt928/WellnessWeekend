@@ -53,6 +53,7 @@ export const practitioners: Practitioner[] = [
     role: "Aerial Silk Artist & SUP Yoga Instructor",
     offering: "Aerial Silk · Paddleboard Yoga",
     bio: "Alice is a certified aerial silk artist and stand-up paddleboard yoga instructor with a gift for making both disciplines accessible and joyful. Whether you're floating on fabric or floating on water, she meets you exactly where you are with encouragement, laughter, and skill.",
+    photo: "/images/practitioners/alice-sullivan.jpg",
   },
   {
     slug: "jenni",

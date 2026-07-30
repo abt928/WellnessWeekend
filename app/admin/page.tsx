@@ -343,13 +343,24 @@ interface ContrastBooking {
   id: number; name: string; email: string; phone: string | null;
   slots: string; notes: string | null; created_at: string;
 }
+interface OrderLineItem {
+  name: string; quantity: number; priceCents: number;
+}
+interface TicketOrder {
+  id: number; customer_name: string | null; customer_email: string | null;
+  amount_cents: number; referral_code: string | null;
+  line_items: OrderLineItem[] | string; created_at: string;
+}
 
 function GuestListTab() {
   const [massage, setMassage] = useState<MassageBooking[]>([]);
   const [contrast, setContrast] = useState<ContrastBooking[]>([]);
+  const [orders, setOrders] = useState<TicketOrder[]>([]);
   const [loading, setLoading] = useState(true);
-  const [view, setView] = useState<"massage" | "contrast" | "payouts">("massage");
+  const [view, setView] = useState<"tickets" | "massage" | "contrast" | "payouts">("tickets");
   const [rates, setRates] = useState<Record<string, string>>({});
+  const [syncing, setSyncing] = useState(false);
+  const [syncMsg, setSyncMsg] = useState<string | null>(null);
 
   const load = useCallback(async () => {
     setLoading(true);
@@ -359,9 +370,26 @@ function GuestListTab() {
         const d = await res.json();
         setMassage(d.massage ?? []);
         setContrast(d.contrast ?? []);
+        setOrders(d.orders ?? []);
       }
     } finally { setLoading(false); }
   }, []);
+
+  const syncOrders = async () => {
+    setSyncing(true); setSyncMsg(null);
+    try {
+      const res = await fetch("/api/admin/sync-orders", { method: "POST" });
+      const d = await res.json();
+      if (d.error) setSyncMsg("Error: " + d.error);
+      else { setSyncMsg(`Synced ${d.synced} orders from Square`); load(); }
+    } catch { setSyncMsg("Network error"); }
+    setSyncing(false);
+  };
+
+  const parseLineItems = (raw: OrderLineItem[] | string): OrderLineItem[] => {
+    if (Array.isArray(raw)) return raw;
+    try { return JSON.parse(raw as string) ?? []; } catch { return []; }
+  };
 
   useEffect(() => { load(); }, [load]);
 
@@ -379,6 +407,20 @@ function GuestListTab() {
     byPractitioner[b.practitioner].push(b);
   }
 
+  const exportOrdersCSV = () => {
+    const cols = ["Name","Email","Amount","Items","Referral","Purchased At"];
+    const csv = [cols.join(","), ...orders.map(o => {
+      const items = parseLineItems(o.line_items).map(li => `${li.quantity}x ${li.name}`).join("; ");
+      return [
+        o.customer_name ?? "", o.customer_email ?? "",
+        `$${(o.amount_cents / 100).toFixed(2)}`, items,
+        o.referral_code ?? "", o.created_at,
+      ].map(v => `"${String(v).replace(/"/g, '""')}"`).join(",");
+    })].join("\n");
+    const a = document.createElement("a"); a.href = URL.createObjectURL(new Blob([csv], { type: "text/csv" }));
+    a.download = `ticket_buyers_${new Date().toISOString().slice(0, 10)}.csv`; a.click();
+  };
+
   const exportMassageCSV = () => {
     const cols = ["Name","Email","Phone","Practitioner","Slot","Session Type","Hands","Notes","Booked At"];
     const csv = [cols.join(","), ...massage.map(b =>
@@ -390,21 +432,75 @@ function GuestListTab() {
 
   if (loading) return <div className="admin-loading">Loading guest list…</div>;
 
+  const totalRevenue = orders.reduce((s, o) => s + o.amount_cents, 0);
+
   return (
     <div style={{ padding: "1.5rem 2rem" }}>
       <div style={{ display: "flex", flexWrap: "wrap", gap: "1rem", marginBottom: "1.5rem" }}>
+        <StatCard label="Ticket Buyers" value={orders.length} accent="#D4AF3C" sub={orders.length > 0 ? usd(totalRevenue) + " total" : undefined} />
         <StatCard label="Massage Bookings" value={massage.length} accent="#8B5FBF" />
         <StatCard label="Practitioners" value={Object.keys(byPractitioner).length} />
         <StatCard label="Contrast Therapy" value={contrast.length} accent="#3DB8AF" />
       </div>
 
-      <div style={{ display: "flex", gap: "0.5rem", marginBottom: "1.25rem", alignItems: "center" }}>
-        <button style={subTab("massage", "Massage Bookings")} onClick={() => setView("massage")}>Massage Bookings</button>
-        <button style={subTab("contrast", "Contrast Therapy")} onClick={() => setView("contrast")}>Contrast Therapy</button>
-        <button style={subTab("payouts", "Payout Calculator")} onClick={() => setView("payouts")}>Payout Calculator</button>
-        <button onClick={load} style={{ marginLeft: "auto", fontSize: "0.78rem", color: "var(--ink-muted)", background: "none", border: "none", cursor: "pointer" }}>Refresh</button>
-        {view === "massage" && <button onClick={exportMassageCSV} className="admin-export-btn" disabled={!massage.length}>Export CSV</button>}
+      <div style={{ display: "flex", gap: "0.5rem", marginBottom: "1.25rem", alignItems: "center", flexWrap: "wrap" }}>
+        <button style={subTab("tickets", "Tickets")} onClick={() => setView("tickets")}>Ticket Buyers</button>
+        <button style={subTab("massage", "Massage")} onClick={() => setView("massage")}>Massage Bookings</button>
+        <button style={subTab("contrast", "Contrast")} onClick={() => setView("contrast")}>Contrast Therapy</button>
+        <button style={subTab("payouts", "Payouts")} onClick={() => setView("payouts")}>Payout Calculator</button>
+        <div style={{ marginLeft: "auto", display: "flex", gap: "0.5rem", alignItems: "center", flexWrap: "wrap" }}>
+          {syncMsg && <span style={{ fontSize: "0.75rem", color: syncMsg.startsWith("Error") ? "#f87171" : "#3DB8AF" }}>{syncMsg}</span>}
+          <button onClick={syncOrders} disabled={syncing} style={{ fontSize: "0.75rem", color: "var(--ink-muted)", background: "rgba(212,175,60,0.1)", border: "1px solid rgba(212,175,60,0.3)", borderRadius: "6px", padding: "0.3rem 0.7rem", cursor: "pointer", fontFamily: "inherit" }}>
+            {syncing ? "Syncing…" : "Sync from Square"}
+          </button>
+          <button onClick={load} style={{ fontSize: "0.78rem", color: "var(--ink-muted)", background: "none", border: "none", cursor: "pointer" }}>Refresh</button>
+          {view === "tickets" && <button onClick={exportOrdersCSV} className="admin-export-btn" disabled={!orders.length}>Export CSV</button>}
+          {view === "massage" && <button onClick={exportMassageCSV} className="admin-export-btn" disabled={!massage.length}>Export CSV</button>}
+        </div>
       </div>
+
+      {view === "tickets" && (
+        orders.length === 0 ? (
+          <div>
+            <div className="admin-empty">No ticket orders yet. Hit "Sync from Square" to pull your existing sales.</div>
+          </div>
+        ) : (
+          <div style={{ overflowX: "auto" }}>
+            <table style={{ width: "100%", borderCollapse: "collapse", background: "var(--surface-elevated)", borderRadius: "10px", overflow: "hidden" }}>
+              <thead><tr>
+                {["#","Name","Email","Amount","What They Bought","Referral","Purchased"].map(h => <th key={h} style={hcell}>{h}</th>)}
+              </tr></thead>
+              <tbody>
+                {orders.map((o, i) => {
+                  const items = parseLineItems(o.line_items);
+                  return (
+                    <tr key={o.id}>
+                      <td style={{ ...cell, color: "var(--ink-muted)", width: "2rem" }}>{i + 1}</td>
+                      <td style={{ ...cell, fontWeight: 600 }}>{o.customer_name || <span style={{ color: "var(--ink-muted)", fontStyle: "italic" }}>Unknown</span>}</td>
+                      <td style={{ ...cell, fontSize: "0.78rem" }}>{o.customer_email || "—"}</td>
+                      <td style={{ ...cell, fontWeight: 600, color: "#D4AF3C" }}>{usd(o.amount_cents)}</td>
+                      <td style={{ ...cell, fontSize: "0.78rem" }}>
+                        {items.length > 0 ? (
+                          <div style={{ display: "flex", flexDirection: "column", gap: "0.2rem" }}>
+                            {items.map((li, j) => (
+                              <div key={j} style={{ display: "flex", gap: "0.4rem", alignItems: "baseline" }}>
+                                <span style={{ color: "var(--ink)", fontWeight: 500 }}>{li.quantity > 1 ? `${li.quantity}×` : ""} {li.name}</span>
+                                <span style={{ color: "var(--ink-muted)", fontSize: "0.72rem" }}>{usd(li.priceCents)}</span>
+                              </div>
+                            ))}
+                          </div>
+                        ) : "—"}
+                      </td>
+                      <td style={{ ...cell, fontSize: "0.75rem", color: "var(--ink-muted)" }}>{o.referral_code || "—"}</td>
+                      <td style={{ ...cell, fontSize: "0.75rem", color: "var(--ink-muted)" }}>{fmtDate(o.created_at)}</td>
+                    </tr>
+                  );
+                })}
+              </tbody>
+            </table>
+          </div>
+        )
+      )}
 
       {view === "massage" && (
         massage.length === 0 ? <div className="admin-empty">No massage bookings yet</div> : (

@@ -20,7 +20,7 @@ export async function GET(req: NextRequest) {
           FROM massage_bookings ORDER BY created_at ASC`,
       sql`SELECT id, name, email, phone, slots, notes, created_at
           FROM contrast_bookings ORDER BY created_at ASC`,
-      sql`SELECT id, customer_email, amount_cents, line_items, created_at
+      sql`SELECT id, customer_name, customer_email, amount_cents, referral_code, line_items, created_at
           FROM orders WHERE status = 'completed' ORDER BY created_at DESC LIMIT 500`,
     ]);
 

@@ -2060,7 +2060,7 @@ export default function AdminPage() {
       {activeTab === "staff_registrations"      && <DataTab tableKey="staff_registrations"      columns={["id","name","email","phone","role","emergency_contact_name","emergency_contact_phone","dietary_needs","ticket_code","created_at"]} />}
       {activeTab === "staff_guests"             && <DataTab tableKey="staff_guests"             columns={["id","staff_ticket_code","staff_name","guest_name","guest_email","ticket_code","created_at"]} />}
       {activeTab === "contrast_bookings"        && <DataTab tableKey="contrast_bookings"        columns={["id","name","email","phone","slots","notes","created_at"]} />}
-      {activeTab === "massage_bookings"         && <DataTab tableKey="massage_bookings"         columns={["id","name","email","phone","practitioner","slot","session_type","notes","created_at"]} />}
+      {activeTab === "massage_bookings"         && <DataTab tableKey="massage_bookings"         columns={["id","name","email","phone","practitioner","slot","session_type","hands","notes","created_at"]} />}
       {activeTab === "instructor_waitlist"      && <DataTab tableKey="instructor_waitlist"      columns={["id","name","email","phone","modality","years_teaching","interested_in_2026","interested_in_2027","offering","created_at"]} />}
       {activeTab === "sponsors"                 && <DataTab tableKey="sponsors"                 columns={["id","name","email","company","budget_range","interests","goals","created_at"]} />}
       {activeTab === "confirmations"            && <CommsTab />}

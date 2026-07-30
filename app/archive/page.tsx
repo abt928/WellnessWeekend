@@ -1,6 +1,8 @@
 import Link from "next/link";
+import Image from "next/image";
 import Gallery from "@/components/Gallery";
 import ShareStoryForm from "./ShareStoryForm";
+import ScheduleViewer2023 from "./ScheduleViewer2023";
 
 export const metadata = {
   title: "Archive | Wellness Weekend",
@@ -14,6 +16,7 @@ const YEARS = [
     theme: "Sound · Fire · Community",
     color: "#9B7FD4",
     story: "The third year brought more voices, more ceremony, and deeper roots. A community that was finding its shape in 2024 now knew itself. The land remembered everyone who returned.",
+    hasSchedule: false,
   },
   {
     year: 2024,
@@ -21,6 +24,7 @@ const YEARS = [
     theme: "Earth · Water · Ceremony",
     color: "#3DB8AF",
     story: "Year two was where the container deepened. Teachers came back. First-timers became regulars. The labyrinth walked more feet. The fire burned longer.",
+    hasSchedule: false,
   },
   {
     year: 2023,
@@ -28,6 +32,7 @@ const YEARS = [
     theme: "Where It All Began",
     color: "#C9983F",
     story: "A small circle of healers gathered on the land in Sutton for the first time. Nobody knew what it would become. The fire was lit. The water was still. Something began.",
+    hasSchedule: true,
   },
 ];
 
@@ -112,18 +117,24 @@ export default function ArchivePage() {
                 {y.story}
               </p>
 
-              <div style={{ display: "flex", gap: "0.5rem", flexWrap: "wrap", marginTop: "1.1rem" }}>
-                {["Schedule", "Music", "Gallery", "Highlights"].map((item) => (
-                  <span key={item} style={{
-                    fontSize: "0.72rem", color: "rgba(255,255,255,0.28)",
-                    background: "rgba(255,255,255,0.04)",
-                    border: "1px solid rgba(255,255,255,0.07)",
-                    borderRadius: 20, padding: "0.2rem 0.6rem",
-                  }}>
-                    {item} · coming soon
-                  </span>
-                ))}
-              </div>
+              {y.hasSchedule ? (
+                <div style={{ marginTop: "1.25rem" }}>
+                  <ScheduleViewer2023 color={y.color} />
+                </div>
+              ) : (
+                <div style={{ display: "flex", gap: "0.5rem", flexWrap: "wrap", marginTop: "1.1rem" }}>
+                  {["Schedule", "Music", "Gallery", "Highlights"].map((item) => (
+                    <span key={item} style={{
+                      fontSize: "0.72rem", color: "rgba(255,255,255,0.28)",
+                      background: "rgba(255,255,255,0.04)",
+                      border: "1px solid rgba(255,255,255,0.07)",
+                      borderRadius: 20, padding: "0.2rem 0.6rem",
+                    }}>
+                      {item} · coming soon
+                    </span>
+                  ))}
+                </div>
+              )}
             </div>
           </div>
         ))}

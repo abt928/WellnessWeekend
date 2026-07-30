@@ -3,7 +3,7 @@ import { useState } from "react";
 import { SPACES, type SacredSpace } from "@/lib/spaces";
 import SpaceModal from "@/components/SpaceModal";
 
-const SPACE_ORDER = ["Lakeside", "Bonfire", "Main Stage", "Labyrinth Garden", "Aerial Rig"];
+const SPACE_ORDER = ["Lakeside", "Sauna", "Bonfire", "Main Stage", "Labyrinth Garden", "Aerial Rig"];
 
 export default function SacredSpaces() {
   const [selected, setSelected] = useState<SacredSpace | null>(null);
@@ -73,9 +73,27 @@ export default function SacredSpaces() {
             })}
           </div>
 
-          {/* Labyrinth callout */}
+          {/* Sauna callout */}
           <div style={{
             marginTop: "1.75rem",
+            background: "rgba(192,90,42,0.08)",
+            border: "1px solid rgba(192,90,42,0.28)",
+            borderRadius: 12,
+            padding: "1rem 1.25rem",
+            display: "flex",
+            gap: "0.75rem",
+            alignItems: "flex-start",
+          }}>
+            <span style={{ fontSize: "1.2rem", flexShrink: 0 }}>🪵</span>
+            <p style={{ fontSize: "0.84rem", color: "rgba(255,255,255,0.6)", lineHeight: 1.7, margin: 0 }}>
+              <strong style={{ color: "#C05A2A" }}>Solstice Saunas brings their barrel sauna to the edge of the lake.</strong>{" "}
+              Cedar walls, a wood-fired stove, and a circular window framing the water. Open all weekend for bathing, contrast therapy, and deep integration between ceremonies.
+            </p>
+          </div>
+
+          {/* Labyrinth callout */}
+          <div style={{
+            marginTop: "0.85rem",
             background: "rgba(94,138,106,0.1)",
             border: "1px solid rgba(94,138,106,0.3)",
             borderRadius: 12,

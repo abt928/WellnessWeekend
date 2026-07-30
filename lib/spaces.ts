@@ -7,6 +7,7 @@ export interface SacredSpace {
   tagline: string;
   description: string;
   offerings: string[];
+  photo?: string;
 }
 
 export const SPACES: Record<string, SacredSpace> = {
@@ -86,6 +87,22 @@ export const SPACES: Record<string, SacredSpace> = {
       "Lionsgate Aerial Activation · Saturday 8 AM",
       "Intro Aerial for Kids · Sunday 2 PM",
     ],
+  },
+  "Sauna": {
+    key: "Sauna",
+    name: "The Sauna",
+    element: "Steam · Fire · Water",
+    elementColor: "#C05A2A",
+    icon: "🪵",
+    tagline: "Cedar walls, wood fire, and a view of the lake. The oldest healing ritual.",
+    description: "Solstice Saunas brings their legendary barrel sauna to the edge of the lake at Warrior Lodge — a cedar-lined sanctuary with a circular window that frames the water like a painting. The wood-fired stove heats the room to a slow, deep burn. The lake is right there for your cold plunge. Sauna bathing is one of the most ancient healing modalities on earth: heat opens what armor keeps closed, and the contrast of hot and cold resets the nervous system at a cellular level. At Wellness Weekend, this is where you come to integrate, to sweat out what no longer belongs, and to emerge clearer.",
+    offerings: [
+      "Open Sauna Bathing · All Weekend",
+      "Lakeside Cold Plunge",
+      "Contrast Therapy · Heat + Cold",
+      "Integration Sessions · Between Ceremonies",
+    ],
+    photo: "/images/client-2026/sauna-interior.jpg",
   },
 };
 

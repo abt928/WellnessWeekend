@@ -1,5 +1,6 @@
 "use client";
 import { useEffect, useRef } from "react";
+import Image from "next/image";
 import type { SacredSpace } from "@/lib/spaces";
 
 export default function SpaceModal({ space, onClose }: { space: SacredSpace; onClose: () => void }) {
@@ -66,6 +67,26 @@ export default function SpaceModal({ space, onClose }: { space: SacredSpace; onC
             {space.element}
           </span>
         </div>
+
+        {space.photo && (
+          <div style={{
+            margin: "0 -2.25rem 1.5rem",
+            position: "relative",
+            height: 180,
+            overflow: "hidden",
+          }}>
+            <Image
+              src={space.photo}
+              alt={space.name}
+              fill
+              style={{ objectFit: "cover", objectPosition: "center 40%" }}
+            />
+            <div style={{
+              position: "absolute", inset: 0,
+              background: `linear-gradient(to bottom, transparent 40%, #12121f 100%)`,
+            }} />
+          </div>
+        )}
 
         <h2 style={{
           fontFamily: "var(--font-display, serif)",

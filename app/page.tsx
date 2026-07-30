@@ -33,6 +33,13 @@ const partners = [
     logoHeight: 120,
   },
   {
+    name: "Solstice Saunas",
+    role: "Lakeside Sauna · Contrast Therapy",
+    logo: "/logos/solstice-saunas.jpg",
+    logoWidth: 300,
+    logoHeight: 180,
+  },
+  {
     name: "Flow Massage",
     role: "Licensed Massage Therapy",
     logo: "/logos/flow-massage.png",

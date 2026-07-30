@@ -10,7 +10,7 @@ export default function SacredSpaces() {
 
   return (
     <>
-      <section style={{
+      <section id="sacred-spaces" style={{
         background: "linear-gradient(180deg, #0d0d1a 0%, #10101e 100%)",
         padding: "4rem 1.5rem",
         borderTop: "1px solid rgba(255,255,255,0.06)",

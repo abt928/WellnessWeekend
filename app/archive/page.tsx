@@ -1,8 +1,10 @@
 import Link from "next/link";
+import Gallery from "@/components/Gallery";
+import ShareStoryForm from "./ShareStoryForm";
 
 export const metadata = {
   title: "Archive | Wellness Weekend",
-  description: "Past years of Wellness Weekend — schedules, music lineups, and memories from 2023, 2024, and 2025.",
+  description: "Our story through the years — past schedules, music, and memories from every Wellness Weekend gathering since 2023.",
 };
 
 const YEARS = [
@@ -10,25 +12,22 @@ const YEARS = [
     year: 2025,
     subtitle: "3rd Annual",
     theme: "Sound · Fire · Community",
-    highlights: ["Coming soon"],
     color: "#9B7FD4",
-    status: "coming-soon",
+    story: "The third year brought more voices, more ceremony, and deeper roots. A community that was finding its shape in 2024 now knew itself. The land remembered everyone who returned.",
   },
   {
     year: 2024,
     subtitle: "2nd Annual",
     theme: "Earth · Water · Ceremony",
-    highlights: ["Coming soon"],
     color: "#3DB8AF",
-    status: "coming-soon",
+    story: "Year two was where the container deepened. Teachers came back. First-timers became regulars. The labyrinth walked more feet. The fire burned longer.",
   },
   {
     year: 2023,
     subtitle: "1st Annual",
     theme: "Where It All Began",
-    highlights: ["Coming soon"],
     color: "#C9983F",
-    status: "coming-soon",
+    story: "A small circle of healers gathered on the land in Sutton for the first time. Nobody knew what it would become. The fire was lit. The water was still. Something began.",
   },
 ];
 
@@ -39,7 +38,7 @@ export default function ArchivePage() {
       {/* Header */}
       <div style={{
         background: "radial-gradient(ellipse at 50% 0%, rgba(139,95,191,0.3) 0%, transparent 60%), #0a0a14",
-        padding: "5rem 1.5rem 4rem",
+        padding: "5rem 1.5rem 3.5rem",
         textAlign: "center",
         borderBottom: "1px solid rgba(255,255,255,0.07)",
       }}>
@@ -52,99 +51,130 @@ export default function ArchivePage() {
         <h1 style={{ fontFamily: "var(--font-display, serif)", fontSize: "clamp(2.4rem, 7vw, 5rem)", lineHeight: 1.05, marginBottom: "1rem" }}>
           The Archive
         </h1>
-        <p style={{ color: "rgba(255,255,255,0.55)", fontSize: "1rem", lineHeight: 1.8, maxWidth: 480, margin: "0 auto" }}>
-          Four years of gathering on this land. Past schedules, music lineups, and memories from every year.
-        </p>
       </div>
 
+      {/* Our Story Through the Years */}
+      <section style={{ maxWidth: 820, margin: "0 auto", padding: "4rem 1.5rem 0" }}>
+        <p style={{ fontSize: "0.7rem", letterSpacing: "0.15em", textTransform: "uppercase", color: "rgba(255,255,255,0.4)", fontWeight: 600, marginBottom: "1rem" }}>
+          Our Story
+        </p>
+        <h2 style={{ fontFamily: "var(--font-display, serif)", fontSize: "clamp(1.8rem, 5vw, 3.2rem)", marginBottom: "1.5rem", lineHeight: 1.15 }}>
+          Our story<br />through the years.
+        </h2>
+        <div style={{ display: "grid", gap: "1.1rem", fontSize: "1rem", lineHeight: 1.85, color: "rgba(255,255,255,0.68)", maxWidth: 680 }}>
+          <p>
+            What began with a small circle of healers in the summer of 2023 has become one of Alaska&apos;s most quietly powerful gatherings. Not a festival. A gathering. A living thread of ceremony, sound, and shared presence.
+          </p>
+          <p>
+            Each year the community returns — different faces, deepening roots. Teachers who came as students. First-timers who drove through the night to make it. Families who camp together every August and leave changed in ways they&apos;re still discovering.
+          </p>
+          <p>
+            The land holds the memory of every circle we&apos;ve sat in, every fire we&apos;ve lit, every healing that has happened here. These pages are for the moments we want to carry forward — and for those who were there and want to share what it meant to them.
+          </p>
+        </div>
+      </section>
+
       {/* Year cards */}
-      <div style={{ maxWidth: 900, margin: "0 auto", padding: "4rem 1.5rem", display: "grid", gap: "2rem" }}>
+      <section style={{ maxWidth: 820, margin: "0 auto", padding: "3.5rem 1.5rem", display: "grid", gap: "1.25rem" }}>
         {YEARS.map((y) => (
           <div key={y.year} style={{
             border: `1px solid ${y.color}30`,
-            borderRadius: 20,
+            borderRadius: 18,
             overflow: "hidden",
-            background: `radial-gradient(ellipse at 10% 50%, ${y.color}15 0%, transparent 60%), rgba(255,255,255,0.03)`,
+            background: `radial-gradient(ellipse at 10% 50%, ${y.color}12 0%, transparent 55%), rgba(255,255,255,0.03)`,
+            display: "grid",
+            gridTemplateColumns: "auto 1fr",
+            gap: 0,
           }}>
-            {/* Photo placeholder */}
+            {/* Year accent */}
             <div style={{
-              height: 280,
-              background: `linear-gradient(135deg, ${y.color}20 0%, rgba(10,10,20,0.8) 100%)`,
-              display: "flex",
-              alignItems: "center",
-              justifyContent: "center",
-              position: "relative",
-              borderBottom: `1px solid ${y.color}20`,
-            }}>
-              <div style={{ textAlign: "center" }}>
-                <div style={{ fontFamily: "var(--font-display, serif)", fontSize: "clamp(4rem, 12vw, 8rem)", color: `${y.color}40`, lineHeight: 1, userSelect: "none" }}>
+              width: 6,
+              background: `linear-gradient(180deg, ${y.color} 0%, ${y.color}40 100%)`,
+            }} />
+
+            <div style={{ padding: "1.75rem 2rem" }}>
+              <div style={{ display: "flex", alignItems: "baseline", gap: "0.75rem", marginBottom: "0.4rem", flexWrap: "wrap" }}>
+                <span style={{ fontFamily: "var(--font-display, serif)", fontSize: "clamp(1.8rem, 5vw, 2.8rem)", lineHeight: 1, color: y.color }}>
                   {y.year}
-                </div>
-                <p style={{ color: "rgba(255,255,255,0.3)", fontSize: "0.8rem", letterSpacing: "0.12em", textTransform: "uppercase", marginTop: "0.5rem" }}>
-                  Photos coming soon
-                </p>
+                </span>
+                <span style={{
+                  fontSize: "0.65rem", fontWeight: 700, letterSpacing: "0.1em", textTransform: "uppercase",
+                  color: y.color, background: `${y.color}15`,
+                  border: `1px solid ${y.color}30`, padding: "0.2rem 0.6rem", borderRadius: 20,
+                }}>
+                  {y.subtitle}
+                </span>
               </div>
-              <div style={{
-                position: "absolute", top: "1rem", right: "1rem",
-                background: "rgba(0,0,0,0.5)", border: `1px solid ${y.color}50`,
-                borderRadius: 20, padding: "0.25rem 0.75rem",
-                fontSize: "0.65rem", fontWeight: 700, letterSpacing: "0.1em", textTransform: "uppercase",
-                color: y.color,
-              }}>
-                {y.subtitle}
-              </div>
-            </div>
+              <p style={{ fontSize: "0.75rem", color: y.color, letterSpacing: "0.08em", textTransform: "uppercase", fontWeight: 600, marginBottom: "0.6rem" }}>
+                {y.theme}
+              </p>
+              <p style={{ fontSize: "0.9rem", color: "rgba(255,255,255,0.6)", lineHeight: 1.7, margin: 0 }}>
+                {y.story}
+              </p>
 
-            {/* Card body */}
-            <div style={{ padding: "1.75rem 2rem 2rem" }}>
-              <div style={{ display: "flex", alignItems: "flex-start", justifyContent: "space-between", gap: "1rem", flexWrap: "wrap", marginBottom: "1.25rem" }}>
-                <div>
-                  <h2 style={{ fontFamily: "var(--font-display, serif)", fontSize: "clamp(1.6rem, 4vw, 2.4rem)", marginBottom: "0.25rem" }}>
-                    Wellness Weekend {y.year}
-                  </h2>
-                  <p style={{ color: y.color, fontSize: "0.82rem", letterSpacing: "0.08em", textTransform: "uppercase", fontWeight: 600 }}>
-                    {y.theme}
-                  </p>
-                </div>
-              </div>
-
-              <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(180px, 1fr))", gap: "0.75rem" }}>
-                {[
-                  { label: "Schedule", icon: "📅" },
-                  { label: "Music Lineup", icon: "🎵" },
-                  { label: "Photo Gallery", icon: "📷" },
-                  { label: "Highlights", icon: "✦" },
-                ].map((item) => (
-                  <div key={item.label} style={{
+              <div style={{ display: "flex", gap: "0.5rem", flexWrap: "wrap", marginTop: "1.1rem" }}>
+                {["Schedule", "Music", "Gallery", "Highlights"].map((item) => (
+                  <span key={item} style={{
+                    fontSize: "0.72rem", color: "rgba(255,255,255,0.28)",
                     background: "rgba(255,255,255,0.04)",
                     border: "1px solid rgba(255,255,255,0.07)",
-                    borderRadius: 10,
-                    padding: "0.85rem 1rem",
-                    display: "flex",
-                    alignItems: "center",
-                    gap: "0.6rem",
-                    color: "rgba(255,255,255,0.35)",
-                    fontSize: "0.85rem",
+                    borderRadius: 20, padding: "0.2rem 0.6rem",
                   }}>
-                    <span>{item.icon}</span>
-                    <span>{item.label}</span>
-                    <span style={{ marginLeft: "auto", fontSize: "0.65rem", letterSpacing: "0.08em", textTransform: "uppercase", color: "rgba(255,255,255,0.2)" }}>
-                      Soon
-                    </span>
-                  </div>
+                    {item} · coming soon
+                  </span>
                 ))}
               </div>
             </div>
           </div>
         ))}
-      </div>
+      </section>
 
-      {/* 2026 promo */}
-      <div style={{ textAlign: "center", padding: "2rem 1.5rem 5rem", borderTop: "1px solid rgba(255,255,255,0.06)" }}>
-        <p style={{ color: "rgba(255,255,255,0.4)", fontSize: "0.82rem", marginBottom: "1.25rem" }}>
-          You&apos;re reading the archive — the next chapter is still being written.
+      {/* Gallery */}
+      <section style={{ borderTop: "1px solid rgba(255,255,255,0.06)", paddingTop: "1rem" }}>
+        <div style={{ maxWidth: 820, margin: "0 auto", padding: "2rem 1.5rem 0.5rem" }}>
+          <p style={{ fontSize: "0.7rem", letterSpacing: "0.15em", textTransform: "uppercase", color: "rgba(255,255,255,0.4)", fontWeight: 600, marginBottom: "0.5rem" }}>
+            Moments in Time
+          </p>
+          <h2 style={{ fontFamily: "var(--font-display, serif)", fontSize: "clamp(1.6rem, 4vw, 2.8rem)", marginBottom: "0.5rem" }}>
+            The Memories.
+          </h2>
+          <p style={{ color: "rgba(255,255,255,0.5)", fontSize: "0.9rem", lineHeight: 1.7, maxWidth: 540, marginBottom: "1rem" }}>
+            Real moments from 2023, 2024, and 2025 — the joy, connection, and healing that unfolds every August under the midnight sun. Click any photo to open it.
+          </p>
+        </div>
+        <Gallery />
+      </section>
+
+      {/* Share Your Story */}
+      <section id="share" style={{
+        background: "radial-gradient(ellipse at 50% 0%, rgba(201,152,63,0.12) 0%, transparent 60%), rgba(255,255,255,0.02)",
+        borderTop: "1px solid rgba(255,255,255,0.07)",
+        padding: "5rem 1.5rem",
+      }}>
+        <div style={{ maxWidth: 600, margin: "0 auto" }}>
+          <p style={{ fontSize: "0.7rem", letterSpacing: "0.15em", textTransform: "uppercase", color: "var(--gold, #C9983F)", fontWeight: 600, marginBottom: "0.75rem", textAlign: "center" }}>
+            Community
+          </p>
+          <h2 style={{ fontFamily: "var(--font-display, serif)", fontSize: "clamp(1.8rem, 5vw, 3rem)", textAlign: "center", marginBottom: "0.75rem", lineHeight: 1.1 }}>
+            Share Your Story
+          </h2>
+          <p style={{ color: "rgba(255,255,255,0.55)", fontSize: "0.95rem", lineHeight: 1.8, textAlign: "center", marginBottom: "2.5rem" }}>
+            If you&apos;ve joined us before, we would love to hear what it meant to you. Photos and videos welcome — send them to{" "}
+            <a href="mailto:support@thesoundspace.us" style={{ color: "var(--gold, #C9983F)", textDecoration: "none" }}>
+              support@thesoundspace.us
+            </a>{" "}
+            with your name and year attended.
+          </p>
+          <ShareStoryForm />
+        </div>
+      </section>
+
+      {/* Back / 2026 CTA */}
+      <div style={{ textAlign: "center", padding: "3rem 1.5rem 5rem", borderTop: "1px solid rgba(255,255,255,0.06)" }}>
+        <p style={{ color: "rgba(255,255,255,0.3)", fontSize: "0.82rem", marginBottom: "1.25rem" }}>
+          The next chapter is being written now.
         </p>
-        <Link href="/" style={{
+        <Link href="/#store" style={{
           display: "inline-block",
           background: "var(--gold, #C9983F)", color: "#fff",
           fontWeight: 700, fontSize: "0.95rem",

@@ -2,9 +2,24 @@
 import { useEffect, useState, useCallback } from "react";
 import { CloseIcon } from "@/components/Icons";
 
+const NAV_LINKS = [
+  { label: "Schedule",       href: "/#schedule" },
+  { label: "Sacred Spaces",  href: "/#sacred-spaces" },
+  { label: "Ecstatic Dance", href: "/ecstatic-dance" },
+  { label: "Travel",         href: "/travel" },
+  { label: "Archive",        href: "/archive" },
+];
+
+const MOBILE_EXTRA = [
+  { label: "Book Your Session", href: "/#build" },
+  { label: "FAQ",               href: "/#faq" },
+  { label: "Get Involved",      href: "/#get-involved" },
+  { label: "Share Your Story",  href: "/archive#share" },
+];
+
 export default function Navigation() {
-  const [scrolled, setScrolled] = useState(false);
-  const [menuOpen, setMenuOpen] = useState(false);
+  const [scrolled, setScrolled]   = useState(false);
+  const [menuOpen, setMenuOpen]   = useState(false);
 
   useEffect(() => {
     const handler = () => setScrolled(window.scrollY > 50);
@@ -12,45 +27,37 @@ export default function Navigation() {
     return () => window.removeEventListener("scroll", handler);
   }, []);
 
-  // Lock body scroll when menu is open
   useEffect(() => {
-    if (menuOpen) {
-      document.body.style.overflow = "hidden";
-    } else {
-      document.body.style.overflow = "";
-    }
+    document.body.style.overflow = menuOpen ? "hidden" : "";
     return () => { document.body.style.overflow = ""; };
   }, [menuOpen]);
 
-  const closeMenu = useCallback(() => setMenuOpen(false), []);
+  const close = useCallback(() => setMenuOpen(false), []);
 
   return (
     <nav className={`nav${scrolled ? " scrolled" : ""}${menuOpen ? " menu-open" : ""}`}>
-      <div className="nav-logo">
-        Wellness Weekend
-      </div>
 
-      {/* Desktop nav links */}
+      {/* Logo */}
+      <a href="/" className="nav-logo" style={{ textDecoration: "none" }}>
+        Wellness Weekend
+      </a>
+
+      {/* Desktop links */}
       <ul className="nav-links">
-        <li><a href="#schedule">Schedule</a></li>
-        <li><a href="#gallery">Gallery</a></li>
-        <li><a href="#alaska">The Land</a></li>
-        <li><a href="#store">Tickets</a></li>
-        <li><a href="#faq">FAQ</a></li>
-        <li><a href="/archive">Archive</a></li>
+        {NAV_LINKS.map((l) => (
+          <li key={l.label}><a href={l.href}>{l.label}</a></li>
+        ))}
       </ul>
 
-      {/* Desktop CTA — surfaces only after first scroll past hero */}
-      {scrolled && (
-        <a href="#store" className="nav-cta-link">
-          <button className="nav-cta">Reserve Your Spot</button>
-        </a>
-      )}
+      {/* Desktop CTA */}
+      <a href="/#store" className="nav-cta-link" style={{ opacity: scrolled ? 1 : 0, pointerEvents: scrolled ? "auto" : "none", transition: "opacity 0.2s" }}>
+        <button className="nav-cta">Get Tickets</button>
+      </a>
 
-      {/* Mobile hamburger button */}
+      {/* Hamburger */}
       <button
         className="nav-hamburger"
-        onClick={() => setMenuOpen((prev) => !prev)}
+        onClick={() => setMenuOpen((p) => !p)}
         aria-label={menuOpen ? "Close menu" : "Open menu"}
         aria-expanded={menuOpen}
       >
@@ -59,29 +66,31 @@ export default function Navigation() {
         <span className="hamburger-line" />
       </button>
 
-      {/* Mobile slide-out menu */}
+      {/* Mobile menu */}
       {menuOpen && (
-        <div className="mobile-menu-overlay" onClick={closeMenu}>
+        <div className="mobile-menu-overlay" onClick={close}>
           <div className="mobile-menu" onClick={(e) => e.stopPropagation()}>
             <div className="mobile-menu-header">
-              <div className="nav-logo">
-                Wellness Weekend
-              </div>
-              <button className="mobile-menu-close" onClick={closeMenu} aria-label="Close menu">
+              <div className="nav-logo">Wellness Weekend</div>
+              <button className="mobile-menu-close" onClick={close} aria-label="Close menu">
                 <CloseIcon size={20} />
               </button>
             </div>
+
             <ul className="mobile-menu-links">
-              <li><a href="#schedule" onClick={closeMenu}>Schedule</a></li>
-              <li><a href="#store" onClick={closeMenu}>Tickets</a></li>
-              <li><a href="#gallery" onClick={closeMenu}>Gallery</a></li>
-              <li><a href="#alaska" onClick={closeMenu}>The Land</a></li>
-              <li><a href="#faq" onClick={closeMenu}>FAQ</a></li>
-              <li><a href="#get-involved" onClick={closeMenu}>Get Involved</a></li>
-              <li><a href="/archive" onClick={closeMenu}>Archive</a></li>
+              {NAV_LINKS.map((l) => (
+                <li key={l.label}><a href={l.href} onClick={close}>{l.label}</a></li>
+              ))}
+              <li style={{ borderTop: "1px solid rgba(255,255,255,0.1)", paddingTop: "0.5rem", marginTop: "0.25rem" }} />
+              {MOBILE_EXTRA.map((l) => (
+                <li key={l.label} style={{ opacity: 0.65 }}>
+                  <a href={l.href} onClick={close} style={{ fontSize: "0.9rem" }}>{l.label}</a>
+                </li>
+              ))}
             </ul>
-            <a href="#store" className="mobile-menu-cta" onClick={closeMenu}>
-              Reserve Your Spot
+
+            <a href="/#store" className="mobile-menu-cta" onClick={close}>
+              Get Tickets →
             </a>
           </div>
         </div>

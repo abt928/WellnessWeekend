@@ -7,7 +7,6 @@ import FAQ from "@/components/FAQ";
 import GetInvolved from "@/components/GetInvolved";
 import Store from "@/components/Store";
 import Packages from "@/components/Packages";
-import PhotoStrip from "@/components/PhotoStrip";
 import FloatingActions from "@/components/FloatingActions";
 import ConversionNudges from "@/components/ConversionNudges";
 import PartnerCard from "@/components/PartnerCard";
@@ -142,58 +141,35 @@ export default function Home() {
         />
       </div>
 
-      {/* ═══ HERO ═══ */}
-      <section className="hero">
-        <div className="hero-overlay" />
-        {/* Fire horse + Flower of Life — transparent PNG floats on the dark hero */}
-        <Image
-          src="/images/logo-fire-horse.png"
-          alt=""
-          aria-hidden="true"
-          width={700}
-          height={933}
-          priority
-          style={{
-            position: "absolute",
-            right: "-5%",
-            bottom: "0",
-            width: "clamp(280px, 55vw, 620px)",
-            height: "auto",
-            opacity: 0.22,
-            pointerEvents: "none",
-            zIndex: 1,
-            mixBlendMode: "screen",
-          }}
-        />
-        <div className="hero-content" style={{ position: "relative", zIndex: 2 }}>
-          <span className="hero-badge">⚡ Final Days — August 7 is Almost Here</span>
-          <h1 className="hero-title">
-            Wellness <em>Weekend</em>
-          </h1>
-          <p className="hero-subtitle">
-            A Healing Arts Gathering Under the Midnight Sun
-          </p>
-          <p className="hero-date">August 7 – 9, 2026 · Sutton, Alaska</p>
-          <a href="#store" className="hero-cta">
-            Last Call — Secure Your Spot →
-          </a>
-          <p style={{ fontSize: "0.78rem", color: "rgba(255,255,255,0.5)", letterSpacing: "0.08em", textTransform: "uppercase", marginTop: "0.75rem" }}>
-            Final spots available · Don&apos;t miss it
-          </p>
-          <CountdownTimer />
-        </div>
-        <div className="scroll-indicator">
-          <span>Discover</span>
-          <div className="scroll-constellation" aria-hidden="true">
-            <span className="constellation-dot" />
-            <span className="constellation-dot" />
-            <span className="constellation-dot" />
-          </div>
-        </div>
-      </section>
-
-      {/* ═══ PHOTO STRIP ═══ */}
-      <PhotoStrip />
+      {/* ═══ ANNOUNCEMENT BANNER ═══ */}
+      <div style={{
+        background: "radial-gradient(ellipse at 50% 0%, rgba(139,95,191,0.25) 0%, transparent 70%), #0a0a14",
+        borderBottom: "1px solid rgba(255,255,255,0.07)",
+        padding: "2rem 1.5rem",
+        textAlign: "center",
+      }}>
+        <p style={{ fontSize: "0.68rem", letterSpacing: "0.18em", textTransform: "uppercase", color: "var(--gold, #C9983F)", fontWeight: 700, marginBottom: "0.5rem" }}>
+          ⚡ August 7 – 9, 2026 · Warrior Lodge · Sutton, Alaska
+        </p>
+        <h1 style={{ fontFamily: "var(--font-display, serif)", fontSize: "clamp(1.8rem, 6vw, 3.2rem)", lineHeight: 1.1, marginBottom: "0.75rem", color: "#fff" }}>
+          Wellness <em style={{ color: "var(--gold, #C9983F)" }}>Weekend</em>
+        </h1>
+        <CountdownTimer />
+        <a href="#store" style={{
+          display: "inline-block",
+          marginTop: "1.1rem",
+          background: "var(--gold, #C9983F)",
+          color: "#fff",
+          fontWeight: 700,
+          fontSize: "0.9rem",
+          padding: "0.65rem 1.75rem",
+          borderRadius: 30,
+          textDecoration: "none",
+          letterSpacing: "0.02em",
+        }}>
+          Last Call — Get Your Ticket →
+        </a>
+      </div>
 
       {/* ═══ SCHEDULE ═══ */}
       <Schedule />

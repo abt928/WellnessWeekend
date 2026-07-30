@@ -340,10 +340,10 @@ export default function Store() {
     <section id="store" className="section store-section">
       <p className="section-label">Tickets & Add-Ons</p>
       <h2 className="section-title">
-        We welcome all guests for a day or a weekend.
+        Last call.
       </h2>
       <p className="section-desc">
-        Choose your tickets, add-on experiences, and merch — all processed securely through Square.
+        Prices will rise at the door — and we have a very limited number of spots remaining. Secure yours now.
       </p>
 
 
@@ -581,7 +581,7 @@ export default function Store() {
                   >
                     {checkingOut ? "Redirecting to checkout..." : "Proceed to Checkout"}
                   </button>
-                  <p className="cart-secure">🔒 Secure checkout powered by Square</p>
+                  <p className="cart-secure">🔒 Secure checkout</p>
                 </div>
               </>
             )}

@@ -48,10 +48,10 @@ export default function BuildYourWeekend() {
   return (
     <>
       <section id="build" className="section build-weekend">
-        <p className="section-label">Deepen Your Experience</p>
-        <h2 className="section-title">Build Your Weekend.</h2>
+        <p className="section-label">Add-On Experiences</p>
+        <h2 className="section-title">Book Your Session.</h2>
         <p className="section-desc">
-          Layer in what calls to you — each add-on session is bookable ahead of time so you arrive ready.
+          Layer in what calls to you — each add-on is bookable ahead of time so you arrive ready.
         </p>
         <div className="build-grid">
           {ADDONS.map((a) => (

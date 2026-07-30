@@ -12,7 +12,8 @@ import FloatingActions from "@/components/FloatingActions";
 import ConversionNudges from "@/components/ConversionNudges";
 import PartnerCard from "@/components/PartnerCard";
 import BuildYourWeekend from "@/components/BuildYourWeekend";
-import { PlaneIcon, MapPinIcon, LeafIcon, MoonIcon } from "@/components/Icons";
+import InstructorSlideshow from "@/components/InstructorSlideshow";
+import { MapPinIcon } from "@/components/Icons";
 
 /* ── static data ── */
 const partners = [
@@ -189,13 +190,7 @@ export default function Home() {
       {/* ═══ SCHEDULE ═══ */}
       <Schedule />
 
-      {/* ═══ TICKETS STORE ═══ */}
-      <Store />
-
-      {/* ═══ PACKAGES ═══ */}
-      <Packages />
-
-      {/* ═══ FEATURED LINEUP ═══ */}
+      {/* ═══ FEATURED LINEUP / MUSIC ═══ */}
       <section className="section lineup-section" style={{
         background:
           "radial-gradient(ellipse at 10% 20%, rgba(212,99,159,0.28) 0%, transparent 45%)," +
@@ -264,8 +259,17 @@ export default function Home() {
         </Reveal>
       </section>
 
-      {/* ═══ BUILD YOUR WEEKEND ═══ */}
+      {/* ═══ TICKETS STORE ═══ */}
+      <Store />
+
+      {/* ═══ PACKAGES ═══ */}
+      <Packages />
+
+      {/* ═══ BOOK YOUR SESSION ═══ */}
       <BuildYourWeekend />
+
+      {/* ═══ INSTRUCTOR SLIDESHOW ═══ */}
+      <InstructorSlideshow />
 
       {/* ═══ FAMILY DAY ═══ */}
       <section className="family-day-section section">
@@ -300,117 +304,33 @@ export default function Home() {
         </Reveal>
       </section>
 
-      {/* ═══ ABOUT / PREVIOUS YEARS ═══ */}
-      <section className="about section">
-        <div className="about-grid">
-          <div className="about-headline">
-            <Reveal>
-              <p className="section-label">Our Story</p>
-              <h2 className="about-title">
-                Four years of gathering on this land.
-              </h2>
-              <p className="about-stats">
-                Est. 2023<br />
-                4th Annual<br />
-                Sutton, Alaska<br />
-                3 Days of Ceremony
-              </p>
-            </Reveal>
-          </div>
-          <div className="about-desc">
-            <Reveal>
-              <p>
-                What began with a small circle of healers in the summer of 2023
-                has become one of Alaska&apos;s most quietly powerful gatherings.
-                Each year the community returns — different faces, deepening
-                roots. Teachers who came as students. First-timers who drove
-                through the night to make it. Families who camp together every
-                August.
-              </p>
-              <p style={{ marginTop: "1.25rem" }}>
-                Not a festival. A gathering. A living thread of ceremony,
-                sound, and shared presence. The land holds the memory of every
-                circle we&apos;ve sat in, every fire we&apos;ve lit, every
-                healing that has happened here.
-              </p>
-            </Reveal>
-          </div>
-        </div>
-      </section>
-
-      {/* ═══ PLAN YOUR TRIP ═══ */}
-      <section id="alaska" className="trip-section">
-
-        {/* Photo banner */}
-        <div className="trip-photo">
-          <Image src="/images/alaska.png" alt="Matanuska Valley, Alaska" fill style={{ objectFit: "cover", objectPosition: "center 35%" }} priority={false} />
-          <div className="trip-photo-overlay" />
-          <div className="trip-photo-text">
-            <Reveal>
-              <p className="section-label" style={{ color: "rgba(255,255,255,0.75)", textAlign: "left" }}>Sutton, Alaska · Aug 7–9</p>
-              <h2 className="trip-photo-heading">Plan Your Trip</h2>
-            </Reveal>
-          </div>
-        </div>
-
-        {/* Trip planning cards */}
-        <div className="trip-cards">
-          <Reveal>
-            <div className="trip-card">
-              <span className="trip-card-icon"><PlaneIcon size={20} color="var(--sage)" /></span>
-              <h3 className="trip-card-title">Getting Here</h3>
-              <p className="trip-card-body">Fly into Ted Stevens Anchorage International Airport (ANC), then follow the Glenn Highway northeast to Sutton in the Matanuska-Susitna Valley — one of Alaska&apos;s most breathtaking drives.</p>
-            </div>
-          </Reveal>
-          <Reveal>
-            <div className="trip-card">
-              <span className="trip-card-icon"><MoonIcon size={20} color="var(--sage)" /></span>
-              <h3 className="trip-card-title">August in Alaska</h3>
-              <p className="trip-card-body">Days stretch to nearly 19 hours of light around August 8. Temperatures run 55–70°F with cool mornings and evenings. Layers are essential — Alaskan weather is generous and unpredictable.</p>
-            </div>
-          </Reveal>
-          <Reveal>
-            <div className="trip-card">
-              <span className="trip-card-icon"><MapPinIcon size={20} color="var(--sage)" /></span>
-              <h3 className="trip-card-title">Camping On-Site</h3>
-              <p className="trip-card-body">On-site camping is included with your pass. Bring a cold-weather sleeping bag and a tent that can handle rain. Hotels and cabins in Palmer and Wasilla are 30–40 minutes away if you prefer a bed.</p>
-            </div>
-          </Reveal>
-          <Reveal>
-            <div className="trip-card">
-              <span className="trip-card-icon"><LeafIcon size={20} color="var(--sage)" /></span>
-              <h3 className="trip-card-title">What to Pack</h3>
-              <p className="trip-card-body">Rain jacket, sturdy waterproof footwear, sun protection (the midnight sun is real), and something warm for ceremony under the stars. Leave space in your bag for what you&apos;ll carry home.</p>
-            </div>
-          </Reveal>
-        </div>
-
-        {/* Warrior Lodge pitch */}
+      {/* ═══ PLAN YOUR TRIP (button) ═══ */}
+      <section id="alaska" style={{ background: "var(--cream)", padding: "4rem 1.5rem", textAlign: "center", borderTop: "1px solid rgba(51,53,51,0.08)" }}>
         <Reveal>
-          <div className="warrior-lodge">
-            <div className="warrior-lodge-text">
-              <p className="section-label" style={{ textAlign: "left" }}>Warrior Lodge · On-Site Accommodation</p>
-              <h3 className="warrior-lodge-title">Stay warm. Stay dry. Dance all night.</h3>
-              <p className="warrior-lodge-desc">
-                August in Alaska is wild — radiant summer days that stretch past midnight and cool, crisp nights perfect for gathering under the stars. The Warrior Lodge and on-site cabins were built for exactly this: a warm, dry sanctuary between ceremonies so you never have to leave the magic.
-              </p>
-              <p className="warrior-lodge-desc" style={{ marginTop: "0.75rem" }}>
-                Wake up steps from the lake. Walk to morning yoga. Come back to a real bed after the fire dies. On-site lodging is limited and fills every year — fewer than 10 camping passes remain.
-              </p>
-              <a href="#store" className="warrior-lodge-cta">Reserve Lodging →</a>
-            </div>
-          </div>
-        </Reveal>
-
-        {/* Land acknowledgment */}
-        <div className="land-ack">
-          <p className="land-ack-text">
-            We gather on the unceded ancestral homeland of the Dena&apos;ina Athabascan people,
-            whose relationship with this valley, these rivers, and these mountains stretches
-            back thousands of years and continues today. We are grateful to be guests on this land.
+          <span style={{ display: "flex", justifyContent: "center", marginBottom: "1rem" }}>
+            <MapPinIcon size={28} color="var(--sage)" />
+          </span>
+          <p className="section-label">Sutton, Alaska · August 7–9, 2026</p>
+          <h2 style={{ fontFamily: "var(--font-display)", fontSize: "clamp(1.8rem, 5vw, 3rem)", color: "var(--charcoal)", marginBottom: "0.75rem" }}>
+            Plan Your Trip
+          </h2>
+          <p style={{ color: "rgba(51,53,51,0.65)", fontSize: "0.95rem", lineHeight: 1.7, maxWidth: 480, margin: "0 auto 1.75rem" }}>
+            Fly into Anchorage, drive the Glenn Highway, and wake up under the midnight sun. Everything you need — getting here, camping, and nearby campgrounds — in one place.
           </p>
-        </div>
-
+          <a href="/travel" style={{
+            display: "inline-block",
+            background: "var(--charcoal)",
+            color: "#fff",
+            fontWeight: 700,
+            fontSize: "0.95rem",
+            padding: "0.8rem 2.2rem",
+            borderRadius: 30,
+            textDecoration: "none",
+            letterSpacing: "0.02em",
+          }}>
+            Plan Your Trip →
+          </a>
+        </Reveal>
       </section>
 
       {/* ═══ BRAND PARTNERS ═══ */}

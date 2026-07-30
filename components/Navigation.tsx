@@ -37,6 +37,7 @@ export default function Navigation() {
         <li><a href="#alaska">The Land</a></li>
         <li><a href="#store">Tickets</a></li>
         <li><a href="#faq">FAQ</a></li>
+        <li><a href="/archive">Archive</a></li>
       </ul>
 
       {/* Desktop CTA — surfaces only after first scroll past hero */}
@@ -77,6 +78,7 @@ export default function Navigation() {
               <li><a href="#alaska" onClick={closeMenu}>The Land</a></li>
               <li><a href="#faq" onClick={closeMenu}>FAQ</a></li>
               <li><a href="#get-involved" onClick={closeMenu}>Get Involved</a></li>
+              <li><a href="/archive" onClick={closeMenu}>Archive</a></li>
             </ul>
             <a href="#store" className="mobile-menu-cta" onClick={closeMenu}>
               Reserve Your Spot

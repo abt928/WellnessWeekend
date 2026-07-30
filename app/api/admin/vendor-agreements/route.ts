@@ -32,6 +32,9 @@ export async function GET(req: NextRequest) {
         payment_status,
         printed_name,
         sig_date,
+        camping,
+        lodging_paid,
+        admin_notes,
         created_at
       FROM vendor_agreements
       ORDER BY created_at DESC
@@ -55,16 +58,24 @@ export async function PATCH(req: NextRequest) {
   }
 
   try {
-    const { id, payment_status } = await req.json();
+    const { id, payment_status, camping, lodging_paid, admin_notes } = await req.json();
     if (!id) return NextResponse.json({ error: "id required" }, { status: 400 });
-    if (!payment_status) return NextResponse.json({ error: "payment_status required" }, { status: 400 });
 
     const sql = neon(dbUrl);
-    await sql`
-      UPDATE vendor_agreements
-      SET payment_status = ${payment_status}
-      WHERE id = ${Number(id)}
-    `;
+
+    if (payment_status !== undefined) {
+      await sql`UPDATE vendor_agreements SET payment_status = ${payment_status} WHERE id = ${Number(id)}`;
+    }
+    if (camping !== undefined) {
+      await sql`UPDATE vendor_agreements SET camping = ${Boolean(camping)} WHERE id = ${Number(id)}`;
+    }
+    if (lodging_paid !== undefined) {
+      await sql`UPDATE vendor_agreements SET lodging_paid = ${Boolean(lodging_paid)} WHERE id = ${Number(id)}`;
+    }
+    if (admin_notes !== undefined) {
+      await sql`UPDATE vendor_agreements SET admin_notes = ${String(admin_notes)} WHERE id = ${Number(id)}`;
+    }
+
     return NextResponse.json({ success: true });
   } catch (e) {
     console.error("[admin/vendor-agreements PATCH] Error:", e);

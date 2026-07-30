@@ -12,7 +12,7 @@ type TableName =
   | "volunteer_registrations" | "warriors" | "members" | "staff_registrations" | "staff_guests" | "contrast_bookings" | "massage_bookings";
 
 type ActiveTab =
-  | "overview" | "loyalty" | "budget"
+  | "overview" | "guest_list" | "budget"
   | "affiliates" | "referral_events" | "newsletter" | "leads"
   | "vendor_agreements"
   | "vendors" | "volunteers" | "volunteer_registrations" | "warriors" | "instructor_waitlist" | "sponsors"
@@ -42,32 +42,6 @@ interface BudgetTotals {
   income_cents: number;
 }
 
-interface LoyaltyTotals {
-  total_members: number;
-  new_this_month: number;
-  total_points: number;
-  members_with_points: number;
-  total_redemptions: number;
-  total_points_redeemed: number;
-}
-
-interface MemberRow {
-  id: number;
-  name: string | null;
-  email: string;
-  points_balance: number;
-  referral_code: string | null;
-  created_at: string;
-}
-
-interface RedemptionRow {
-  id: number;
-  points_used: number;
-  reward: string | null;
-  redeemed_at: string;
-  member_name: string | null;
-  member_email: string;
-}
 
 // ── Helpers ──────────────────────────────────────────────────────────
 
@@ -146,39 +120,41 @@ interface VolunteerOverview {
 
 function OverviewTab() {
   const [budget, setBudget] = useState<{ items: BudgetItem[]; totals: BudgetTotals } | null>(null);
-  const [loyalty, setLoyalty] = useState<{ totals: LoyaltyTotals } | null>(null);
   const [communityData, setCommunityData] = useState<{
     leads: number; newsletter: number; affiliates: number;
   } | null>(null);
   const [volunteerData, setVolunteerData] = useState<VolunteerOverview | null>(null);
   const [vendorCount, setVendorCount] = useState<number | null>(null);
+  const [massageCount, setMassageCount] = useState<number | null>(null);
+  const [contrastCount, setContrastCount] = useState<number | null>(null);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     const fetchAll = async () => {
       setLoading(true);
       try {
-        const [budgetRes, loyaltyRes, leadsRes, newsletterRes, affiliatesRes, volunteerRes, vendorRes] = await Promise.all([
+        const [budgetRes, leadsRes, newsletterRes, affiliatesRes, volunteerRes, vendorRes, guestRes] = await Promise.all([
           fetch("/api/admin/budget"),
-          fetch("/api/admin/members"),
           fetch("/api/admin/data?table=leads"),
           fetch("/api/admin/data?table=newsletter"),
           fetch("/api/admin/data?table=affiliates"),
           fetch("/api/admin/data?table=volunteer_registrations"),
           fetch("/api/admin/vendor-agreements"),
+          fetch("/api/admin/guest-list"),
         ]);
         if (budgetRes.ok) setBudget(await budgetRes.json());
-        if (loyaltyRes.ok) {
-          const d = await loyaltyRes.json();
-          setLoyalty({ totals: d.totals });
-        }
-        const [leadsData, newsletterData, affiliatesData, volunteerRaw, vendorRaw] = await Promise.all([
+        const [leadsData, newsletterData, affiliatesData, volunteerRaw, vendorRaw, guestData] = await Promise.all([
           leadsRes.ok ? leadsRes.json() : null,
           newsletterRes.ok ? newsletterRes.json() : null,
           affiliatesRes.ok ? affiliatesRes.json() : null,
           volunteerRes.ok ? volunteerRes.json() : null,
           vendorRes.ok ? vendorRes.json() : null,
+          guestRes.ok ? guestRes.json() : null,
         ]);
+        if (guestData) {
+          setMassageCount((guestData.massage ?? []).length);
+          setContrastCount((guestData.contrast ?? []).length);
+        }
         setCommunityData({
           leads: leadsData?.count ?? 0,
           newsletter: newsletterData?.count ?? 0,
@@ -226,6 +202,8 @@ function OverviewTab() {
   const rewardAccent = (r: string) =>
     r === "lodging" ? "#D4AF3C" : r === "weekend_pass" ? "#3DB8AF" : "#8B5FBF";
 
+  const totalBookings = (massageCount ?? 0) + (contrastCount ?? 0);
+
   const section = (title: string, children: React.ReactNode) => (
     <section style={{ marginBottom: "2rem" }}>
       <h2 style={{ fontSize: "0.72rem", fontWeight: 700, color: "var(--ink-muted)", textTransform: "uppercase", letterSpacing: "0.09em", margin: "0 0 1rem" }}>
@@ -236,9 +214,6 @@ function OverviewTab() {
   );
 
   if (loading) return <div className="admin-loading">Loading…</div>;
-
-  const totalHeadcount =
-    (loyalty?.totals.total_members ?? 0) + (volunteerData?.count ?? 0) + (vendorCount ?? 0);
 
   return (
     <div style={{ padding: "1.75rem 2rem" }}>
@@ -269,10 +244,11 @@ function OverviewTab() {
       {/* Master headcount */}
       {section("Headcount", (
         <div style={{ display: "flex", flexWrap: "wrap", gap: "1rem" }}>
-          <StatCard label="Registered Guests" value={loyalty?.totals.total_members ?? "—"} accent="#8B5FBF" sub="Loyalty program members" />
+          <StatCard label="Massage Bookings" value={massageCount ?? "—"} accent="#8B5FBF" sub="Session slots filled" />
+          <StatCard label="Contrast Therapy Bookings" value={contrastCount ?? "—"} accent="#3DB8AF" sub="Sauna / cold plunge slots" />
+          <StatCard label="Total Bookings" value={totalBookings || "—"} accent="#D4AF3C" sub="Across all add-on experiences" />
           <StatCard label="Volunteers" value={volunteerData?.count ?? "—"} accent="#2a9d8f" sub="Signed up for shifts" />
           <StatCard label="Confirmed Vendors" value={vendorCount ?? "—"} sub="Vendor agreements confirmed" />
-          <StatCard label="Total On-Site" value={totalHeadcount || "—"} accent="#D4AF3C" sub="Guests + volunteers + vendors" />
         </div>
       ))}
 
@@ -328,8 +304,6 @@ function OverviewTab() {
       {/* Community snapshot */}
       {section("Community", (
         <div style={{ display: "flex", flexWrap: "wrap", gap: "1rem" }}>
-          <StatCard label="Circle Members" value={loyalty?.totals.total_members ?? "—"} accent="#8B5FBF" />
-          <StatCard label="New This Month" value={loyalty?.totals.new_this_month ?? "—"} />
           <StatCard label="Newsletter Subscribers" value={communityData?.newsletter ?? "—"} accent="#2a9d8f" />
           <StatCard label="Leads" value={communityData?.leads ?? "—"} />
           <StatCard label="Affiliate Partners" value={communityData?.affiliates ?? "—"} />
@@ -353,187 +327,222 @@ function OverviewTab() {
         </div>
       ))}
 
-      {/* Loyalty snapshot */}
-      {section("Loyalty Snapshot", (
-        <div style={{ display: "flex", flexWrap: "wrap", gap: "1rem" }}>
-          <StatCard label="Points Distributed" value={(loyalty?.totals.total_points ?? 0).toLocaleString()} accent="#D4AF3C" />
-          <StatCard label="Members with Points" value={loyalty?.totals.members_with_points ?? "—"} />
-          <StatCard label="Total Redemptions" value={loyalty?.totals.total_redemptions ?? "—"} />
-          <StatCard label="Points Redeemed" value={(loyalty?.totals.total_points_redeemed ?? 0).toLocaleString()} />
-        </div>
-      ))}
 
     </div>
   );
 }
 
-// ── Loyalty Tab ───────────────────────────────────────────────────────
+// ── Guest List Tab ────────────────────────────────────────────────────
 
-function LoyaltyTab() {
-  const [data, setData] = useState<{
-    totals: LoyaltyTotals;
-    recentSignups: MemberRow[];
-    topMembers: MemberRow[];
-    recentRedemptions: RedemptionRow[];
-  } | null>(null);
+interface MassageBooking {
+  id: number; name: string; email: string; phone: string | null;
+  practitioner: string; slot: string; session_type: string | null;
+  hands: string | null; notes: string | null; created_at: string;
+}
+interface ContrastBooking {
+  id: number; name: string; email: string; phone: string | null;
+  slots: string; notes: string | null; created_at: string;
+}
+
+function GuestListTab() {
+  const [massage, setMassage] = useState<MassageBooking[]>([]);
+  const [contrast, setContrast] = useState<ContrastBooking[]>([]);
   const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
-  const [view, setView] = useState<"signups" | "top" | "redemptions">("signups");
+  const [view, setView] = useState<"massage" | "contrast" | "payouts">("massage");
+  const [rates, setRates] = useState<Record<string, string>>({});
 
   const load = useCallback(async () => {
     setLoading(true);
     try {
-      const res = await fetch("/api/admin/members");
-      if (res.ok) setData(await res.json());
-      else setError("Failed to load loyalty data");
-    } catch {
-      setError("Network error");
-    } finally {
-      setLoading(false);
-    }
+      const res = await fetch("/api/admin/guest-list");
+      if (res.ok) {
+        const d = await res.json();
+        setMassage(d.massage ?? []);
+        setContrast(d.contrast ?? []);
+      }
+    } finally { setLoading(false); }
   }, []);
 
   useEffect(() => { load(); }, [load]);
 
-  if (loading) return <div className="admin-loading">Loading loyalty data…</div>;
-  if (error) return <div className="admin-empty" style={{ color: "#dc5050" }}>{error}</div>;
-  if (!data) return null;
-
-  const { totals, recentSignups, topMembers, recentRedemptions } = data;
-
-  const subTabStyle = (active: boolean): React.CSSProperties => ({
+  const subTab = (key: typeof view, label: string): React.CSSProperties => ({
     padding: "0.4rem 1rem", borderRadius: "8px", border: "none", cursor: "pointer",
-    fontSize: "0.8rem", fontFamily: "inherit", fontWeight: active ? 600 : 400,
-    background: active ? "rgba(139,95,191,0.15)" : "transparent",
-    color: active ? "#8B5FBF" : "var(--ink-muted)",
+    fontSize: "0.8rem", fontFamily: "inherit", fontWeight: view === key ? 600 : 400,
+    background: view === key ? "rgba(139,95,191,0.15)" : "transparent",
+    color: view === key ? "#8B5FBF" : "var(--ink-muted)",
   });
+
+  // Group massage bookings by practitioner
+  const byPractitioner: Record<string, MassageBooking[]> = {};
+  for (const b of massage) {
+    if (!byPractitioner[b.practitioner]) byPractitioner[b.practitioner] = [];
+    byPractitioner[b.practitioner].push(b);
+  }
+
+  const exportMassageCSV = () => {
+    const cols = ["Name","Email","Phone","Practitioner","Slot","Session Type","Hands","Notes","Booked At"];
+    const csv = [cols.join(","), ...massage.map(b =>
+      [b.name,b.email,b.phone??"",(b.practitioner),b.slot,b.session_type??"",b.hands??"",b.notes??"",b.created_at]
+        .map(v=>`"${String(v).replace(/"/g,'""')}"`).join(","))].join("\n");
+    const a = document.createElement("a"); a.href = URL.createObjectURL(new Blob([csv],{type:"text/csv"}));
+    a.download = `massage_bookings_${new Date().toISOString().slice(0,10)}.csv`; a.click();
+  };
+
+  if (loading) return <div className="admin-loading">Loading guest list…</div>;
 
   return (
     <div style={{ padding: "1.5rem 2rem" }}>
-
-      {/* Stats row */}
-      <div style={{ display: "flex", flexWrap: "wrap", gap: "1rem", marginBottom: "2rem" }}>
-        <StatCard label="Total Members" value={totals.total_members} accent="#8B5FBF" />
-        <StatCard label="New This Month" value={totals.new_this_month} />
-        <StatCard label="Points Distributed" value={totals.total_points.toLocaleString()} accent="#D4AF3C" sub="1 pt per $1 spent" />
-        <StatCard label="Members with Points" value={totals.members_with_points} />
-        <StatCard label="Redemptions" value={totals.total_redemptions} />
-        <StatCard label="Points Redeemed" value={totals.total_points_redeemed.toLocaleString()} />
+      <div style={{ display: "flex", flexWrap: "wrap", gap: "1rem", marginBottom: "1.5rem" }}>
+        <StatCard label="Massage Bookings" value={massage.length} accent="#8B5FBF" />
+        <StatCard label="Practitioners" value={Object.keys(byPractitioner).length} />
+        <StatCard label="Contrast Therapy" value={contrast.length} accent="#3DB8AF" />
       </div>
 
-      {/* Rewards tiers callout */}
-      <div style={{
-        background: "linear-gradient(135deg, rgba(212,175,60,0.08) 0%, rgba(139,95,191,0.08) 100%)",
-        border: "1px solid rgba(212,175,60,0.25)", borderRadius: "12px",
-        padding: "1rem 1.5rem", marginBottom: "2rem",
-        display: "flex", flexWrap: "wrap", gap: "1.5rem", alignItems: "center",
-      }}>
-        <span style={{ fontSize: "0.75rem", color: "var(--ink-muted)", textTransform: "uppercase", letterSpacing: "0.08em" }}>Reward Tiers</span>
-        {[
-          { pts: "100 pts", reward: "$10 off add-ons or merch" },
-          { pts: "500 pts", reward: "Free day pass" },
-          { pts: "1,000 pts", reward: "Free weekend pass" },
-        ].map(({ pts, reward }) => (
-          <div key={pts} style={{ display: "flex", gap: "0.4rem", alignItems: "baseline" }}>
-            <span style={{ fontWeight: 700, color: "#D4AF3C", fontSize: "0.85rem" }}>{pts}</span>
-            <span style={{ fontSize: "0.8rem", color: "var(--ink-muted)" }}>→ {reward}</span>
-          </div>
-        ))}
-        <div style={{ marginLeft: "auto", fontSize: "0.75rem", color: "var(--ink-muted)" }}>
-          +50 bonus pts per referral
-        </div>
-      </div>
-
-      {/* Sub-view switcher */}
-      <div style={{ display: "flex", gap: "0.5rem", marginBottom: "1rem" }}>
-        <button style={subTabStyle(view === "signups")} onClick={() => setView("signups")}>Recent Sign-ups</button>
-        <button style={subTabStyle(view === "top")} onClick={() => setView("top")}>Top Members</button>
-        <button style={subTabStyle(view === "redemptions")} onClick={() => setView("redemptions")}>Redemptions</button>
+      <div style={{ display: "flex", gap: "0.5rem", marginBottom: "1.25rem", alignItems: "center" }}>
+        <button style={subTab("massage", "Massage Bookings")} onClick={() => setView("massage")}>Massage Bookings</button>
+        <button style={subTab("contrast", "Contrast Therapy")} onClick={() => setView("contrast")}>Contrast Therapy</button>
+        <button style={subTab("payouts", "Payout Calculator")} onClick={() => setView("payouts")}>Payout Calculator</button>
         <button onClick={load} style={{ marginLeft: "auto", fontSize: "0.78rem", color: "var(--ink-muted)", background: "none", border: "none", cursor: "pointer" }}>Refresh</button>
+        {view === "massage" && <button onClick={exportMassageCSV} className="admin-export-btn" disabled={!massage.length}>Export CSV</button>}
       </div>
 
-      {/* Tables */}
-      {view === "signups" && (
-        <div style={{ overflowX: "auto" }}>
-          {recentSignups.length === 0 ? (
-            <div className="admin-empty">No members yet — sign-ups will appear here</div>
-          ) : (
+      {view === "massage" && (
+        massage.length === 0 ? <div className="admin-empty">No massage bookings yet</div> : (
+          <div style={{ overflowX: "auto" }}>
             <table style={{ width: "100%", borderCollapse: "collapse", background: "var(--surface-elevated)", borderRadius: "10px", overflow: "hidden" }}>
-              <thead>
-                <tr>
-                  {["Name", "Email", "Points", "Referral Code", "Joined"].map(h => <th key={h} style={hcell}>{h}</th>)}
-                </tr>
-              </thead>
+              <thead><tr>
+                {["#","Name","Email","Phone","Practitioner","Slot","Session","Hands","Notes","Booked"].map(h=><th key={h} style={hcell}>{h}</th>)}
+              </tr></thead>
               <tbody>
-                {recentSignups.map(m => (
-                  <tr key={m.id}>
-                    <td style={cell}>{m.name || "—"}</td>
-                    <td style={cell}>{m.email}</td>
-                    <td style={{ ...cell, fontWeight: 600, color: m.points_balance > 0 ? "#D4AF3C" : "var(--ink-muted)" }}>
-                      {m.points_balance.toLocaleString()}
-                    </td>
-                    <td style={{ ...cell, fontFamily: "monospace", fontSize: "0.78rem", color: "var(--psyche-cyan)" }}>
-                      {m.referral_code || "—"}
-                    </td>
-                    <td style={{ ...cell, color: "var(--ink-muted)" }}>{fmtDate(m.created_at)}</td>
+                {massage.map((b, i) => (
+                  <tr key={b.id}>
+                    <td style={{ ...cell, color: "var(--ink-muted)", width: "2rem" }}>{i + 1}</td>
+                    <td style={{ ...cell, fontWeight: 600 }}>{b.name}</td>
+                    <td style={{ ...cell, fontSize: "0.78rem" }}>{b.email}</td>
+                    <td style={{ ...cell, fontSize: "0.78rem" }}>{b.phone || "—"}</td>
+                    <td style={{ ...cell, color: "#8B5FBF", fontWeight: 600 }}>{b.practitioner}</td>
+                    <td style={cell}>{b.slot}</td>
+                    <td style={{ ...cell, color: "var(--ink-muted)" }}>{b.session_type || "—"}</td>
+                    <td style={{ ...cell, color: "var(--ink-muted)" }}>{b.hands || "—"}</td>
+                    <td style={{ ...cell, fontSize: "0.75rem", color: "var(--ink-muted)", maxWidth: "160px" }}>{b.notes || "—"}</td>
+                    <td style={{ ...cell, fontSize: "0.75rem", color: "var(--ink-muted)" }}>{fmtDate(b.created_at)}</td>
                   </tr>
                 ))}
               </tbody>
             </table>
-          )}
-        </div>
+          </div>
+        )
       )}
 
-      {view === "top" && (
-        <div style={{ overflowX: "auto" }}>
-          {topMembers.length === 0 ? (
-            <div className="admin-empty">No members have earned points yet</div>
-          ) : (
+      {view === "contrast" && (
+        contrast.length === 0 ? <div className="admin-empty">No contrast therapy bookings yet</div> : (
+          <div style={{ overflowX: "auto" }}>
             <table style={{ width: "100%", borderCollapse: "collapse", background: "var(--surface-elevated)", borderRadius: "10px", overflow: "hidden" }}>
-              <thead>
-                <tr>
-                  {["#", "Name", "Email", "Points", "Joined"].map(h => <th key={h} style={hcell}>{h}</th>)}
-                </tr>
-              </thead>
+              <thead><tr>
+                {["#","Name","Email","Phone","Slots Booked","Notes","Booked At"].map(h=><th key={h} style={hcell}>{h}</th>)}
+              </tr></thead>
               <tbody>
-                {topMembers.map((m, i) => (
-                  <tr key={m.id}>
-                    <td style={{ ...cell, color: "#D4AF3C", fontWeight: 700 }}>{i + 1}</td>
-                    <td style={{ ...cell, fontWeight: 600 }}>{m.name || "—"}</td>
-                    <td style={cell}>{m.email}</td>
-                    <td style={{ ...cell, fontWeight: 700, color: "#D4AF3C" }}>{m.points_balance.toLocaleString()}</td>
-                    <td style={{ ...cell, color: "var(--ink-muted)" }}>{fmtDate(m.created_at)}</td>
+                {contrast.map((b, i) => (
+                  <tr key={b.id}>
+                    <td style={{ ...cell, color: "var(--ink-muted)", width: "2rem" }}>{i + 1}</td>
+                    <td style={{ ...cell, fontWeight: 600 }}>{b.name}</td>
+                    <td style={{ ...cell, fontSize: "0.78rem" }}>{b.email}</td>
+                    <td style={{ ...cell, fontSize: "0.78rem" }}>{b.phone || "—"}</td>
+                    <td style={{ ...cell, color: "#3DB8AF" }}>{b.slots}</td>
+                    <td style={{ ...cell, fontSize: "0.75rem", color: "var(--ink-muted)" }}>{b.notes || "—"}</td>
+                    <td style={{ ...cell, fontSize: "0.75rem", color: "var(--ink-muted)" }}>{fmtDate(b.created_at)}</td>
                   </tr>
                 ))}
               </tbody>
             </table>
-          )}
-        </div>
+          </div>
+        )
       )}
 
-      {view === "redemptions" && (
-        <div style={{ overflowX: "auto" }}>
-          {recentRedemptions.length === 0 ? (
-            <div className="admin-empty">No redemptions yet</div>
+      {view === "payouts" && (
+        <div>
+          <p style={{ fontSize: "0.85rem", color: "var(--ink-muted)", marginBottom: "1.25rem" }}>
+            Enter the payout rate per session for each practitioner to calculate what you owe them.
+          </p>
+          {Object.keys(byPractitioner).length === 0 ? (
+            <div className="admin-empty">No massage bookings yet — payouts will appear here once guests book sessions.</div>
           ) : (
-            <table style={{ width: "100%", borderCollapse: "collapse", background: "var(--surface-elevated)", borderRadius: "10px", overflow: "hidden" }}>
-              <thead>
-                <tr>
-                  {["Member", "Email", "Points Used", "Reward", "Date"].map(h => <th key={h} style={hcell}>{h}</th>)}
-                </tr>
-              </thead>
-              <tbody>
-                {recentRedemptions.map(r => (
-                  <tr key={r.id}>
-                    <td style={cell}>{r.member_name || "—"}</td>
-                    <td style={cell}>{r.member_email}</td>
-                    <td style={{ ...cell, fontWeight: 600, color: "#dc5050" }}>-{r.points_used.toLocaleString()}</td>
-                    <td style={cell}>{r.reward || "—"}</td>
-                    <td style={{ ...cell, color: "var(--ink-muted)" }}>{fmtDate(r.redeemed_at)}</td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
+            <div style={{ display: "flex", flexDirection: "column", gap: "1rem" }}>
+              {Object.entries(byPractitioner).map(([practitioner, bookings]) => {
+                const rateStr = rates[practitioner] ?? "";
+                const rate = parseFloat(rateStr) || 0;
+                const total = rate * bookings.length;
+                return (
+                  <div key={practitioner} style={{
+                    background: "var(--surface-elevated)", border: "1px solid var(--line-medium)",
+                    borderRadius: "12px", overflow: "hidden",
+                  }}>
+                    <div style={{
+                      padding: "0.9rem 1.25rem", background: "rgba(139,95,191,0.06)",
+                      borderBottom: "1px solid var(--line-subtle)",
+                      display: "flex", alignItems: "center", gap: "1rem", flexWrap: "wrap",
+                    }}>
+                      <span style={{ fontWeight: 700, fontSize: "1rem", color: "#8B5FBF", flex: 1 }}>{practitioner}</span>
+                      <span style={{ fontSize: "0.82rem", color: "var(--ink-muted)" }}>
+                        {bookings.length} booking{bookings.length !== 1 ? "s" : ""}
+                      </span>
+                      <div style={{ display: "flex", alignItems: "center", gap: "0.5rem" }}>
+                        <span style={{ fontSize: "0.78rem", color: "var(--ink-muted)" }}>$/session:</span>
+                        <input
+                          type="number" min={0} step={5} placeholder="0"
+                          value={rateStr}
+                          onChange={e => setRates(r => ({ ...r, [practitioner]: e.target.value }))}
+                          style={{
+                            width: "80px", padding: "0.3rem 0.5rem", borderRadius: "6px",
+                            border: "1px solid var(--line-medium)", background: "var(--surface-page)",
+                            color: "var(--ink)", fontSize: "0.85rem", textAlign: "right",
+                          }}
+                        />
+                      </div>
+                      <div style={{
+                        fontWeight: 700, fontSize: "1.1rem",
+                        color: total > 0 ? "#2a9d8f" : "var(--ink-muted)",
+                        minWidth: "90px", textAlign: "right",
+                      }}>
+                        {total > 0 ? `$${total.toFixed(2)}` : "—"}
+                      </div>
+                    </div>
+                    <table style={{ width: "100%", borderCollapse: "collapse" }}>
+                      <thead><tr>
+                        {["Guest","Slot","Session Type","Hands"].map(h=><th key={h} style={{ ...hcell, fontSize: "0.68rem" }}>{h}</th>)}
+                      </tr></thead>
+                      <tbody>
+                        {bookings.map(b => (
+                          <tr key={b.id}>
+                            <td style={{ ...cell, fontWeight: 600, fontSize: "0.82rem" }}>{b.name}</td>
+                            <td style={{ ...cell, fontSize: "0.82rem" }}>{b.slot}</td>
+                            <td style={{ ...cell, color: "var(--ink-muted)", fontSize: "0.78rem" }}>{b.session_type || "—"}</td>
+                            <td style={{ ...cell, color: "var(--ink-muted)", fontSize: "0.78rem" }}>{b.hands || "—"}</td>
+                          </tr>
+                        ))}
+                      </tbody>
+                    </table>
+                  </div>
+                );
+              })}
+
+              {/* Grand total */}
+              {Object.keys(rates).some(p => parseFloat(rates[p]) > 0) && (
+                <div style={{
+                  background: "rgba(42,157,143,0.08)", border: "1px solid rgba(42,157,143,0.3)",
+                  borderRadius: "10px", padding: "1rem 1.25rem",
+                  display: "flex", justifyContent: "space-between", alignItems: "center",
+                }}>
+                  <span style={{ fontWeight: 600, fontSize: "0.9rem" }}>Total Practitioner Payouts</span>
+                  <span style={{ fontWeight: 800, fontSize: "1.3rem", color: "#2a9d8f" }}>
+                    ${Object.entries(byPractitioner).reduce((sum, [p, bks]) => {
+                      const r = parseFloat(rates[p] ?? "0") || 0;
+                      return sum + r * bks.length;
+                    }, 0).toFixed(2)}
+                  </span>
+                </div>
+              )}
+            </div>
           )}
         </div>
       )}
@@ -921,6 +930,9 @@ interface VendorAgreement {
   payment_status: string;
   printed_name: string;
   sig_date: string;
+  camping: boolean;
+  lodging_paid: boolean;
+  admin_notes: string | null;
   created_at: string;
 }
 
@@ -938,6 +950,8 @@ function VendorAgreementsTab() {
   const [selected, setSelected]     = useState<VendorAgreement | null>(null);
   const [saving, setSaving]         = useState(false);
   const [deleteConfirm, setDeleteConfirm] = useState<number | null>(null);
+  const [view, setView]             = useState<"agreements" | "camping">("agreements");
+  const [campingNotes, setCampingNotes] = useState<Record<number, string>>({});
 
   const load = useCallback(() => {
     setLoading(true);
@@ -978,6 +992,15 @@ function VendorAgreementsTab() {
     load();
   };
 
+  const updateField = async (id: number, field: string, value: unknown) => {
+    await fetch("/api/admin/vendor-agreements", {
+      method: "PATCH",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ id, [field]: value }),
+    });
+    setAgreements(prev => prev.map(a => a.id === id ? { ...a, [field]: value } : a));
+  };
+
   const statusStyle = (s: string): React.CSSProperties => ({
     fontSize: "0.7rem", padding: "0.2rem 0.55rem", borderRadius: "10px", fontWeight: 700,
     background: s === "confirmed" ? "rgba(61,184,175,0.15)" : s === "pending" ? "rgba(201,152,63,0.15)" : "rgba(200,200,200,0.15)",
@@ -990,58 +1013,140 @@ function VendorAgreementsTab() {
   if (loading) return <div style={{ padding: "2rem", color: "var(--ink-muted)" }}>Loading…</div>;
   if (error)   return <div style={{ padding: "2rem", color: "#dc5050" }}>{error}</div>;
 
+  const subTabStyle = (key: typeof view): React.CSSProperties => ({
+    padding: "0.4rem 1rem", borderRadius: "8px", border: "none", cursor: "pointer",
+    fontSize: "0.8rem", fontFamily: "inherit", fontWeight: view === key ? 600 : 400,
+    background: view === key ? "rgba(61,184,175,0.15)" : "transparent",
+    color: view === key ? "#3DB8AF" : "var(--ink-muted)",
+  });
+
   return (
     <div style={{ padding: "1.5rem" }}>
-      <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "1rem" }}>
-        <span style={{ fontSize: "0.85rem", color: "var(--ink-muted)" }}>{agreements.length} agreement{agreements.length !== 1 ? "s" : ""}</span>
+      <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "1rem", flexWrap: "wrap", gap: "0.75rem" }}>
+        <div style={{ display: "flex", gap: "0.5rem" }}>
+          <button style={subTabStyle("agreements")} onClick={() => setView("agreements")}>Agreements</button>
+          <button style={subTabStyle("camping")} onClick={() => setView("camping")}>Camping & Lodging</button>
+        </div>
         <span style={{ fontSize: "0.8rem", color: "var(--ink-muted)" }}>
-          Confirmed: {agreements.filter(a => a.payment_status === "confirmed").length} &nbsp;·&nbsp;
-          Pending: {agreements.filter(a => a.payment_status === "pending").length}
+          {agreements.length} total · Confirmed: {agreements.filter(a => a.payment_status === "confirmed").length} · Pending: {agreements.filter(a => a.payment_status === "pending").length}
         </span>
       </div>
 
-      {agreements.length === 0 ? (
-        <p style={{ color: "var(--ink-muted)", fontSize: "0.9rem" }}>No vendor agreements submitted yet.</p>
-      ) : (
-        <div style={{ overflowX: "auto" }}>
-          <table style={{ width: "100%", borderCollapse: "collapse", background: "var(--surface-elevated)", borderRadius: "10px", overflow: "hidden" }}>
-            <thead>
-              <tr>
-                {["Vendor", "Contact", "Email", "Space", "Days", "Elec", "Amount", "Status", "Signed", "Submitted"].map(h => (
-                  <th key={h} style={vhcell}>{h}</th>
-                ))}
-              </tr>
-            </thead>
-            <tbody>
+      {view === "camping" && (
+        <div>
+          <p style={{ fontSize: "0.82rem", color: "var(--ink-muted)", marginBottom: "1.25rem" }}>
+            Track which vendors are camping on-site and have paid for lodging. Changes save instantly.
+          </p>
+          {agreements.length === 0 ? (
+            <div className="admin-empty">No vendor agreements yet.</div>
+          ) : (
+            <div style={{ display: "flex", flexDirection: "column", gap: "0.75rem" }}>
               {agreements.map(a => (
-                <tr
-                  key={a.id}
-                  onClick={() => setSelected(selected?.id === a.id ? null : a)}
-                  style={{ cursor: "pointer", background: selected?.id === a.id ? "rgba(61,184,175,0.06)" : "transparent" }}
-                >
-                  <td style={vcell}>
-                    <div style={{ fontWeight: 600 }}>{a.vendor_name}</div>
+                <div key={a.id} style={{
+                  background: "var(--surface-elevated)", border: "1px solid var(--line-medium)",
+                  borderRadius: "10px", padding: "0.9rem 1.25rem",
+                  display: "flex", flexWrap: "wrap", gap: "1rem", alignItems: "center",
+                }}>
+                  <div style={{ flex: "1 1 180px" }}>
+                    <div style={{ fontWeight: 600, fontSize: "0.9rem" }}>{a.vendor_name}</div>
                     {a.business_name && a.business_name !== a.vendor_name && (
                       <div style={{ fontSize: "0.75rem", color: "var(--ink-muted)" }}>{a.business_name}</div>
                     )}
-                  </td>
-                  <td style={vcell}>{a.contact_name}</td>
-                  <td style={vcell}>{a.email}</td>
-                  <td style={vcell}>{SPACE_LABELS[a.space_type] ?? a.space_type}</td>
-                  <td style={{ ...vcell, fontSize: "0.75rem", color: "var(--ink-muted)" }}>{a.selected_days || "All 3"}</td>
-                  <td style={vcell}>{a.electricity === "yes" ? "Yes" : "No"}</td>
-                  <td style={{ ...vcell, fontWeight: 600 }}>{a.price_cents === 0 ? "Free" : `$${(a.price_cents / 100).toFixed(0)}`}</td>
-                  <td style={vcell}><span style={statusStyle(a.payment_status)}>{a.payment_status}</span></td>
-                  <td style={{ ...vcell, fontSize: "0.75rem" }}>{a.printed_name}<br /><span style={{ color: "var(--ink-muted)" }}>{a.sig_date}</span></td>
-                  <td style={{ ...vcell, fontSize: "0.75rem", color: "var(--ink-muted)" }}>{new Date(a.created_at).toLocaleDateString()}</td>
-                </tr>
+                    <div style={{ fontSize: "0.75rem", color: "var(--ink-muted)" }}>{a.contact_name} · {a.email}</div>
+                  </div>
+                  <label style={{ display: "flex", alignItems: "center", gap: "0.4rem", cursor: "pointer", fontSize: "0.82rem" }}>
+                    <input
+                      type="checkbox"
+                      checked={!!a.camping}
+                      onChange={e => updateField(a.id, "camping", e.target.checked)}
+                      style={{ width: "16px", height: "16px", cursor: "pointer", accentColor: "#D4AF3C" }}
+                    />
+                    <span style={{ color: a.camping ? "#D4AF3C" : "var(--ink-muted)", fontWeight: a.camping ? 600 : 400 }}>Camping</span>
+                  </label>
+                  <label style={{ display: "flex", alignItems: "center", gap: "0.4rem", cursor: "pointer", fontSize: "0.82rem" }}>
+                    <input
+                      type="checkbox"
+                      checked={!!a.lodging_paid}
+                      onChange={e => updateField(a.id, "lodging_paid", e.target.checked)}
+                      style={{ width: "16px", height: "16px", cursor: "pointer", accentColor: "#3DB8AF" }}
+                    />
+                    <span style={{ color: a.lodging_paid ? "#3DB8AF" : "var(--ink-muted)", fontWeight: a.lodging_paid ? 600 : 400 }}>Lodging Paid</span>
+                  </label>
+                  <div style={{ flex: "2 1 200px", display: "flex", alignItems: "center", gap: "0.5rem" }}>
+                    <input
+                      type="text"
+                      placeholder="Admin notes…"
+                      value={campingNotes[a.id] !== undefined ? campingNotes[a.id] : (a.admin_notes ?? "")}
+                      onChange={e => setCampingNotes(prev => ({ ...prev, [a.id]: e.target.value }))}
+                      onBlur={e => {
+                        const val = e.target.value;
+                        if (val !== (a.admin_notes ?? "")) updateField(a.id, "admin_notes", val);
+                      }}
+                      style={{
+                        flex: 1, padding: "0.35rem 0.6rem", borderRadius: "6px",
+                        border: "1px solid var(--line-medium)", background: "var(--surface-page)",
+                        color: "var(--ink)", fontSize: "0.8rem",
+                      }}
+                    />
+                  </div>
+                </div>
               ))}
-            </tbody>
-          </table>
+              <div style={{ fontSize: "0.78rem", color: "var(--ink-muted)", marginTop: "0.25rem" }}>
+                Camping: {agreements.filter(a => a.camping).length} vendor{agreements.filter(a => a.camping).length !== 1 ? "s" : ""} &nbsp;·&nbsp;
+                Lodging paid: {agreements.filter(a => a.lodging_paid).length}
+              </div>
+            </div>
+          )}
         </div>
       )}
 
-      {selected && (
+      {view === "agreements" && (
+        agreements.length === 0 ? (
+          <p style={{ color: "var(--ink-muted)", fontSize: "0.9rem" }}>No vendor agreements submitted yet.</p>
+        ) : (
+          <div style={{ overflowX: "auto" }}>
+            <table style={{ width: "100%", borderCollapse: "collapse", background: "var(--surface-elevated)", borderRadius: "10px", overflow: "hidden" }}>
+              <thead>
+                <tr>
+                  {["Vendor", "Contact", "Email", "Space", "Days", "Elec", "Amount", "Status", "Camp", "Signed", "Submitted"].map(h => (
+                    <th key={h} style={vhcell}>{h}</th>
+                  ))}
+                </tr>
+              </thead>
+              <tbody>
+                {agreements.map(a => (
+                  <tr
+                    key={a.id}
+                    onClick={() => setSelected(selected?.id === a.id ? null : a)}
+                    style={{ cursor: "pointer", background: selected?.id === a.id ? "rgba(61,184,175,0.06)" : "transparent" }}
+                  >
+                    <td style={vcell}>
+                      <div style={{ fontWeight: 600 }}>{a.vendor_name}</div>
+                      {a.business_name && a.business_name !== a.vendor_name && (
+                        <div style={{ fontSize: "0.75rem", color: "var(--ink-muted)" }}>{a.business_name}</div>
+                      )}
+                    </td>
+                    <td style={vcell}>{a.contact_name}</td>
+                    <td style={vcell}>{a.email}</td>
+                    <td style={vcell}>{SPACE_LABELS[a.space_type] ?? a.space_type}</td>
+                    <td style={{ ...vcell, fontSize: "0.75rem", color: "var(--ink-muted)" }}>{a.selected_days || "All 3"}</td>
+                    <td style={vcell}>{a.electricity === "yes" ? "Yes" : "No"}</td>
+                    <td style={{ ...vcell, fontWeight: 600 }}>{a.price_cents === 0 ? "Free" : `$${(a.price_cents / 100).toFixed(0)}`}</td>
+                    <td style={vcell}><span style={statusStyle(a.payment_status)}>{a.payment_status}</span></td>
+                    <td style={vcell}>
+                      {a.camping ? <span style={{ color: "#D4AF3C", fontSize: "0.72rem", fontWeight: 600 }}>⛺ Yes</span> : <span style={{ color: "var(--ink-muted)", fontSize: "0.72rem" }}>—</span>}
+                    </td>
+                    <td style={{ ...vcell, fontSize: "0.75rem" }}>{a.printed_name}<br /><span style={{ color: "var(--ink-muted)" }}>{a.sig_date}</span></td>
+                    <td style={{ ...vcell, fontSize: "0.75rem", color: "var(--ink-muted)" }}>{new Date(a.created_at).toLocaleDateString()}</td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        )
+      )}
+
+      {view === "agreements" && selected && (
         <div className="admin-detail-panel" style={{ marginTop: "1.5rem" }}>
           <div className="admin-detail-header">
             <span className="admin-detail-title">{selected.vendor_name}</span>
@@ -2015,7 +2120,7 @@ export default function AdminPage() {
       {/* Tabs */}
       <div className="admin-tabs">
         {tab("overview", "Overview")}
-        {tab("loyalty", "Loyalty")}
+        {tab("guest_list", "Guest List")}
         {tab("budget", "Budget", true)}
 
         <span className="admin-tab-sep" />
@@ -2046,7 +2151,7 @@ export default function AdminPage() {
 
       {/* Tab content */}
       {activeTab === "overview"            && <OverviewTab />}
-      {activeTab === "loyalty"             && <LoyaltyTab />}
+      {activeTab === "guest_list"           && <GuestListTab />}
       {activeTab === "budget"              && canSeeFinancials && <BudgetTab />}
       {activeTab === "affiliates"          && <AffiliatesTab />}
       {activeTab === "referral_events"     && <DataTab tableKey="referral_events"    columns={["id","affiliate_code","event_type","order_id","order_amount_cents","commission_cents","created_at"]} />}

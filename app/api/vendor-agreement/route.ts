@@ -41,6 +41,9 @@ async function ensureTable(sql: ReturnType<typeof neon>) {
   await sql`ALTER TABLE vendor_agreements ADD COLUMN IF NOT EXISTS price_cents       INTEGER NOT NULL DEFAULT 0`;
   await sql`ALTER TABLE vendor_agreements ADD COLUMN IF NOT EXISTS payment_status    VARCHAR(20) NOT NULL DEFAULT 'pending'`;
   await sql`ALTER TABLE vendor_agreements ADD COLUMN IF NOT EXISTS square_payment_id VARCHAR(100)`;
+  await sql`ALTER TABLE vendor_agreements ADD COLUMN IF NOT EXISTS camping           BOOLEAN NOT NULL DEFAULT FALSE`;
+  await sql`ALTER TABLE vendor_agreements ADD COLUMN IF NOT EXISTS lodging_paid      BOOLEAN NOT NULL DEFAULT FALSE`;
+  await sql`ALTER TABLE vendor_agreements ADD COLUMN IF NOT EXISTS admin_notes       TEXT`;
 }
 
 export async function POST(req: NextRequest) {

@@ -259,6 +259,41 @@ export default function Home() {
         </Reveal>
       </section>
 
+      {/* ═══ ECSTATIC DANCE CALLOUT ═══ */}
+      <section style={{
+        background: "radial-gradient(ellipse at 20% 50%, rgba(139,95,191,0.28) 0%, transparent 55%), radial-gradient(ellipse at 80% 50%, rgba(212,99,159,0.22) 0%, transparent 55%), #0d0a1f",
+        padding: "5rem 1.5rem",
+        textAlign: "center",
+        borderTop: "1px solid rgba(255,255,255,0.06)",
+      }}>
+        <Reveal>
+          <p style={{ fontSize: "0.7rem", letterSpacing: "0.15em", textTransform: "uppercase", color: "rgba(255,255,255,0.45)", fontWeight: 600, marginBottom: "1rem" }}>
+            A Festival Pillar
+          </p>
+          <h2 style={{ fontFamily: "var(--font-display)", fontSize: "clamp(2rem, 5vw, 3.8rem)", color: "#fff", marginBottom: "0.75rem", lineHeight: 1.1 }}>
+            3 Nights of Ecstatic Dance.
+          </h2>
+          <p style={{ color: "rgba(255,255,255,0.6)", fontSize: "clamp(0.95rem, 2vw, 1.1rem)", lineHeight: 1.8, maxWidth: 520, margin: "0 auto 2.25rem" }}>
+            From the opening ceremony on Friday to the closing dance on Sunday — five ceremonies, one dancefloor, and music that moves you somewhere beyond language.
+          </p>
+          <a href="/ecstatic-dance" style={{
+            display: "inline-block",
+            background: "transparent",
+            color: "#fff",
+            fontWeight: 700,
+            fontSize: "0.95rem",
+            padding: "0.8rem 2.25rem",
+            borderRadius: 30,
+            textDecoration: "none",
+            border: "1.5px solid rgba(255,255,255,0.35)",
+            letterSpacing: "0.02em",
+            transition: "border-color 0.2s ease, background 0.2s ease",
+          }}>
+            What is Ecstatic Dance? →
+          </a>
+        </Reveal>
+      </section>
+
       {/* ═══ TICKETS STORE ═══ */}
       <Store />
 

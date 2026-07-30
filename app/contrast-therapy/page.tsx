@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Link from "next/link";
 
 const C = {
@@ -26,6 +26,12 @@ const SLOTS = [
   { key: "sun-1130am", day: "Sunday · Aug 9",    time: "11:30 AM" },
 ];
 
+interface SlotAvailability {
+  booked: number;
+  capacity: number;
+  full: boolean;
+}
+
 export default function ContrastTherapyPage() {
   const [selected, setSelected] = useState<Set<string>>(new Set());
   const [name, setName] = useState("");
@@ -34,8 +40,17 @@ export default function ContrastTherapyPage() {
   const [notes, setNotes] = useState("");
   const [status, setStatus] = useState<"idle" | "sending" | "sent" | "error">("idle");
   const [errorMsg, setErrorMsg] = useState("");
+  const [availability, setAvailability] = useState<Record<string, SlotAvailability>>({});
+
+  useEffect(() => {
+    fetch("/api/contrast-booking")
+      .then(r => r.json())
+      .then(d => { if (d.availability) setAvailability(d.availability); })
+      .catch(() => {});
+  }, []);
 
   function toggle(key: string) {
+    if (availability[key]?.full) return;
     setSelected(prev => {
       const next = new Set(prev);
       if (next.has(key)) next.delete(key); else next.add(key);
@@ -88,7 +103,7 @@ export default function ContrastTherapyPage() {
           </h1>
           <p style={{ color: C.muted, lineHeight: 1.6, marginBottom: "2rem" }}>
             Ashleigh will confirm your session slot by email before the event.
-            Sessions are limited to 4 people — arrive a few minutes early.
+            Sessions are limited to 5 people — arrive a few minutes early.
           </p>
           <Link href="/" style={{ color: C.teal, fontWeight: 600, textDecoration: "none" }}>
             ← Back to the festival
@@ -124,7 +139,7 @@ export default function ContrastTherapyPage() {
           <p style={{ color: C.muted, lineHeight: 1.75, margin: 0 }}>
             Alternating cold water immersion and heat activates circulation, reduces inflammation,
             and powerfully grounds the nervous system. Sessions run in 30-minute slots throughout
-            the weekend — the sauna holds <strong style={{ color: C.charcoal }}>4 people maximum</strong>.
+            the weekend — the sauna holds <strong style={{ color: C.charcoal }}>5 people maximum</strong>.
             Bookings are confirmed by email before the event.
           </p>
         </div>
@@ -138,41 +153,55 @@ export default function ContrastTherapyPage() {
           <div style={{ display: "grid", gap: "0.6rem", marginBottom: "2rem" }}>
             {SLOTS.map(slot => {
               const active = selected.has(slot.key);
+              const avail = availability[slot.key];
+              const isFull = avail?.full ?? false;
+              const remaining = avail ? avail.capacity - avail.booked : null;
               return (
                 <button
                   key={slot.key}
                   type="button"
                   onClick={() => toggle(slot.key)}
+                  disabled={isFull}
                   style={{
                     display: "flex",
                     alignItems: "center",
                     gap: "1rem",
                     padding: "1rem 1.25rem",
-                    background: active ? C.tealLight : C.card,
-                    border: `2px solid ${active ? C.teal : C.border}`,
+                    background: isFull ? "rgba(51,53,51,0.04)" : active ? C.tealLight : C.card,
+                    border: `2px solid ${isFull ? "rgba(51,53,51,0.1)" : active ? C.teal : C.border}`,
                     borderRadius: 12,
-                    cursor: "pointer",
+                    cursor: isFull ? "not-allowed" : "pointer",
                     textAlign: "left",
                     transition: "all 0.15s ease",
+                    opacity: isFull ? 0.6 : 1,
                   }}
                 >
                   <span style={{
                     width: 22, height: 22, borderRadius: 6,
-                    border: `2px solid ${active ? C.teal : C.faint}`,
-                    background: active ? C.teal : "transparent",
+                    border: `2px solid ${isFull ? C.faint : active ? C.teal : C.faint}`,
+                    background: active && !isFull ? C.teal : "transparent",
                     display: "flex", alignItems: "center", justifyContent: "center",
                     flexShrink: 0, transition: "all 0.15s ease",
                   }}>
-                    {active && <span style={{ color: "#fff", fontSize: 13, fontWeight: 700 }}>✓</span>}
+                    {active && !isFull && <span style={{ color: "#fff", fontSize: 13, fontWeight: 700 }}>✓</span>}
                   </span>
-                  <span>
-                    <span style={{ display: "block", fontWeight: 600, color: C.charcoal, fontSize: "0.95rem" }}>
+                  <span style={{ flex: 1 }}>
+                    <span style={{ display: "block", fontWeight: 600, color: isFull ? C.muted : C.charcoal, fontSize: "0.95rem" }}>
                       {slot.time}
                     </span>
                     <span style={{ display: "block", color: C.muted, fontSize: "0.82rem", marginTop: 2 }}>
                       {slot.day}
                     </span>
                   </span>
+                  {isFull ? (
+                    <span style={{ fontSize: "0.72rem", fontWeight: 700, color: "#B84A2B", background: "rgba(184,74,43,0.1)", padding: "0.2rem 0.55rem", borderRadius: 20, flexShrink: 0 }}>
+                      Full
+                    </span>
+                  ) : remaining !== null && remaining <= 2 ? (
+                    <span style={{ fontSize: "0.72rem", fontWeight: 600, color: C.gold, background: "rgba(201,152,63,0.12)", padding: "0.2rem 0.55rem", borderRadius: 20, flexShrink: 0 }}>
+                      {remaining} left
+                    </span>
+                  ) : null}
                 </button>
               );
             })}
@@ -242,7 +271,7 @@ export default function ContrastTherapyPage() {
           </button>
 
           <p style={{ color: C.faint, fontSize: "0.78rem", textAlign: "center", marginTop: "0.75rem" }}>
-            Ashleigh will confirm your spot by email. Sessions are limited to 4 people.
+            Ashleigh will confirm your spot by email. Sessions are limited to 5 people.
           </p>
         </form>
 

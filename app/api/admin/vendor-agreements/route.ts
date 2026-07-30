@@ -16,6 +16,10 @@ export async function GET(req: NextRequest) {
 
   try {
     const sql = neon(dbUrl);
+    // Ensure columns added in later migrations exist before selecting them
+    await sql`ALTER TABLE vendor_agreements ADD COLUMN IF NOT EXISTS camping      BOOLEAN NOT NULL DEFAULT FALSE`;
+    await sql`ALTER TABLE vendor_agreements ADD COLUMN IF NOT EXISTS lodging_paid BOOLEAN NOT NULL DEFAULT FALSE`;
+    await sql`ALTER TABLE vendor_agreements ADD COLUMN IF NOT EXISTS admin_notes  TEXT`;
     const rows = await sql`
       SELECT
         id,

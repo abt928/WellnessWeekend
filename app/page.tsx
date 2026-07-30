@@ -12,7 +12,6 @@ import FloatingActions from "@/components/FloatingActions";
 import ConversionNudges from "@/components/ConversionNudges";
 import PartnerCard from "@/components/PartnerCard";
 import BuildYourWeekend from "@/components/BuildYourWeekend";
-import Musicians from "@/components/Musicians";
 import { PlaneIcon, MapPinIcon, LeafIcon, MoonIcon } from "@/components/Icons";
 
 /* ── static data ── */
@@ -243,6 +242,12 @@ export default function Home() {
                 role: "Visiting Artist · Hawaii",
                 detail: "Draggon Stargates · Friday / The Expression of the Soul · Saturday",
               },
+              {
+                src: "/images/practitioners/kuf-knotz-christine-elise.jpg",
+                name: "Kuf Knotz + Christine Elise",
+                role: "Hip Hop · Soul · New Age",
+                detail: "Conscious hip-hop meets raw folk — Sunday afternoon main stage",
+              },
             ].map((item) => (
               <figure key={item.name} className="lineup-card">
                 <div className="lineup-artwork">
@@ -258,9 +263,6 @@ export default function Home() {
           </div>
         </Reveal>
       </section>
-
-      {/* ═══ MUSICIANS / VISITING ARTISTS ═══ */}
-      <Musicians />
 
       {/* ═══ BUILD YOUR WEEKEND ═══ */}
       <BuildYourWeekend />

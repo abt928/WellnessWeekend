@@ -273,6 +273,13 @@ export const scheduleDays: ScheduleDay[] = [
         location: "Main Stage",
         hosts: ["j-brave"],
       },
+      {
+        time: "10:00 PM",
+        event: "Ecstatic Dance",
+        element: "fire", secondElement: "air", thirdElement: "quantum",
+        location: "Main Stage",
+        hosts: ["flowscape"],
+      },
     ],
   },
   {

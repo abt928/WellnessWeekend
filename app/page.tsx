@@ -13,6 +13,7 @@ import ConversionNudges from "@/components/ConversionNudges";
 import PartnerCard from "@/components/PartnerCard";
 import BuildYourWeekend from "@/components/BuildYourWeekend";
 import InstructorSlideshow from "@/components/InstructorSlideshow";
+import SacredSpaces from "@/components/SacredSpaces";
 import { MapPinIcon } from "@/components/Icons";
 
 /* ── static data ── */
@@ -305,6 +306,9 @@ export default function Home() {
 
       {/* ═══ INSTRUCTOR SLIDESHOW ═══ */}
       <InstructorSlideshow />
+
+      {/* ═══ SACRED SPACES ═══ */}
+      <SacredSpaces />
 
       {/* ═══ FAMILY DAY ═══ */}
       <section className="family-day-section section">

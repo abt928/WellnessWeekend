@@ -6,13 +6,14 @@ export const metadata = {
   description: "Ecstatic Dance is a free-form, sober movement ceremony — a pillar of Wellness Weekend. Three nights of conscious dance under the Alaskan sky.",
 };
 
-const DANCES = [
+const DANCES: { day: string; time: string; name: string; desc: string; dj: string; special?: boolean; location?: string }[] = [
   {
     day: "Friday · Aug 7",
     time: "8:00 PM",
     name: "Opening Night",
     desc: "The weekend opens with ecstatic dance on the main stage — a full-body arrival ceremony to shake off the road and land in the body.",
     dj: "Flowscape",
+    location: "Main Stage",
   },
   {
     day: "Saturday · Aug 8",
@@ -20,6 +21,7 @@ const DANCES = [
     name: "Lion's Gate Dance",
     desc: "The most sacred night. After cacao ceremony at the fire, J Brave holds the dancefloor as the Lion's Gate portal opens — a full ceremony of sound and movement.",
     dj: "J Brave",
+    location: "Main Stage",
   },
   {
     day: "Saturday · Aug 8",
@@ -27,14 +29,16 @@ const DANCES = [
     name: "Late Night Journey",
     desc: "The floor stays alive. Flowscape picks up where J Brave leaves off — deeper, darker, longer. Dance until the midnight sun finds you.",
     dj: "Flowscape",
+    location: "Main Stage",
   },
   {
     day: "Sunday · Aug 9",
     time: "11:11 AM",
     name: "Message from the Bees",
-    desc: "A special morning ecstatic dance held in the labyrinth garden with High Vibin' Mary — let the bees speak through your body and activate the garden portal.",
+    desc: "Held inside the Labyrinth Garden — the portal space of Warrior Lodge — this is not a dancefloor ceremony. It is a garden activation. High Vibin' Mary calls the body into movement to awaken the labyrinth's energy and open its medicine for the final day. The bees carry the message. The dance carries the light.",
     dj: "High Vibin' Mary",
     special: true,
+    location: "🌀 Labyrinth Garden · Portal Activation",
   },
   {
     day: "Sunday · Aug 9",
@@ -42,6 +46,7 @@ const DANCES = [
     name: "Closing Dance",
     desc: "The final dance of the weekend — 7 to 9 PM, closing the container, moving the medicine, sending every body home full.",
     dj: "Flowscape",
+    location: "Main Stage",
   },
 ];
 
@@ -160,11 +165,12 @@ export default function EcstaticDancePage() {
                   <div style={{ fontFamily: "var(--font-display, serif)", fontSize: "1.3rem", color: d.special ? "#9B7FD4" : "var(--gold, #C9983F)", lineHeight: 1 }}>{d.time}</div>
                 </div>
                 <div>
-                  <div style={{ fontWeight: 700, fontSize: "1rem", marginBottom: "0.2rem", display: "flex", alignItems: "center", gap: "0.5rem" }}>
+                  <div style={{ fontWeight: 700, fontSize: "1rem", marginBottom: "0.2rem", display: "flex", alignItems: "center", gap: "0.5rem", flexWrap: "wrap" }}>
                     {d.name}
-                    {d.special && <span style={{ fontSize: "0.65rem", background: "#9B7FD4", color: "#fff", padding: "0.15rem 0.5rem", borderRadius: 20, fontWeight: 700, letterSpacing: "0.06em" }}>SPECIAL</span>}
+                    {d.special && <span style={{ fontSize: "0.65rem", background: "#9B7FD4", color: "#fff", padding: "0.15rem 0.5rem", borderRadius: 20, fontWeight: 700, letterSpacing: "0.06em" }}>PORTAL ACTIVATION</span>}
                   </div>
-                  <div style={{ fontSize: "0.75rem", color: "rgba(255,255,255,0.45)", marginBottom: "0.5rem", textTransform: "uppercase", letterSpacing: "0.08em" }}>DJ · {d.dj}</div>
+                  <div style={{ fontSize: "0.75rem", color: "rgba(255,255,255,0.45)", marginBottom: "0.3rem", textTransform: "uppercase", letterSpacing: "0.08em" }}>DJ · {d.dj}</div>
+                  {d.location && <div style={{ fontSize: "0.72rem", color: d.special ? "#5E8A6A" : "rgba(255,255,255,0.35)", marginBottom: "0.5rem", fontStyle: "italic" }}>{d.location}</div>}
                   <p style={{ fontSize: "0.88rem", color: "rgba(255,255,255,0.62)", lineHeight: 1.65, margin: 0 }}>{d.desc}</p>
                 </div>
               </div>

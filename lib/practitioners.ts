@@ -108,6 +108,7 @@ export const practitioners: Practitioner[] = [
     role: "Electronic Music Producer & DJ",
     offering: "Ecstatic Dance · Friday & Sunday",
     bio: "Flowscape is an electronic music producer and DJ whose genre-dissolving sets are purpose-built for ecstatic dance, ceremony, and late-night exploration. Expect deep bass, ethereal textures, and the kind of music that makes your body move before your mind has caught up.",
+    photo: "/images/practitioners/flowscape.jpg",
     isMusician: true,
   },
   {

@@ -3,7 +3,9 @@ import { useState, type ReactNode } from "react";
 import { LeafIcon, FlameIcon, WaterDropIcon, WindIcon, MoonIcon, SparklesIcon } from "@/components/Icons";
 import EventGloss from "@/components/EventGloss";
 import BioTrigger from "@/components/BioTrigger";
+import SpaceModal from "@/components/SpaceModal";
 import { scheduleDays, type Element, type ScheduleEvent } from "@/lib/schedule-data";
+import { getSpaceForLocation } from "@/lib/spaces";
 
 const elementMeta: Record<Element, { icon: ReactNode; label: string; color: string; desc: string }> = {
   fire:    { icon: <FlameIcon      size={14} color="#FF6B35" />, label: "Fire",    color: "#FF6B35", desc: "Main Stage · Ceremony" },
@@ -51,6 +53,7 @@ function readInitialDay(): number {
 export default function Schedule() {
   const [active, setActiveState] = useState<number>(readInitialDay);
   const [elementFilter, setElementFilter] = useState<Element | null>(null);
+  const [activeSpace, setActiveSpace] = useState<string | null>(null);
 
   const setActive = (i: number) => {
     setActiveState(i);
@@ -145,7 +148,20 @@ export default function Schedule() {
           >
             <div className="schedule-time">
               {e.time}
-              {e.location && <span className="schedule-location"> · {e.location}</span>}
+              {e.location && (() => {
+                const space = getSpaceForLocation(e.location);
+                return space ? (
+                  <button
+                    className="schedule-location schedule-location-btn"
+                    onClick={() => setActiveSpace(space.key)}
+                    title={`Learn about ${space.name}`}
+                  >
+                    · {e.location}
+                  </button>
+                ) : (
+                  <span className="schedule-location"> · {e.location}</span>
+                );
+              })()}
             </div>
             <div className="schedule-event">
               <span className="schedule-track-icon">{elementMeta[e.element].icon}</span>
@@ -208,6 +224,12 @@ export default function Schedule() {
             </div>
           </div>
         );
+      })()}
+
+      {/* Space modal */}
+      {activeSpace && (() => {
+        const space = getSpaceForLocation(activeSpace);
+        return space ? <SpaceModal space={space} onClose={() => setActiveSpace(null)} /> : null;
       })()}
 
       {/* Sunday Family Day */}

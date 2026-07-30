@@ -1506,6 +1506,14 @@ textarea:focus-visible {
   color: var(--aurora); font-style: italic; letter-spacing: 0.05em;
   text-transform: none;
 }
+.schedule-location-btn {
+  background: none; border: none; padding: 0; margin: 0;
+  cursor: pointer; font: inherit; font-style: italic;
+  color: var(--aurora); letter-spacing: 0.05em;
+  text-decoration: underline dotted rgba(179,145,255,0.4);
+  transition: color 0.15s;
+}
+.schedule-location-btn:hover { color: #fff; text-decoration-color: rgba(255,255,255,0.5); }
 .schedule-track-icon { margin-right: 0.4rem; }
 .schedule-event { font-size: 1.05rem; color: rgba(240,234,252,0.9); font-weight: 500; }
 .schedule-detail { font-size: 0.95rem; color: rgba(220,210,240,0.58); margin-top: 0.15rem; font-family: var(--font-body); }

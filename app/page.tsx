@@ -12,6 +12,7 @@ import FloatingActions from "@/components/FloatingActions";
 import ConversionNudges from "@/components/ConversionNudges";
 import PartnerCard from "@/components/PartnerCard";
 import BuildYourWeekend from "@/components/BuildYourWeekend";
+import Musicians from "@/components/Musicians";
 import { PlaneIcon, MapPinIcon, LeafIcon, MoonIcon } from "@/components/Icons";
 
 /* ── static data ── */
@@ -257,6 +258,9 @@ export default function Home() {
           </div>
         </Reveal>
       </section>
+
+      {/* ═══ MUSICIANS / VISITING ARTISTS ═══ */}
+      <Musicians />
 
       {/* ═══ BUILD YOUR WEEKEND ═══ */}
       <BuildYourWeekend />

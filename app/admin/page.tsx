@@ -1116,6 +1116,22 @@ function VendorAgreementsTab() {
     color: view === key ? "#3DB8AF" : "var(--ink-muted)",
   });
 
+  const exportCSV = () => {
+    const cols = ["Vendor","Business","Contact","Email","Phone","Category","Space","Days","Electricity","Amount","Status","Camping","Lodging Paid","Admin Notes","Signed By","Signed On","Submitted"];
+    const csv = [cols.join(","), ...agreements.map(a => [
+      a.vendor_name, a.business_name ?? "", a.contact_name, a.email, a.phone,
+      a.category, SPACE_LABELS[a.space_type] ?? a.space_type, a.selected_days ?? "All 3",
+      a.electricity, a.price_cents === 0 ? "Free" : `$${(a.price_cents / 100).toFixed(0)}`,
+      a.payment_status, a.camping ? "Yes" : "No", a.lodging_paid ? "Yes" : "No",
+      a.admin_notes ?? "", a.printed_name, a.sig_date,
+      new Date(a.created_at).toLocaleDateString(),
+    ].map(v => `"${String(v).replace(/"/g, '""')}"`).join(","))].join("\n");
+    const el = document.createElement("a");
+    el.href = URL.createObjectURL(new Blob([csv], { type: "text/csv" }));
+    el.download = `vendor_agreements_${new Date().toISOString().slice(0, 10)}.csv`;
+    el.click();
+  };
+
   return (
     <div style={{ padding: "1.5rem" }}>
       <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "1rem", flexWrap: "wrap", gap: "0.75rem" }}>
@@ -1123,9 +1139,12 @@ function VendorAgreementsTab() {
           <button style={subTabStyle("agreements")} onClick={() => setView("agreements")}>Agreements</button>
           <button style={subTabStyle("camping")} onClick={() => setView("camping")}>Camping & Lodging</button>
         </div>
-        <span style={{ fontSize: "0.8rem", color: "var(--ink-muted)" }}>
-          {agreements.length} total · Confirmed: {agreements.filter(a => a.payment_status === "confirmed").length} · Pending: {agreements.filter(a => a.payment_status === "pending").length}
-        </span>
+        <div style={{ display: "flex", gap: "0.75rem", alignItems: "center" }}>
+          <span style={{ fontSize: "0.8rem", color: "var(--ink-muted)" }}>
+            {agreements.length} total · Confirmed: {agreements.filter(a => a.payment_status === "confirmed").length} · Pending: {agreements.filter(a => a.payment_status === "pending").length}
+          </span>
+          <button onClick={exportCSV} className="admin-export-btn" disabled={!agreements.length}>Export CSV</button>
+        </div>
       </div>
 
       {view === "camping" && (

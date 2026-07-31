@@ -200,12 +200,14 @@ export default function SponsorsPage() {
                 fontSize: "1.05rem",
                 lineHeight: 1.75,
                 color: C.muted,
-                maxWidth: "540px",
-                margin: "0 auto 1.75rem",
+                maxWidth: "560px",
+                margin: "0 auto 1rem",
               }}
             >
-              Connect your brand with hundreds of health-conscious Alaskans at our
-              4th annual healing arts gathering. Three tiers. Real impact.
+              For 4+ years we&apos;ve brought a team of master healers to Alaska for a
+              premier healing arts festival experience. We intentionally limit capacity
+              to curate a safe, family-friendly environment — festival vibes, intimate
+              gathering. Three tiers. Real impact.
             </p>
             <div
               style={{
@@ -213,12 +215,14 @@ export default function SponsorsPage() {
                 gap: "1.5rem",
                 flexWrap: "wrap",
                 justifyContent: "center",
+                marginBottom: "1.75rem",
               }}
             >
               {[
-                ["300+", "Attendees"],
+                ["4+", "Years Running"],
+                ["150+", "Attendees"],
                 ["3", "Days"],
-                ["40+", "Practitioners"],
+                ["25+", "Practitioners / yr"],
               ].map(([num, label]) => (
                 <div key={label} style={{ textAlign: "center" }}>
                   <div

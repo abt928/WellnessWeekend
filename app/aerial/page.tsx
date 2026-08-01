@@ -23,7 +23,7 @@ const MODES = [
     key: "class",
     title: "Join a Class",
     sub: "Guided · Small group · 6 max",
-    desc: "Beth guides you through a beginner-friendly aerial silk flow — floating, stretching, and moving in three dimensions. No experience needed. At least two sessions run every day of the weekend.",
+    desc: "Instructor Beth guides you through a beginner-friendly aerial silk flow — floating, stretching, and moving in three dimensions. No experience needed. At least two sessions run every day of the weekend.",
   },
   {
     key: "solo",
@@ -132,13 +132,13 @@ export default function AerialPage() {
       {/* Header */}
       <div style={{ background: C.charcoal, color: "#fff", padding: "3.5rem 1.5rem 3rem", textAlign: "center" }}>
         <p style={{ color: "rgba(255,255,255,0.5)", fontSize: "0.8rem", letterSpacing: "0.12em", textTransform: "uppercase", marginBottom: "0.75rem" }}>
-          Add-On Experience · The Aerial Rig
+          Add-On Experience · The Aerial Rig · Instructed by Beth
         </p>
         <h1 style={{ fontFamily: "var(--font-display)", fontSize: "clamp(2rem,5vw,3rem)", fontWeight: 600, marginBottom: "0.5rem" }}>
           Become Motionless in Sound
         </h1>
         <p style={{ color: "rgba(255,255,255,0.7)", fontSize: "1rem", maxWidth: 560, margin: "0 auto" }}>
-          The floating ecstatic dance experience — suspended in a silk hammock, held by sound instead of movement.
+          The floating ecstatic dance experience — suspended in a silk hammock, held by sound instead of movement. Silks and paddleboards provided by Alaska Fly Dog.
         </p>
       </div>
 

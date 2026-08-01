@@ -161,7 +161,7 @@ export const practitioners: Practitioner[] = [
     name: "Beth",
     role: "Aerial Silk Artist",
     offering: "Aerial Silk · All Weekend",
-    bio: "Beth is an aerial silk artist and movement educator who brings warmth, technical skill, and genuine joy to every session. Her beginner-friendly aerial classes create a safe, encouraging space for people of all backgrounds to discover what it feels like to leave the ground. Small groups of 6 ensure everyone gets hands-on attention. Beyond class, Beth's silk hammocks are also available to rent solo during any Sound offering — for anyone who wants to float, go still, and let the frequency hold them instead.",
+    bio: "Beth is an aerial silk artist and movement educator who brings warmth, technical skill, and genuine joy to every session. Her beginner-friendly aerial classes create a safe, encouraging space for people of all backgrounds to discover what it feels like to leave the ground. Small groups of 6 ensure everyone gets hands-on attention. The silk rig itself is provided by Alaska Fly Dog, who also rent hammocks solo during any Sound offering — for anyone who wants to float, go still, and let the frequency hold them instead.",
   },
   {
     slug: "mystical-moon-dance",

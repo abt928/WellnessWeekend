@@ -17,7 +17,7 @@ type ActiveTab =
   | "vendor_agreements"
   | "vendors" | "volunteers" | "volunteer_registrations" | "warriors" | "instructor_waitlist" | "sponsors"
   | "staff_registrations" | "staff_guests" | "contrast_bookings" | "massage_bookings" | "aerial_bookings" | "paddleboard_bookings"
-  | "confirmations" | "giveaway" | "partner_codes" | "class_reservations";
+  | "confirmations" | "giveaway" | "partner_codes" | "class_reservations" | "people";
 
 interface TabConfig {
   key: TableName;
@@ -2306,6 +2306,206 @@ function CommsTab() {
   );
 }
 
+// ── People Tab ────────────────────────────────────────────────────────
+
+type PersonCategory = "warrior" | "volunteer" | "staff" | "giveaway" | "guest";
+
+interface Person {
+  id: number;
+  name: string | null;
+  email: string | null;
+  phone: string | null;
+  created_at: string | null;
+  category: PersonCategory;
+  // extras
+  family_size?: number;
+  beds_needed?: number;
+  shifts?: string;
+  role?: string;
+  prize_name?: string;
+  amount_cents?: number;
+}
+
+const CAT_CONFIG: Record<PersonCategory, { label: string; color: string; bg: string }> = {
+  warrior:   { label: "Warrior",   color: "#fb923c", bg: "rgba(251,146,60,0.15)" },
+  volunteer: { label: "Volunteer", color: "#86efac", bg: "rgba(134,239,172,0.15)" },
+  staff:     { label: "Staff",     color: "#a78bfa", bg: "rgba(167,139,250,0.15)" },
+  giveaway:  { label: "Giveaway",  color: "#D4AF3C", bg: "rgba(212,175,60,0.15)" },
+  guest:     { label: "Guest",     color: "#38bdf8", bg: "rgba(56,189,248,0.15)" },
+};
+
+function PeopleTab() {
+  const [all, setAll] = useState<Person[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [filter, setFilter] = useState<PersonCategory | "all">("all");
+  const [search, setSearch] = useState("");
+  const [copied, setCopied] = useState<string | null>(null);
+
+  useEffect(() => {
+    fetch("/api/admin/people")
+      .then(r => r.json())
+      .then(d => {
+        if (d.error) return;
+        const combined: Person[] = [
+          ...(d.warriors  ?? []),
+          ...(d.volunteers ?? []),
+          ...(d.staff     ?? []),
+          ...(d.giveaway  ?? []),
+          ...(d.guests    ?? []),
+        ].sort((a, b) => new Date(b.created_at ?? 0).getTime() - new Date(a.created_at ?? 0).getTime());
+        setAll(combined);
+      })
+      .finally(() => setLoading(false));
+  }, []);
+
+  function copyText(text: string) {
+    navigator.clipboard.writeText(text);
+    setCopied(text);
+    setTimeout(() => setCopied(null), 1500);
+  }
+
+  const filtered = all.filter(p => {
+    if (filter !== "all" && p.category !== filter) return false;
+    if (!search.trim()) return true;
+    const q = search.toLowerCase();
+    return (p.name ?? "").toLowerCase().includes(q) ||
+           (p.email ?? "").toLowerCase().includes(q) ||
+           (p.phone ?? "").toLowerCase().includes(q);
+  });
+
+  const counts: Record<PersonCategory | "all", number> = {
+    all: all.length,
+    warrior:   all.filter(p => p.category === "warrior").length,
+    volunteer: all.filter(p => p.category === "volunteer").length,
+    staff:     all.filter(p => p.category === "staff").length,
+    giveaway:  all.filter(p => p.category === "giveaway").length,
+    guest:     all.filter(p => p.category === "guest").length,
+  };
+
+  function exportCSV() {
+    const header = "Category,Name,Email,Phone,Date,Extra";
+    const rows = filtered.map(p => {
+      const extra = p.prize_name ?? p.role ?? (p.shifts ? "volunteer" : "") ?? "";
+      return [CAT_CONFIG[p.category].label, p.name ?? "", p.email ?? "", p.phone ?? "",
+              p.created_at ? new Date(p.created_at).toLocaleString() : "", extra]
+        .map(v => `"${String(v).replace(/"/g, '""')}"`)
+        .join(",");
+    });
+    const blob = new Blob([[header, ...rows].join("\n")], { type: "text/csv" });
+    const a = document.createElement("a"); a.href = URL.createObjectURL(blob);
+    a.download = "people.csv"; a.click();
+  }
+
+  const filterBtn = (key: PersonCategory | "all", label: string) => (
+    <button key={key} onClick={() => setFilter(key)} style={{
+      padding: "0.35rem 0.85rem", borderRadius: 20, border: "none", cursor: "pointer",
+      fontSize: "0.8rem", fontWeight: 600,
+      background: filter === key ? "#fff" : "rgba(255,255,255,0.07)",
+      color: filter === key ? "#0a0a14" : "rgba(255,255,255,0.6)",
+    }}>
+      {label} <span style={{ opacity: 0.65 }}>({counts[key]})</span>
+    </button>
+  );
+
+  return (
+    <div>
+      {/* Header */}
+      <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: "1rem", flexWrap: "wrap", gap: "0.75rem" }}>
+        <h2 style={{ fontSize: "1.2rem", fontWeight: 700, margin: 0 }}>Everyone</h2>
+        <button onClick={exportCSV} style={{ padding: "0.4rem 0.9rem", borderRadius: 8, border: "1px solid rgba(255,255,255,0.18)", background: "transparent", color: "rgba(255,255,255,0.65)", cursor: "pointer", fontSize: "0.8rem" }}>
+          Export CSV
+        </button>
+      </div>
+
+      {/* Search */}
+      <input
+        placeholder="Search by name, email, or phone…"
+        value={search} onChange={e => setSearch(e.target.value)}
+        style={{ width: "100%", padding: "0.7rem 1rem", borderRadius: 10, border: "1px solid rgba(255,255,255,0.12)", background: "rgba(255,255,255,0.05)", color: "#fff", fontSize: "0.9rem", outline: "none", boxSizing: "border-box", marginBottom: "0.85rem" }}
+      />
+
+      {/* Filter pills */}
+      <div style={{ display: "flex", gap: "0.4rem", flexWrap: "wrap", marginBottom: "1.25rem" }}>
+        {filterBtn("all",      "All")}
+        {filterBtn("warrior",  "Warriors")}
+        {filterBtn("volunteer","Volunteers")}
+        {filterBtn("staff",    "Staff")}
+        {filterBtn("giveaway", "Giveaway")}
+        {filterBtn("guest",    "Guests")}
+      </div>
+
+      {loading ? (
+        <p style={{ color: "rgba(255,255,255,0.4)", fontSize: "0.875rem" }}>Loading…</p>
+      ) : filtered.length === 0 ? (
+        <p style={{ color: "rgba(255,255,255,0.35)", fontSize: "0.875rem" }}>No results.</p>
+      ) : (
+        <>
+          <p style={{ fontSize: "0.78rem", color: "rgba(255,255,255,0.35)", marginBottom: "0.75rem" }}>{filtered.length} people</p>
+          <div style={{ display: "flex", flexDirection: "column", gap: "0.5rem" }}>
+            {filtered.map((p, i) => {
+              const cat = CAT_CONFIG[p.category];
+              const extra = p.prize_name
+                ? `Won: ${p.prize_name}`
+                : p.role
+                ? `Role: ${p.role}`
+                : p.beds_needed
+                ? `${p.family_size} people · ${p.beds_needed} beds`
+                : "";
+              return (
+                <div key={`${p.category}-${p.id}-${i}`} style={{
+                  display: "grid", gridTemplateColumns: "auto 1fr auto",
+                  alignItems: "center", gap: "0.75rem 1rem",
+                  background: "rgba(255,255,255,0.04)", border: "1px solid rgba(255,255,255,0.08)",
+                  borderRadius: 10, padding: "0.75rem 1rem",
+                }}>
+                  {/* Category badge */}
+                  <span style={{ padding: "0.2rem 0.55rem", borderRadius: 20, fontSize: "0.7rem", fontWeight: 700, color: cat.color, background: cat.bg, whiteSpace: "nowrap" }}>
+                    {cat.label}
+                  </span>
+
+                  {/* Contact info */}
+                  <div style={{ minWidth: 0 }}>
+                    <div style={{ fontWeight: 700, color: "#fff", fontSize: "0.9rem", marginBottom: "0.15rem", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>
+                      {p.name || <em style={{ color: "rgba(255,255,255,0.3)" }}>Unknown</em>}
+                    </div>
+                    <div style={{ display: "flex", gap: "0.75rem", flexWrap: "wrap", alignItems: "center" }}>
+                      {p.email && (
+                        <a href={`mailto:${p.email}`} style={{ color: "#D4AF3C", fontSize: "0.82rem", textDecoration: "none" }}>{p.email}</a>
+                      )}
+                      {p.phone && (
+                        <a href={`tel:${p.phone}`} style={{ color: "rgba(255,255,255,0.55)", fontSize: "0.82rem", textDecoration: "none" }}>{p.phone}</a>
+                      )}
+                      {!p.phone && (
+                        <span style={{ color: "rgba(255,255,255,0.2)", fontSize: "0.78rem", fontStyle: "italic" }}>no phone</span>
+                      )}
+                    </div>
+                    {extra && <div style={{ fontSize: "0.75rem", color: "rgba(255,255,255,0.35)", marginTop: "0.2rem" }}>{extra}</div>}
+                  </div>
+
+                  {/* Date + copy */}
+                  <div style={{ textAlign: "right", display: "flex", flexDirection: "column", alignItems: "flex-end", gap: "0.35rem" }}>
+                    <span style={{ fontSize: "0.75rem", color: "rgba(255,255,255,0.35)", whiteSpace: "nowrap" }}>
+                      {p.created_at ? new Date(p.created_at).toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" }) : "—"}
+                    </span>
+                    {p.email && (
+                      <button
+                        onClick={() => copyText(p.email!)}
+                        style={{ padding: "0.15rem 0.45rem", borderRadius: 4, border: "1px solid rgba(255,255,255,0.12)", background: "transparent", color: copied === p.email ? "#86efac" : "rgba(255,255,255,0.35)", cursor: "pointer", fontSize: "0.68rem" }}
+                      >
+                        {copied === p.email ? "Copied!" : "Copy email"}
+                      </button>
+                    )}
+                  </div>
+                </div>
+              );
+            })}
+          </div>
+        </>
+      )}
+    </div>
+  );
+}
+
 // ── Class Reservations Tab ────────────────────────────────────────────
 
 const CLASS_LABELS: Record<string, string> = {
@@ -3021,42 +3221,51 @@ export default function AdminPage() {
       {/* Tabs */}
       <div className="admin-tabs">
         {tab("overview", "Overview")}
-        {tab("guest_list", "Guest List")}
-        {tab("budget", "Budget", true)}
+        {tab("people",   "👥 People")}
+        {tab("budget",   "Budget", true)}
 
         <span className="admin-tab-sep" />
+        <span className="admin-tab-group-label">People</span>
 
-        {tab("affiliates", "Affiliates")}
-        {tab("referral_events", "Referrals")}
-        {tab("newsletter", "Newsletter")}
-        {tab("leads", "Leads")}
-
-        <span className="admin-tab-sep" />
-
-        {tab("vendor_agreements", "Agreements")}
-        {tab("vendors", "Vendors")}
-        {tab("volunteers", "Vol. Interest")}
-        {tab("volunteer_registrations", "Vol. Signups")}
-        {tab("warriors", "Warriors")}
-        {tab("staff_registrations", "Staff")}
-        {tab("staff_guests", "Staff Guests")}
-        {tab("class_reservations", "Classes")}
-        {tab("contrast_bookings", "Contrast Therapy")}
-        {tab("massage_bookings", "Massage")}
-        {tab("aerial_bookings", "Aerial / Silk")}
-        {tab("paddleboard_bookings", "Paddleboard")}
-        {tab("instructor_waitlist", "Instructors")}
-        {tab("sponsors", "Sponsors")}
-        {tab("giveaway", "Giveaway")}
-        {tab("partner_codes", "Partners")}
+        {tab("guest_list",            "Guests")}
+        {tab("warriors",              "Warriors")}
+        {tab("volunteer_registrations","Volunteers")}
+        {tab("staff_registrations",   "Staff")}
+        {tab("staff_guests",          "Staff Guests")}
+        {tab("giveaway",              "Giveaway")}
+        {tab("partner_codes",         "Partners")}
 
         <span className="admin-tab-sep" />
+        <span className="admin-tab-group-label">Bookings</span>
 
-        {tab("confirmations", "Confirmations")}
+        {tab("class_reservations",  "Classes")}
+        {tab("contrast_bookings",   "Contrast")}
+        {tab("massage_bookings",    "Massage")}
+        {tab("aerial_bookings",     "Aerial")}
+        {tab("paddleboard_bookings","Paddleboard")}
+
+        <span className="admin-tab-sep" />
+        <span className="admin-tab-group-label">Marketing</span>
+
+        {tab("affiliates",       "Affiliates")}
+        {tab("referral_events",  "Referrals")}
+        {tab("newsletter",       "Newsletter")}
+        {tab("leads",            "Leads")}
+        {tab("instructor_waitlist","Instructors")}
+        {tab("sponsors",         "Sponsors")}
+
+        <span className="admin-tab-sep" />
+        <span className="admin-tab-group-label">Commerce</span>
+
+        {tab("vendor_agreements","Agreements")}
+        {tab("vendors",          "Vendors")}
+        {tab("volunteers",       "Vol. Interest")}
+        {tab("confirmations",    "Confirmations")}
       </div>
 
       {/* Tab content */}
       {activeTab === "overview"            && <OverviewTab />}
+      {activeTab === "people"              && <PeopleTab />}
       {activeTab === "guest_list"           && <GuestListTab />}
       {activeTab === "budget"              && canSeeFinancials && <BudgetTab />}
       {activeTab === "affiliates"          && <AffiliatesTab />}
@@ -3067,7 +3276,7 @@ export default function AdminPage() {
       {activeTab === "vendors"             && <DataTab tableKey="vendors"             columns={["id","name","email","business","category","description","created_at"]} />}
       {activeTab === "volunteers"               && <DataTab tableKey="volunteers"               columns={["id","name","email","phone","interest","experience","availability","created_at"]} />}
       {activeTab === "volunteer_registrations"  && <VolunteerRegistrationsTab />}
-      {activeTab === "warriors"                 && <DataTab tableKey="warriors"                 columns={["id","name","email","family_size","beds_needed","created_at"]} />}
+      {activeTab === "warriors"                 && <DataTab tableKey="warriors"                 columns={["id","name","email","phone","family_size","beds_needed","created_at"]} />}
       {activeTab === "staff_registrations"      && <DataTab tableKey="staff_registrations"      columns={["id","name","email","phone","role","emergency_contact_name","emergency_contact_phone","dietary_needs","ticket_code","created_at"]} />}
       {activeTab === "staff_guests"             && <DataTab tableKey="staff_guests"             columns={["id","staff_ticket_code","staff_name","guest_name","guest_email","ticket_code","created_at"]} />}
       {activeTab === "class_reservations"        && <ClassReservationsTab />}

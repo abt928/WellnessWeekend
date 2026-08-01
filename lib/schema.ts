@@ -138,6 +138,7 @@ export const warriors = pgTable("warriors", {
   id: serial("id").primaryKey(),
   name: varchar("name", { length: 255 }).notNull(),
   email: varchar("email", { length: 255 }).notNull(),
+  phone: varchar("phone", { length: 50 }),
   familySize: integer("family_size").notNull(),
   bedsNeeded: integer("beds_needed").notNull(),
   createdAt: timestamp("created_at", { withTimezone: true }).defaultNow().notNull(),

@@ -25,6 +25,7 @@ export default function WarriorsPage() {
 
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
+  const [phone, setPhone] = useState("");
   const [familySize, setFamilySize] = useState("");
   const [bedsNeeded, setBedsNeeded] = useState("");
 
@@ -45,6 +46,7 @@ export default function WarriorsPage() {
         body: JSON.stringify({
           name,
           email,
+          phone,
           familySize: parseInt(familySize),
           bedsNeeded: parseInt(bedsNeeded),
         }),
@@ -221,6 +223,10 @@ export default function WarriorsPage() {
 
               <Field label="Email Address">
                 <input type="email" required value={email} onChange={(e) => setEmail(e.target.value)} placeholder="your@email.com" style={inputStyle} />
+              </Field>
+
+              <Field label="Phone Number">
+                <input type="tel" required value={phone} onChange={(e) => setPhone(e.target.value)} placeholder="(907) 555-0100" style={inputStyle} />
               </Field>
 
               <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "1rem" }}>

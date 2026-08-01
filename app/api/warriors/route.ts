@@ -22,7 +22,7 @@ export async function GET() {
 
 export async function POST(req: NextRequest) {
   try {
-    const { name, email, familySize, bedsNeeded } = await req.json();
+    const { name, email, phone, familySize, bedsNeeded } = await req.json();
     if (!name || !email || !familySize || !bedsNeeded) {
       return NextResponse.json({ error: "All fields are required" }, { status: 400 });
     }
@@ -43,7 +43,7 @@ export async function POST(req: NextRequest) {
       );
     }
 
-    await db.insert(warriors).values({ name, email, familySize, bedsNeeded });
+    await db.insert(warriors).values({ name, email, phone: phone?.trim() || null, familySize, bedsNeeded });
     const newRemaining = remaining - bedsNeeded;
     return NextResponse.json({ success: true, bedsRemaining: newRemaining });
   } catch (error) {

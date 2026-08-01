@@ -259,6 +259,19 @@ export async function POST(req: NextRequest) {
     `;
 
     await sql`
+      CREATE TABLE IF NOT EXISTS aerial_bookings (
+        id SERIAL PRIMARY KEY,
+        name VARCHAR(255) NOT NULL,
+        email VARCHAR(255) NOT NULL,
+        phone VARCHAR(50),
+        mode VARCHAR(20) NOT NULL,
+        slot VARCHAR(50) NOT NULL,
+        notes TEXT,
+        created_at TIMESTAMPTZ DEFAULT NOW() NOT NULL
+      )
+    `;
+
+    await sql`
       CREATE TABLE IF NOT EXISTS massage_bookings (
         id SERIAL PRIMARY KEY,
         name VARCHAR(255) NOT NULL,
@@ -306,8 +319,9 @@ export async function POST(req: NextRequest) {
         "budget_items", "members", "member_referrals", "member_redemptions",
         "warriors", "volunteer_registrations", "volunteer_shift_claims",
         "admin_tasks", "staff_registrations", "staff_guests", "contrast_bookings", "massage_bookings",
+        "aerial_bookings",
       ],
-      message: "All 21 tables verified / created.",
+      message: "All 22 tables verified / created.",
     });
   } catch (e) {
     console.error("DB setup error:", e);

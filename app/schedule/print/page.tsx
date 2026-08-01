@@ -9,7 +9,7 @@ export const metadata = {
 };
 
 const elementSymbol: Record<string, string> = {
-  fire: "🔥", water: "💧", air: "🌬", earth: "🌿", quantum: "✨",
+  fire: "🔥", water: "💧", air: "🌬", earth: "🌿", sound: "✨",
 };
 
 function hostNames(slugs: string[]): string {

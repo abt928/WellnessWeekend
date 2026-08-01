@@ -206,6 +206,17 @@ export const contrastBookings = pgTable("contrast_bookings", {
   createdAt: timestamp("created_at", { withTimezone: true }).defaultNow().notNull(),
 });
 
+export const aerialBookings = pgTable("aerial_bookings", {
+  id: serial("id").primaryKey(),
+  name: varchar("name", { length: 255 }).notNull(),
+  email: varchar("email", { length: 255 }).notNull(),
+  phone: varchar("phone", { length: 50 }),
+  mode: varchar("mode", { length: 20 }).notNull(),
+  slot: varchar("slot", { length: 50 }).notNull(),
+  notes: text("notes"),
+  createdAt: timestamp("created_at", { withTimezone: true }).defaultNow().notNull(),
+});
+
 export const staffRegistrations = pgTable("staff_registrations", {
   id: serial("id").primaryKey(),
   name: varchar("name", { length: 255 }).notNull(),

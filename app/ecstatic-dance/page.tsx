@@ -202,6 +202,29 @@ export default function EcstaticDancePage() {
         </div>
       </section>
 
+      {/* Aerial cross-promo */}
+      <section style={{ maxWidth: 760, margin: "0 auto", padding: "0 1.5rem 4rem" }}>
+        <Link href="/aerial" style={{
+          display: "block", textDecoration: "none",
+          background: "linear-gradient(135deg, rgba(139,95,191,0.22), rgba(212,99,159,0.14))",
+          border: "1px solid rgba(139,95,191,0.4)", borderRadius: 18,
+          padding: "2rem 2.2rem",
+        }}>
+          <p style={{ fontSize: "0.72rem", letterSpacing: "0.15em", textTransform: "uppercase", color: "#9B7FD4", fontWeight: 600, marginBottom: "0.75rem" }}>
+            The Other Ecstatic Dance
+          </p>
+          <h3 style={{ fontFamily: "var(--font-display, serif)", fontSize: "clamp(1.3rem, 3vw, 1.8rem)", color: "#fff", marginBottom: "0.6rem" }}>
+            Become motionless in sound.
+          </h3>
+          <p style={{ color: "rgba(255,255,255,0.65)", fontSize: "0.92rem", lineHeight: 1.7, marginBottom: "1rem", maxWidth: 560 }}>
+            If the dancefloor asks your body to move, the aerial silk hammock asks it to surrender. Float, go still, and let sound do what movement usually does — $20 for 30 minutes, guided or solo.
+          </p>
+          <span style={{ color: "#9B7FD4", fontWeight: 700, fontSize: "0.9rem" }}>
+            Explore the Aerial Rig →
+          </span>
+        </Link>
+      </section>
+
       {/* CTA */}
       <section style={{ textAlign: "center", padding: "4rem 1.5rem 6rem", borderTop: "1px solid rgba(255,255,255,0.07)" }}>
         <p style={{ fontSize: "0.72rem", letterSpacing: "0.15em", textTransform: "uppercase", color: "rgba(255,255,255,0.4)", marginBottom: "1rem" }}>

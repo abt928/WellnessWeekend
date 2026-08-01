@@ -12,7 +12,7 @@ const elementMeta: Record<Element, { icon: ReactNode; label: string; color: stri
   water:   { icon: <WaterDropIcon  size={14} color="#3DB8AF" />, label: "Water",   color: "#3DB8AF", desc: "Lakeside · Immersion" },
   air:     { icon: <WindIcon       size={14} color="#9B7FD4" />, label: "Air",     color: "#9B7FD4", desc: "Aerial · Movement" },
   earth:   { icon: <LeafIcon       size={14} color="#5E8A6A" />, label: "Earth",   color: "#5E8A6A", desc: "Garden · Nature" },
-  quantum: { icon: <SparklesIcon   size={14} color="#D4AF3C" />, label: "Quantum", color: "#D4AF3C", desc: "Light · Frequency · Sound" },
+  sound:   { icon: <SparklesIcon   size={14} color="#D4AF3C" />, label: "Sound",   color: "#D4AF3C", desc: "Frequency · Resonance" },
 };
 
 interface ScheduleBlock {
@@ -77,7 +77,7 @@ export default function Schedule() {
         The Journey
       </h2>
       <p className="section-desc">
-        From fire ceremonies to lakeside immersion, aerial arts to quantum sound — filter by element to find your path through the weekend.
+        From fire ceremonies to lakeside immersion, aerial arts to sound frequency — filter by element to find your path through the weekend.
       </p>
 
       {/* Element Legend */}

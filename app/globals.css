@@ -5768,7 +5768,7 @@ body {
 .print-row-water   { background: rgba(61, 184, 175, 0.04); }
 .print-row-air     { background: rgba(155, 127, 212, 0.04); }
 .print-row-earth   { background: rgba(94, 138, 106, 0.04); }
-.print-row-quantum { background: rgba(201, 152, 63, 0.05); }
+.print-row-sound   { background: rgba(201, 152, 63, 0.05); }
 
 .print-time {
   font-weight: 600;

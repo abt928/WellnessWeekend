@@ -45,7 +45,7 @@ export const SPACES: Record<string, SacredSpace> = {
   "Main Stage": {
     key: "Main Stage",
     name: "The Main Stage",
-    element: "Fire · Air · Quantum",
+    element: "Fire · Air · Sound",
     elementColor: "#D4AF3C",
     icon: "🎤",
     tagline: "The heartbeat of the weekend — where every modality lives.",
@@ -80,11 +80,12 @@ export const SPACES: Record<string, SacredSpace> = {
     elementColor: "#9B7FD4",
     icon: "🎋",
     tagline: "Leave the ground behind — and discover what lives above it.",
-    description: "The aerial silk rig is where gravity becomes negotiable. Instructor Beth creates an intimate, encouraging space for beginners of all backgrounds to discover what it feels like to leave the ground — floating, stretching, and moving in three dimensions. Sessions run all weekend in small groups of six, giving everyone real hands-on attention. The Lionsgate Aerial Activation on Saturday morning — floating in a silk hammock as the Lion's Gate portal opens — is one of the most extraordinary experiences of the weekend.",
+    description: "The aerial silk rig is where gravity becomes negotiable. Instructor Beth creates an intimate, encouraging space for beginners of all backgrounds to discover what it feels like to leave the ground — floating, stretching, and moving in three dimensions. Sessions run beginner-friendly, small-group classes (six max) at least twice a day, every day of the weekend. Prefer to fly solo? Silk hammocks are also available to rent during any Sound offering — settle in, go still, and let the frequency hold you. The Lionsgate Aerial Activation on Saturday morning — floating in a silk hammock as the Lion's Gate portal opens — is one of the most extraordinary experiences of the weekend.",
     offerings: [
-      "Intro Aerial Silks · Friday, Saturday, Sunday",
+      "Intro Aerial Silks · 2+ classes daily, Friday–Sunday",
       "Lionsgate Aerial Activation · Saturday 8 AM",
       "Intro Aerial for Kids · Sunday 2 PM",
+      "Solo Silk Hammock Rental · Every Sound offering · $20/30 min · See /aerial",
     ],
   },
   "Sauna": {

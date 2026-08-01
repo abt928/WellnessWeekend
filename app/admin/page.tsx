@@ -9,14 +9,14 @@ import { SHIFT_MAP, SHIFTS } from "@/lib/volunteer-shifts";
 type TableName =
   | "leads" | "newsletter" | "vendors" | "volunteers"
   | "sponsors" | "instructor_waitlist" | "affiliates" | "referral_events"
-  | "volunteer_registrations" | "warriors" | "members" | "staff_registrations" | "staff_guests" | "contrast_bookings" | "massage_bookings";
+  | "volunteer_registrations" | "warriors" | "members" | "staff_registrations" | "staff_guests" | "contrast_bookings" | "massage_bookings" | "aerial_bookings";
 
 type ActiveTab =
   | "overview" | "guest_list" | "budget"
   | "affiliates" | "referral_events" | "newsletter" | "leads"
   | "vendor_agreements"
   | "vendors" | "volunteers" | "volunteer_registrations" | "warriors" | "instructor_waitlist" | "sponsors"
-  | "staff_registrations" | "staff_guests" | "contrast_bookings" | "massage_bookings"
+  | "staff_registrations" | "staff_guests" | "contrast_bookings" | "massage_bookings" | "aerial_bookings"
   | "confirmations";
 
 interface TabConfig {
@@ -1567,6 +1567,83 @@ function DataTab({ tableKey, columns, statusField }: { tableKey: TableName; colu
   );
 }
 
+// ── Aerial / Silk Bookings Tab ──────────────────────────────────────────
+// Shows equipment capacity (silk hammocks) per slot at a glance, above the
+// full booking list, so staff can see at a glance whether a class or a
+// solo rental slot is fully equipped.
+
+const AERIAL_CLASS_SLOTS = [
+  { key: "fri-3pm",      label: "Fri 3:00 PM" },
+  { key: "fri-6pm",      label: "Fri 6:00 PM" },
+  { key: "sat-10am",     label: "Sat 10:00 AM" },
+  { key: "sat-2pm",      label: "Sat 2:00 PM" },
+  { key: "sun-1030am",   label: "Sun 10:30 AM" },
+  { key: "sun-2pm-kids", label: "Sun 2:00 PM (Kids)" },
+];
+const AERIAL_SOLO_SLOTS = [
+  { key: "fri-4pm",  label: "Fri 4:00 PM" },
+  { key: "sat-7am",  label: "Sat 7:00 AM" },
+  { key: "sat-8am",  label: "Sat 8:00 AM" },
+  { key: "sat-4pm",  label: "Sat 4:00 PM" },
+  { key: "sat-5pm",  label: "Sat 5:00 PM" },
+  { key: "sun-8am",  label: "Sun 8:00 AM" },
+  { key: "sun-10am", label: "Sun 10:00 AM" },
+];
+
+function AerialBookingsTab() {
+  const [rows, setRows] = useState<Record<string, unknown>[]>([]);
+
+  const fetchCounts = useCallback(async () => {
+    try {
+      const res = await fetch("/api/admin/data?table=aerial_bookings");
+      if (res.ok) {
+        const data = await res.json();
+        setRows(data.rows || []);
+      }
+    } catch { setRows([]); }
+  }, []);
+
+  useEffect(() => { fetchCounts(); }, [fetchCounts]);
+
+  const countFor = (mode: string, key: string) =>
+    rows.filter(r => r.mode === mode && r.slot === key).length;
+
+  const renderStrip = (title: string, slots: { key: string; label: string }[], mode: string, capacity: number) => (
+    <div style={{ marginBottom: "0.9rem" }}>
+      <div style={{ fontSize: "0.72rem", fontWeight: 700, letterSpacing: "0.06em", textTransform: "uppercase", color: "var(--ink-muted)", marginBottom: "0.5rem" }}>
+        {title}
+      </div>
+      <div style={{ display: "flex", gap: "0.5rem", flexWrap: "wrap" }}>
+        {slots.map(s => {
+          const booked = countFor(mode, s.key);
+          const full = booked >= capacity;
+          return (
+            <span key={s.key} style={{
+              fontSize: "0.75rem", padding: "0.35rem 0.7rem", borderRadius: "999px",
+              border: `1px solid ${full ? "#dc5050" : "var(--line-medium)"}`,
+              color: full ? "#dc5050" : "var(--ink-muted)",
+              background: full ? "rgba(220,80,80,0.08)" : "transparent",
+              fontWeight: full ? 700 : 400,
+            }}>
+              {s.label}: {booked}/{capacity}{full ? " · FULL" : ""}
+            </span>
+          );
+        })}
+      </div>
+    </div>
+  );
+
+  return (
+    <>
+      <div style={{ padding: "1.25rem 1.5rem 0.25rem" }}>
+        {renderStrip("Group Classes · 6 hammocks each", AERIAL_CLASS_SLOTS, "class", 6)}
+        {renderStrip("Solo Hammock Rentals · 7 hammocks available", AERIAL_SOLO_SLOTS, "solo", 7)}
+      </div>
+      <DataTab tableKey="aerial_bookings" columns={["id", "name", "email", "phone", "mode", "slot", "notes", "created_at"]} />
+    </>
+  );
+}
+
 // ── Volunteer Registrations Tab ───────────────────────────────────────
 
 function VolunteerRegistrationsTab() {
@@ -2309,6 +2386,7 @@ export default function AdminPage() {
         {tab("staff_guests", "Staff Guests")}
         {tab("contrast_bookings", "Contrast Therapy")}
         {tab("massage_bookings", "Massage")}
+        {tab("aerial_bookings", "Aerial / Silk")}
         {tab("instructor_waitlist", "Instructors")}
         {tab("sponsors", "Sponsors")}
 
@@ -2334,6 +2412,7 @@ export default function AdminPage() {
       {activeTab === "staff_guests"             && <DataTab tableKey="staff_guests"             columns={["id","staff_ticket_code","staff_name","guest_name","guest_email","ticket_code","created_at"]} />}
       {activeTab === "contrast_bookings"        && <DataTab tableKey="contrast_bookings"        columns={["id","name","email","phone","slots","notes","created_at"]} />}
       {activeTab === "massage_bookings"         && <DataTab tableKey="massage_bookings"         columns={["id","name","email","phone","practitioner","slot","session_type","hands","notes","created_at"]} />}
+      {activeTab === "aerial_bookings"          && <AerialBookingsTab />}
       {activeTab === "instructor_waitlist"      && <DataTab tableKey="instructor_waitlist"      columns={["id","name","email","phone","modality","years_teaching","interested_in_2026","interested_in_2027","offering","status","created_at"]} statusField="status" />}
       {activeTab === "sponsors"                 && <DataTab tableKey="sponsors"                 columns={["id","name","email","company","budget_range","interests","goals","created_at"]} />}
       {activeTab === "confirmations"            && <CommsTab />}

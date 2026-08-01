@@ -1581,13 +1581,23 @@ const AERIAL_CLASS_SLOTS = [
   { key: "sun-2pm-kids", label: "Sun 2:00 PM (Kids)" },
 ];
 const AERIAL_SOLO_SLOTS = [
-  { key: "fri-4pm",  label: "Fri 4:00 PM" },
-  { key: "sat-7am",  label: "Sat 7:00 AM" },
-  { key: "sat-8am",  label: "Sat 8:00 AM" },
-  { key: "sat-4pm",  label: "Sat 4:00 PM" },
-  { key: "sat-5pm",  label: "Sat 5:00 PM" },
-  { key: "sun-8am",  label: "Sun 8:00 AM" },
-  { key: "sun-10am", label: "Sun 10:00 AM" },
+  { key: "fri-4pm",    label: "Fri 4:00 PM" },
+  { key: "sat-7am",    label: "Sat 7:00 AM" },
+  { key: "sat-8am",    label: "Sat 8:00 AM" },
+  { key: "sat-4pm",    label: "Sat 4:00 PM" },
+  { key: "sat-5pm",    label: "Sat 5:00 PM" },
+  { key: "sun-8am",    label: "Sun 8:00 AM" },
+  { key: "sun-10am",   label: "Sun 10:00 AM" },
+  { key: "fri-8pm",    label: "Fri 8:00 PM (Dance)" },
+  { key: "sat-8pm",    label: "Sat 8:00 PM (Dance)" },
+  { key: "sat-10pm",   label: "Sat 10:00 PM (Dance)" },
+  { key: "sun-1111am", label: "Sun 11:11 AM (Dance)" },
+  { key: "sun-7pm",    label: "Sun 7:00 PM (Dance)" },
+  { key: "sat-6pm",    label: "Sat 6:00 PM (Music)" },
+  { key: "sun-12pm",   label: "Sun 12:00 PM (Music)" },
+  { key: "sun-1pm",    label: "Sun 1:00 PM (Music)" },
+  { key: "sun-315pm",  label: "Sun 3:15 PM (Music)" },
+  { key: "sun-4pm",    label: "Sun 4:00 PM (Music)" },
 ];
 
 function AerialBookingsTab() {

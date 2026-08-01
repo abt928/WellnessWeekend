@@ -5,14 +5,20 @@ import { aerialBookings } from "@/lib/schema";
 export const dynamic = "force-dynamic";
 
 // "class" = guided small-group Intro Aerial sessions (6 max, matches the printed schedule)
-// "solo"  = unguided silk hammock rental during Sound offerings (7 hammocks available)
+// "solo"  = unguided silk hammock rental during any Sound offering, Ecstatic Dance,
+//           or live music set (7 hammocks available)
 const CAPACITY: Record<string, number> = { class: 6, solo: 7 };
 
 const CLASS_SLOTS = [
   "fri-3pm", "fri-6pm", "sat-10am", "sat-2pm", "sun-1030am", "sun-2pm-kids",
 ];
 const SOLO_SLOTS = [
+  // Sound offerings
   "fri-4pm", "sat-7am", "sat-8am", "sat-4pm", "sat-5pm", "sun-8am", "sun-10am",
+  // Ecstatic Dance
+  "fri-8pm", "sat-8pm", "sat-10pm", "sun-1111am", "sun-7pm",
+  // Live Music
+  "sat-6pm", "sun-12pm", "sun-1pm", "sun-315pm", "sun-4pm",
 ];
 const SLOTS_BY_MODE: Record<string, string[]> = { class: CLASS_SLOTS, solo: SOLO_SLOTS };
 

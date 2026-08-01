@@ -124,6 +124,7 @@ export const scheduleDays: ScheduleDay[] = [
         event: "Ecstatic Dance",
         element: "fire", secondElement: "air",
         location: "Main Stage",
+        fee: "Silk hammock rental available · $20/30 min · See /aerial",
         hosts: ["flowscape"],
       },
     ],
@@ -277,6 +278,7 @@ export const scheduleDays: ScheduleDay[] = [
         detail: "A live set to carry the community from afternoon practice into the evening's ceremony.",
         element: "air",
         location: "Main Stage · Live Music",
+        fee: "Silk hammock rental available · $20/30 min · See /aerial",
         hosts: ["s7ngrae"],
       },
       {
@@ -290,6 +292,7 @@ export const scheduleDays: ScheduleDay[] = [
         event: "Ecstatic Dance",
         element: "fire", secondElement: "air",
         location: "Main Stage",
+        fee: "Silk hammock rental available · $20/30 min · See /aerial",
         hosts: ["j-brave"],
       },
       {
@@ -297,6 +300,7 @@ export const scheduleDays: ScheduleDay[] = [
         event: "Ecstatic Dance",
         element: "fire", secondElement: "air",
         location: "Main Stage",
+        fee: "Silk hammock rental available · $20/30 min · See /aerial",
         hosts: ["flowscape"],
       },
     ],
@@ -357,6 +361,7 @@ export const scheduleDays: ScheduleDay[] = [
         detail: "Let the bees speak through your body — an ecstatic dance to activate the Labyrinth Garden portal and move the medicine.",
         element: "earth", secondElement: "fire",
         location: "Labyrinth Garden",
+        fee: "Silk hammock rental available · $20/30 min · See /aerial",
         hosts: ["mary"],
       },
       {
@@ -365,6 +370,7 @@ export const scheduleDays: ScheduleDay[] = [
         detail: "Soulful live music to open the family-day afternoon.",
         element: "air",
         location: "Main Stage · Live Music",
+        fee: "Silk hammock rental available · $20/30 min · See /aerial",
         hosts: ["shawn-zuke"],
       },
       {
@@ -373,6 +379,7 @@ export const scheduleDays: ScheduleDay[] = [
         detail: "Conscious hip-hop meets raw folk — an uplifting 2-hour live collaboration.",
         element: "air",
         location: "Main Stage · Live Music",
+        fee: "Silk hammock rental available · $20/30 min · See /aerial",
         hosts: ["kuf-knotz", "christine-elise"],
       },
       {
@@ -416,6 +423,7 @@ export const scheduleDays: ScheduleDay[] = [
         detail: "45 minutes of conscious lyricism and heart-forward music.",
         element: "air",
         location: "Main Stage · Live Music",
+        fee: "Silk hammock rental available · $20/30 min · See /aerial",
         hosts: ["j-brave"],
       },
       {
@@ -424,6 +432,7 @@ export const scheduleDays: ScheduleDay[] = [
         detail: "A live sonic journey to gather the community toward closing.",
         element: "air",
         location: "Main Stage · Live Music",
+        fee: "Silk hammock rental available · $20/30 min · See /aerial",
         hosts: ["akatale"],
       },
       {
@@ -460,6 +469,7 @@ export const scheduleDays: ScheduleDay[] = [
         detail: "7–9 PM · Close the weekend dancing.",
         element: "fire", secondElement: "air",
         location: "Main Stage",
+        fee: "Silk hammock rental available · $20/30 min · See /aerial",
         hosts: ["flowscape"],
       },
     ],

@@ -29,7 +29,7 @@ const MODES = [
     key: "solo",
     title: "Go Solo",
     sub: "Unguided · Rent a hammock · 7 available",
-    desc: "Rent a silk hammock during any Sound offering, settle in, and let the frequency hold you. No instruction, no choreography — just you, suspended, motionless in sound.",
+    desc: "Rent a silk hammock during any Sound offering, Ecstatic Dance, or live music set — settle in, and let the frequency hold you. No instruction, no choreography — just you, suspended, motionless in sound while the room moves around you.",
   },
 ];
 
@@ -43,13 +43,26 @@ const CLASS_SLOTS = [
 ];
 
 const SOLO_SLOTS = [
-  { key: "fri-4pm", day: "Friday · Aug 7",   time: "4:00 PM",  note: "During Yin Yoga & Sound Savasana" },
-  { key: "sat-7am", day: "Saturday · Aug 8", time: "7:00 AM",  note: "During Floating Sound Bath" },
-  { key: "sat-8am", day: "Saturday · Aug 8", time: "8:00 AM",  note: "During Lionsgate Activation + Floating Sound Bath" },
-  { key: "sat-4pm", day: "Saturday · Aug 8", time: "4:00 PM",  note: "During Roots for Recovery" },
-  { key: "sat-5pm", day: "Saturday · Aug 8", time: "5:00 PM",  note: "During Guzheng · Five Elements Sound Healing" },
-  { key: "sun-8am", day: "Sunday · Aug 9",   time: "8:00 AM",  note: "During Sound Journey" },
-  { key: "sun-10am", day: "Sunday · Aug 9",  time: "10:00 AM", note: "During Activate Your Light Floating Sound Bath" },
+  // Sound offerings
+  { key: "fri-4pm",    day: "Friday · Aug 7",   time: "4:00 PM",  note: "During Yin Yoga & Sound Savasana" },
+  { key: "sat-7am",    day: "Saturday · Aug 8", time: "7:00 AM",  note: "During Floating Sound Bath" },
+  { key: "sat-8am",    day: "Saturday · Aug 8", time: "8:00 AM",  note: "During Lionsgate Activation + Floating Sound Bath" },
+  { key: "sat-4pm",    day: "Saturday · Aug 8", time: "4:00 PM",  note: "During Roots for Recovery" },
+  { key: "sat-5pm",    day: "Saturday · Aug 8", time: "5:00 PM",  note: "During Guzheng · Five Elements Sound Healing" },
+  { key: "sun-8am",    day: "Sunday · Aug 9",   time: "8:00 AM",  note: "During Sound Journey" },
+  { key: "sun-10am",   day: "Sunday · Aug 9",   time: "10:00 AM", note: "During Activate Your Light Floating Sound Bath" },
+  // Ecstatic Dance
+  { key: "fri-8pm",    day: "Friday · Aug 7",   time: "8:00 PM",  note: "During Ecstatic Dance · Opening Night" },
+  { key: "sat-8pm",    day: "Saturday · Aug 8", time: "8:00 PM",  note: "During Ecstatic Dance · Lion's Gate Dance" },
+  { key: "sat-10pm",   day: "Saturday · Aug 8", time: "10:00 PM", note: "During Ecstatic Dance · Late Night Journey" },
+  { key: "sun-1111am", day: "Sunday · Aug 9",   time: "11:11 AM", note: "During Message from the Bees · Ecstatic Dance" },
+  { key: "sun-7pm",    day: "Sunday · Aug 9",   time: "7:00 PM",  note: "During Ecstatic Dance · Closing Dance" },
+  // Live Music
+  { key: "sat-6pm",    day: "Saturday · Aug 8", time: "6:00 PM",  note: "During S7INGRAE & Brackish" },
+  { key: "sun-12pm",   day: "Sunday · Aug 9",   time: "12:00 PM", note: "During Shawn Zuke" },
+  { key: "sun-1pm",    day: "Sunday · Aug 9",   time: "1:00 PM",  note: "During Kuf Knotz + Christine Elise" },
+  { key: "sun-315pm",  day: "Sunday · Aug 9",   time: "3:15 PM",  note: "During J Brave" },
+  { key: "sun-4pm",    day: "Sunday · Aug 9",   time: "4:00 PM",  note: "During ÂKÅTÂLĖ" },
 ];
 
 interface SlotAvailability { booked: number; capacity: number; full: boolean; }
@@ -154,7 +167,7 @@ export default function AerialPage() {
               Ecstatic Dance asks the body to move freely. This is the opposite invitation: to go completely still. Wrapped in a silk aerial hammock — floating, weightless, cradled — you let the sound move through you instead of the other way around. It&apos;s the same surrender, the same ceremony, just held in stillness instead of motion.
             </p>
             <p style={{ margin: 0 }}>
-              Every session is <strong style={{ color: C.charcoal }}>$20 for 30 minutes</strong> — whether you join a guided class or go solo. Classes run at least twice daily, beginner-friendly, six people max. Solo hammock rentals are available during any Sound offering on the schedule, with seven hammocks to go around.
+              Every session is <strong style={{ color: C.charcoal }}>$20 for 30 minutes</strong> — whether you join a guided class or go solo. Classes run at least twice daily, beginner-friendly, six people max. Solo hammock rentals are available during any Sound offering, Ecstatic Dance, or live music set on the schedule, with seven hammocks to go around.
             </p>
           </div>
         </div>

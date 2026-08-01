@@ -80,12 +80,12 @@ export const SPACES: Record<string, SacredSpace> = {
     elementColor: "#9B7FD4",
     icon: "🎋",
     tagline: "Leave the ground behind — and discover what lives above it.",
-    description: "The aerial silk rig is where gravity becomes negotiable. Instructor Beth creates an intimate, encouraging space for beginners of all backgrounds to discover what it feels like to leave the ground — floating, stretching, and moving in three dimensions. The silks and paddleboards are provided by Alaska Fly Dog, our adventure equipment partner. Sessions run beginner-friendly, small-group classes (six max) at least twice a day, every day of the weekend. Prefer to fly solo? Silk hammocks are also available to rent during any Sound offering — settle in, go still, and let the frequency hold you. The Lionsgate Aerial Activation on Saturday morning — floating in a silk hammock as the Lion's Gate portal opens — is one of the most extraordinary experiences of the weekend.",
+    description: "The aerial silk rig is where gravity becomes negotiable. Instructor Beth creates an intimate, encouraging space for beginners of all backgrounds to discover what it feels like to leave the ground — floating, stretching, and moving in three dimensions. The silks and paddleboards are provided by Alaska Fly Dog, our adventure equipment partner. Sessions run beginner-friendly, small-group classes (six max) at least twice a day, every day of the weekend. Prefer to fly solo? Silk hammocks are also available to rent during any Sound offering, Ecstatic Dance, or live music set — settle in, go still, and let the frequency hold you. The Lionsgate Aerial Activation on Saturday morning — floating in a silk hammock as the Lion's Gate portal opens — is one of the most extraordinary experiences of the weekend.",
     offerings: [
       "Intro Aerial Silks · 2+ classes daily, Friday–Sunday",
       "Lionsgate Aerial Activation · Saturday 8 AM",
       "Intro Aerial for Kids · Sunday 2 PM",
-      "Solo Silk Hammock Rental · Every Sound offering · $20/30 min · See /aerial",
+      "Solo Silk Hammock Rental · Sound offerings, Ecstatic Dance & live music · $20/30 min · See /aerial",
     ],
   },
   "Sauna": {

@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { getDb } from "@/lib/db";
-import { leads, newsletter, vendors, volunteers, sponsors, instructorWaitlist, affiliates, referralEvents, volunteerRegistrations, volunteerShiftClaims, warriors, members, staffRegistrations, staffGuests, contrastBookings, massageBookings, aerialBookings } from "@/lib/schema";
+import { leads, newsletter, vendors, volunteers, sponsors, instructorWaitlist, affiliates, referralEvents, volunteerRegistrations, volunteerShiftClaims, warriors, members, staffRegistrations, staffGuests, contrastBookings, massageBookings, aerialBookings, paddleboardBookings } from "@/lib/schema";
 import { isAdminAuthenticated } from "@/app/api/admin/auth/route";
 import { desc, eq, sql } from "drizzle-orm";
 import { SHIFT_MAP, calcReward } from "@/lib/volunteer-shifts";
@@ -22,6 +22,7 @@ const TABLES = {
   contrast_bookings: contrastBookings,
   massage_bookings: massageBookings,
   aerial_bookings: aerialBookings,
+  paddleboard_bookings: paddleboardBookings,
 } as const;
 
 type TableName = keyof typeof TABLES;

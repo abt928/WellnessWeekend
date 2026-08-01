@@ -55,6 +55,7 @@ export const scheduleDays: ScheduleDay[] = [
         detail: "All levels, beginner-friendly flow on the lake — you might get wet!",
         element: "water", location: "Lakeside",
         limited: true,
+        link: "/paddleboard",
         hosts: ["alice"],
       },
       {
@@ -213,6 +214,7 @@ export const scheduleDays: ScheduleDay[] = [
         detail: "An afternoon flow on the water — all levels welcome.",
         element: "water", location: "Lakeside",
         limited: true,
+        link: "/paddleboard",
         hosts: ["ashleigh"],
       },
       {
@@ -379,6 +381,7 @@ export const scheduleDays: ScheduleDay[] = [
         detail: "A playful, safe introduction to paddleboarding for young adventurers — family day on the lake!",
         element: "water", location: "Lakeside",
         limited: true,
+        link: "/paddleboard",
         hosts: ["alice"],
       },
       {
@@ -404,6 +407,7 @@ export const scheduleDays: ScheduleDay[] = [
         detail: "A final all-levels flow on the water — integrate the weekend floating under the open sky.",
         element: "water", location: "Lakeside",
         limited: true,
+        link: "/paddleboard",
         hosts: ["alice"],
       },
       {

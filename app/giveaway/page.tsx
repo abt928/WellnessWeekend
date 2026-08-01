@@ -28,6 +28,7 @@ export default function GiveawayPage() {
   const [prize, setPrize] = useState<PrizeInfo | null>(null);
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
+  const [phone, setPhone] = useState("");
   const [loading, setLoading] = useState(false);
   const [errorMsg, setErrorMsg] = useState("");
 
@@ -57,7 +58,7 @@ export default function GiveawayPage() {
       const res = await fetch("/api/giveaway", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ code: code.trim(), name: name.trim(), email: email.trim() }),
+        body: JSON.stringify({ code: code.trim(), name: name.trim(), email: email.trim(), phone: phone.trim() }),
       });
       const d = await res.json();
       if (!res.ok) { setErrorMsg(d.error || "Something went wrong."); setLoading(false); return; }
@@ -181,6 +182,11 @@ export default function GiveawayPage() {
                 <input
                   required type="email" placeholder="Email address"
                   value={email} onChange={e => setEmail(e.target.value)}
+                  style={inputStyle}
+                />
+                <input
+                  required type="tel" placeholder="Phone number"
+                  value={phone} onChange={e => setPhone(e.target.value)}
                   style={inputStyle}
                 />
                 {errorMsg && (

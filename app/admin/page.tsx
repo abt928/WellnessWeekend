@@ -2329,6 +2329,7 @@ interface ClassReservation {
   class_key: string;
   attendee_name: string;
   attendee_email: string;
+  attendee_phone: string | null;
   booked_at: string;
   payment_verified: boolean;
 }
@@ -2446,7 +2447,7 @@ function ClassReservationsTab() {
           <table style={{ width: "100%", borderCollapse: "collapse", fontSize: "0.85rem" }}>
             <thead>
               <tr style={{ borderBottom: "1px solid rgba(255,255,255,0.1)" }}>
-                {["Paid ✓", "Name", "Email", "Class", "Booked", ""].map(h => (
+                {["Paid ✓", "Name", "Email / Phone", "Class", "Booked", ""].map(h => (
                   <th key={h} style={{ padding: "0.5rem 0.75rem", textAlign: "left", color: "rgba(255,255,255,0.4)", fontWeight: 600, fontSize: "0.72rem", textTransform: "uppercase", letterSpacing: "0.05em", whiteSpace: "nowrap" }}>{h}</th>
                 ))}
               </tr>
@@ -2471,7 +2472,10 @@ function ClassReservationsTab() {
                     </button>
                   </td>
                   <td style={{ padding: "0.75rem", color: "#fff", fontWeight: 600, whiteSpace: "nowrap" }}>{r.attendee_name}</td>
-                  <td style={{ padding: "0.75rem", color: "rgba(255,255,255,0.6)" }}>{r.attendee_email}</td>
+                  <td style={{ padding: "0.75rem" }}>
+                    <a href={`mailto:${r.attendee_email}`} style={{ display: "block", color: "#D4AF3C", textDecoration: "none", fontSize: "0.85rem" }}>{r.attendee_email}</a>
+                    {r.attendee_phone && <a href={`tel:${r.attendee_phone}`} style={{ display: "block", color: "rgba(255,255,255,0.5)", textDecoration: "none", fontSize: "0.8rem", marginTop: 2 }}>{r.attendee_phone}</a>}
+                  </td>
                   <td style={{ padding: "0.75rem", color: "rgba(255,255,255,0.75)", whiteSpace: "nowrap" }}>
                     <span style={{
                       display: "inline-block", padding: "0.15rem 0.55rem", borderRadius: "20px", fontSize: "0.75rem", fontWeight: 600,
@@ -2744,6 +2748,7 @@ interface GiveawayPrize {
   claimed: boolean;
   claimed_by_name: string | null;
   claimed_by_email: string | null;
+  claimed_by_phone: string | null;
   claimed_at: string | null;
   created_at: string;
 }
@@ -2817,60 +2822,72 @@ function GiveawayTab() {
           <p style={{ margin: 0, fontSize: "0.95rem" }}>No prizes yet. Click "Generate Codes" to create the 8 giveaway prizes.</p>
         </div>
       ) : (
-        <div style={{ overflowX: "auto" }}>
-          <table style={{ width: "100%", borderCollapse: "collapse", fontSize: "0.85rem" }}>
-            <thead>
-              <tr style={{ borderBottom: "1px solid rgba(255,255,255,0.1)" }}>
-                {["Prize", "Code", "Status", "Claimed By", "Claimed At", ""].map(h => (
-                  <th key={h} style={{ padding: "0.5rem 0.75rem", textAlign: "left", color: "rgba(255,255,255,0.4)", fontWeight: 600, fontSize: "0.75rem", textTransform: "uppercase", letterSpacing: "0.05em", whiteSpace: "nowrap" }}>{h}</th>
-                ))}
-              </tr>
-            </thead>
-            <tbody>
-              {prizes.map(p => (
-                <tr key={p.id} style={{ borderBottom: "1px solid rgba(255,255,255,0.06)" }}>
-                  <td style={{ padding: "0.75rem", color: "#fff", fontWeight: 600, whiteSpace: "nowrap" }}>{p.prize_name}</td>
-                  <td style={{ padding: "0.75rem" }}>
-                    <div style={{ display: "flex", alignItems: "center", gap: "0.5rem" }}>
-                      <code style={{ fontFamily: "monospace", fontSize: "0.9rem", color: "#D4AF3C", letterSpacing: "0.08em" }}>{p.code}</code>
-                      <button
-                        onClick={() => copyCode(p.code)}
-                        style={{ padding: "0.2rem 0.5rem", borderRadius: "4px", border: "1px solid rgba(255,255,255,0.15)", background: "transparent", color: copied === p.code ? "#86efac" : "rgba(255,255,255,0.5)", cursor: "pointer", fontSize: "0.7rem" }}
-                      >
-                        {copied === p.code ? "Copied!" : "Copy"}
-                      </button>
+        <div style={{ display: "flex", flexDirection: "column", gap: "0.75rem" }}>
+          {prizes.map(p => (
+            <div key={p.id} style={{
+              background: p.claimed ? "rgba(212,175,60,0.06)" : "rgba(255,255,255,0.03)",
+              border: `1px solid ${p.claimed ? "rgba(212,175,60,0.2)" : "rgba(255,255,255,0.08)"}`,
+              borderRadius: 12, padding: "1rem 1.25rem",
+              display: "grid", gridTemplateColumns: "1fr auto", gap: "0.5rem 1.5rem", alignItems: "start",
+            }}>
+              {/* Left: prize + code */}
+              <div>
+                <div style={{ display: "flex", alignItems: "center", gap: "0.65rem", marginBottom: "0.25rem", flexWrap: "wrap" }}>
+                  <span style={{ fontWeight: 700, color: "#fff", fontSize: "0.95rem" }}>{p.prize_name}</span>
+                  <span style={{ padding: "0.15rem 0.55rem", borderRadius: 20, fontSize: "0.72rem", fontWeight: 600, background: p.claimed ? "rgba(248,113,113,0.15)" : "rgba(134,239,172,0.15)", color: p.claimed ? "#f87171" : "#86efac" }}>
+                    {p.claimed ? "Claimed" : "Available"}
+                  </span>
+                </div>
+                <div style={{ display: "flex", alignItems: "center", gap: "0.5rem", marginBottom: p.claimed ? "0.85rem" : 0 }}>
+                  <code style={{ fontFamily: "monospace", fontSize: "0.85rem", color: "#D4AF3C", letterSpacing: "0.1em" }}>{p.code}</code>
+                  <button onClick={() => copyCode(p.code)} style={{ padding: "0.15rem 0.45rem", borderRadius: 4, border: "1px solid rgba(255,255,255,0.15)", background: "transparent", color: copied === p.code ? "#86efac" : "rgba(255,255,255,0.45)", cursor: "pointer", fontSize: "0.68rem" }}>
+                    {copied === p.code ? "Copied!" : "Copy"}
+                  </button>
+                </div>
+
+                {/* Contact card — only when claimed */}
+                {p.claimed && p.claimed_by_name && (
+                  <div style={{ background: "rgba(0,0,0,0.25)", borderRadius: 8, padding: "0.75rem 1rem", display: "grid", gap: "0.35rem" }}>
+                    <div style={{ display: "flex", alignItems: "baseline", gap: "0.5rem" }}>
+                      <span style={{ fontSize: "0.7rem", textTransform: "uppercase", letterSpacing: "0.08em", color: "rgba(255,255,255,0.35)", fontWeight: 600, minWidth: 38 }}>Name</span>
+                      <span style={{ color: "#fff", fontWeight: 700, fontSize: "0.95rem" }}>{p.claimed_by_name}</span>
                     </div>
-                  </td>
-                  <td style={{ padding: "0.75rem" }}>
-                    <span style={{ padding: "0.2rem 0.6rem", borderRadius: "20px", fontSize: "0.75rem", fontWeight: 600, background: p.claimed ? "rgba(248,113,113,0.15)" : "rgba(134,239,172,0.15)", color: p.claimed ? "#f87171" : "#86efac" }}>
-                      {p.claimed ? "Claimed" : "Available"}
-                    </span>
-                  </td>
-                  <td style={{ padding: "0.75rem", color: "rgba(255,255,255,0.65)" }}>
-                    {p.claimed_by_name ? (
-                      <div>
-                        <div>{p.claimed_by_name}</div>
-                        <div style={{ fontSize: "0.75rem", color: "rgba(255,255,255,0.4)" }}>{p.claimed_by_email}</div>
+                    {p.claimed_by_email && (
+                      <div style={{ display: "flex", alignItems: "baseline", gap: "0.5rem" }}>
+                        <span style={{ fontSize: "0.7rem", textTransform: "uppercase", letterSpacing: "0.08em", color: "rgba(255,255,255,0.35)", fontWeight: 600, minWidth: 38 }}>Email</span>
+                        <a href={`mailto:${p.claimed_by_email}`} style={{ color: "#D4AF3C", fontSize: "0.88rem", textDecoration: "none", fontWeight: 500 }}>{p.claimed_by_email}</a>
                       </div>
-                    ) : "—"}
-                  </td>
-                  <td style={{ padding: "0.75rem", color: "rgba(255,255,255,0.4)", fontSize: "0.8rem", whiteSpace: "nowrap" }}>
-                    {p.claimed_at ? new Date(p.claimed_at).toLocaleDateString() : "—"}
-                  </td>
-                  <td style={{ padding: "0.75rem" }}>
-                    {p.claimed && (
-                      <button
-                        onClick={() => resetPrize(p.id)}
-                        style={{ padding: "0.25rem 0.65rem", borderRadius: "6px", border: "1px solid rgba(248,113,113,0.3)", background: "transparent", color: "#f87171", cursor: "pointer", fontSize: "0.75rem" }}
-                      >
-                        Reset
-                      </button>
                     )}
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
+                    {p.claimed_by_phone && (
+                      <div style={{ display: "flex", alignItems: "baseline", gap: "0.5rem" }}>
+                        <span style={{ fontSize: "0.7rem", textTransform: "uppercase", letterSpacing: "0.08em", color: "rgba(255,255,255,0.35)", fontWeight: 600, minWidth: 38 }}>Phone</span>
+                        <a href={`tel:${p.claimed_by_phone}`} style={{ color: "#D4AF3C", fontSize: "0.88rem", textDecoration: "none", fontWeight: 500 }}>{p.claimed_by_phone}</a>
+                      </div>
+                    )}
+                    {!p.claimed_by_phone && (
+                      <div style={{ display: "flex", alignItems: "baseline", gap: "0.5rem" }}>
+                        <span style={{ fontSize: "0.7rem", textTransform: "uppercase", letterSpacing: "0.08em", color: "rgba(255,255,255,0.35)", fontWeight: 600, minWidth: 38 }}>Phone</span>
+                        <span style={{ color: "rgba(255,255,255,0.25)", fontSize: "0.82rem", fontStyle: "italic" }}>not collected</span>
+                      </div>
+                    )}
+                    <div style={{ display: "flex", alignItems: "baseline", gap: "0.5rem" }}>
+                      <span style={{ fontSize: "0.7rem", textTransform: "uppercase", letterSpacing: "0.08em", color: "rgba(255,255,255,0.35)", fontWeight: 600, minWidth: 38 }}>Date</span>
+                      <span style={{ color: "rgba(255,255,255,0.5)", fontSize: "0.82rem" }}>{p.claimed_at ? new Date(p.claimed_at).toLocaleString() : "—"}</span>
+                    </div>
+                  </div>
+                )}
+              </div>
+
+              {/* Right: reset button */}
+              <div>
+                {p.claimed && (
+                  <button onClick={() => resetPrize(p.id)} style={{ padding: "0.25rem 0.65rem", borderRadius: 6, border: "1px solid rgba(248,113,113,0.3)", background: "transparent", color: "#f87171", cursor: "pointer", fontSize: "0.75rem", whiteSpace: "nowrap" }}>
+                    Reset
+                  </button>
+                )}
+              </div>
+            </div>
+          ))}
         </div>
       )}
     </div>

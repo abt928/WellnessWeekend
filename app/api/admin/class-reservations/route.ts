@@ -17,6 +17,7 @@ async function migrate(sql: ReturnType<typeof neon>) {
     )
   `;
   await sql`ALTER TABLE class_reservations ADD COLUMN IF NOT EXISTS payment_verified BOOLEAN NOT NULL DEFAULT FALSE`;
+  await sql`ALTER TABLE class_reservations ADD COLUMN IF NOT EXISTS attendee_phone TEXT`;
 }
 
 export async function GET(req: NextRequest) {
@@ -28,7 +29,7 @@ export async function GET(req: NextRequest) {
     const sql = neon(dbUrl);
     await migrate(sql);
     const rows = await sql`
-      SELECT id, class_key, attendee_name, attendee_email, booked_at, payment_verified
+      SELECT id, class_key, attendee_name, attendee_email, attendee_phone, booked_at, payment_verified
       FROM class_reservations ORDER BY class_key, booked_at ASC
     `;
     return NextResponse.json({ rows });

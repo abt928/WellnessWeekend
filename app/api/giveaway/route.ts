@@ -13,6 +13,7 @@ async function ensureTable(sql: ReturnType<typeof neon>) {
       claimed           BOOLEAN      NOT NULL DEFAULT FALSE,
       claimed_by_name   VARCHAR(255),
       claimed_by_email  VARCHAR(255),
+      claimed_by_phone  VARCHAR(50),
       claimed_at        TIMESTAMPTZ,
       created_at        TIMESTAMPTZ  NOT NULL DEFAULT NOW()
     )
@@ -55,13 +56,14 @@ export async function POST(req: NextRequest) {
   if (!dbUrl) return NextResponse.json({ error: "Database not configured" }, { status: 500 });
 
   try {
-    const { code, name, email } = await req.json();
+    const { code, name, email, phone } = await req.json();
     if (!code || !name?.trim() || !email?.trim()) {
       return NextResponse.json({ error: "Code, name, and email are required." }, { status: 400 });
     }
 
     const sql = neon(dbUrl);
     await ensureTable(sql);
+    await sql`ALTER TABLE giveaway_prizes ADD COLUMN IF NOT EXISTS claimed_by_phone VARCHAR(50)`;
 
     const rows = await sql`
       SELECT id, prize_name, claimed FROM giveaway_prizes WHERE code = ${code.toUpperCase().replace(/\s/g, "")}
@@ -71,7 +73,8 @@ export async function POST(req: NextRequest) {
 
     const updated = await sql`
       UPDATE giveaway_prizes
-      SET claimed = TRUE, claimed_by_name = ${name.trim()}, claimed_by_email = ${email.trim()}, claimed_at = NOW()
+      SET claimed = TRUE, claimed_by_name = ${name.trim()}, claimed_by_email = ${email.trim()},
+          claimed_by_phone = ${phone?.trim() || null}, claimed_at = NOW()
       WHERE id = ${rows[0].id} AND claimed = FALSE
       RETURNING prize_name
     `;

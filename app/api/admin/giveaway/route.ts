@@ -30,10 +30,12 @@ async function ensureTable(sql: ReturnType<typeof neon>) {
       claimed           BOOLEAN      NOT NULL DEFAULT FALSE,
       claimed_by_name   VARCHAR(255),
       claimed_by_email  VARCHAR(255),
+      claimed_by_phone  VARCHAR(50),
       claimed_at        TIMESTAMPTZ,
       created_at        TIMESTAMPTZ  NOT NULL DEFAULT NOW()
     )
   `;
+  await sql`ALTER TABLE giveaway_prizes ADD COLUMN IF NOT EXISTS claimed_by_phone VARCHAR(50)`;
 }
 
 export async function GET(req: NextRequest) {
@@ -45,7 +47,7 @@ export async function GET(req: NextRequest) {
     const sql = neon(dbUrl);
     await ensureTable(sql);
     const rows = await sql`
-      SELECT id, code, prize_name, prize_description, claimed, claimed_by_name, claimed_by_email, claimed_at, created_at
+      SELECT id, code, prize_name, prize_description, claimed, claimed_by_name, claimed_by_email, claimed_by_phone, claimed_at, created_at
       FROM giveaway_prizes ORDER BY id ASC
     `;
     return NextResponse.json({ rows, count: rows.length });

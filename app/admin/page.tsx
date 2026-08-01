@@ -17,7 +17,7 @@ type ActiveTab =
   | "vendor_agreements"
   | "vendors" | "volunteers" | "volunteer_registrations" | "warriors" | "instructor_waitlist" | "sponsors"
   | "staff_registrations" | "staff_guests" | "contrast_bookings" | "massage_bookings"
-  | "confirmations" | "giveaway";
+  | "confirmations" | "giveaway" | "partner_codes";
 
 interface TabConfig {
   key: TableName;
@@ -2108,6 +2108,238 @@ function CommsTab() {
   );
 }
 
+// ── Partner Codes Tab ─────────────────────────────────────────────────
+
+interface PartnerCode {
+  id: number;
+  code: string;
+  partner_name: string;
+  partner_email: string | null;
+  benefit: string;
+  max_uses: number;
+  use_count: number;
+  active: boolean;
+  created_at: string;
+}
+
+interface PartnerCodeUse {
+  code_id: number;
+  redeemer_name: string;
+  redeemer_email: string;
+  used_at: string;
+}
+
+function PartnerCodesTab() {
+  const [codes, setCodes] = useState<PartnerCode[]>([]);
+  const [uses, setUses] = useState<PartnerCodeUse[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [expanded, setExpanded] = useState<number | null>(null);
+
+  // Create form
+  const [newName, setNewName] = useState("");
+  const [newEmail, setNewEmail] = useState("");
+  const [newCode, setNewCode] = useState("");
+  const [newBenefit, setNewBenefit] = useState("Complimentary Wellness Weekend 2026 access");
+  const [newMaxUses, setNewMaxUses] = useState("5");
+  const [creating, setCreating] = useState(false);
+  const [createMsg, setCreateMsg] = useState("");
+  const [showForm, setShowForm] = useState(false);
+
+  function suggestCode(name: string) {
+    return name.trim().toUpperCase().replace(/\s+/g, "-").replace(/[^A-Z0-9-]/g, "").slice(0, 20) + "-WW26";
+  }
+
+  async function load() {
+    setLoading(true);
+    const r = await fetch("/api/admin/partner-codes");
+    if (r.ok) { const d = await r.json(); setCodes(d.codes); setUses(d.uses); }
+    setLoading(false);
+  }
+
+  useEffect(() => { load(); }, []);
+
+  async function createCode(e: React.FormEvent) {
+    e.preventDefault();
+    setCreating(true); setCreateMsg("");
+    const r = await fetch("/api/admin/partner-codes", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ code: newCode, partner_name: newName, partner_email: newEmail, benefit: newBenefit, max_uses: Number(newMaxUses) }),
+    });
+    const d = await r.json();
+    if (r.ok) {
+      setCreateMsg(`Created code "${d.row.code}" for ${d.row.partner_name}`);
+      setNewName(""); setNewEmail(""); setNewCode(""); setNewMaxUses("5");
+      setShowForm(false);
+      await load();
+    } else {
+      setCreateMsg(d.error || "Failed to create");
+    }
+    setCreating(false);
+  }
+
+  async function toggleActive(id: number, active: boolean) {
+    await fetch("/api/admin/partner-codes", { method: "PATCH", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ id, active }) });
+    await load();
+  }
+
+  async function deleteCode(id: number) {
+    if (!confirm("Delete this partner code and all its use history?")) return;
+    await fetch("/api/admin/partner-codes", { method: "DELETE", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ id }) });
+    await load();
+  }
+
+  const usesFor = (id: number) => uses.filter(u => u.code_id === id);
+
+  return (
+    <div>
+      <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: "1.5rem", flexWrap: "wrap", gap: "0.75rem" }}>
+        <div>
+          <h2 style={{ fontSize: "1.2rem", fontWeight: 700, margin: 0 }}>Partner Codes</h2>
+          {codes.length > 0 && (
+            <p style={{ margin: "0.25rem 0 0", fontSize: "0.85rem", color: "rgba(255,255,255,0.5)" }}>
+              {codes.length} codes · {uses.length} total redemptions · Share link: <code style={{ color: "#86efac", fontSize: "0.8rem" }}>/partner</code>
+            </p>
+          )}
+        </div>
+        <button
+          onClick={() => setShowForm(f => !f)}
+          style={{ padding: "0.55rem 1.25rem", borderRadius: "8px", border: "none", cursor: "pointer", background: "#86efac", color: "#0a0a14", fontWeight: 700, fontSize: "0.85rem" }}
+        >
+          {showForm ? "Cancel" : "+ New Code"}
+        </button>
+      </div>
+
+      {createMsg && (
+        <p style={{ fontSize: "0.85rem", marginBottom: "1rem", color: createMsg.startsWith("Created") ? "#86efac" : "#f87171" }}>{createMsg}</p>
+      )}
+
+      {showForm && (
+        <form onSubmit={createCode} style={{ background: "rgba(255,255,255,0.04)", border: "1px solid rgba(255,255,255,0.1)", borderRadius: "12px", padding: "1.25rem", marginBottom: "1.5rem", display: "flex", flexDirection: "column", gap: "0.75rem" }}>
+          <p style={{ margin: 0, fontSize: "0.8rem", textTransform: "uppercase", letterSpacing: "0.08em", color: "rgba(255,255,255,0.4)", fontWeight: 600 }}>New Partner Code</p>
+          <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "0.65rem" }}>
+            <input
+              required placeholder="Partner name *" value={newName}
+              onChange={e => { setNewName(e.target.value); if (!newCode) setNewCode(suggestCode(e.target.value)); }}
+              style={smallInput}
+            />
+            <input
+              placeholder="Partner email" value={newEmail}
+              onChange={e => setNewEmail(e.target.value)}
+              style={smallInput}
+            />
+            <input
+              required placeholder="Code * (e.g. ALICE-WW26)" value={newCode}
+              onChange={e => setNewCode(e.target.value.toUpperCase())}
+              style={{ ...smallInput, fontFamily: "monospace", letterSpacing: "0.08em" }}
+            />
+            <input
+              type="number" placeholder="Max uses" value={newMaxUses} min={1} max={100}
+              onChange={e => setNewMaxUses(e.target.value)}
+              style={smallInput}
+            />
+          </div>
+          <input
+            placeholder="Benefit description" value={newBenefit}
+            onChange={e => setNewBenefit(e.target.value)}
+            style={smallInput}
+          />
+          <button
+            type="submit" disabled={creating}
+            style={{ alignSelf: "flex-start", padding: "0.5rem 1.25rem", borderRadius: "8px", border: "none", cursor: "pointer", background: "#86efac", color: "#0a0a14", fontWeight: 700, fontSize: "0.85rem", opacity: creating ? 0.6 : 1 }}
+          >
+            {creating ? "Creating…" : "Create Code"}
+          </button>
+        </form>
+      )}
+
+      {loading ? (
+        <p style={{ color: "rgba(255,255,255,0.4)", fontSize: "0.875rem" }}>Loading…</p>
+      ) : codes.length === 0 ? (
+        <div style={{ textAlign: "center", padding: "3rem 1rem", color: "rgba(255,255,255,0.35)", border: "1px dashed rgba(255,255,255,0.1)", borderRadius: "12px" }}>
+          <p style={{ margin: 0, fontSize: "0.95rem" }}>No partner codes yet. Click "+ New Code" to create one.</p>
+        </div>
+      ) : (
+        <div style={{ display: "flex", flexDirection: "column", gap: "0.75rem" }}>
+          {codes.map(c => {
+            const codeUses = usesFor(c.id);
+            const pct = Math.round((c.use_count / c.max_uses) * 100);
+            const isExpanded = expanded === c.id;
+            return (
+              <div key={c.id} style={{ background: "rgba(255,255,255,0.04)", border: "1px solid rgba(255,255,255,0.09)", borderRadius: "12px", padding: "1rem 1.25rem" }}>
+                <div style={{ display: "flex", alignItems: "flex-start", justifyContent: "space-between", gap: "1rem", flexWrap: "wrap" }}>
+                  <div style={{ flex: 1 }}>
+                    <div style={{ display: "flex", alignItems: "center", gap: "0.75rem", marginBottom: "0.25rem" }}>
+                      <code style={{ fontSize: "1rem", fontWeight: 700, color: "#86efac", letterSpacing: "0.1em" }}>{c.code}</code>
+                      <span style={{ fontSize: "0.75rem", padding: "0.15rem 0.5rem", borderRadius: "20px", fontWeight: 600, background: c.active ? "rgba(134,239,172,0.12)" : "rgba(248,113,113,0.12)", color: c.active ? "#86efac" : "#f87171" }}>
+                        {c.active ? "Active" : "Inactive"}
+                      </span>
+                    </div>
+                    <p style={{ margin: 0, fontSize: "0.9rem", color: "#fff", fontWeight: 600 }}>{c.partner_name}</p>
+                    {c.partner_email && <p style={{ margin: "0.1rem 0 0", fontSize: "0.8rem", color: "rgba(255,255,255,0.45)" }}>{c.partner_email}</p>}
+                    <p style={{ margin: "0.4rem 0 0", fontSize: "0.8rem", color: "rgba(255,255,255,0.55)" }}>{c.benefit}</p>
+                  </div>
+
+                  <div style={{ textAlign: "right", minWidth: 90 }}>
+                    <p style={{ margin: 0, fontWeight: 700, fontSize: "1rem", color: c.use_count >= c.max_uses ? "#f87171" : "#fff" }}>
+                      {c.use_count} / {c.max_uses}
+                    </p>
+                    <div style={{ height: 4, borderRadius: 2, background: "rgba(255,255,255,0.1)", marginTop: "0.35rem" }}>
+                      <div style={{ height: "100%", borderRadius: 2, width: `${pct}%`, background: pct >= 100 ? "#f87171" : "#86efac" }} />
+                    </div>
+                    <p style={{ margin: "0.2rem 0 0", fontSize: "0.7rem", color: "rgba(255,255,255,0.35)" }}>used</p>
+                  </div>
+                </div>
+
+                <div style={{ display: "flex", gap: "0.5rem", marginTop: "0.85rem", flexWrap: "wrap" }}>
+                  {codeUses.length > 0 && (
+                    <button
+                      onClick={() => setExpanded(isExpanded ? null : c.id)}
+                      style={{ padding: "0.3rem 0.7rem", borderRadius: "6px", border: "1px solid rgba(255,255,255,0.15)", background: "transparent", color: "rgba(255,255,255,0.6)", cursor: "pointer", fontSize: "0.75rem" }}
+                    >
+                      {isExpanded ? "Hide" : "Show"} {codeUses.length} redemption{codeUses.length !== 1 ? "s" : ""}
+                    </button>
+                  )}
+                  <button
+                    onClick={() => toggleActive(c.id, !c.active)}
+                    style={{ padding: "0.3rem 0.7rem", borderRadius: "6px", border: "1px solid rgba(255,255,255,0.15)", background: "transparent", color: "rgba(255,255,255,0.6)", cursor: "pointer", fontSize: "0.75rem" }}
+                  >
+                    {c.active ? "Deactivate" : "Reactivate"}
+                  </button>
+                  <button
+                    onClick={() => deleteCode(c.id)}
+                    style={{ padding: "0.3rem 0.7rem", borderRadius: "6px", border: "1px solid rgba(248,113,113,0.3)", background: "transparent", color: "#f87171", cursor: "pointer", fontSize: "0.75rem" }}
+                  >
+                    Delete
+                  </button>
+                </div>
+
+                {isExpanded && codeUses.length > 0 && (
+                  <div style={{ marginTop: "0.85rem", borderTop: "1px solid rgba(255,255,255,0.08)", paddingTop: "0.85rem" }}>
+                    {codeUses.map((u, i) => (
+                      <div key={i} style={{ display: "flex", justifyContent: "space-between", fontSize: "0.8rem", padding: "0.3rem 0", borderBottom: i < codeUses.length - 1 ? "1px solid rgba(255,255,255,0.05)" : "none" }}>
+                        <span style={{ color: "#fff" }}>{u.redeemer_name}</span>
+                        <span style={{ color: "rgba(255,255,255,0.45)" }}>{u.redeemer_email}</span>
+                        <span style={{ color: "rgba(255,255,255,0.3)", whiteSpace: "nowrap" }}>{new Date(u.used_at).toLocaleDateString()}</span>
+                      </div>
+                    ))}
+                  </div>
+                )}
+              </div>
+            );
+          })}
+        </div>
+      )}
+    </div>
+  );
+}
+
+const smallInput: React.CSSProperties = {
+  padding: "0.65rem 0.85rem", borderRadius: "8px",
+  background: "rgba(255,255,255,0.06)", border: "1px solid rgba(255,255,255,0.12)",
+  color: "#fff", fontSize: "0.875rem", outline: "none", width: "100%", boxSizing: "border-box",
+};
+
 // ── Giveaway Tab ──────────────────────────────────────────────────────
 
 interface GiveawayPrize {
@@ -2402,6 +2634,7 @@ export default function AdminPage() {
         {tab("instructor_waitlist", "Instructors")}
         {tab("sponsors", "Sponsors")}
         {tab("giveaway", "Giveaway")}
+        {tab("partner_codes", "Partners")}
 
         <span className="admin-tab-sep" />
 
@@ -2429,6 +2662,7 @@ export default function AdminPage() {
       {activeTab === "sponsors"                 && <DataTab tableKey="sponsors"                 columns={["id","name","email","company","budget_range","interests","goals","created_at"]} />}
       {activeTab === "confirmations"            && <CommsTab />}
       {activeTab === "giveaway"                 && <GiveawayTab />}
+      {activeTab === "partner_codes"            && <PartnerCodesTab />}
     </div>
   );
 }

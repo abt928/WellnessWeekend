@@ -17,7 +17,7 @@ type ActiveTab =
   | "vendor_agreements"
   | "vendors" | "volunteers" | "volunteer_registrations" | "warriors" | "instructor_waitlist" | "sponsors"
   | "staff_registrations" | "staff_guests" | "contrast_bookings" | "massage_bookings" | "aerial_bookings" | "paddleboard_bookings"
-  | "confirmations" | "giveaway" | "partner_codes";
+  | "confirmations" | "giveaway" | "partner_codes" | "class_reservations";
 
 interface TabConfig {
   key: TableName;
@@ -2296,6 +2296,202 @@ function CommsTab() {
   );
 }
 
+// ── Class Reservations Tab ────────────────────────────────────────────
+
+const CLASS_LABELS: Record<string, string> = {
+  "aerial-fri-3pm":   "Aerial Silk · Fri 3:00 PM",
+  "aerial-fri-extra": "Aerial Silk · Fri 4:30 PM",
+  "aerial-sat-10am":  "Aerial Silk · Sat 10:00 AM",
+  "aerial-sat-extra": "Aerial Silk · Sat 3:30 PM",
+  "aerial-sat-2pm":   "Aerial Silk · Sat 2:00 PM",
+  "paddle-fri-2pm":   "Paddleboard Yoga · Fri 2:00 PM",
+  "paddle-fri-extra": "Paddleboard Yoga · Fri 3:30 PM",
+  "paddle-sat-2pm":   "Paddleboard Yoga · Sat 2:00 PM",
+  "paddle-sat-extra": "Paddleboard Yoga · Sat 3:30 PM",
+  "sauna-fri-3pm":    "Contrast Therapy · Fri 3:00 PM",
+  "sauna-sat-1230pm": "Contrast Therapy · Sat 12:30 PM",
+  "sauna-sat-530pm":  "Contrast Therapy · Sat 5:30 PM",
+  "sauna-sun-1130am": "Contrast Therapy · Sun 11:30 AM",
+};
+
+interface ClassReservation {
+  id: number;
+  class_key: string;
+  attendee_name: string;
+  attendee_email: string;
+  booked_at: string;
+  payment_verified: boolean;
+}
+
+function ClassReservationsTab() {
+  const [rows, setRows] = useState<ClassReservation[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [filter, setFilter] = useState<"all" | "aerial" | "paddle" | "sauna">("all");
+  const [verifying, setVerifying] = useState<number | null>(null);
+
+  async function load() {
+    setLoading(true);
+    const r = await fetch("/api/admin/class-reservations");
+    if (r.ok) { const d = await r.json(); setRows(d.rows); }
+    setLoading(false);
+  }
+
+  useEffect(() => { load(); }, []);
+
+  async function toggleVerified(id: number, current: boolean) {
+    setVerifying(id);
+    await fetch("/api/admin/class-reservations", {
+      method: "PATCH",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ id, payment_verified: !current }),
+    });
+    setRows(prev => prev.map(r => r.id === id ? { ...r, payment_verified: !current } : r));
+    setVerifying(null);
+  }
+
+  async function deleteRow(id: number) {
+    if (!confirm("Remove this reservation?")) return;
+    await fetch("/api/admin/class-reservations", {
+      method: "DELETE",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ id }),
+    });
+    setRows(prev => prev.filter(r => r.id !== id));
+  }
+
+  function exportCSV() {
+    const visible = filtered;
+    const header = "Class,Name,Email,Booked At,Payment Verified";
+    const csvRows = visible.map(r =>
+      [CLASS_LABELS[r.class_key] ?? r.class_key, r.attendee_name, r.attendee_email,
+       new Date(r.booked_at).toLocaleString(), r.payment_verified ? "Yes" : "No"]
+        .map(v => `"${String(v).replace(/"/g, '""')}"`)
+        .join(",")
+    );
+    const blob = new Blob([[header, ...csvRows].join("\n")], { type: "text/csv" });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a"); a.href = url; a.download = "class-reservations.csv"; a.click();
+    URL.revokeObjectURL(url);
+  }
+
+  const filtered = rows.filter(r => {
+    if (filter === "aerial") return r.class_key.startsWith("aerial");
+    if (filter === "paddle") return r.class_key.startsWith("paddle");
+    if (filter === "sauna")  return r.class_key.startsWith("sauna");
+    return true;
+  });
+
+  const aerialCount  = rows.filter(r => r.class_key.startsWith("aerial")).length;
+  const paddleCount  = rows.filter(r => r.class_key.startsWith("paddle")).length;
+  const saunaCount   = rows.filter(r => r.class_key.startsWith("sauna")).length;
+  const verifiedCount = filtered.filter(r => r.payment_verified).length;
+
+  const filterBtn = (key: typeof filter, label: string, count: number) => (
+    <button
+      onClick={() => setFilter(key)}
+      style={{
+        padding: "0.4rem 1rem", borderRadius: "20px", border: "none", cursor: "pointer", fontSize: "0.82rem", fontWeight: 600,
+        background: filter === key ? "#D4AF3C" : "rgba(255,255,255,0.08)",
+        color: filter === key ? "#0a0a14" : "rgba(255,255,255,0.65)",
+      }}
+    >
+      {label} ({count})
+    </button>
+  );
+
+  return (
+    <div>
+      <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: "1.25rem", flexWrap: "wrap", gap: "0.75rem" }}>
+        <div>
+          <h2 style={{ fontSize: "1.2rem", fontWeight: 700, margin: 0 }}>Class Reservations</h2>
+          {!loading && (
+            <p style={{ margin: "0.25rem 0 0", fontSize: "0.85rem", color: "rgba(255,255,255,0.5)" }}>
+              {filtered.length} reservations · {verifiedCount} payment verified
+            </p>
+          )}
+        </div>
+        <button
+          onClick={exportCSV}
+          style={{ padding: "0.45rem 1rem", borderRadius: "8px", border: "1px solid rgba(255,255,255,0.2)", background: "transparent", color: "rgba(255,255,255,0.7)", cursor: "pointer", fontSize: "0.82rem" }}
+        >
+          Export CSV
+        </button>
+      </div>
+
+      <div style={{ display: "flex", gap: "0.5rem", marginBottom: "1.25rem", flexWrap: "wrap" }}>
+        {filterBtn("all",    "All",             rows.length)}
+        {filterBtn("aerial", "Aerial Silk",      aerialCount)}
+        {filterBtn("paddle", "Paddleboard Yoga", paddleCount)}
+        {filterBtn("sauna",  "Contrast Therapy", saunaCount)}
+      </div>
+
+      {loading ? (
+        <p style={{ color: "rgba(255,255,255,0.4)", fontSize: "0.875rem" }}>Loading…</p>
+      ) : filtered.length === 0 ? (
+        <div style={{ textAlign: "center", padding: "3rem 1rem", color: "rgba(255,255,255,0.35)", border: "1px dashed rgba(255,255,255,0.1)", borderRadius: "12px" }}>
+          <p style={{ margin: 0 }}>No reservations yet.</p>
+        </div>
+      ) : (
+        <div style={{ overflowX: "auto" }}>
+          <table style={{ width: "100%", borderCollapse: "collapse", fontSize: "0.85rem" }}>
+            <thead>
+              <tr style={{ borderBottom: "1px solid rgba(255,255,255,0.1)" }}>
+                {["Paid ✓", "Name", "Email", "Class", "Booked", ""].map(h => (
+                  <th key={h} style={{ padding: "0.5rem 0.75rem", textAlign: "left", color: "rgba(255,255,255,0.4)", fontWeight: 600, fontSize: "0.72rem", textTransform: "uppercase", letterSpacing: "0.05em", whiteSpace: "nowrap" }}>{h}</th>
+                ))}
+              </tr>
+            </thead>
+            <tbody>
+              {filtered.map(r => (
+                <tr key={r.id} style={{ borderBottom: "1px solid rgba(255,255,255,0.05)", background: r.payment_verified ? "rgba(134,239,172,0.04)" : "transparent" }}>
+                  <td style={{ padding: "0.75rem" }}>
+                    <button
+                      onClick={() => toggleVerified(r.id, r.payment_verified)}
+                      disabled={verifying === r.id}
+                      title={r.payment_verified ? "Mark as not paid" : "Mark as payment verified"}
+                      style={{
+                        width: 26, height: 26, borderRadius: 6, border: `2px solid ${r.payment_verified ? "#86efac" : "rgba(255,255,255,0.25)"}`,
+                        background: r.payment_verified ? "#86efac" : "transparent",
+                        cursor: "pointer", display: "flex", alignItems: "center", justifyContent: "center",
+                        color: "#0a0a14", fontWeight: 700, fontSize: "0.85rem", flexShrink: 0,
+                        opacity: verifying === r.id ? 0.5 : 1,
+                      }}
+                    >
+                      {r.payment_verified ? "✓" : ""}
+                    </button>
+                  </td>
+                  <td style={{ padding: "0.75rem", color: "#fff", fontWeight: 600, whiteSpace: "nowrap" }}>{r.attendee_name}</td>
+                  <td style={{ padding: "0.75rem", color: "rgba(255,255,255,0.6)" }}>{r.attendee_email}</td>
+                  <td style={{ padding: "0.75rem", color: "rgba(255,255,255,0.75)", whiteSpace: "nowrap" }}>
+                    <span style={{
+                      display: "inline-block", padding: "0.15rem 0.55rem", borderRadius: "20px", fontSize: "0.75rem", fontWeight: 600,
+                      background: r.class_key.startsWith("aerial") ? "rgba(167,139,250,0.15)" : r.class_key.startsWith("paddle") ? "rgba(56,189,248,0.15)" : "rgba(251,146,60,0.15)",
+                      color: r.class_key.startsWith("aerial") ? "#a78bfa" : r.class_key.startsWith("paddle") ? "#38bdf8" : "#fb923c",
+                    }}>
+                      {CLASS_LABELS[r.class_key] ?? r.class_key}
+                    </span>
+                  </td>
+                  <td style={{ padding: "0.75rem", color: "rgba(255,255,255,0.4)", fontSize: "0.8rem", whiteSpace: "nowrap" }}>
+                    {new Date(r.booked_at).toLocaleDateString()}
+                  </td>
+                  <td style={{ padding: "0.75rem" }}>
+                    <button
+                      onClick={() => deleteRow(r.id)}
+                      style={{ padding: "0.2rem 0.55rem", borderRadius: "5px", border: "1px solid rgba(248,113,113,0.3)", background: "transparent", color: "#f87171", cursor: "pointer", fontSize: "0.72rem" }}
+                    >
+                      Remove
+                    </button>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      )}
+    </div>
+  );
+}
+
 // ── Partner Codes Tab ─────────────────────────────────────────────────
 
 interface PartnerCode {
@@ -2817,6 +3013,7 @@ export default function AdminPage() {
         {tab("warriors", "Warriors")}
         {tab("staff_registrations", "Staff")}
         {tab("staff_guests", "Staff Guests")}
+        {tab("class_reservations", "Classes")}
         {tab("contrast_bookings", "Contrast Therapy")}
         {tab("massage_bookings", "Massage")}
         {tab("aerial_bookings", "Aerial / Silk")}
@@ -2846,6 +3043,7 @@ export default function AdminPage() {
       {activeTab === "warriors"                 && <DataTab tableKey="warriors"                 columns={["id","name","email","family_size","beds_needed","created_at"]} />}
       {activeTab === "staff_registrations"      && <DataTab tableKey="staff_registrations"      columns={["id","name","email","phone","role","emergency_contact_name","emergency_contact_phone","dietary_needs","ticket_code","created_at"]} />}
       {activeTab === "staff_guests"             && <DataTab tableKey="staff_guests"             columns={["id","staff_ticket_code","staff_name","guest_name","guest_email","ticket_code","created_at"]} />}
+      {activeTab === "class_reservations"        && <ClassReservationsTab />}
       {activeTab === "contrast_bookings"        && <DataTab tableKey="contrast_bookings"        columns={["id","name","email","phone","slots","notes","created_at"]} />}
       {activeTab === "massage_bookings"         && <DataTab tableKey="massage_bookings"         columns={["id","name","email","phone","practitioner","slot","session_type","hands","notes","created_at"]} />}
       {activeTab === "aerial_bookings"          && <AerialBookingsTab />}

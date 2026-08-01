@@ -17,7 +17,7 @@ type ActiveTab =
   | "vendor_agreements"
   | "vendors" | "volunteers" | "volunteer_registrations" | "warriors" | "instructor_waitlist" | "sponsors"
   | "staff_registrations" | "staff_guests" | "contrast_bookings" | "massage_bookings"
-  | "confirmations";
+  | "confirmations" | "giveaway";
 
 interface TabConfig {
   key: TableName;
@@ -2108,6 +2108,149 @@ function CommsTab() {
   );
 }
 
+// ── Giveaway Tab ──────────────────────────────────────────────────────
+
+interface GiveawayPrize {
+  id: number;
+  code: string;
+  prize_name: string;
+  prize_description: string;
+  claimed: boolean;
+  claimed_by_name: string | null;
+  claimed_by_email: string | null;
+  claimed_at: string | null;
+  created_at: string;
+}
+
+function GiveawayTab() {
+  const [prizes, setPrizes] = useState<GiveawayPrize[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [seeding, setSeeding] = useState(false);
+  const [seedMsg, setSeedMsg] = useState("");
+  const [copied, setCopied] = useState<string | null>(null);
+
+  async function load() {
+    setLoading(true);
+    const r = await fetch("/api/admin/giveaway");
+    if (r.ok) { const d = await r.json(); setPrizes(d.rows); }
+    setLoading(false);
+  }
+
+  useEffect(() => { load(); }, []);
+
+  async function seedPrizes() {
+    setSeeding(true); setSeedMsg("");
+    const r = await fetch("/api/admin/giveaway", { method: "POST" });
+    const d = await r.json();
+    if (r.ok) { setSeedMsg(`Generated ${d.inserted.length} codes!`); await load(); }
+    else setSeedMsg(d.error || "Failed to seed");
+    setSeeding(false);
+  }
+
+  async function resetPrize(id: number) {
+    await fetch("/api/admin/giveaway", { method: "PATCH", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ id }) });
+    await load();
+  }
+
+  function copyCode(code: string) {
+    navigator.clipboard.writeText(code);
+    setCopied(code);
+    setTimeout(() => setCopied(null), 1500);
+  }
+
+  const claimed = prizes.filter(p => p.claimed).length;
+
+  return (
+    <div>
+      <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: "1.5rem", flexWrap: "wrap", gap: "0.75rem" }}>
+        <div>
+          <h2 style={{ fontSize: "1.2rem", fontWeight: 700, margin: 0 }}>Giveaway Prizes</h2>
+          {prizes.length > 0 && (
+            <p style={{ margin: "0.25rem 0 0", fontSize: "0.85rem", color: "rgba(255,255,255,0.5)" }}>
+              {claimed} / {prizes.length} claimed
+            </p>
+          )}
+        </div>
+        <div style={{ display: "flex", gap: "0.75rem", alignItems: "center" }}>
+          {seedMsg && <span style={{ fontSize: "0.85rem", color: prizes.length > 0 ? "#f87171" : "#86efac" }}>{seedMsg}</span>}
+          {prizes.length === 0 && (
+            <button
+              onClick={seedPrizes} disabled={seeding}
+              style={{ padding: "0.55rem 1.25rem", borderRadius: "8px", border: "none", cursor: "pointer", background: "#D4AF3C", color: "#0a0a14", fontWeight: 700, fontSize: "0.85rem", opacity: seeding ? 0.6 : 1 }}
+            >
+              {seeding ? "Generating…" : "Generate Codes"}
+            </button>
+          )}
+        </div>
+      </div>
+
+      {loading ? (
+        <p style={{ color: "rgba(255,255,255,0.4)", fontSize: "0.875rem" }}>Loading…</p>
+      ) : prizes.length === 0 ? (
+        <div style={{ textAlign: "center", padding: "3rem 1rem", color: "rgba(255,255,255,0.35)", border: "1px dashed rgba(255,255,255,0.1)", borderRadius: "12px" }}>
+          <p style={{ margin: 0, fontSize: "0.95rem" }}>No prizes yet. Click "Generate Codes" to create the 8 giveaway prizes.</p>
+        </div>
+      ) : (
+        <div style={{ overflowX: "auto" }}>
+          <table style={{ width: "100%", borderCollapse: "collapse", fontSize: "0.85rem" }}>
+            <thead>
+              <tr style={{ borderBottom: "1px solid rgba(255,255,255,0.1)" }}>
+                {["Prize", "Code", "Status", "Claimed By", "Claimed At", ""].map(h => (
+                  <th key={h} style={{ padding: "0.5rem 0.75rem", textAlign: "left", color: "rgba(255,255,255,0.4)", fontWeight: 600, fontSize: "0.75rem", textTransform: "uppercase", letterSpacing: "0.05em", whiteSpace: "nowrap" }}>{h}</th>
+                ))}
+              </tr>
+            </thead>
+            <tbody>
+              {prizes.map(p => (
+                <tr key={p.id} style={{ borderBottom: "1px solid rgba(255,255,255,0.06)" }}>
+                  <td style={{ padding: "0.75rem", color: "#fff", fontWeight: 600, whiteSpace: "nowrap" }}>{p.prize_name}</td>
+                  <td style={{ padding: "0.75rem" }}>
+                    <div style={{ display: "flex", alignItems: "center", gap: "0.5rem" }}>
+                      <code style={{ fontFamily: "monospace", fontSize: "0.9rem", color: "#D4AF3C", letterSpacing: "0.08em" }}>{p.code}</code>
+                      <button
+                        onClick={() => copyCode(p.code)}
+                        style={{ padding: "0.2rem 0.5rem", borderRadius: "4px", border: "1px solid rgba(255,255,255,0.15)", background: "transparent", color: copied === p.code ? "#86efac" : "rgba(255,255,255,0.5)", cursor: "pointer", fontSize: "0.7rem" }}
+                      >
+                        {copied === p.code ? "Copied!" : "Copy"}
+                      </button>
+                    </div>
+                  </td>
+                  <td style={{ padding: "0.75rem" }}>
+                    <span style={{ padding: "0.2rem 0.6rem", borderRadius: "20px", fontSize: "0.75rem", fontWeight: 600, background: p.claimed ? "rgba(248,113,113,0.15)" : "rgba(134,239,172,0.15)", color: p.claimed ? "#f87171" : "#86efac" }}>
+                      {p.claimed ? "Claimed" : "Available"}
+                    </span>
+                  </td>
+                  <td style={{ padding: "0.75rem", color: "rgba(255,255,255,0.65)" }}>
+                    {p.claimed_by_name ? (
+                      <div>
+                        <div>{p.claimed_by_name}</div>
+                        <div style={{ fontSize: "0.75rem", color: "rgba(255,255,255,0.4)" }}>{p.claimed_by_email}</div>
+                      </div>
+                    ) : "—"}
+                  </td>
+                  <td style={{ padding: "0.75rem", color: "rgba(255,255,255,0.4)", fontSize: "0.8rem", whiteSpace: "nowrap" }}>
+                    {p.claimed_at ? new Date(p.claimed_at).toLocaleDateString() : "—"}
+                  </td>
+                  <td style={{ padding: "0.75rem" }}>
+                    {p.claimed && (
+                      <button
+                        onClick={() => resetPrize(p.id)}
+                        style={{ padding: "0.25rem 0.65rem", borderRadius: "6px", border: "1px solid rgba(248,113,113,0.3)", background: "transparent", color: "#f87171", cursor: "pointer", fontSize: "0.75rem" }}
+                      >
+                        Reset
+                      </button>
+                    )}
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      )}
+    </div>
+  );
+}
+
 // ── Main Admin Page ───────────────────────────────────────────────────
 
 export default function AdminPage() {
@@ -2258,6 +2401,7 @@ export default function AdminPage() {
         {tab("massage_bookings", "Massage")}
         {tab("instructor_waitlist", "Instructors")}
         {tab("sponsors", "Sponsors")}
+        {tab("giveaway", "Giveaway")}
 
         <span className="admin-tab-sep" />
 
@@ -2284,6 +2428,7 @@ export default function AdminPage() {
       {activeTab === "instructor_waitlist"      && <DataTab tableKey="instructor_waitlist"      columns={["id","name","email","phone","modality","years_teaching","interested_in_2026","interested_in_2027","offering","created_at"]} />}
       {activeTab === "sponsors"                 && <DataTab tableKey="sponsors"                 columns={["id","name","email","company","budget_range","interests","goals","created_at"]} />}
       {activeTab === "confirmations"            && <CommsTab />}
+      {activeTab === "giveaway"                 && <GiveawayTab />}
     </div>
   );
 }

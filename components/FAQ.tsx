@@ -8,7 +8,7 @@ const faqs = [
   },
   {
     q: "What's the weather like in August?",
-    a: "Sutton, Alaska enjoys long summer days with temperatures between 55–75°F. Evenings can cool to 40–50°F. The midnight sun provides nearly 20 hours of daylight; bring an eye mask for sleeping!",
+    a: "Sutton, Alaska enjoys long summer days with temperatures between 55–75°F. Evenings can cool to 40–50°F. The midnight sun provides nearly 20 hours of daylight; bring an eye mask for sleeping! Tentative forecast for 2026: rain is expected Friday and Sunday, so pack a rain layer and a tent that can handle it. Saturday is looking sunny and hot — prime fire-ceremony energy. Get cozy either way; the healing vibes don't check the weather. (Forecast is tentative and subject to change as we get closer to the date.)",
   },
   {
     q: "How do I get to the festival?",

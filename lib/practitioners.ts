@@ -168,7 +168,7 @@ export const practitioners: Practitioner[] = [
     name: "Mystical Moon Dance",
     role: "Tarot Reader & Ceremonial Space Holder",
     offering: "Tarot + Tea Party · Daily 4 PM",
-    bio: "Mystical Moon Dance is a tarot reader and ceremonial space holder who weaves divination, community ritual, and the magic of gathering into her daily Tarot + Tea Party. Each afternoon session in the Labyrinth Garden is an invitation to slow down, pull a card, and let the mystery speak.",
+    bio: "Mystical Moon Dance is a tarot reader and ceremonial space holder who weaves divination, community ritual, and the magic of gathering into her daily Tarot + Tea Party. Each afternoon session in the lodge's upstairs lounge is an invitation to slow down, pull a card, and let the mystery speak.",
   },
   {
     slug: "jing-xi-kang",

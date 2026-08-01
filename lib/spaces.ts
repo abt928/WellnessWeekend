@@ -65,9 +65,8 @@ export const SPACES: Record<string, SacredSpace> = {
     elementColor: "#5E8A6A",
     icon: "🌀",
     tagline: "One path in. One path out. The garden holds what the ceremony releases.",
-    description: "The labyrinth is a portal. Its single winding path leads you inward and then — eventually — back out into the world, changed. Open throughout the entire weekend for silent walking, integration, and reflection, it is the space between the ceremonies. Our daily Tarot + Tea Party gathers here every afternoon. The Sound Journey happens here on Sunday morning. And on Sunday at 11:11 AM, the Message from the Bees ecstatic dance activates this garden's full portal energy — one of the most sacred moments of the entire weekend.",
+    description: "The labyrinth is a portal. Its single winding path leads you inward and then — eventually — back out into the world, changed. Open throughout the entire weekend for silent walking, integration, and reflection, it is the space between the ceremonies. The Sound Journey happens here on Sunday morning. And on Sunday at 11:11 AM, the Message from the Bees ecstatic dance activates this garden's full portal energy — one of the most sacred moments of the entire weekend.",
     offerings: [
-      "Tarot + Tea Party · Daily 4 PM",
       "Sound Journey · Sunday 8 AM",
       "Message from the Bees · Sunday 11:11 AM",
       "Pendulum Readings & Salt Intentions",

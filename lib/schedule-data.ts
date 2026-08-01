@@ -82,8 +82,8 @@ export const scheduleDays: ScheduleDay[] = [
       {
         time: "4:00 PM",
         event: "Tarot + Tea Party",
-        detail: "Divinators gather in the garden to share readings, sip community tea, and activate the space. Come as you are — daily at 4 PM.",
-        element: "earth", location: "Labyrinth Garden",
+        detail: "Divinators gather in the lodge's upstairs lounge to share readings, sip community tea, and activate the space. Come as you are — daily at 4 PM.",
+        element: "quantum", location: "Lodge · Upstairs Lounge",
       },
       {
         time: "4:00 PM",
@@ -241,8 +241,8 @@ export const scheduleDays: ScheduleDay[] = [
       {
         time: "4:00 PM",
         event: "Tarot + Tea Party",
-        detail: "Daily gathering of readers and seekers in the garden — tea, cards, and connection.",
-        element: "earth", location: "Labyrinth Garden",
+        detail: "Daily gathering of readers and seekers in the lodge's upstairs lounge — tea, cards, and connection.",
+        element: "quantum", location: "Lodge · Upstairs Lounge",
       },
       {
         time: "5:00 PM",
@@ -403,8 +403,8 @@ export const scheduleDays: ScheduleDay[] = [
       {
         time: "4:00 PM",
         event: "Tarot + Tea Party",
-        detail: "The final daily garden gathering — close the weekend with mystery and magic.",
-        element: "earth", location: "Labyrinth Garden",
+        detail: "The final daily lounge gathering — close the weekend with mystery and magic.",
+        element: "quantum", location: "Lodge · Upstairs Lounge",
         hosts: ["mystical-moon-dance"],
       },
       {

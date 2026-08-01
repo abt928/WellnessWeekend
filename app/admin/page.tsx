@@ -1350,7 +1350,14 @@ function VendorAgreementsTab() {
 
 // ── Generic Data Table ────────────────────────────────────────────────
 
-function DataTab({ tableKey, columns }: { tableKey: TableName; columns: string[] }) {
+const INSTRUCTOR_STATUSES: { value: string; label: string; color: string }[] = [
+  { value: "pending",         label: "Pending",         color: "var(--ink-muted)" },
+  { value: "staff",           label: "Staff",           color: "#3a9d5c" },
+  { value: "denied",          label: "Denied",          color: "#dc5050" },
+  { value: "follow_up_2027",  label: "Follow up 2027",  color: "#c98a2c" },
+];
+
+function DataTab({ tableKey, columns, statusField }: { tableKey: TableName; columns: string[]; statusField?: string }) {
   const [rows, setRows] = useState<Record<string, unknown>[]>([]);
   const [count, setCount] = useState(0);
   const [loading, setLoading] = useState(false);
@@ -1391,6 +1398,17 @@ function DataTab({ tableKey, columns }: { tableKey: TableName; columns: string[]
     setDeleteConfirm(null);
     setSelectedRow(null);
     fetchData(search);
+  };
+
+  const updateStatus = async (id: number, status: string) => {
+    if (!statusField) return;
+    await fetch("/api/admin/data", {
+      method: "PATCH",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ table: tableKey, id, status }),
+    });
+    setRows(prev => prev.map(r => (Number(r.id) === id ? { ...r, [statusField]: status } : r)));
+    setSelectedRow(prev => (prev && Number(prev.id) === id ? { ...prev, [statusField]: status } : prev));
   };
 
   const exportCSV = () => {
@@ -1436,7 +1454,23 @@ function DataTab({ tableKey, columns }: { tableKey: TableName; columns: string[]
                   <tr key={i} onClick={() => { setSelectedRow(isSelected ? null : row); setDeleteConfirm(null); }}
                     style={{ cursor: "pointer", background: isSelected ? "rgba(139,95,191,0.07)" : undefined }}>
                     {columns.map(col => (
-                      <td key={col}>{col === "created_at" ? fmtDate(row[col]) : String(row[col] ?? "—")}</td>
+                      <td key={col} onClick={col === statusField ? e => e.stopPropagation() : undefined}>
+                        {col === "created_at" ? fmtDate(row[col])
+                          : col === statusField ? (
+                            <select
+                              value={String(row[col] ?? "pending")}
+                              onChange={e => updateStatus(id, e.target.value)}
+                              style={{
+                                fontSize: "0.75rem", padding: "0.15rem 0.3rem", borderRadius: "4px",
+                                border: `1px solid ${INSTRUCTOR_STATUSES.find(s => s.value === row[col])?.color ?? "var(--line-medium)"}`,
+                                color: INSTRUCTOR_STATUSES.find(s => s.value === row[col])?.color,
+                                background: "transparent",
+                              }}
+                            >
+                              {INSTRUCTOR_STATUSES.map(s => <option key={s.value} value={s.value}>{s.label}</option>)}
+                            </select>
+                          ) : String(row[col] ?? "—")}
+                      </td>
                     ))}
                     <td onClick={e => e.stopPropagation()} style={{ textAlign: "center" }}>
                       {deleteConfirm === id ? (
@@ -1473,7 +1507,7 @@ function DataTab({ tableKey, columns }: { tableKey: TableName; columns: string[]
             <button className="admin-detail-close" onClick={() => setSelectedRow(null)}>✕ Close</button>
           </div>
           <div className="admin-detail-grid">
-            {columns.filter(col => col !== "id" && col !== "created_at").map(col => {
+            {columns.filter(col => col !== "id" && col !== "created_at" && col !== statusField).map(col => {
               const display = String(selectedRow[col] ?? "—");
               if (!display || display === "—") return null;
               return (
@@ -1488,6 +1522,25 @@ function DataTab({ tableKey, columns }: { tableKey: TableName; columns: string[]
               <div className="admin-detail-value">{fmtDate(selectedRow.created_at)}</div>
             </div>
           </div>
+          {statusField && (
+            <div style={{ padding: "0.75rem 1.25rem", borderTop: "1px solid var(--line-subtle)", display: "flex", gap: "0.5rem", alignItems: "center", flexWrap: "wrap" }}>
+              <span style={{ fontSize: "0.8rem", color: "var(--ink-muted)" }}>Status:</span>
+              {INSTRUCTOR_STATUSES.map(s => {
+                const active = String(selectedRow[statusField] ?? "pending") === s.value;
+                return (
+                  <button key={s.value} onClick={() => updateStatus(Number(selectedRow.id), s.value)}
+                    style={{
+                      fontSize: "0.75rem", padding: "0.3rem 0.7rem", borderRadius: "999px", cursor: "pointer",
+                      border: `1px solid ${s.color}`,
+                      background: active ? s.color : "transparent",
+                      color: active ? "#fff" : s.color,
+                    }}>
+                    {s.label}
+                  </button>
+                );
+              })}
+            </div>
+          )}
           <div style={{ padding: "0.75rem 1.25rem", borderTop: "1px solid var(--line-subtle)" }}>
             {deleteConfirm === Number(selectedRow.id) ? (
               <span style={{ display: "flex", gap: "0.5rem", alignItems: "center" }}>
@@ -2281,7 +2334,7 @@ export default function AdminPage() {
       {activeTab === "staff_guests"             && <DataTab tableKey="staff_guests"             columns={["id","staff_ticket_code","staff_name","guest_name","guest_email","ticket_code","created_at"]} />}
       {activeTab === "contrast_bookings"        && <DataTab tableKey="contrast_bookings"        columns={["id","name","email","phone","slots","notes","created_at"]} />}
       {activeTab === "massage_bookings"         && <DataTab tableKey="massage_bookings"         columns={["id","name","email","phone","practitioner","slot","session_type","hands","notes","created_at"]} />}
-      {activeTab === "instructor_waitlist"      && <DataTab tableKey="instructor_waitlist"      columns={["id","name","email","phone","modality","years_teaching","interested_in_2026","interested_in_2027","offering","created_at"]} />}
+      {activeTab === "instructor_waitlist"      && <DataTab tableKey="instructor_waitlist"      columns={["id","name","email","phone","modality","years_teaching","interested_in_2026","interested_in_2027","offering","status","created_at"]} statusField="status" />}
       {activeTab === "sponsors"                 && <DataTab tableKey="sponsors"                 columns={["id","name","email","company","budget_range","interests","goals","created_at"]} />}
       {activeTab === "confirmations"            && <CommsTab />}
     </div>

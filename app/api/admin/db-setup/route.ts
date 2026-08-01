@@ -100,6 +100,7 @@ export async function POST(req: NextRequest) {
         created_at TIMESTAMPTZ DEFAULT NOW() NOT NULL
       )
     `;
+    await sql`ALTER TABLE instructor_waitlist ADD COLUMN IF NOT EXISTS status VARCHAR(20) NOT NULL DEFAULT 'pending'`;
 
     await sql`
       CREATE TABLE IF NOT EXISTS affiliates (

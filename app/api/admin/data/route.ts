@@ -105,13 +105,31 @@ export async function DELETE(req: NextRequest) {
   }
 }
 
-// PATCH /api/admin/data — update volunteer shift assignments
+const INSTRUCTOR_STATUSES = ["pending", "staff", "denied", "follow_up_2027"] as const;
+
+// PATCH /api/admin/data — update volunteer shift assignments, or instructor applicant status
 export async function PATCH(req: NextRequest) {
   if (!isAdminAuthenticated(req)) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
 
-  const { table, id, shiftIds } = await req.json();
+  const { table, id, shiftIds, status } = await req.json();
+
+  if (table === "instructor_waitlist") {
+    if (!id || !INSTRUCTOR_STATUSES.includes(status)) {
+      return NextResponse.json(
+        { error: `Missing id or invalid status. Use: ${INSTRUCTOR_STATUSES.join(", ")}` },
+        { status: 400 }
+      );
+    }
+    const db = getDb();
+    await db.update(instructorWaitlist).set({ status }).where(eq(instructorWaitlist.id, Number(id)));
+    return NextResponse.json({ ok: true });
+  }
+
   if (table !== "volunteer_registrations" || !id || !Array.isArray(shiftIds)) {
-    return NextResponse.json({ error: "Only volunteer_registrations supports PATCH with shiftIds[]" }, { status: 400 });
+    return NextResponse.json(
+      { error: "Only volunteer_registrations supports PATCH with shiftIds[], or instructor_waitlist with status" },
+      { status: 400 }
+    );
   }
 
   try {

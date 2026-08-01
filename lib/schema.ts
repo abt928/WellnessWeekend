@@ -63,6 +63,7 @@ export const instructorWaitlist = pgTable("instructor_waitlist", {
   interestedIn2026: boolean("interested_in_2026").default(false).notNull(),
   interestedIn2027: boolean("interested_in_2027").default(false).notNull(),
   offering: text("offering").notNull(),
+  status: varchar("status", { length: 20 }).notNull().default("pending"),
   createdAt: timestamp("created_at", { withTimezone: true }).defaultNow().notNull(),
 });
 

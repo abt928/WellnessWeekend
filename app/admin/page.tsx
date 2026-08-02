@@ -456,6 +456,7 @@ function GuestListTab() {
           <button onClick={load} style={{ fontSize: "0.78rem", color: "var(--ink-muted)", background: "none", border: "none", cursor: "pointer" }}>Refresh</button>
           {view === "tickets" && <button onClick={exportOrdersCSV} className="admin-export-btn" disabled={!orders.length}>Export CSV</button>}
           {view === "massage" && <button onClick={exportMassageCSV} className="admin-export-btn" disabled={!massage.length}>Export CSV</button>}
+          <button onClick={() => window.print()} className="admin-refresh-btn" style={{ borderColor: "#7a52b0", color: "#7a52b0" }}>Print / PDF</button>
         </div>
       </div>
 
@@ -719,12 +720,15 @@ function BudgetTab() {
           <h2 style={{ fontSize: "0.8rem", fontWeight: 600, color: "var(--ink-muted)", textTransform: "uppercase", letterSpacing: "0.08em", margin: 0 }}>
             Budget & Expenses
           </h2>
-          <button
-            onClick={() => setAddingBudget((v) => !v)}
-            style={{ fontSize: "0.78rem", color: "var(--psyche-cyan)", background: "none", border: "none", cursor: "pointer", padding: 0 }}
-          >
-            {addingBudget ? "Cancel" : "+ Add Item"}
-          </button>
+          <div style={{ display: "flex", gap: "0.5rem", alignItems: "center" }}>
+            <button onClick={() => window.print()} className="admin-refresh-btn" style={{ borderColor: "#7a52b0", color: "#7a52b0" }}>Print / PDF</button>
+            <button
+              onClick={() => setAddingBudget((v) => !v)}
+              style={{ fontSize: "0.78rem", color: "var(--psyche-cyan)", background: "none", border: "none", cursor: "pointer", padding: 0 }}
+            >
+              {addingBudget ? "Cancel" : "+ Add Item"}
+            </button>
+          </div>
         </div>
 
         {addingBudget && (
@@ -910,6 +914,7 @@ function AffiliatesTab() {
           </button>
           <button onClick={() => fetchData(search)} className="admin-refresh-btn">Refresh</button>
           <button onClick={exportCSV} className="admin-export-btn" disabled={!rows.length}>Export CSV</button>
+          <button onClick={() => window.print()} className="admin-refresh-btn" style={{ borderColor: "#7a52b0", color: "#7a52b0" }}>Print / PDF</button>
         </div>
       </div>
       {showCreate && (
@@ -1144,6 +1149,7 @@ function VendorAgreementsTab() {
             {agreements.length} total · Confirmed: {agreements.filter(a => a.payment_status === "confirmed").length} · Pending: {agreements.filter(a => a.payment_status === "pending").length}
           </span>
           <button onClick={exportCSV} className="admin-export-btn" disabled={!agreements.length}>Export CSV</button>
+          <button onClick={() => window.print()} className="admin-refresh-btn" style={{ borderColor: "#7a52b0", color: "#7a52b0" }}>Print / PDF</button>
         </div>
       </div>
 
@@ -1430,6 +1436,7 @@ function DataTab({ tableKey, columns, statusField }: { tableKey: TableName; colu
         <div className="admin-toolbar-right">
           <button onClick={() => fetchData(search)} className="admin-refresh-btn">Refresh</button>
           <button onClick={exportCSV} className="admin-export-btn" disabled={rows.length === 0}>Export CSV</button>
+          <button onClick={() => window.print()} className="admin-refresh-btn" style={{ borderColor: "#7a52b0", color: "#7a52b0" }}>Print / PDF</button>
         </div>
       </div>
 
@@ -2327,11 +2334,11 @@ interface Person {
 }
 
 const CAT_CONFIG: Record<PersonCategory, { label: string; color: string; bg: string }> = {
-  warrior:   { label: "Warrior",   color: "#fb923c", bg: "rgba(251,146,60,0.15)" },
-  volunteer: { label: "Volunteer", color: "#86efac", bg: "rgba(134,239,172,0.15)" },
-  staff:     { label: "Staff",     color: "#a78bfa", bg: "rgba(167,139,250,0.15)" },
-  giveaway:  { label: "Giveaway",  color: "#D4AF3C", bg: "rgba(212,175,60,0.15)" },
-  guest:     { label: "Guest",     color: "#38bdf8", bg: "rgba(56,189,248,0.15)" },
+  warrior:   { label: "Warrior",   color: "#c0622a", bg: "rgba(192,98,42,0.12)" },
+  volunteer: { label: "Volunteer", color: "#2a9d8f", bg: "rgba(42,157,143,0.12)" },
+  staff:     { label: "Staff",     color: "#7a52b0", bg: "rgba(122,82,176,0.12)" },
+  giveaway:  { label: "Giveaway",  color: "#C9983F", bg: "rgba(201,152,63,0.12)" },
+  guest:     { label: "Guest",     color: "#1d7ea6", bg: "rgba(29,126,166,0.12)" },
 };
 
 function PeopleTab() {
@@ -2398,30 +2405,34 @@ function PeopleTab() {
 
   const filterBtn = (key: PersonCategory | "all", label: string) => (
     <button key={key} onClick={() => setFilter(key)} style={{
-      padding: "0.35rem 0.85rem", borderRadius: 20, border: "none", cursor: "pointer",
+      padding: "0.35rem 0.85rem", borderRadius: 20, cursor: "pointer",
       fontSize: "0.8rem", fontWeight: 600,
-      background: filter === key ? "#fff" : "rgba(255,255,255,0.07)",
-      color: filter === key ? "#0a0a14" : "rgba(255,255,255,0.6)",
+      border: `1px solid ${filter === key ? "var(--ink)" : "var(--line-medium)"}`,
+      background: filter === key ? "var(--ink)" : "var(--surface-elevated)",
+      color: filter === key ? "var(--surface-elevated)" : "var(--ink-muted)",
+      fontFamily: "inherit",
     }}>
       {label} <span style={{ opacity: 0.65 }}>({counts[key]})</span>
     </button>
   );
 
   return (
-    <div>
+    <div style={{ padding: "1.5rem 2rem" }}>
       {/* Header */}
       <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: "1rem", flexWrap: "wrap", gap: "0.75rem" }}>
-        <h2 style={{ fontSize: "1.2rem", fontWeight: 700, margin: 0 }}>Everyone</h2>
-        <button onClick={exportCSV} style={{ padding: "0.4rem 0.9rem", borderRadius: 8, border: "1px solid rgba(255,255,255,0.18)", background: "transparent", color: "rgba(255,255,255,0.65)", cursor: "pointer", fontSize: "0.8rem" }}>
-          Export CSV
-        </button>
+        <h2 style={{ fontSize: "1.2rem", fontWeight: 700, margin: 0, color: "var(--ink)" }}>Everyone</h2>
+        <div style={{ display: "flex", gap: "0.5rem" }}>
+          <button onClick={exportCSV} className="admin-export-btn">Export CSV</button>
+          <button onClick={() => window.print()} className="admin-refresh-btn" style={{ borderColor: "#7a52b0", color: "#7a52b0" }}>Print / PDF</button>
+        </div>
       </div>
 
       {/* Search */}
       <input
         placeholder="Search by name, email, or phone…"
         value={search} onChange={e => setSearch(e.target.value)}
-        style={{ width: "100%", padding: "0.7rem 1rem", borderRadius: 10, border: "1px solid rgba(255,255,255,0.12)", background: "rgba(255,255,255,0.05)", color: "#fff", fontSize: "0.9rem", outline: "none", boxSizing: "border-box", marginBottom: "0.85rem" }}
+        className="admin-search"
+        style={{ width: "100%", marginBottom: "0.85rem", boxSizing: "border-box" }}
       />
 
       {/* Filter pills */}
@@ -2435,12 +2446,12 @@ function PeopleTab() {
       </div>
 
       {loading ? (
-        <p style={{ color: "rgba(255,255,255,0.4)", fontSize: "0.875rem" }}>Loading…</p>
+        <div className="admin-loading">Loading…</div>
       ) : filtered.length === 0 ? (
-        <p style={{ color: "rgba(255,255,255,0.35)", fontSize: "0.875rem" }}>No results.</p>
+        <div className="admin-empty">No results.</div>
       ) : (
         <>
-          <p style={{ fontSize: "0.78rem", color: "rgba(255,255,255,0.35)", marginBottom: "0.75rem" }}>{filtered.length} people</p>
+          <p style={{ fontSize: "0.78rem", color: "var(--ink-muted)", marginBottom: "0.75rem" }}>{filtered.length} people</p>
           <div style={{ display: "flex", flexDirection: "column", gap: "0.5rem" }}>
             {filtered.map((p, i) => {
               const cat = CAT_CONFIG[p.category];
@@ -2455,42 +2466,42 @@ function PeopleTab() {
                 <div key={`${p.category}-${p.id}-${i}`} style={{
                   display: "grid", gridTemplateColumns: "auto 1fr auto",
                   alignItems: "center", gap: "0.75rem 1rem",
-                  background: "rgba(255,255,255,0.04)", border: "1px solid rgba(255,255,255,0.08)",
+                  background: "var(--surface-elevated)", border: "1px solid var(--line-medium)",
                   borderRadius: 10, padding: "0.75rem 1rem",
                 }}>
                   {/* Category badge */}
-                  <span style={{ padding: "0.2rem 0.55rem", borderRadius: 20, fontSize: "0.7rem", fontWeight: 700, color: cat.color, background: cat.bg, whiteSpace: "nowrap" }}>
+                  <span style={{ padding: "0.2rem 0.55rem", borderRadius: 20, fontSize: "0.7rem", fontWeight: 700, color: cat.color, background: cat.bg, whiteSpace: "nowrap", flexShrink: 0 }}>
                     {cat.label}
                   </span>
 
                   {/* Contact info */}
                   <div style={{ minWidth: 0 }}>
-                    <div style={{ fontWeight: 700, color: "#fff", fontSize: "0.9rem", marginBottom: "0.15rem", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>
-                      {p.name || <em style={{ color: "rgba(255,255,255,0.3)" }}>Unknown</em>}
+                    <div style={{ fontWeight: 700, color: "var(--ink)", fontSize: "0.9rem", marginBottom: "0.15rem", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>
+                      {p.name || <em style={{ color: "var(--ink-muted)" }}>Unknown</em>}
                     </div>
                     <div style={{ display: "flex", gap: "0.75rem", flexWrap: "wrap", alignItems: "center" }}>
                       {p.email && (
-                        <a href={`mailto:${p.email}`} style={{ color: "#D4AF3C", fontSize: "0.82rem", textDecoration: "none" }}>{p.email}</a>
+                        <a href={`mailto:${p.email}`} style={{ color: "#2a9d8f", fontSize: "0.82rem", textDecoration: "none" }}>{p.email}</a>
                       )}
                       {p.phone && (
-                        <a href={`tel:${p.phone}`} style={{ color: "rgba(255,255,255,0.55)", fontSize: "0.82rem", textDecoration: "none" }}>{p.phone}</a>
+                        <a href={`tel:${p.phone}`} style={{ color: "var(--ink-muted)", fontSize: "0.82rem", textDecoration: "none" }}>{p.phone}</a>
                       )}
                       {!p.phone && (
-                        <span style={{ color: "rgba(255,255,255,0.2)", fontSize: "0.78rem", fontStyle: "italic" }}>no phone</span>
+                        <span style={{ color: "var(--ink-muted)", fontSize: "0.78rem", fontStyle: "italic" }}>no phone</span>
                       )}
                     </div>
-                    {extra && <div style={{ fontSize: "0.75rem", color: "rgba(255,255,255,0.35)", marginTop: "0.2rem" }}>{extra}</div>}
+                    {extra && <div style={{ fontSize: "0.75rem", color: "var(--ink-muted)", marginTop: "0.2rem" }}>{extra}</div>}
                   </div>
 
                   {/* Date + copy */}
                   <div style={{ textAlign: "right", display: "flex", flexDirection: "column", alignItems: "flex-end", gap: "0.35rem" }}>
-                    <span style={{ fontSize: "0.75rem", color: "rgba(255,255,255,0.35)", whiteSpace: "nowrap" }}>
+                    <span style={{ fontSize: "0.75rem", color: "var(--ink-muted)", whiteSpace: "nowrap" }}>
                       {p.created_at ? new Date(p.created_at).toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" }) : "—"}
                     </span>
                     {p.email && (
                       <button
                         onClick={() => copyText(p.email!)}
-                        style={{ padding: "0.15rem 0.45rem", borderRadius: 4, border: "1px solid rgba(255,255,255,0.12)", background: "transparent", color: copied === p.email ? "#86efac" : "rgba(255,255,255,0.35)", cursor: "pointer", fontSize: "0.68rem" }}
+                        style={{ padding: "0.15rem 0.45rem", borderRadius: 4, border: "1px solid var(--line-medium)", background: "transparent", color: copied === p.email ? "#2a9d8f" : "var(--ink-muted)", cursor: "pointer", fontSize: "0.68rem", fontFamily: "inherit" }}
                       >
                         {copied === p.email ? "Copied!" : "Copy email"}
                       </button>
@@ -2601,9 +2612,10 @@ function ClassReservationsTab() {
     <button
       onClick={() => setFilter(key)}
       style={{
-        padding: "0.4rem 1rem", borderRadius: "20px", border: "none", cursor: "pointer", fontSize: "0.82rem", fontWeight: 600,
-        background: filter === key ? "#D4AF3C" : "rgba(255,255,255,0.08)",
-        color: filter === key ? "#0a0a14" : "rgba(255,255,255,0.65)",
+        padding: "0.4rem 1rem", borderRadius: "20px", border: `1px solid ${filter === key ? "#D4AF3C" : "var(--line-medium)"}`,
+        cursor: "pointer", fontSize: "0.82rem", fontWeight: 600,
+        background: filter === key ? "rgba(212,175,60,0.12)" : "var(--surface-elevated)",
+        color: filter === key ? "#C9983F" : "var(--ink-muted)",
       }}
     >
       {label} ({count})
@@ -2611,22 +2623,20 @@ function ClassReservationsTab() {
   );
 
   return (
-    <div>
+    <div style={{ padding: "1.5rem 2rem" }}>
       <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: "1.25rem", flexWrap: "wrap", gap: "0.75rem" }}>
         <div>
-          <h2 style={{ fontSize: "1.2rem", fontWeight: 700, margin: 0 }}>Class Reservations</h2>
+          <h2 style={{ fontSize: "1.2rem", fontWeight: 700, margin: 0, color: "var(--ink)" }}>Class Reservations</h2>
           {!loading && (
-            <p style={{ margin: "0.25rem 0 0", fontSize: "0.85rem", color: "rgba(255,255,255,0.5)" }}>
+            <p style={{ margin: "0.25rem 0 0", fontSize: "0.85rem", color: "var(--ink-muted)" }}>
               {filtered.length} reservations · {verifiedCount} payment verified
             </p>
           )}
         </div>
-        <button
-          onClick={exportCSV}
-          style={{ padding: "0.45rem 1rem", borderRadius: "8px", border: "1px solid rgba(255,255,255,0.2)", background: "transparent", color: "rgba(255,255,255,0.7)", cursor: "pointer", fontSize: "0.82rem" }}
-        >
-          Export CSV
-        </button>
+        <div style={{ display: "flex", gap: "0.5rem" }}>
+          <button onClick={exportCSV} className="admin-export-btn">Export CSV</button>
+          <button onClick={() => window.print()} className="admin-refresh-btn" style={{ borderColor: "#7a52b0", color: "#7a52b0" }}>Print / PDF</button>
+        </div>
       </div>
 
       <div style={{ display: "flex", gap: "0.5rem", marginBottom: "1.25rem", flexWrap: "wrap" }}>
@@ -2637,61 +2647,60 @@ function ClassReservationsTab() {
       </div>
 
       {loading ? (
-        <p style={{ color: "rgba(255,255,255,0.4)", fontSize: "0.875rem" }}>Loading…</p>
+        <div className="admin-loading">Loading…</div>
       ) : filtered.length === 0 ? (
-        <div style={{ textAlign: "center", padding: "3rem 1rem", color: "rgba(255,255,255,0.35)", border: "1px dashed rgba(255,255,255,0.1)", borderRadius: "12px" }}>
-          <p style={{ margin: 0 }}>No reservations yet.</p>
-        </div>
+        <div className="admin-empty">No reservations yet.</div>
       ) : (
         <div style={{ overflowX: "auto" }}>
-          <table style={{ width: "100%", borderCollapse: "collapse", fontSize: "0.85rem" }}>
+          <table style={{ width: "100%", borderCollapse: "collapse", background: "var(--surface-elevated)", borderRadius: "10px", overflow: "hidden", fontSize: "0.85rem" }}>
             <thead>
-              <tr style={{ borderBottom: "1px solid rgba(255,255,255,0.1)" }}>
+              <tr>
                 {["Paid ✓", "Name", "Email / Phone", "Class", "Booked", ""].map(h => (
-                  <th key={h} style={{ padding: "0.5rem 0.75rem", textAlign: "left", color: "rgba(255,255,255,0.4)", fontWeight: 600, fontSize: "0.72rem", textTransform: "uppercase", letterSpacing: "0.05em", whiteSpace: "nowrap" }}>{h}</th>
+                  <th key={h} style={hcell}>{h}</th>
                 ))}
               </tr>
             </thead>
             <tbody>
               {filtered.map(r => (
-                <tr key={r.id} style={{ borderBottom: "1px solid rgba(255,255,255,0.05)", background: r.payment_verified ? "rgba(134,239,172,0.04)" : "transparent" }}>
-                  <td style={{ padding: "0.75rem" }}>
+                <tr key={r.id} style={{ background: r.payment_verified ? "rgba(42,157,143,0.04)" : "transparent" }}>
+                  <td style={{ ...cell, width: "3rem" }}>
                     <button
                       onClick={() => toggleVerified(r.id, r.payment_verified)}
                       disabled={verifying === r.id}
                       title={r.payment_verified ? "Mark as not paid" : "Mark as payment verified"}
                       style={{
-                        width: 26, height: 26, borderRadius: 6, border: `2px solid ${r.payment_verified ? "#86efac" : "rgba(255,255,255,0.25)"}`,
-                        background: r.payment_verified ? "#86efac" : "transparent",
+                        width: 26, height: 26, borderRadius: 6,
+                        border: `2px solid ${r.payment_verified ? "#2a9d8f" : "var(--line-medium)"}`,
+                        background: r.payment_verified ? "rgba(42,157,143,0.15)" : "transparent",
                         cursor: "pointer", display: "flex", alignItems: "center", justifyContent: "center",
-                        color: "#0a0a14", fontWeight: 700, fontSize: "0.85rem", flexShrink: 0,
+                        color: "#2a9d8f", fontWeight: 700, fontSize: "0.85rem", flexShrink: 0,
                         opacity: verifying === r.id ? 0.5 : 1,
                       }}
                     >
                       {r.payment_verified ? "✓" : ""}
                     </button>
                   </td>
-                  <td style={{ padding: "0.75rem", color: "#fff", fontWeight: 600, whiteSpace: "nowrap" }}>{r.attendee_name}</td>
-                  <td style={{ padding: "0.75rem" }}>
-                    <a href={`mailto:${r.attendee_email}`} style={{ display: "block", color: "#D4AF3C", textDecoration: "none", fontSize: "0.85rem" }}>{r.attendee_email}</a>
-                    {r.attendee_phone && <a href={`tel:${r.attendee_phone}`} style={{ display: "block", color: "rgba(255,255,255,0.5)", textDecoration: "none", fontSize: "0.8rem", marginTop: 2 }}>{r.attendee_phone}</a>}
+                  <td style={{ ...cell, fontWeight: 600 }}>{r.attendee_name}</td>
+                  <td style={cell}>
+                    <a href={`mailto:${r.attendee_email}`} style={{ display: "block", color: "#2a9d8f", textDecoration: "none", fontSize: "0.85rem" }}>{r.attendee_email}</a>
+                    {r.attendee_phone && <a href={`tel:${r.attendee_phone}`} style={{ display: "block", color: "var(--ink-muted)", textDecoration: "none", fontSize: "0.8rem", marginTop: 2 }}>{r.attendee_phone}</a>}
                   </td>
-                  <td style={{ padding: "0.75rem", color: "rgba(255,255,255,0.75)", whiteSpace: "nowrap" }}>
+                  <td style={{ ...cell, whiteSpace: "nowrap" }}>
                     <span style={{
                       display: "inline-block", padding: "0.15rem 0.55rem", borderRadius: "20px", fontSize: "0.75rem", fontWeight: 600,
-                      background: r.class_key.startsWith("aerial") ? "rgba(167,139,250,0.15)" : r.class_key.startsWith("paddle") ? "rgba(56,189,248,0.15)" : "rgba(251,146,60,0.15)",
-                      color: r.class_key.startsWith("aerial") ? "#a78bfa" : r.class_key.startsWith("paddle") ? "#38bdf8" : "#fb923c",
+                      background: r.class_key.startsWith("aerial") ? "rgba(139,95,191,0.12)" : r.class_key.startsWith("paddle") ? "rgba(61,184,175,0.12)" : "rgba(212,175,60,0.12)",
+                      color: r.class_key.startsWith("aerial") ? "#7a52b0" : r.class_key.startsWith("paddle") ? "#2a9d8f" : "#C9983F",
                     }}>
                       {CLASS_LABELS[r.class_key] ?? r.class_key}
                     </span>
                   </td>
-                  <td style={{ padding: "0.75rem", color: "rgba(255,255,255,0.4)", fontSize: "0.8rem", whiteSpace: "nowrap" }}>
+                  <td style={{ ...cell, color: "var(--ink-muted)", fontSize: "0.8rem", whiteSpace: "nowrap" }}>
                     {new Date(r.booked_at).toLocaleDateString()}
                   </td>
-                  <td style={{ padding: "0.75rem" }}>
+                  <td style={cell}>
                     <button
                       onClick={() => deleteRow(r.id)}
-                      style={{ padding: "0.2rem 0.55rem", borderRadius: "5px", border: "1px solid rgba(248,113,113,0.3)", background: "transparent", color: "#f87171", cursor: "pointer", fontSize: "0.72rem" }}
+                      style={{ padding: "0.2rem 0.55rem", borderRadius: "5px", border: "1px solid rgba(220,80,80,0.3)", background: "transparent", color: "#dc5050", cursor: "pointer", fontSize: "0.72rem" }}
                     >
                       Remove
                     </button>
@@ -2790,31 +2799,34 @@ function PartnerCodesTab() {
   const usesFor = (id: number) => uses.filter(u => u.code_id === id);
 
   return (
-    <div>
+    <div style={{ padding: "1.5rem 2rem" }}>
       <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: "1.5rem", flexWrap: "wrap", gap: "0.75rem" }}>
         <div>
-          <h2 style={{ fontSize: "1.2rem", fontWeight: 700, margin: 0 }}>Partner Codes</h2>
+          <h2 style={{ fontSize: "1.2rem", fontWeight: 700, margin: 0, color: "var(--ink)" }}>Partner Codes</h2>
           {codes.length > 0 && (
-            <p style={{ margin: "0.25rem 0 0", fontSize: "0.85rem", color: "rgba(255,255,255,0.5)" }}>
-              {codes.length} codes · {uses.length} total redemptions · Share link: <code style={{ color: "#86efac", fontSize: "0.8rem" }}>/partner</code>
+            <p style={{ margin: "0.25rem 0 0", fontSize: "0.85rem", color: "var(--ink-muted)" }}>
+              {codes.length} codes · {uses.length} total redemptions · Share link: <code style={{ color: "#2a9d8f", fontSize: "0.8rem", background: "var(--surface-page)", padding: "0.1rem 0.3rem", borderRadius: 4 }}>/partner</code>
             </p>
           )}
         </div>
-        <button
-          onClick={() => setShowForm(f => !f)}
-          style={{ padding: "0.55rem 1.25rem", borderRadius: "8px", border: "none", cursor: "pointer", background: "#86efac", color: "#0a0a14", fontWeight: 700, fontSize: "0.85rem" }}
-        >
-          {showForm ? "Cancel" : "+ New Code"}
-        </button>
+        <div style={{ display: "flex", gap: "0.5rem", alignItems: "center" }}>
+          <button onClick={() => window.print()} className="admin-refresh-btn" style={{ borderColor: "#7a52b0", color: "#7a52b0" }}>Print / PDF</button>
+          <button
+            onClick={() => setShowForm(f => !f)}
+            style={{ padding: "0.55rem 1.25rem", borderRadius: "8px", border: "1px solid #2a9d8f", cursor: "pointer", background: "rgba(42,157,143,0.1)", color: "#2a9d8f", fontWeight: 700, fontSize: "0.85rem", fontFamily: "inherit" }}
+          >
+            {showForm ? "Cancel" : "+ New Code"}
+          </button>
+        </div>
       </div>
 
       {createMsg && (
-        <p style={{ fontSize: "0.85rem", marginBottom: "1rem", color: createMsg.startsWith("Created") ? "#86efac" : "#f87171" }}>{createMsg}</p>
+        <p style={{ fontSize: "0.85rem", marginBottom: "1rem", color: createMsg.startsWith("Created") ? "#2a9d8f" : "#dc5050" }}>{createMsg}</p>
       )}
 
       {showForm && (
-        <form onSubmit={createCode} style={{ background: "rgba(255,255,255,0.04)", border: "1px solid rgba(255,255,255,0.1)", borderRadius: "12px", padding: "1.25rem", marginBottom: "1.5rem", display: "flex", flexDirection: "column", gap: "0.75rem" }}>
-          <p style={{ margin: 0, fontSize: "0.8rem", textTransform: "uppercase", letterSpacing: "0.08em", color: "rgba(255,255,255,0.4)", fontWeight: 600 }}>New Partner Code</p>
+        <form onSubmit={createCode} style={{ background: "var(--surface-elevated)", border: "1px solid var(--line-medium)", borderRadius: "12px", padding: "1.25rem", marginBottom: "1.5rem", display: "flex", flexDirection: "column", gap: "0.75rem" }}>
+          <p style={{ margin: 0, fontSize: "0.8rem", textTransform: "uppercase", letterSpacing: "0.08em", color: "var(--ink-muted)", fontWeight: 600 }}>New Partner Code</p>
           <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "0.65rem" }}>
             <input
               required placeholder="Partner name *" value={newName}
@@ -2844,7 +2856,7 @@ function PartnerCodesTab() {
           />
           <button
             type="submit" disabled={creating}
-            style={{ alignSelf: "flex-start", padding: "0.5rem 1.25rem", borderRadius: "8px", border: "none", cursor: "pointer", background: "#86efac", color: "#0a0a14", fontWeight: 700, fontSize: "0.85rem", opacity: creating ? 0.6 : 1 }}
+            style={{ alignSelf: "flex-start", padding: "0.5rem 1.25rem", borderRadius: "8px", border: "1px solid #2a9d8f", cursor: "pointer", background: "rgba(42,157,143,0.12)", color: "#2a9d8f", fontWeight: 700, fontSize: "0.85rem", fontFamily: "inherit", opacity: creating ? 0.6 : 1 }}
           >
             {creating ? "Creating…" : "Create Code"}
           </button>
@@ -2852,11 +2864,9 @@ function PartnerCodesTab() {
       )}
 
       {loading ? (
-        <p style={{ color: "rgba(255,255,255,0.4)", fontSize: "0.875rem" }}>Loading…</p>
+        <div className="admin-loading">Loading…</div>
       ) : codes.length === 0 ? (
-        <div style={{ textAlign: "center", padding: "3rem 1rem", color: "rgba(255,255,255,0.35)", border: "1px dashed rgba(255,255,255,0.1)", borderRadius: "12px" }}>
-          <p style={{ margin: 0, fontSize: "0.95rem" }}>No partner codes yet. Click "+ New Code" to create one.</p>
-        </div>
+        <div className="admin-empty">No partner codes yet. Click "+ New Code" to create one.</div>
       ) : (
         <div style={{ display: "flex", flexDirection: "column", gap: "0.75rem" }}>
           {codes.map(c => {
@@ -2864,28 +2874,28 @@ function PartnerCodesTab() {
             const pct = Math.round((c.use_count / c.max_uses) * 100);
             const isExpanded = expanded === c.id;
             return (
-              <div key={c.id} style={{ background: "rgba(255,255,255,0.04)", border: "1px solid rgba(255,255,255,0.09)", borderRadius: "12px", padding: "1rem 1.25rem" }}>
+              <div key={c.id} style={{ background: "var(--surface-elevated)", border: "1px solid var(--line-medium)", borderRadius: "12px", padding: "1rem 1.25rem" }}>
                 <div style={{ display: "flex", alignItems: "flex-start", justifyContent: "space-between", gap: "1rem", flexWrap: "wrap" }}>
                   <div style={{ flex: 1 }}>
                     <div style={{ display: "flex", alignItems: "center", gap: "0.75rem", marginBottom: "0.25rem" }}>
-                      <code style={{ fontSize: "1rem", fontWeight: 700, color: "#86efac", letterSpacing: "0.1em" }}>{c.code}</code>
-                      <span style={{ fontSize: "0.75rem", padding: "0.15rem 0.5rem", borderRadius: "20px", fontWeight: 600, background: c.active ? "rgba(134,239,172,0.12)" : "rgba(248,113,113,0.12)", color: c.active ? "#86efac" : "#f87171" }}>
+                      <code style={{ fontSize: "1rem", fontWeight: 700, color: "#2a9d8f", letterSpacing: "0.1em", background: "var(--surface-page)", padding: "0.15rem 0.5rem", borderRadius: 5, border: "1px solid var(--line-medium)" }}>{c.code}</code>
+                      <span style={{ fontSize: "0.75rem", padding: "0.15rem 0.5rem", borderRadius: "20px", fontWeight: 600, background: c.active ? "rgba(42,157,143,0.12)" : "rgba(220,80,80,0.1)", color: c.active ? "#2a9d8f" : "#dc5050" }}>
                         {c.active ? "Active" : "Inactive"}
                       </span>
                     </div>
-                    <p style={{ margin: 0, fontSize: "0.9rem", color: "#fff", fontWeight: 600 }}>{c.partner_name}</p>
-                    {c.partner_email && <p style={{ margin: "0.1rem 0 0", fontSize: "0.8rem", color: "rgba(255,255,255,0.45)" }}>{c.partner_email}</p>}
-                    <p style={{ margin: "0.4rem 0 0", fontSize: "0.8rem", color: "rgba(255,255,255,0.55)" }}>{c.benefit}</p>
+                    <p style={{ margin: 0, fontSize: "0.9rem", color: "var(--ink)", fontWeight: 600 }}>{c.partner_name}</p>
+                    {c.partner_email && <p style={{ margin: "0.1rem 0 0", fontSize: "0.8rem", color: "var(--ink-muted)" }}>{c.partner_email}</p>}
+                    <p style={{ margin: "0.4rem 0 0", fontSize: "0.8rem", color: "var(--ink-muted)" }}>{c.benefit}</p>
                   </div>
 
                   <div style={{ textAlign: "right", minWidth: 90 }}>
-                    <p style={{ margin: 0, fontWeight: 700, fontSize: "1rem", color: c.use_count >= c.max_uses ? "#f87171" : "#fff" }}>
+                    <p style={{ margin: 0, fontWeight: 700, fontSize: "1rem", color: c.use_count >= c.max_uses ? "#dc5050" : "var(--ink)" }}>
                       {c.use_count} / {c.max_uses}
                     </p>
-                    <div style={{ height: 4, borderRadius: 2, background: "rgba(255,255,255,0.1)", marginTop: "0.35rem" }}>
-                      <div style={{ height: "100%", borderRadius: 2, width: `${pct}%`, background: pct >= 100 ? "#f87171" : "#86efac" }} />
+                    <div style={{ height: 4, borderRadius: 2, background: "var(--line-medium)", marginTop: "0.35rem" }}>
+                      <div style={{ height: "100%", borderRadius: 2, width: `${pct}%`, background: pct >= 100 ? "#dc5050" : "#2a9d8f" }} />
                     </div>
-                    <p style={{ margin: "0.2rem 0 0", fontSize: "0.7rem", color: "rgba(255,255,255,0.35)" }}>used</p>
+                    <p style={{ margin: "0.2rem 0 0", fontSize: "0.7rem", color: "var(--ink-muted)" }}>used</p>
                   </div>
                 </div>
 
@@ -2893,32 +2903,32 @@ function PartnerCodesTab() {
                   {codeUses.length > 0 && (
                     <button
                       onClick={() => setExpanded(isExpanded ? null : c.id)}
-                      style={{ padding: "0.3rem 0.7rem", borderRadius: "6px", border: "1px solid rgba(255,255,255,0.15)", background: "transparent", color: "rgba(255,255,255,0.6)", cursor: "pointer", fontSize: "0.75rem" }}
+                      style={{ padding: "0.3rem 0.7rem", borderRadius: "6px", border: "1px solid var(--line-medium)", background: "transparent", color: "var(--ink-muted)", cursor: "pointer", fontSize: "0.75rem", fontFamily: "inherit" }}
                     >
                       {isExpanded ? "Hide" : "Show"} {codeUses.length} redemption{codeUses.length !== 1 ? "s" : ""}
                     </button>
                   )}
                   <button
                     onClick={() => toggleActive(c.id, !c.active)}
-                    style={{ padding: "0.3rem 0.7rem", borderRadius: "6px", border: "1px solid rgba(255,255,255,0.15)", background: "transparent", color: "rgba(255,255,255,0.6)", cursor: "pointer", fontSize: "0.75rem" }}
+                    style={{ padding: "0.3rem 0.7rem", borderRadius: "6px", border: "1px solid var(--line-medium)", background: "transparent", color: "var(--ink-muted)", cursor: "pointer", fontSize: "0.75rem", fontFamily: "inherit" }}
                   >
                     {c.active ? "Deactivate" : "Reactivate"}
                   </button>
                   <button
                     onClick={() => deleteCode(c.id)}
-                    style={{ padding: "0.3rem 0.7rem", borderRadius: "6px", border: "1px solid rgba(248,113,113,0.3)", background: "transparent", color: "#f87171", cursor: "pointer", fontSize: "0.75rem" }}
+                    style={{ padding: "0.3rem 0.7rem", borderRadius: "6px", border: "1px solid rgba(220,80,80,0.3)", background: "transparent", color: "#dc5050", cursor: "pointer", fontSize: "0.75rem", fontFamily: "inherit" }}
                   >
                     Delete
                   </button>
                 </div>
 
                 {isExpanded && codeUses.length > 0 && (
-                  <div style={{ marginTop: "0.85rem", borderTop: "1px solid rgba(255,255,255,0.08)", paddingTop: "0.85rem" }}>
+                  <div style={{ marginTop: "0.85rem", borderTop: "1px solid var(--line-subtle)", paddingTop: "0.85rem" }}>
                     {codeUses.map((u, i) => (
-                      <div key={i} style={{ display: "flex", justifyContent: "space-between", fontSize: "0.8rem", padding: "0.3rem 0", borderBottom: i < codeUses.length - 1 ? "1px solid rgba(255,255,255,0.05)" : "none" }}>
-                        <span style={{ color: "#fff" }}>{u.redeemer_name}</span>
-                        <span style={{ color: "rgba(255,255,255,0.45)" }}>{u.redeemer_email}</span>
-                        <span style={{ color: "rgba(255,255,255,0.3)", whiteSpace: "nowrap" }}>{new Date(u.used_at).toLocaleDateString()}</span>
+                      <div key={i} style={{ display: "flex", justifyContent: "space-between", fontSize: "0.8rem", padding: "0.3rem 0", borderBottom: i < codeUses.length - 1 ? "1px solid var(--line-subtle)" : "none" }}>
+                        <span style={{ color: "var(--ink)", fontWeight: 500 }}>{u.redeemer_name}</span>
+                        <span style={{ color: "var(--ink-muted)" }}>{u.redeemer_email}</span>
+                        <span style={{ color: "var(--ink-muted)", whiteSpace: "nowrap" }}>{new Date(u.used_at).toLocaleDateString()}</span>
                       </div>
                     ))}
                   </div>
@@ -2934,8 +2944,8 @@ function PartnerCodesTab() {
 
 const smallInput: React.CSSProperties = {
   padding: "0.65rem 0.85rem", borderRadius: "8px",
-  background: "rgba(255,255,255,0.06)", border: "1px solid rgba(255,255,255,0.12)",
-  color: "#fff", fontSize: "0.875rem", outline: "none", width: "100%", boxSizing: "border-box",
+  background: "var(--surface-page)", border: "1px solid var(--line-medium)",
+  color: "var(--ink)", fontSize: "0.875rem", outline: "none", width: "100%", boxSizing: "border-box",
 };
 
 // ── Giveaway Tab ──────────────────────────────────────────────────────
@@ -3033,7 +3043,10 @@ function GiveawayTab() {
             </button>
           )}
           {prizes.length > 0 && (
-            <button onClick={load} style={{ fontSize: "0.78rem", color: "var(--ink-muted)", background: "none", border: "none", cursor: "pointer", fontFamily: "inherit" }}>Refresh</button>
+            <>
+              <button onClick={load} style={{ fontSize: "0.78rem", color: "var(--ink-muted)", background: "none", border: "none", cursor: "pointer", fontFamily: "inherit" }}>Refresh</button>
+              <button onClick={() => window.print()} className="admin-refresh-btn" style={{ borderColor: "#7a52b0", color: "#7a52b0" }}>Print / PDF</button>
+            </>
           )}
         </div>
       </div>

@@ -3637,6 +3637,61 @@ textarea:focus-visible {
   white-space: pre-wrap; word-break: break-word;
 }
 
+/* ── Admin Print Styles ──────────────────────────────────── */
+@media print {
+  .admin-header,
+  .admin-tabs,
+  .admin-toolbar,
+  .no-print,
+  .admin-detail-panel,
+  .admin-detail-close,
+  .admin-logout-btn,
+  .admin-setup-btn { display: none !important; }
+
+  body, .admin-layout { background: #fff !important; }
+  .admin-dashboard { padding: 0 !important; max-width: 100% !important; }
+
+  .admin-table-wrap {
+    border: 1px solid #ccc !important;
+    border-radius: 0 !important;
+    overflow: visible !important;
+  }
+  .admin-table th {
+    background: #f0f0f0 !important;
+    color: #000 !important;
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
+  }
+  .admin-table td {
+    color: #000 !important;
+    white-space: normal !important;
+    overflow: visible !important;
+    text-overflow: unset !important;
+  }
+  .admin-table tr:hover td { background: none !important; }
+
+  /* Force any lingering colored text to black */
+  a { color: #000 !important; text-decoration: none !important; }
+  span[style], div[style] { color: inherit; }
+
+  /* Stat cards */
+  [class*="StatCard"] { break-inside: avoid; }
+
+  /* Print title injected via ::before on the content area */
+  .admin-table-wrap::before {
+    content: "Wellness Weekend 2026";
+    display: block;
+    font-size: 0.75rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    color: #666;
+    margin-bottom: 0.5rem;
+    padding-bottom: 0.5rem;
+    border-bottom: 1px solid #ccc;
+  }
+}
+
 /* ========== MOBILE NAVIGATION (base styles) ========== */
 .nav-hamburger {
   display: none;

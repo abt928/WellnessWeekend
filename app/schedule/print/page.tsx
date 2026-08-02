@@ -1,22 +1,50 @@
 import Link from "next/link";
 import PrintButton from "@/components/PrintButton";
-import { scheduleDays } from "@/lib/schedule-data";
+import { scheduleDays, type ScheduleEvent } from "@/lib/schedule-data";
 import { practitioners } from "@/lib/practitioners";
 
 export const metadata = {
-  title: "Full Schedule · Wellness Weekend 2026",
-  description: "Printable 3-day schedule for Wellness Weekend — August 7–9, 2026 · Sutton, Alaska",
+  title: "Class Schedule · Wellness Weekend 2026",
+  description: "Printable class schedule for Wellness Weekend — August 7–9, 2026 · Sutton, Alaska",
 };
 
-const elementSymbol: Record<string, string> = {
-  fire: "🔥", water: "💧", air: "🌬", earth: "🌿", sound: "✨",
-};
+// Exclude logistics, sauna (in add-ons sheet), and passive music performances
+const EXCLUDE_EVENTS = new Set([
+  "Gates Open · Check-in",
+  "Lakeside Sauna Opens",
+  "Lakeside Sauna",
+  "S7INGRAE & Brackish",
+  "Shawn Zuke",
+  "Kuf Knotz + Christine Elise",
+  "J Brave",
+  "ÂKÅTÂLĖ",
+]);
+
+function isClass(e: ScheduleEvent): boolean {
+  return !EXCLUDE_EVENTS.has(e.event);
+}
+
+function groupByTime(events: ScheduleEvent[]) {
+  const groups = new Map<string, ScheduleEvent[]>();
+  for (const e of events) {
+    if (!groups.has(e.time)) groups.set(e.time, []);
+    groups.get(e.time)!.push(e);
+  }
+  return Array.from(groups.entries()).map(([time, evs]) => ({ time, events: evs }));
+}
 
 function hostNames(slugs: string[]): string {
   return slugs
     .map((s) => practitioners.find((p) => p.slug === s)?.name ?? s)
-    .join(" · ");
+    .join(", ");
 }
+
+const elementColor: Record<string, string> = {
+  fire: "#FF6B35", water: "#3DB8AF", air: "#9B7FD4", earth: "#5E8A6A", sound: "#D4AF3C",
+};
+const elementSymbol: Record<string, string> = {
+  fire: "🔥", water: "💧", air: "🌬", earth: "🌿", sound: "✨",
+};
 
 export default function PrintSchedulePage() {
   return (
@@ -26,7 +54,7 @@ export default function PrintSchedulePage() {
         <Link href="/#schedule" className="print-back-link">← Back to site</Link>
         <PrintButton />
         <Link href="/schedule/print/addons" className="print-back-link">
-          View Add-Ons →
+          Add-Ons &amp; Sauna →
         </Link>
       </div>
 
@@ -48,61 +76,58 @@ export default function PrintSchedulePage() {
           </span>
         ))}
         <span className="print-legend-item">⚑ Book ahead</span>
-        <span className="print-legend-item">$ Fee applies</span>
       </div>
 
       {/* Days */}
-      {scheduleDays.map((day) => (
-        <section key={day.label} className="print-day">
-          <div className="print-day-header">
-            <h2 className="print-day-title">{day.label}</h2>
-            <span className="print-day-theme">{day.headingText} · {day.theme}</span>
-          </div>
+      {scheduleDays.map((day) => {
+        const classes = day.events.filter(isClass);
+        const timeGroups = groupByTime(classes);
+        return (
+          <section key={day.label} className="print-day">
+            <div className="print-day-header">
+              <h2 className="print-day-title">{day.label}</h2>
+              <span className="print-day-theme">{day.headingText} · {day.theme}</span>
+            </div>
 
-          <table className="print-table">
-            <thead>
-              <tr>
-                <th style={{ width: "80px" }}>Time</th>
-                <th style={{ width: "180px" }}>Event</th>
-                <th style={{ width: "120px" }}>Location</th>
-                <th>Host(s)</th>
-                <th style={{ width: "60px" }}>Notes</th>
-              </tr>
-            </thead>
-            <tbody>
-              {day.events.map((e, i) => (
-                <tr key={i} className={`print-row print-row-${e.element}`}>
-                  <td className="print-time">{e.time}</td>
-                  <td className="print-event-name">
-                    <span className="print-elem-sym">{elementSymbol[e.element]}</span>
-                    {e.secondElement && (
-                      <span className="print-elem-sym">{elementSymbol[e.secondElement]}</span>
-                    )}
-                    {e.thirdElement && (
-                      <span className="print-elem-sym">{elementSymbol[e.thirdElement]}</span>
-                    )}
-                    {e.event}
-                    {e.detail && <div className="print-detail">{e.detail}</div>}
-                  </td>
-                  <td className="print-location">{e.location ?? "—"}</td>
-                  <td className="print-hosts">
-                    {e.hosts && e.hosts.length > 0 ? hostNames(e.hosts) : "—"}
-                  </td>
-                  <td className="print-notes">
-                    {e.limited && <span className="print-badge-limited">⚑ Book</span>}
-                    {e.fee && <span className="print-badge-fee">$</span>}
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        </section>
-      ))}
+            {timeGroups.map(({ time, events: evs }) => (
+              <div key={time} className="print-time-block">
+                <div className="print-tb-time">{time}</div>
+                <div
+                  className="print-tb-events"
+                  style={{ gridTemplateColumns: `repeat(${evs.length}, 1fr)` }}
+                >
+                  {evs.map((e, i) => (
+                    <div
+                      key={i}
+                      className="print-tb-event"
+                      style={{ borderLeftColor: elementColor[e.element] }}
+                    >
+                      <div className="print-tb-name">
+                        <span className="print-elem-sym">{elementSymbol[e.element]}</span>
+                        {e.event}
+                      </div>
+                      <div className="print-tb-meta">
+                        {e.location && <span>{e.location}</span>}
+                        {e.hosts && e.hosts.length > 0 && (
+                          <span>{e.location ? " · " : ""}{hostNames(e.hosts)}</span>
+                        )}
+                      </div>
+                      {e.limited && (
+                        <span className="print-badge-limited">⚑ Book ahead</span>
+                      )}
+                    </div>
+                  ))}
+                </div>
+              </div>
+            ))}
+          </section>
+        );
+      })}
 
       {/* Footer */}
       <footer className="print-footer">
-        <p>Lakeside Sauna by Solstice Saunas · 1 hour $22 · All day $45 · Full weekend $99 · Pay at the gate</p>
-        <p style={{ marginTop: "0.25rem" }}>Camping is sold out — cabin beds still available · wellnessweekendak.com/#store</p>
+        <p>Sauna by Solstice Saunas — see Add-Ons &amp; Sauna sheet for pricing · Cabin beds still available · wellnessweekendak.com/#store</p>
+        <p style={{ marginTop: "0.25rem" }}>support@thesoundspace.us</p>
       </footer>
     </div>
   );

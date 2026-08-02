@@ -1367,6 +1367,7 @@ function DataTab({ tableKey, columns, statusField }: { tableKey: TableName; colu
   const [rows, setRows] = useState<Record<string, unknown>[]>([]);
   const [count, setCount] = useState(0);
   const [loading, setLoading] = useState(false);
+  const [fetchError, setFetchError] = useState<string | null>(null);
   const [search, setSearch] = useState("");
   const [selectedRow, setSelectedRow] = useState<Record<string, unknown> | null>(null);
   const [deleteConfirm, setDeleteConfirm] = useState<number | null>(null);
@@ -1374,6 +1375,7 @@ function DataTab({ tableKey, columns, statusField }: { tableKey: TableName; colu
 
   const fetchData = useCallback(async (searchQuery?: string) => {
     setLoading(true);
+    setFetchError(null);
     try {
       const params = new URLSearchParams({ table: tableKey });
       if (searchQuery) params.set("search", searchQuery);
@@ -1382,8 +1384,12 @@ function DataTab({ tableKey, columns, statusField }: { tableKey: TableName; colu
         const data = await res.json();
         setRows(data.rows || []);
         setCount(data.count || 0);
+      } else {
+        const data = await res.json().catch(() => ({}));
+        setFetchError(data.error ?? `API error ${res.status}`);
+        setRows([]);
       }
-    } catch { setRows([]); }
+    } catch (e) { setFetchError(String(e)); setRows([]); }
     setLoading(false);
   }, [tableKey]);
 
@@ -1443,8 +1449,10 @@ function DataTab({ tableKey, columns, statusField }: { tableKey: TableName; colu
       <div className="admin-table-wrap">
         {loading ? (
           <div className="admin-loading">Loading…</div>
+        ) : fetchError ? (
+          <div className="admin-empty" style={{ color: "#dc5050" }}>Error: {fetchError}</div>
         ) : rows.length === 0 ? (
-          <div className="admin-empty">No records found</div>
+          <div className="admin-empty">No records yet</div>
         ) : (
           <table className="admin-table">
             <thead>

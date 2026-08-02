@@ -43,10 +43,52 @@ export async function GET(req: NextRequest) {
     );
   }
 
-  // Run column migrations for tables that have had schema additions
-  if (table === "warriors" && process.env.DATABASE_URL) {
-    const sql = neon(process.env.DATABASE_URL);
-    await sql`ALTER TABLE warriors ADD COLUMN IF NOT EXISTS phone VARCHAR(50)`.catch(() => {});
+  // Self-heal: ensure tables exist before querying
+  if (process.env.DATABASE_URL) {
+    const rawSql = neon(process.env.DATABASE_URL);
+    if (table === "warriors") {
+      await rawSql`ALTER TABLE warriors ADD COLUMN IF NOT EXISTS phone VARCHAR(50)`.catch(() => {});
+    }
+    if (table === "contrast_bookings") {
+      await rawSql`
+        CREATE TABLE IF NOT EXISTS contrast_bookings (
+          id SERIAL PRIMARY KEY,
+          name VARCHAR(255) NOT NULL,
+          email VARCHAR(255) NOT NULL,
+          phone VARCHAR(50),
+          slots TEXT NOT NULL,
+          notes TEXT,
+          created_at TIMESTAMPTZ DEFAULT NOW() NOT NULL
+        )
+      `.catch(() => {});
+    }
+    if (table === "aerial_bookings") {
+      await rawSql`
+        CREATE TABLE IF NOT EXISTS aerial_bookings (
+          id SERIAL PRIMARY KEY,
+          name VARCHAR(255) NOT NULL,
+          email VARCHAR(255) NOT NULL,
+          phone VARCHAR(50),
+          mode VARCHAR(20) NOT NULL,
+          slot VARCHAR(50) NOT NULL,
+          notes TEXT,
+          created_at TIMESTAMPTZ DEFAULT NOW() NOT NULL
+        )
+      `.catch(() => {});
+    }
+    if (table === "paddleboard_bookings") {
+      await rawSql`
+        CREATE TABLE IF NOT EXISTS paddleboard_bookings (
+          id SERIAL PRIMARY KEY,
+          name VARCHAR(255) NOT NULL,
+          email VARCHAR(255) NOT NULL,
+          phone VARCHAR(50),
+          slot VARCHAR(50) NOT NULL,
+          notes TEXT,
+          created_at TIMESTAMPTZ DEFAULT NOW() NOT NULL
+        )
+      `.catch(() => {});
+    }
   }
 
   try {

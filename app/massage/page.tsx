@@ -27,8 +27,8 @@ const PRACTITIONERS = [
   {
     key: "alaska-massage-band",
     name: "Alaska Massage Band",
-    role: "Therapeutic Bodywork · 2 Hands or 4 Hands",
-    desc: "The Alaska Massage Band offers deep therapeutic bodywork in 30, 60, or 90-minute sessions. Choose 2 Hands (one therapist) or 4 Hands (two therapists working in sync) — price doubles for the 4-hands experience.",
+    role: "Therapeutic Bodywork · Alice Sullivan & Nalani",
+    desc: "Alice Sullivan and Nalani offer deep therapeutic bodywork in 30, 60, or 90-minute sessions. Choose 2 Hands (one therapist) or 4 Hands — Alice and Nalani working in sync on one body. Price doubles for the 4-hands experience.",
   },
   {
     key: "no-preference",
@@ -38,10 +38,13 @@ const PRACTITIONERS = [
   },
 ];
 
+// Slots when Alice is teaching paddleboard yoga — unavailable for 4 Hands
+const ALICE_BUSY_SLOTS = new Set(["fri-2pm", "sat-1pm", "sun-1pm", "sun-3pm"]);
+
 const AMB_DURATIONS = ["30 minutes", "60 minutes", "90 minutes", "No preference"];
 const HANDS_OPTIONS = [
   { key: "2-hands", label: "2 Hands", sub: "1 therapist" },
-  { key: "4-hands", label: "4 Hands", sub: "2 therapists · price doubles" },
+  { key: "4-hands", label: "4 Hands", sub: "Alice + Nalani · price doubles" },
 ];
 
 type DaySlot = {
@@ -109,6 +112,13 @@ export default function MassagePage() {
     setPractitioner(key);
     setSessionType(key === "flow-massage" ? "20 minutes (Chair)" : "");
     setHands("");
+    setSlot("");
+  }
+
+  function selectHands(key: string) {
+    setHands(key);
+    // Clear slot if it's blocked for 4 Hands (Alice teaching)
+    if (key === "4-hands" && ALICE_BUSY_SLOTS.has(slot)) setSlot("");
   }
   const [email, setEmail] = useState("");
   const [phone, setPhone] = useState("");
@@ -258,7 +268,7 @@ export default function MassagePage() {
                 {HANDS_OPTIONS.map(h => {
                   const active = hands === h.key;
                   return (
-                    <button key={h.key} type="button" onClick={() => setHands(h.key)} style={{
+                    <button key={h.key} type="button" onClick={() => selectHands(h.key)} style={{
                       padding: "0.75rem 1rem", textAlign: "left",
                       background: active ? C.goldLight : C.card,
                       border: `2px solid ${active ? C.gold : C.border}`,
@@ -307,11 +317,12 @@ export default function MassagePage() {
                 <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(130px, 1fr))", gap: "0.5rem" }}>
                   {day.slots.map(s => {
                     const active = slot === s.key;
-                    if (s.booked) {
+                    const aliceBusy = practitioner === "alaska-massage-band" && hands === "4-hands" && ALICE_BUSY_SLOTS.has(s.key);
+                    if (s.booked || aliceBusy) {
                       return (
                         <div
                           key={s.key}
-                          title={s.bookedNote}
+                          title={aliceBusy ? "Alice is teaching paddleboard yoga at this time" : s.bookedNote}
                           style={{
                             padding: "0.7rem 0.75rem", borderRadius: 10, textAlign: "center",
                             background: "rgba(51,53,51,0.04)", border: `1.5px solid ${C.border}`,
@@ -319,7 +330,9 @@ export default function MassagePage() {
                           }}
                         >
                           <span style={{ display: "block", fontWeight: 600, color: C.charcoal, fontSize: "0.88rem" }}>{s.time}</span>
-                          <span style={{ display: "block", fontSize: "0.68rem", color: C.faint, marginTop: 2 }}>Booked</span>
+                          <span style={{ display: "block", fontSize: "0.68rem", color: C.faint, marginTop: 2 }}>
+                            {aliceBusy ? "Alice teaching" : "Booked"}
+                          </span>
                         </div>
                       );
                     }

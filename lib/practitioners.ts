@@ -43,9 +43,9 @@ export const practitioners: Practitioner[] = [
   {
     slug: "alice",
     name: "Alice Sullivan",
-    role: "Aerial Silk Artist & SUP Yoga Instructor",
-    offering: "Aerial Silk · Paddleboard Yoga",
-    bio: "Alice is a certified aerial silk artist and stand-up paddleboard yoga instructor with a gift for making both disciplines accessible and joyful. Whether you're floating on fabric or floating on water, she meets you exactly where you are with encouragement, laughter, and skill.",
+    role: "Aerial Silk Artist · SUP Yoga Instructor · Massage Therapist",
+    offering: "Aerial Silk · Paddleboard Yoga · Therapeutic Massage",
+    bio: "Alice is a certified aerial silk artist, stand-up paddleboard yoga instructor, and licensed massage therapist with a gift for making every discipline accessible and joyful. Whether you're floating on fabric, floating on water, or receiving bodywork, she meets you exactly where you are with encouragement, laughter, and skill. Alice offers massage sessions through Alaska Massage Band — solo or as part of the signature 4 Hands experience with Nalani.",
     photo: "/images/practitioners/alice-sullivan.jpg",
   },
   {

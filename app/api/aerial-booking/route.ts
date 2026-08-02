@@ -10,7 +10,7 @@ export const dynamic = "force-dynamic";
 const CAPACITY: Record<string, number> = { class: 6, solo: 7 };
 
 const CLASS_SLOTS = [
-  "fri-3pm", "fri-6pm", "sat-10am", "sat-2pm", "sun-1030am", "sun-2pm-kids",
+  "fri-3pm", "fri-7pm", "sat-10am", "sat-2pm", "sun-1030am", "sun-2pm-kids",
 ];
 const SOLO_SLOTS = [
   // Sound offerings

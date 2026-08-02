@@ -35,7 +35,7 @@ const MODES = [
 
 const CLASS_SLOTS = [
   { key: "fri-3pm",     day: "Friday · Aug 7",   time: "3:00 PM",  note: "Intro Aerial" },
-  { key: "fri-6pm",     day: "Friday · Aug 7",   time: "6:00 PM",  note: "Intro Aerial · Sunset Session" },
+  { key: "fri-7pm",     day: "Friday · Aug 7",   time: "7:00 PM",  note: "Intro Aerial · Sunset Session" },
   { key: "sat-10am",    day: "Saturday · Aug 8", time: "10:00 AM", note: "Intro Aerial" },
   { key: "sat-2pm",     day: "Saturday · Aug 8", time: "2:00 PM",  note: "Intro Aerial" },
   { key: "sun-1030am",  day: "Sunday · Aug 9",   time: "10:30 AM", note: "Intro Aerial" },

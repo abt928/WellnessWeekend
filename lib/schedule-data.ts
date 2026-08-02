@@ -115,7 +115,6 @@ export const scheduleDays: ScheduleDay[] = [
         detail: "Restorative long-hold poses melting into a sound savasana.",
         element: "earth", secondElement: "sound",
         location: "Main Stage",
-        fee: "Silk hammock rental available · $20/30 min · See /aerial",
         hosts: ["mary"],
       },
       {
@@ -163,7 +162,6 @@ export const scheduleDays: ScheduleDay[] = [
         detail: "Handpan music and ambient sound washing over the still morning lake.",
         element: "water", secondElement: "air", thirdElement: "sound",
         location: "Lakeside",
-        fee: "Silk hammock rental available · $20/30 min · See /aerial",
         hosts: ["peace-pixy"],
       },
       {
@@ -173,7 +171,6 @@ export const scheduleDays: ScheduleDay[] = [
         element: "water", secondElement: "air", thirdElement: "sound",
         location: "Lakeside · Aerial",
         gloss: LIONSGATE_GLOSS,
-        fee: "Silk hammock rental available · $20/30 min · See /aerial",
         hosts: ["avalon-starling"],
       },
       {
@@ -193,13 +190,6 @@ export const scheduleDays: ScheduleDay[] = [
         hosts: ["logan-forehand"],
       },
       {
-        time: "10:30 AM",
-        event: "Quantum Light Activation",
-        detail: "Activate your healing with phototherapy — harness quantum light to renew the body and brighten the field.",
-        element: "fire", location: "Main Stage",
-        hosts: ["shawn"],
-      },
-      {
         time: "10:00 AM",
         event: "Intro Aerial",
         detail: "Floating in silks — a supported introduction to aerial flight. 6 people max.",
@@ -207,6 +197,13 @@ export const scheduleDays: ScheduleDay[] = [
         limited: true,
         link: "/aerial",
         hosts: ["beth"],
+      },
+      {
+        time: "10:30 AM",
+        event: "Quantum Light Activation",
+        detail: "Activate your healing with phototherapy — harness quantum light to renew the body and brighten the field.",
+        element: "fire", location: "Main Stage",
+        hosts: ["shawn"],
       },
       {
         time: "11:00 AM",
@@ -268,7 +265,6 @@ export const scheduleDays: ScheduleDay[] = [
         detail: "Yin yoga with long holds and MFR props, ending in a Tibetan bowl and gong sound bath.",
         element: "earth", secondElement: "sound",
         location: "Main Stage",
-        fee: "Silk hammock rental available · $20/30 min · See /aerial",
         hosts: ["jon"],
       },
       {
@@ -283,7 +279,6 @@ export const scheduleDays: ScheduleDay[] = [
         detail: "A live guzheng performance drawing from the ancient Chinese tradition of five musical tones — Gong, Shang, Jue, Zhi, and Yu — each resonating with the Five Elements and organ systems of the body. Designed to promote relaxation, mindfulness, and balance through music.",
         element: "sound", secondElement: "earth",
         location: "Main Stage",
-        fee: "Silk hammock rental available · $20/30 min · See /aerial",
         hosts: ["jing-xi-kang"],
       },
       {
@@ -292,7 +287,6 @@ export const scheduleDays: ScheduleDay[] = [
         detail: "A live set to carry the community from afternoon practice into the evening's ceremony.",
         element: "air",
         location: "Main Stage · Live Music",
-        fee: "Silk hammock rental available · $20/30 min · See /aerial",
         hosts: ["s7ngrae"],
       },
       {
@@ -332,7 +326,6 @@ export const scheduleDays: ScheduleDay[] = [
         element: "sound", secondElement: "earth",
         location: "Labyrinth Garden",
         gloss: LABYRINTH_GLOSS,
-        fee: "Silk hammock rental available · $20/30 min · See /aerial",
         hosts: ["peace-pixy"],
       },
       {
@@ -365,7 +358,6 @@ export const scheduleDays: ScheduleDay[] = [
         detail: "A combined light activation and floating sound bath — Shawn and Avalon guide you into quantum light and sound to integrate the weekend's medicine.",
         element: "water", secondElement: "air", thirdElement: "sound",
         location: "Lakeside",
-        fee: "Silk hammock rental available · $20/30 min · See /aerial",
         hosts: ["shawn", "avalon-starling"],
       },
       {
@@ -392,7 +384,6 @@ export const scheduleDays: ScheduleDay[] = [
         detail: "Soulful live music to open the family-day afternoon.",
         element: "air",
         location: "Main Stage · Live Music",
-        fee: "Silk hammock rental available · $20/30 min · See /aerial",
         hosts: ["shawn-zuke"],
       },
       {
@@ -401,7 +392,6 @@ export const scheduleDays: ScheduleDay[] = [
         detail: "Conscious hip-hop meets raw folk — an uplifting 2-hour live collaboration.",
         element: "air",
         location: "Main Stage · Live Music",
-        fee: "Silk hammock rental available · $20/30 min · See /aerial",
         hosts: ["kuf-knotz", "christine-elise"],
       },
       {
@@ -432,12 +422,18 @@ export const scheduleDays: ScheduleDay[] = [
         hosts: ["alice"],
       },
       {
+        time: "3:00 PM",
+        event: "Pendulum Readings & Salt Intention Workshop",
+        detail: "An immersive workshop on pendulum divination and the art of creating salt intentions — a sacred pre-ceremony practice before the Tarot + Tea.",
+        element: "earth", location: "Labyrinth Garden",
+        hosts: ["mystical-moon-dance"],
+      },
+      {
         time: "3:15 PM",
         event: "J Brave",
         detail: "45 minutes of conscious lyricism and heart-forward music.",
         element: "air",
         location: "Main Stage · Live Music",
-        fee: "Silk hammock rental available · $20/30 min · See /aerial",
         hosts: ["j-brave"],
       },
       {
@@ -446,15 +442,7 @@ export const scheduleDays: ScheduleDay[] = [
         detail: "A live sonic journey to gather the community toward closing.",
         element: "air",
         location: "Main Stage · Live Music",
-        fee: "Silk hammock rental available · $20/30 min · See /aerial",
         hosts: ["akatale"],
-      },
-      {
-        time: "3:00 PM",
-        event: "Pendulum Readings & Salt Intention Workshop",
-        detail: "An immersive workshop on pendulum divination and the art of creating salt intentions — a sacred pre-ceremony practice before the Tarot + Tea.",
-        element: "earth", location: "Labyrinth Garden",
-        hosts: ["mystical-moon-dance"],
       },
       {
         time: "4:00 PM",

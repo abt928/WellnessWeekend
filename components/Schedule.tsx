@@ -54,16 +54,27 @@ export default function Schedule() {
   const [active, setActiveState] = useState<number>(readInitialDay);
   const [elementFilter, setElementFilter] = useState<Element | null>(null);
   const [activeSpace, setActiveSpace] = useState<string | null>(null);
+  const [expanded, setExpanded] = useState<Set<string>>(new Set());
 
   const setActive = (i: number) => {
     setActiveState(i);
     setElementFilter(null);
+    setExpanded(new Set());
     if (typeof window === "undefined") return;
     const url = new URL(window.location.href);
     if (i === 0) url.searchParams.delete("day");
     else url.searchParams.set("day", DAY_KEYS[i]);
     window.history.replaceState({}, "", url.toString());
   };
+
+  function toggleEvent(key: string) {
+    setExpanded(prev => {
+      const next = new Set(prev);
+      if (next.has(key)) next.delete(key);
+      else next.add(key);
+      return next;
+    });
+  }
 
   const currentDay = days[active];
   const filteredEvents = elementFilter
@@ -140,62 +151,80 @@ export default function Schedule() {
 
       {/* Timeline */}
       <div className="schedule-timeline" key={`${active}-${elementFilter ?? "all"}`}>
-        {filteredEvents.map((e, i) => (
-          <div
-            className="schedule-item"
-            key={i}
-            style={{ "--dot-color": elementMeta[e.element].color } as React.CSSProperties}
-          >
-            <div className="schedule-time">
-              {e.time}
-              {e.location && (() => {
-                const space = getSpaceForLocation(e.location);
-                return space ? (
-                  <button
-                    className="schedule-location schedule-location-btn"
-                    onClick={() => setActiveSpace(space.key)}
-                    title={`Learn about ${space.name}`}
-                  >
-                    · {e.location}
-                  </button>
-                ) : (
-                  <span className="schedule-location"> · {e.location}</span>
-                );
-              })()}
-            </div>
-            <div className="schedule-event">
-              <span className="schedule-track-icon">{elementMeta[e.element].icon}</span>
-              {e.secondElement && (
-                <span className="schedule-track-icon" style={{ marginLeft: "-2px" }}>
-                  {elementMeta[e.secondElement].icon}
-                </span>
-              )}
-              {e.thirdElement && (
-                <span className="schedule-track-icon" style={{ marginLeft: "-2px" }}>
-                  {elementMeta[e.thirdElement].icon}
-                </span>
-              )}
-              {e.gloss ? <EventGloss term={e.event} gloss={e.gloss} /> : e.event}
-              {e.limited && (
-                <a href="#store" className="schedule-limited">Limited · Book ahead</a>
-              )}
-              {e.link && (
-                <a href={e.link} className="schedule-limited">Register →</a>
-              )}
-              {e.fee && (
-                <span className="schedule-fee">{e.fee}</span>
-              )}
-            </div>
-            {e.detail && <div className="schedule-detail">{e.detail}</div>}
-            {e.hosts && e.hosts.length > 0 && (
-              <div className="schedule-hosts">
-                {e.hosts.map((slug) => (
-                  <BioTrigger key={slug} slug={slug} />
-                ))}
+        {filteredEvents.map((e, i) => {
+          const eventKey = `${e.time}-${e.event}`;
+          const isExpanded = expanded.has(eventKey);
+          const hasDetail = !!(e.detail || (e.hosts && e.hosts.length > 0));
+          return (
+            <div
+              className="schedule-item"
+              key={i}
+              style={{ "--dot-color": elementMeta[e.element].color } as React.CSSProperties}
+            >
+              <div className="schedule-time">
+                {e.time}
+                {e.location && (() => {
+                  const space = getSpaceForLocation(e.location);
+                  return space ? (
+                    <button
+                      className="schedule-location schedule-location-btn"
+                      onClick={() => setActiveSpace(space.key)}
+                      title={`Learn about ${space.name}`}
+                    >
+                      · {e.location}
+                    </button>
+                  ) : (
+                    <span className="schedule-location"> · {e.location}</span>
+                  );
+                })()}
               </div>
-            )}
-          </div>
-        ))}
+              <div
+                className="schedule-event"
+                onClick={() => hasDetail && toggleEvent(eventKey)}
+                style={hasDetail ? { cursor: "pointer", userSelect: "none" } : undefined}
+              >
+                <span className="schedule-track-icon">{elementMeta[e.element].icon}</span>
+                {e.secondElement && (
+                  <span className="schedule-track-icon" style={{ marginLeft: "-2px" }}>
+                    {elementMeta[e.secondElement].icon}
+                  </span>
+                )}
+                {e.thirdElement && (
+                  <span className="schedule-track-icon" style={{ marginLeft: "-2px" }}>
+                    {elementMeta[e.thirdElement].icon}
+                  </span>
+                )}
+                {e.gloss ? <EventGloss term={e.event} gloss={e.gloss} /> : e.event}
+                {e.limited && (
+                  <a href="#store" className="schedule-limited" onClick={ev => ev.stopPropagation()}>Limited · Book ahead</a>
+                )}
+                {e.link && (
+                  <a href={e.link} className="schedule-limited" onClick={ev => ev.stopPropagation()}>Register →</a>
+                )}
+                {e.fee && (
+                  <span className="schedule-fee">{e.fee}</span>
+                )}
+                {hasDetail && (
+                  <span style={{
+                    marginLeft: "auto", paddingLeft: "0.5rem", flexShrink: 0,
+                    fontSize: "0.75rem", color: "rgba(255,255,255,0.35)",
+                    transition: "transform 0.2s",
+                    display: "inline-block",
+                    transform: isExpanded ? "rotate(90deg)" : "rotate(0deg)",
+                  }}>›</span>
+                )}
+              </div>
+              {isExpanded && e.detail && <div className="schedule-detail">{e.detail}</div>}
+              {isExpanded && e.hosts && e.hosts.length > 0 && (
+                <div className="schedule-hosts">
+                  {e.hosts.map((slug) => (
+                    <BioTrigger key={slug} slug={slug} />
+                  ))}
+                </div>
+              )}
+            </div>
+          );
+        })}
         {filteredEvents.length === 0 && (
           <div className="schedule-empty">
             No {elementMeta[elementFilter!].label} events on this day

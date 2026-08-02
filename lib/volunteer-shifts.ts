@@ -1,6 +1,6 @@
 export interface Shift {
   shift_id: string;
-  phase: "setup" | "during" | "sunday_evening";
+  phase: "setup" | "during" | "sunday_evening" | "monday";
   role: string;
   day: string;
   date: string;
@@ -52,7 +52,6 @@ export const SHIFTS: Shift[] = [
   { shift_id: "DU-15", phase: "during", role: "Guest services",                  day: "Sunday",   date: "2026-08-09", start_time: null, end_time: null, hours: 4, capacity: 2, notes: null },
   { shift_id: "DU-18", phase: "during", role: "Cacao bar",                       day: "Sunday",   date: "2026-08-09", start_time: null, end_time: null, hours: 4, capacity: 2, notes: null },
   { shift_id: "DU-21", phase: "during", role: "Tea lounge",                      day: "Sunday",   date: "2026-08-09", start_time: null, end_time: null, hours: 4, capacity: 2, notes: null },
-  { shift_id: "DU-24", phase: "during", role: "Sauna strike",                    day: "Sunday",   date: "2026-08-09", start_time: "7:00 AM",  end_time: "11:00 AM", hours: 4, capacity: 2, notes: "Early breakdown for vendor pickup." },
 
   // ── Sunday Evening Teardown ──
   { shift_id: "SE-01", phase: "sunday_evening", role: "Take down",                  day: "Sunday", date: "2026-08-09", start_time: null, end_time: null, hours: 4, capacity: 4, notes: null },
@@ -60,6 +59,9 @@ export const SHIFTS: Shift[] = [
   { shift_id: "SE-03", phase: "sunday_evening", role: "Housekeeping",               day: "Sunday", date: "2026-08-09", start_time: null, end_time: null, hours: 4, capacity: 3, notes: null },
   { shift_id: "SE-04", phase: "sunday_evening", role: "Garbage / cleanup",          day: "Sunday", date: "2026-08-09", start_time: null, end_time: null, hours: 2, capacity: 3, notes: null },
   { shift_id: "SE-05", phase: "sunday_evening", role: "Lodge / pavilion breakdown", day: "Sunday", date: "2026-08-09", start_time: null, end_time: null, hours: 4, capacity: 3, notes: null },
+
+  // ── Monday Aug 10 · Post-Festival Strike ──
+  { shift_id: "MO-01", phase: "monday", role: "Sauna strike", day: "Monday", date: "2026-08-10", start_time: "7:00 AM", end_time: "11:00 AM", hours: 4, capacity: 2, notes: "Wood-fired sauna breakdown for vendor pickup, after the festival ends." },
 ];
 
 export const SHIFT_MAP: Record<string, Shift> = Object.fromEntries(

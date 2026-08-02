@@ -1792,7 +1792,7 @@ function VolunteerRegistrationsTab() {
   });
 
   const dayColor: Record<string, string> = {
-    Thursday: "#7a52b0", Friday: "#2a9d8f", Saturday: "#C9983F", Sunday: "#3b82f6",
+    Thursday: "#7a52b0", Friday: "#2a9d8f", Saturday: "#C9983F", Sunday: "#3b82f6", Monday: "#C05A2A",
   };
 
   return (
@@ -2004,6 +2004,7 @@ function VolunteerDetailPanel({ row, shifts, reward, totalHours, dayColor, rewar
     { label: "Saturday · Aug 8", color: "#C9983F", shifts: SHIFTS.filter(s => s.day === "Saturday") },
     { label: "Sunday · During", color: "#3b82f6", shifts: SHIFTS.filter(s => s.day === "Sunday" && s.phase === "during") },
     { label: "Sunday Evening · Teardown", color: "#dc5050", shifts: SHIFTS.filter(s => s.phase === "sunday_evening") },
+    { label: "Monday · Strike", color: "#C05A2A", shifts: SHIFTS.filter(s => s.phase === "monday") },
   ];
 
   const editHours = SHIFTS.filter(s => editShiftSet.has(s.shift_id)).reduce((sum, s) => sum + s.hours, 0);

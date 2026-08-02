@@ -33,11 +33,13 @@ const PHASES = [
   { key: "saturday",       label: "Festival · Saturday", date: "Saturday, Aug 8", emoji: "🌿" },
   { key: "sunday",         label: "Festival · Sunday", date: "Sunday, Aug 9",    emoji: "☀️" },
   { key: "sunday_evening", label: "Sunday Teardown",   date: "Sunday evening",   emoji: "🌙" },
+  { key: "monday",         label: "Monday Strike",     date: "Monday, Aug 10",   emoji: "🚚" },
 ] as const;
 
 function getPhaseKey(shift: Shift): string {
   if (shift.phase === "setup") return "setup";
   if (shift.phase === "sunday_evening") return "sunday_evening";
+  if (shift.phase === "monday") return "monday";
   return shift.day.toLowerCase();
 }
 
@@ -47,6 +49,7 @@ const SHIFTS_BY_PHASE: Record<string, Shift[]> = {
   saturday:       SHIFTS.filter((s) => s.phase === "during" && s.day === "Saturday"),
   sunday:         SHIFTS.filter((s) => s.phase === "during" && s.day === "Sunday"),
   sunday_evening: SHIFTS.filter((s) => s.phase === "sunday_evening"),
+  monday:         SHIFTS.filter((s) => s.phase === "monday"),
 };
 
 interface Availability {

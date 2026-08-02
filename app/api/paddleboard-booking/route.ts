@@ -6,7 +6,7 @@ export const dynamic = "force-dynamic";
 
 const CAPACITY = 7;
 
-const ALL_SLOT_KEYS = ["fri-2pm", "sat-1pm", "sun-1pm-kids", "sun-3pm"];
+const ALL_SLOT_KEYS = ["fri-2pm", "sat-7am", "sat-8am", "sat-1pm", "sun-1pm-kids", "sun-3pm"];
 
 async function getSlotCounts(): Promise<Record<string, number>> {
   const db = getDb();

@@ -159,9 +159,11 @@ export const scheduleDays: ScheduleDay[] = [
       {
         time: "7:00 AM",
         event: "Floating Sound Bath",
-        detail: "Handpan music and ambient sound washing over the still morning lake.",
+        detail: "Float on a paddleboard or in a silk hammock as Peace Pixy's handpan washes over the still morning lake.",
         element: "water", secondElement: "air", thirdElement: "sound",
-        location: "Lakeside",
+        location: "Lakeside · Aerial",
+        limited: true,
+        link: "/floating",
         hosts: ["peace-pixy"],
       },
       {
@@ -171,6 +173,8 @@ export const scheduleDays: ScheduleDay[] = [
         element: "water", secondElement: "air", thirdElement: "sound",
         location: "Lakeside · Aerial",
         gloss: LIONSGATE_GLOSS,
+        limited: true,
+        link: "/floating",
         hosts: ["avalon-starling"],
       },
       {

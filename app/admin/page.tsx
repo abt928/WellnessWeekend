@@ -9,14 +9,14 @@ import { SHIFT_MAP, SHIFTS } from "@/lib/volunteer-shifts";
 type TableName =
   | "leads" | "newsletter" | "vendors" | "volunteers"
   | "sponsors" | "instructor_waitlist" | "affiliates" | "referral_events"
-  | "volunteer_registrations" | "warriors" | "members" | "staff_registrations" | "staff_guests" | "contrast_bookings" | "massage_bookings" | "aerial_bookings" | "paddleboard_bookings";
+  | "volunteer_registrations" | "warriors" | "members" | "staff_registrations" | "contrast_bookings" | "massage_bookings" | "aerial_bookings" | "paddleboard_bookings";
 
 type ActiveTab =
   | "overview" | "guest_list" | "budget"
   | "affiliates" | "referral_events" | "newsletter" | "leads"
   | "vendor_agreements"
   | "vendors" | "volunteers" | "volunteer_registrations" | "warriors" | "instructor_waitlist" | "sponsors"
-  | "staff_registrations" | "staff_guests" | "contrast_bookings" | "massage_bookings" | "aerial_bookings" | "paddleboard_bookings"
+  | "staff_registrations" | "contrast_bookings" | "massage_bookings" | "aerial_bookings" | "paddleboard_bookings"
   | "confirmations" | "giveaway" | "partner_codes" | "class_reservations" | "people";
 
 interface TabConfig {
@@ -3291,7 +3291,6 @@ export default function AdminPage() {
         {tab("warriors",              "Warriors")}
         {tab("volunteer_registrations","Volunteers")}
         {tab("staff_registrations",   "Staff")}
-        {tab("staff_guests",          "Staff Guests")}
         {tab("giveaway",              "Giveaway")}
         {tab("partner_codes",         "Partners")}
 
@@ -3338,7 +3337,6 @@ export default function AdminPage() {
       {activeTab === "volunteer_registrations"  && <VolunteerRegistrationsTab />}
       {activeTab === "warriors"                 && <DataTab tableKey="warriors"                 columns={["id","name","email","phone","family_size","beds_needed","created_at"]} />}
       {activeTab === "staff_registrations"      && <DataTab tableKey="staff_registrations"      columns={["id","name","email","phone","role","emergency_contact_name","emergency_contact_phone","dietary_needs","ticket_code","created_at"]} />}
-      {activeTab === "staff_guests"             && <DataTab tableKey="staff_guests"             columns={["id","staff_ticket_code","staff_name","guest_name","guest_email","ticket_code","created_at"]} />}
       {activeTab === "class_reservations"        && <ClassReservationsTab />}
       {activeTab === "contrast_bookings"        && <DataTab tableKey="contrast_bookings"        columns={["id","name","email","phone","slots","notes","created_at"]} />}
       {activeTab === "massage_bookings"         && <DataTab tableKey="massage_bookings"         columns={["id","name","email","phone","practitioner","slot","session_type","hands","notes","created_at"]} />}

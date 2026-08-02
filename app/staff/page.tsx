@@ -1,6 +1,7 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState } from "react";
+import Link from "next/link";
 
 const ROLES = [
   "Event Coordinator",
@@ -13,27 +14,18 @@ const ROLES = [
   "Check-In / Gate",
   "Healing Arts Liaison",
   "Sponsor",
-  "Guest Registration",
   "General Staff",
 ];
 
 const GOLD = "#D4AF3C";
 const CYAN = "#3DB8AF";
+const VIOLET = "#9B7FD4";
 
 interface TicketData {
   name: string;
   email: string;
   role: string;
   ticketCode: string;
-  createdAt: string;
-}
-
-interface GuestTicket {
-  guestName: string;
-  guestEmail: string | null;
-  ticketCode: string;
-  staffName: string;
-  staffTicketCode: string;
   createdAt: string;
 }
 
@@ -78,307 +70,6 @@ const fieldStyle: React.CSSProperties = {
   flexDirection: "column",
 };
 
-// ── Guest registration panel ──────────────────────────────────────────
-
-function GuestRegistrationPanel({ staffTicketCode, staffName }: { staffTicketCode: string; staffName: string }) {
-  const [guestName, setGuestName] = useState("");
-  const [guestEmail, setGuestEmail] = useState("");
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState<string | null>(null);
-  const [guests, setGuests] = useState<GuestTicket[]>([]);
-  const [newGuest, setNewGuest] = useState<GuestTicket | null>(null);
-  const [loadingGuests, setLoadingGuests] = useState(false);
-
-  const loadGuests = async () => {
-    setLoadingGuests(true);
-    try {
-      const res = await fetch(`/api/staff/guests?staffTicketCode=${encodeURIComponent(staffTicketCode)}`);
-      if (res.ok) {
-        const data = await res.json();
-        setGuests(
-          (data.guests ?? []).map((g: Record<string, unknown>) => ({
-            guestName: String(g.guest_name ?? g.guestName ?? ""),
-            guestEmail: g.guest_email ? String(g.guest_email) : (g.guestEmail ? String(g.guestEmail) : null),
-            ticketCode: String(g.ticket_code ?? g.ticketCode ?? ""),
-            staffName: String(g.staff_name ?? g.staffName ?? staffName),
-            staffTicketCode: staffTicketCode,
-            createdAt: String(g.created_at ?? g.createdAt ?? ""),
-          }))
-        );
-      }
-    } finally {
-      setLoadingGuests(false);
-    }
-  };
-
-  useEffect(() => { loadGuests(); }, [staffTicketCode]);
-
-  const handleAddGuest = async (e: React.FormEvent) => {
-    e.preventDefault();
-    if (!guestName.trim()) return;
-    setError(null);
-    setLoading(true);
-    try {
-      const res = await fetch("/api/staff/guests", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ staffTicketCode, guestName: guestName.trim(), guestEmail: guestEmail.trim() || undefined }),
-      });
-      const data = await res.json();
-      if (!res.ok) {
-        setError(data.error ?? "Could not register guest. Please try again.");
-        return;
-      }
-      const ticket: GuestTicket = {
-        guestName: data.ticket.guestName,
-        guestEmail: data.ticket.guestEmail ?? null,
-        ticketCode: data.ticket.ticketCode,
-        staffName: data.ticket.staffName,
-        staffTicketCode: data.ticket.staffTicketCode,
-        createdAt: data.ticket.createdAt,
-      };
-      setNewGuest(ticket);
-      setGuests(prev => [ticket, ...prev]);
-      setGuestName("");
-      setGuestEmail("");
-    } catch {
-      setError("Network error. Please check your connection and try again.");
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  return (
-    <div
-      style={{
-        width: "100%",
-        maxWidth: "480px",
-        marginTop: "2rem",
-      }}
-    >
-      {/* Guest ticket flash */}
-      {newGuest && (
-        <div
-          style={{
-            background: "linear-gradient(160deg, #0d0b2a 0%, #1a0d3a 60%, #0a1a2e 100%)",
-            border: `2px solid ${CYAN}`,
-            borderRadius: "16px",
-            padding: "1.75rem 1.5rem",
-            textAlign: "center",
-            marginBottom: "1.5rem",
-            position: "relative",
-            overflow: "hidden",
-          }}
-        >
-          <div style={{ position: "absolute", top: "-40px", right: "-40px", width: "140px", height: "140px", borderRadius: "50%", background: `radial-gradient(circle, ${CYAN}18 0%, transparent 70%)`, pointerEvents: "none" }} />
-          <div style={{ fontSize: "0.6rem", fontWeight: 700, letterSpacing: "0.22em", color: CYAN, textTransform: "uppercase", marginBottom: "1rem", opacity: 0.9 }}>
-            ✦ GUEST CREDENTIAL ✦
-          </div>
-          <div style={{ fontFamily: "var(--font-display, Georgia, serif)", fontSize: "1.4rem", fontWeight: 800, color: "#fff", marginBottom: "0.2rem" }}>
-            WELLNESS WEEKEND
-          </div>
-          <div style={{ fontSize: "0.85rem", color: GOLD, fontWeight: 600, letterSpacing: "0.12em", marginBottom: "0.3rem" }}>2026</div>
-          <div style={{ fontSize: "0.72rem", color: "rgba(255,255,255,0.45)", letterSpacing: "0.05em", marginBottom: "1.25rem" }}>
-            August 7 – 9 · Warrior Lodge, Sutton AK
-          </div>
-          <div style={{ height: "1px", background: `linear-gradient(to right, transparent, ${CYAN}50, transparent)`, marginBottom: "1.25rem" }} />
-          <div style={{ marginBottom: "1rem" }}>
-            <span style={{ display: "inline-block", padding: "0.3rem 1.2rem", border: `2px solid ${CYAN}`, borderRadius: "100px", fontSize: "0.78rem", fontWeight: 800, color: CYAN, letterSpacing: "0.18em", textTransform: "uppercase", background: `${CYAN}10` }}>
-              GUEST
-            </span>
-          </div>
-          <div style={{ fontFamily: "var(--font-display, Georgia, serif)", fontSize: "1.5rem", fontWeight: 700, color: "#fff", marginBottom: "0.25rem" }}>
-            {newGuest.guestName}
-          </div>
-          <div style={{ fontSize: "0.8rem", color: "rgba(255,255,255,0.45)", marginBottom: "1.25rem" }}>
-            Registered by <span style={{ color: GOLD, fontWeight: 600 }}>{newGuest.staffName}</span>
-          </div>
-          <div style={{ height: "1px", background: `linear-gradient(to right, transparent, rgba(255,255,255,0.12), transparent)`, marginBottom: "1rem" }} />
-          <div style={{ fontFamily: "monospace", fontSize: "1.15rem", fontWeight: 700, color: "#fff", letterSpacing: "0.1em", background: "rgba(255,255,255,0.05)", border: "1px solid rgba(255,255,255,0.1)", borderRadius: "8px", padding: "0.6rem 1rem", display: "inline-block" }}>
-            {newGuest.ticketCode}
-          </div>
-          <div style={{ fontSize: "0.65rem", color: "rgba(255,255,255,0.3)", marginTop: "1rem" }}>
-            Present this credential at check-in
-          </div>
-          <div style={{ marginTop: "1rem" }}>
-            <button
-              onClick={() => window.print()}
-              style={{ padding: "0.5rem 1.5rem", background: `linear-gradient(135deg, ${CYAN}, #2a9d8f)`, border: "none", borderRadius: "100px", color: "#0a0820", fontWeight: 700, fontSize: "0.85rem", cursor: "pointer", fontFamily: "inherit" }}
-            >
-              Print
-            </button>
-            <button onClick={() => setNewGuest(null)} style={{ marginLeft: "0.75rem", background: "none", border: "none", color: "rgba(255,255,255,0.35)", fontSize: "0.8rem", cursor: "pointer", fontFamily: "inherit" }}>
-              Dismiss
-            </button>
-          </div>
-        </div>
-      )}
-
-      {/* Add guest form */}
-      <div
-        style={{
-          background: "rgba(255,255,255,0.04)",
-          border: "1px solid rgba(255,255,255,0.1)",
-          borderRadius: "16px",
-          padding: "1.5rem",
-        }}
-      >
-        <div style={{ fontSize: "0.7rem", fontWeight: 700, color: CYAN, textTransform: "uppercase", letterSpacing: "0.15em", borderBottom: `1px solid ${CYAN}30`, paddingBottom: "0.4rem", marginBottom: "1.1rem" }}>
-          Register a Guest
-        </div>
-        <p style={{ fontSize: "0.83rem", color: "rgba(255,255,255,0.45)", margin: "0 0 1rem" }}>
-          Each guest gets a free admission ticket linked to your credential.
-        </p>
-        <form onSubmit={handleAddGuest} style={{ display: "flex", flexDirection: "column", gap: "0.9rem" }}>
-          <div style={fieldStyle}>
-            <label style={labelStyle}>Guest Name <span style={{ color: GOLD }}>*</span></label>
-            <input
-              type="text"
-              className="staff-input"
-              required
-              value={guestName}
-              onChange={e => setGuestName(e.target.value)}
-              placeholder="Full name"
-              style={inputStyle}
-            />
-          </div>
-          <div style={fieldStyle}>
-            <label style={labelStyle}>Guest Email <span style={{ color: "rgba(255,255,255,0.3)" }}>(optional)</span></label>
-            <input
-              type="email"
-              className="staff-input"
-              value={guestEmail}
-              onChange={e => setGuestEmail(e.target.value)}
-              placeholder="guest@email.com"
-              style={inputStyle}
-            />
-          </div>
-          {error && (
-            <div style={{ background: "rgba(220,80,80,0.12)", border: "1px solid rgba(220,80,80,0.3)", borderRadius: "8px", padding: "0.65rem 0.85rem", color: "#ff7070", fontSize: "0.85rem" }}>
-              {error}
-            </div>
-          )}
-          <button
-            type="submit"
-            disabled={loading}
-            style={{
-              padding: "0.75rem",
-              background: loading ? `rgba(61,184,175,0.3)` : `linear-gradient(135deg, ${CYAN}, #2a9d8f)`,
-              border: "none",
-              borderRadius: "100px",
-              color: loading ? "rgba(10,8,32,0.5)" : "#0a0820",
-              fontWeight: 700,
-              fontSize: "0.9rem",
-              cursor: loading ? "not-allowed" : "pointer",
-              fontFamily: "inherit",
-              transition: "all 0.2s",
-            }}
-          >
-            {loading ? "Registering…" : "Add Guest & Generate Pass"}
-          </button>
-        </form>
-      </div>
-
-      {/* Guest list */}
-      {guests.length > 0 && (
-        <div style={{ marginTop: "1.25rem" }}>
-          <div style={{ fontSize: "0.7rem", fontWeight: 700, color: "rgba(255,255,255,0.4)", textTransform: "uppercase", letterSpacing: "0.15em", marginBottom: "0.75rem" }}>
-            Your Guests ({guests.length})
-          </div>
-          <div style={{ display: "flex", flexDirection: "column", gap: "0.5rem" }}>
-            {guests.map((g, i) => (
-              <div
-                key={i}
-                style={{
-                  background: "rgba(255,255,255,0.04)",
-                  border: "1px solid rgba(255,255,255,0.08)",
-                  borderRadius: "10px",
-                  padding: "0.75rem 1rem",
-                  display: "flex",
-                  justifyContent: "space-between",
-                  alignItems: "center",
-                  gap: "0.5rem",
-                }}
-              >
-                <div>
-                  <div style={{ fontSize: "0.9rem", fontWeight: 600, color: "#fff" }}>{g.guestName}</div>
-                  {g.guestEmail && <div style={{ fontSize: "0.75rem", color: "rgba(255,255,255,0.4)" }}>{g.guestEmail}</div>}
-                </div>
-                <div style={{ fontFamily: "monospace", fontSize: "0.8rem", color: CYAN, fontWeight: 700, letterSpacing: "0.08em", flexShrink: 0 }}>
-                  {g.ticketCode}
-                </div>
-              </div>
-            ))}
-          </div>
-          {loadingGuests && <div style={{ fontSize: "0.78rem", color: "rgba(255,255,255,0.3)", marginTop: "0.5rem" }}>Loading…</div>}
-        </div>
-      )}
-    </div>
-  );
-}
-
-// ── Standalone guest lookup (for already-registered staff) ─────────────
-
-function GuestLookupPanel() {
-  const [code, setCode] = useState("");
-  const [confirmed, setConfirmed] = useState(false);
-
-  if (confirmed) {
-    return <GuestRegistrationPanel staffTicketCode={code.trim().toUpperCase()} staffName="" />;
-  }
-
-  return (
-    <div
-      style={{
-        background: "rgba(255,255,255,0.04)",
-        border: "1px solid rgba(255,255,255,0.1)",
-        borderRadius: "16px",
-        padding: "1.5rem",
-        width: "100%",
-        maxWidth: "480px",
-        marginTop: "2rem",
-      }}
-    >
-      <div style={{ fontSize: "0.7rem", fontWeight: 700, color: GOLD, textTransform: "uppercase", letterSpacing: "0.15em", borderBottom: `1px solid ${GOLD}30`, paddingBottom: "0.4rem", marginBottom: "1rem" }}>
-        Already Registered? Register a Guest
-      </div>
-      <p style={{ fontSize: "0.83rem", color: "rgba(255,255,255,0.45)", margin: "0 0 1rem" }}>
-        Enter your STAFF ticket code to add guests to your credential.
-      </p>
-      <form onSubmit={e => { e.preventDefault(); if (code.trim()) setConfirmed(true); }} style={{ display: "flex", flexDirection: "column", gap: "0.85rem" }}>
-        <div style={fieldStyle}>
-          <label style={labelStyle}>Your Staff Ticket Code <span style={{ color: GOLD }}>*</span></label>
-          <input
-            type="text"
-            className="staff-input"
-            required
-            value={code}
-            onChange={e => setCode(e.target.value.toUpperCase())}
-            placeholder="STAFF-XXXXXX"
-            style={{ ...inputStyle, fontFamily: "monospace", letterSpacing: "0.08em" }}
-          />
-        </div>
-        <button
-          type="submit"
-          style={{
-            padding: "0.75rem",
-            background: `linear-gradient(135deg, ${GOLD}, #b8922e)`,
-            border: "none",
-            borderRadius: "100px",
-            color: "#0a0820",
-            fontWeight: 700,
-            fontSize: "0.9rem",
-            cursor: "pointer",
-            fontFamily: "inherit",
-          }}
-        >
-          Continue to Guest Registration
-        </button>
-      </form>
-    </div>
-  );
-}
-
 // ── Main page ─────────────────────────────────────────────────────────
 
 export default function StaffRegistrationPage() {
@@ -391,9 +82,12 @@ export default function StaffRegistrationPage() {
     emergencyContactPhone: "",
     dietaryNeeds: "",
   });
-  const [ticket, setTicket] = useState<TicketData | null>(null);
+  const [checkCommit, setCheckCommit]   = useState(false);
+  const [checkConduct, setCheckConduct] = useState(false);
+  const [checkMedia,   setCheckMedia]   = useState(false);
+  const [ticket, setTicket]   = useState<TicketData | null>(null);
   const [loading, setLoading] = useState(false);
-  const [error, setError] = useState<string | null>(null);
+  const [error, setError]     = useState<string | null>(null);
 
   const handleChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>
@@ -403,6 +97,10 @@ export default function StaffRegistrationPage() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    if (!checkCommit || !checkConduct || !checkMedia) {
+      setError("Please confirm all three agreement items before registering.");
+      return;
+    }
     setError(null);
     setLoading(true);
     try {
@@ -438,7 +136,6 @@ export default function StaffRegistrationPage() {
             from { opacity: 0; transform: translateY(16px); }
             to { opacity: 1; transform: translateY(0); }
           }
-          .staff-input:focus { border-color: ${CYAN} !important; }
         `}</style>
 
         <div
@@ -451,7 +148,7 @@ export default function StaffRegistrationPage() {
             padding: "2rem 1rem 4rem",
           }}
         >
-          {/* Staff ticket */}
+          {/* Staff credential */}
           <div
             id="staff-ticket"
             style={{
@@ -507,42 +204,71 @@ export default function StaffRegistrationPage() {
           {/* Action buttons */}
           <div
             className="no-print"
-            style={{ display: "flex", flexDirection: "column", alignItems: "center", gap: "0.85rem", marginTop: "2rem" }}
+            style={{ display: "flex", flexDirection: "column", alignItems: "center", gap: "0.85rem", marginTop: "2rem", width: "100%", maxWidth: "480px" }}
           >
             <button
               onClick={() => window.print()}
-              style={{ padding: "0.75rem 2.5rem", background: `linear-gradient(135deg, ${GOLD}, #b8922e)`, border: "none", borderRadius: "100px", color: "#0a0820", fontWeight: 700, fontSize: "0.95rem", cursor: "pointer", letterSpacing: "0.04em", fontFamily: "inherit" }}
+              style={{ width: "100%", padding: "0.75rem 2.5rem", background: `linear-gradient(135deg, ${GOLD}, #b8922e)`, border: "none", borderRadius: "100px", color: "#0a0820", fontWeight: 700, fontSize: "0.95rem", cursor: "pointer", letterSpacing: "0.04em", fontFamily: "inherit" }}
             >
               Print Credential
             </button>
+
+            {/* Divider */}
+            <div style={{ width: "100%", marginTop: "1.5rem" }}>
+              <div style={{ height: "1px", background: "linear-gradient(to right, transparent, rgba(255,255,255,0.12), transparent)", marginBottom: "1.5rem" }} />
+              <p style={{ textAlign: "center", fontSize: "0.78rem", color: "rgba(255,255,255,0.4)", textTransform: "uppercase", letterSpacing: "0.14em", marginBottom: "1rem" }}>
+                ✦ More Ways to Get Involved ✦
+              </p>
+            </div>
+
+            {/* Sponsor CTA */}
+            <Link
+              href="/sponsors"
+              style={{
+                display: "block", width: "100%", padding: "1rem 1.5rem",
+                background: "rgba(212,175,60,0.08)", border: `1.5px solid ${GOLD}50`,
+                borderRadius: "14px", textDecoration: "none", textAlign: "center",
+              }}
+            >
+              <div style={{ fontSize: "0.68rem", fontWeight: 700, letterSpacing: "0.14em", color: GOLD, textTransform: "uppercase", marginBottom: "0.3rem" }}>
+                Sponsor Inquiry
+              </div>
+              <div style={{ fontSize: "0.88rem", color: "rgba(255,255,255,0.65)", lineHeight: 1.4 }}>
+                Align your brand with Wellness Weekend 2026 →
+              </div>
+            </Link>
+
+            {/* Brand Partner CTA */}
+            <Link
+              href="/affiliates/apply"
+              style={{
+                display: "block", width: "100%", padding: "1rem 1.5rem",
+                background: `rgba(155,127,212,0.08)`, border: `1.5px solid ${VIOLET}50`,
+                borderRadius: "14px", textDecoration: "none", textAlign: "center",
+              }}
+            >
+              <div style={{ fontSize: "0.68rem", fontWeight: 700, letterSpacing: "0.14em", color: VIOLET, textTransform: "uppercase", marginBottom: "0.3rem" }}>
+                Brand Partner
+              </div>
+              <div style={{ fontSize: "0.88rem", color: "rgba(255,255,255,0.65)", lineHeight: 1.4 }}>
+                Apply as an affiliate partner and earn commission →
+              </div>
+            </Link>
+
             <button
-              onClick={() => { setTicket(null); setForm({ name: "", email: "", phone: "", role: "", emergencyContactName: "", emergencyContactPhone: "", dietaryNeeds: "" }); }}
-              style={{ background: "none", border: "none", color: "rgba(255,255,255,0.45)", fontSize: "0.85rem", cursor: "pointer", textDecoration: "underline", fontFamily: "inherit" }}
+              onClick={() => { setTicket(null); setForm({ name: "", email: "", phone: "", role: "", emergencyContactName: "", emergencyContactPhone: "", dietaryNeeds: "" }); setCheckCommit(false); setCheckConduct(false); setCheckMedia(false); }}
+              style={{ background: "none", border: "none", color: "rgba(255,255,255,0.3)", fontSize: "0.82rem", cursor: "pointer", textDecoration: "underline", fontFamily: "inherit", marginTop: "0.5rem" }}
             >
               Register another person
             </button>
-          </div>
-
-          {/* Guest registration panel — visible after getting your ticket */}
-          <div className="no-print" style={{ width: "100%", maxWidth: "480px" }}>
-            <div style={{ marginTop: "3rem", marginBottom: "1rem", textAlign: "center" }}>
-              <div style={{ height: "1px", background: `linear-gradient(to right, transparent, rgba(255,255,255,0.12), transparent)`, marginBottom: "1.5rem" }} />
-              <div style={{ fontSize: "0.65rem", fontWeight: 700, letterSpacing: "0.2em", color: "rgba(255,255,255,0.4)", textTransform: "uppercase" }}>
-                ✦ BRING YOUR PEOPLE ✦
-              </div>
-              <h2 style={{ fontFamily: "var(--font-display, Georgia, serif)", fontSize: "1.5rem", fontWeight: 700, color: "#fff", margin: "0.5rem 0 0.25rem" }}>
-                Register Your Guests
-              </h2>
-              <p style={{ fontSize: "0.85rem", color: "rgba(255,255,255,0.4)", margin: 0 }}>
-                Staff may bring guests — each gets a free pass linked to your credential.
-              </p>
-            </div>
-            <GuestRegistrationPanel staffTicketCode={ticket.ticketCode} staffName={ticket.name} />
           </div>
         </div>
       </>
     );
   }
+
+  const allAgreed = checkCommit && checkConduct && checkMedia;
+  const canSubmit = allAgreed && !loading;
 
   return (
     <>
@@ -554,6 +280,18 @@ export default function StaffRegistrationPage() {
         .staff-input:focus { border-color: ${CYAN} !important; }
         .staff-select:focus { border-color: ${CYAN} !important; }
         .staff-textarea:focus { border-color: ${CYAN} !important; }
+        .staff-check-row {
+          display: flex; align-items: flex-start; gap: 0.85rem;
+          padding: 0.85rem 1rem;
+          background: rgba(255,255,255,0.03);
+          border: 1px solid rgba(255,255,255,0.1);
+          border-radius: 10px; cursor: pointer;
+          transition: all 0.15s;
+        }
+        .staff-check-row.checked {
+          background: rgba(61,184,175,0.07);
+          border-color: rgba(61,184,175,0.35);
+        }
         .staff-submit:hover:not(:disabled) {
           transform: translateY(-1px);
           box-shadow: 0 6px 24px rgba(212,175,60,0.35);
@@ -591,6 +329,7 @@ export default function StaffRegistrationPage() {
             onSubmit={handleSubmit}
             style={{ background: "rgba(255,255,255,0.04)", border: "1px solid rgba(255,255,255,0.1)", borderRadius: "20px", padding: "2rem", display: "flex", flexDirection: "column", gap: "1.25rem" }}
           >
+            {/* Personal info */}
             <div style={{ fontSize: "0.7rem", fontWeight: 700, color: CYAN, textTransform: "uppercase", letterSpacing: "0.15em", borderBottom: `1px solid ${CYAN}30`, paddingBottom: "0.4rem" }}>
               Personal Information
             </div>
@@ -623,6 +362,7 @@ export default function StaffRegistrationPage() {
               </div>
             </div>
 
+            {/* Emergency contact */}
             <div style={{ fontSize: "0.7rem", fontWeight: 700, color: CYAN, textTransform: "uppercase", letterSpacing: "0.15em", borderBottom: `1px solid ${CYAN}30`, paddingBottom: "0.4rem", marginTop: "0.25rem" }}>
               Emergency Contact
             </div>
@@ -638,6 +378,7 @@ export default function StaffRegistrationPage() {
               </div>
             </div>
 
+            {/* Additional */}
             <div style={{ fontSize: "0.7rem", fontWeight: 700, color: CYAN, textTransform: "uppercase", letterSpacing: "0.15em", borderBottom: `1px solid ${CYAN}30`, paddingBottom: "0.4rem", marginTop: "0.25rem" }}>
               Additional Information
             </div>
@@ -647,6 +388,50 @@ export default function StaffRegistrationPage() {
               <textarea id="dietaryNeeds" name="dietaryNeeds" className="staff-textarea" value={form.dietaryNeeds} onChange={handleChange} placeholder="Allergies, dietary restrictions, or preferences…" rows={3} style={{ ...inputStyle, resize: "vertical", minHeight: "80px" }} />
             </div>
 
+            {/* Agreement */}
+            <div style={{ fontSize: "0.7rem", fontWeight: 700, color: GOLD, textTransform: "uppercase", letterSpacing: "0.15em", borderBottom: `1px solid ${GOLD}30`, paddingBottom: "0.4rem", marginTop: "0.25rem" }}>
+              Staff Agreement
+            </div>
+            <p style={{ fontSize: "0.82rem", color: "rgba(255,255,255,0.45)", margin: "0 0 0.25rem", lineHeight: 1.55 }}>
+              By registering, you commit to the following. Please confirm each item:
+            </p>
+
+            <label className={`staff-check-row${checkCommit ? " checked" : ""}`}>
+              <input
+                type="checkbox"
+                checked={checkCommit}
+                onChange={e => setCheckCommit(e.target.checked)}
+                style={{ marginTop: 2, accentColor: CYAN, width: 17, height: 17, flexShrink: 0 }}
+              />
+              <span style={{ fontSize: "0.88rem", color: "rgba(255,255,255,0.8)", lineHeight: 1.55 }}>
+                I commit to showing up for my assigned role and dates. <strong style={{ color: CYAN }}>Cancellation without notice is not acceptable.</strong> If something changes, I will contact <a href="mailto:support@thesoundspace.us" style={{ color: GOLD }}>support@thesoundspace.us</a> immediately.
+              </span>
+            </label>
+
+            <label className={`staff-check-row${checkConduct ? " checked" : ""}`}>
+              <input
+                type="checkbox"
+                checked={checkConduct}
+                onChange={e => setCheckConduct(e.target.checked)}
+                style={{ marginTop: 2, accentColor: CYAN, width: 17, height: 17, flexShrink: 0 }}
+              />
+              <span style={{ fontSize: "0.88rem", color: "rgba(255,255,255,0.8)", lineHeight: 1.55 }}>
+                I agree to uphold Wellness Weekend&apos;s standards of conduct — treating all guests, participants, and fellow staff with respect, safety, and professionalism.
+              </span>
+            </label>
+
+            <label className={`staff-check-row${checkMedia ? " checked" : ""}`}>
+              <input
+                type="checkbox"
+                checked={checkMedia}
+                onChange={e => setCheckMedia(e.target.checked)}
+                style={{ marginTop: 2, accentColor: CYAN, width: 17, height: 17, flexShrink: 0 }}
+              />
+              <span style={{ fontSize: "0.88rem", color: "rgba(255,255,255,0.8)", lineHeight: 1.55 }}>
+                I grant Wellness Weekend permission to use photos and videos captured during the event for promotional purposes.
+              </span>
+            </label>
+
             {error && (
               <div style={{ background: "rgba(220,80,80,0.12)", border: "1px solid rgba(220,80,80,0.3)", borderRadius: "8px", padding: "0.75rem 1rem", color: "#ff7070", fontSize: "0.88rem" }}>
                 {error}
@@ -655,25 +440,25 @@ export default function StaffRegistrationPage() {
 
             <button
               type="submit"
-              disabled={loading}
+              disabled={!canSubmit}
               className="staff-submit"
               style={{
                 width: "100%",
                 padding: "0.9rem",
-                background: loading ? "rgba(212,175,60,0.4)" : `linear-gradient(135deg, ${GOLD}, #b8922e)`,
+                background: canSubmit ? `linear-gradient(135deg, ${GOLD}, #b8922e)` : "rgba(212,175,60,0.25)",
                 border: "none",
                 borderRadius: "100px",
-                color: loading ? "rgba(10,8,32,0.6)" : "#0a0820",
+                color: canSubmit ? "#0a0820" : "rgba(255,255,255,0.3)",
                 fontWeight: 700,
                 fontSize: "1rem",
-                cursor: loading ? "not-allowed" : "pointer",
+                cursor: canSubmit ? "pointer" : "not-allowed",
                 letterSpacing: "0.04em",
                 fontFamily: "inherit",
                 transition: "all 0.2s",
                 marginTop: "0.25rem",
               }}
             >
-              {loading ? "Registering…" : "Register & Get My Pass"}
+              {loading ? "Registering…" : "Sign Agreement & Get My Pass"}
             </button>
 
             <p style={{ fontSize: "0.75rem", color: "rgba(255,255,255,0.3)", textAlign: "center", margin: 0 }}>
@@ -682,8 +467,14 @@ export default function StaffRegistrationPage() {
             </p>
           </form>
 
-          {/* Already registered — guest lookup */}
-          <GuestLookupPanel />
+          <div style={{ textAlign: "center", marginTop: "2rem" }}>
+            <p style={{ fontSize: "0.82rem", color: "rgba(255,255,255,0.3)" }}>
+              Questions?{" "}
+              <a href="mailto:support@thesoundspace.us" style={{ color: CYAN, textDecoration: "none" }}>
+                support@thesoundspace.us
+              </a>
+            </p>
+          </div>
         </div>
       </div>
     </>

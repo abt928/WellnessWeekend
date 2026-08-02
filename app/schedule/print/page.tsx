@@ -90,7 +90,7 @@ export default function PrintSchedulePage() {
                   </td>
                   <td className="print-notes">
                     {e.limited && <span className="print-badge-limited">⚑ Book</span>}
-                    {e.fee && <span className="print-badge-fee">$75</span>}
+                    {e.fee && <span className="print-badge-fee">$</span>}
                   </td>
                 </tr>
               ))}

@@ -33,7 +33,7 @@ const partners = [
   },
   {
     name: "Solstice Saunas",
-    role: "Lakeside Sauna · Contrast Therapy",
+    role: "Lakeside Sauna",
     logo: "/logos/solstice-saunas.jpg",
     logoWidth: 300,
     logoHeight: 180,

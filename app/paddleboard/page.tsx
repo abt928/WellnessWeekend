@@ -19,7 +19,7 @@ const C = {
 
 const SLOTS = [
   { key: "fri-2pm",      day: "Friday · Aug 7",   time: "2:00 PM", note: "Paddleboard Yoga · with Alice" },
-  { key: "sat-1pm",      day: "Saturday · Aug 8", time: "1:00 PM", note: "Paddleboard Yoga · with Ashleigh" },
+  { key: "sat-1pm",      day: "Saturday · Aug 8", time: "1:00 PM", note: "Paddleboard Yoga · with Alice" },
   { key: "sun-1pm-kids", day: "Sunday · Aug 9",   time: "1:00 PM", note: "Kids Paddleboard · with Alice" },
   { key: "sun-3pm",      day: "Sunday · Aug 9",   time: "3:00 PM", note: "Paddleboard Yoga · with Alice" },
 ];

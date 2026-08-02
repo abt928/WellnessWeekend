@@ -20,13 +20,6 @@ export const practitioners: Practitioner[] = [
     photo: "/images/practitioners/avalon-starling.jpg",
   },
   {
-    slug: "ashleigh",
-    name: "Ashleigh Bicknell",
-    role: "Dance & Movement Facilitator",
-    offering: "Dance Alchemy · Opening Ceremony",
-    bio: "Ashleigh is a movement medicine facilitator whose Dance Alchemy sessions dissolve the boundary between dance and healing. Through improvisational movement, breath, and live music, she creates a container where the body can finally say what words cannot. Expect to sweat, shake, and arrive home in yourself.",
-  },
-  {
     slug: "peace-pixy",
     name: "Peace Pixy",
     role: "Handpan Artist & Sound Healer",

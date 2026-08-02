@@ -101,7 +101,7 @@ export default function PrintSchedulePage() {
 
       {/* Footer */}
       <footer className="print-footer">
-        <p>Contrast Therapy runs all day Fri–Sun in 30-min slots · Sauna max 4 people · Must be booked in advance · Facilitated by Ashleigh Bicknell</p>
+        <p>Lakeside Sauna by Solstice Saunas · 1 hour $22 · All day $45 · Full weekend $99 · Pay at the gate</p>
         <p style={{ marginTop: "0.25rem" }}>Camping is sold out — cabin beds still available · wellnessweekendak.com/#store</p>
       </footer>
     </div>

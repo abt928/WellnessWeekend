@@ -37,10 +37,10 @@ export const scheduleDays: ScheduleDay[] = [
     events: [
       {
         time: "1:00 PM",
-        event: "Opening Ceremony · Dance Alchemy",
-        detail: "Ashleigh guides somatic movement that leads us through the elements. A perfect opening ceremony for our weekend.",
+        event: "Opening Ceremony",
+        detail: "A grounding arrival ceremony to open the weekend — setting intention, calling in community, and landing in the body before the journey begins.",
         element: "fire", location: "Main Stage",
-        hosts: ["ashleigh"],
+        hosts: [],
       },
       {
         time: "2:00 PM",
@@ -216,7 +216,7 @@ export const scheduleDays: ScheduleDay[] = [
         element: "water", location: "Lakeside",
         limited: true,
         link: "/paddleboard",
-        hosts: ["ashleigh"],
+        hosts: ["alice"],
       },
       {
         time: "2:00 PM",

@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { getDb } from "@/lib/db";
+import { neon } from "@neondatabase/serverless";
 import { leads, newsletter, vendors, volunteers, sponsors, instructorWaitlist, affiliates, referralEvents, volunteerRegistrations, volunteerShiftClaims, warriors, members, staffRegistrations, staffGuests, contrastBookings, massageBookings, aerialBookings, paddleboardBookings } from "@/lib/schema";
 import { isAdminAuthenticated } from "@/app/api/admin/auth/route";
 import { desc, eq, sql } from "drizzle-orm";
@@ -40,6 +41,12 @@ export async function GET(req: NextRequest) {
       { error: `Invalid table. Use: ${Object.keys(TABLES).join(", ")}` },
       { status: 400 }
     );
+  }
+
+  // Run column migrations for tables that have had schema additions
+  if (table === "warriors" && process.env.DATABASE_URL) {
+    const sql = neon(process.env.DATABASE_URL);
+    await sql`ALTER TABLE warriors ADD COLUMN IF NOT EXISTS phone VARCHAR(50)`.catch(() => {});
   }
 
   try {

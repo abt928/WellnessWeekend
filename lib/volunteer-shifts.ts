@@ -32,6 +32,7 @@ export const SHIFTS: Shift[] = [
   { shift_id: "DU-13", phase: "during", role: "Guest services",                  day: "Friday",   date: "2026-08-07", start_time: null, end_time: null, hours: 4, capacity: 2, notes: null },
   { shift_id: "DU-16", phase: "during", role: "Cacao bar",                       day: "Friday",   date: "2026-08-07", start_time: null, end_time: null, hours: 4, capacity: 2, notes: null },
   { shift_id: "DU-19", phase: "during", role: "Tea lounge",                      day: "Friday",   date: "2026-08-07", start_time: null, end_time: null, hours: 4, capacity: 2, notes: null },
+  { shift_id: "DU-22", phase: "during", role: "Sauna setup (wood-fired)",        day: "Friday",   date: "2026-08-07", start_time: "12:00 PM", end_time: "4:00 PM", hours: 4, capacity: 2, notes: "Solstice Saunas equipment arrives at noon — help unload and set up." },
 
   // ── During · Saturday Aug 8 ──
   { shift_id: "DU-02", phase: "during", role: "Marketing / Press",               day: "Saturday", date: "2026-08-08", start_time: null, end_time: null, hours: 4, capacity: 3, notes: null },
@@ -41,6 +42,7 @@ export const SHIFTS: Shift[] = [
   { shift_id: "DU-14", phase: "during", role: "Guest services",                  day: "Saturday", date: "2026-08-08", start_time: null, end_time: null, hours: 4, capacity: 2, notes: null },
   { shift_id: "DU-17", phase: "during", role: "Cacao bar",                       day: "Saturday", date: "2026-08-08", start_time: null, end_time: null, hours: 4, capacity: 2, notes: null },
   { shift_id: "DU-20", phase: "during", role: "Tea lounge",                      day: "Saturday", date: "2026-08-08", start_time: null, end_time: null, hours: 4, capacity: 2, notes: null },
+  { shift_id: "DU-23", phase: "during", role: "Sauna morning fire setup",        day: "Saturday", date: "2026-08-08", start_time: "6:00 AM",  end_time: "10:00 AM", hours: 4, capacity: 2, notes: "Light the wood-fired sauna ahead of the day's sessions." },
 
   // ── During · Sunday Aug 9 ──
   { shift_id: "DU-03", phase: "during", role: "Marketing / Press",               day: "Sunday",   date: "2026-08-09", start_time: null, end_time: null, hours: 4, capacity: 3, notes: null },
@@ -50,6 +52,7 @@ export const SHIFTS: Shift[] = [
   { shift_id: "DU-15", phase: "during", role: "Guest services",                  day: "Sunday",   date: "2026-08-09", start_time: null, end_time: null, hours: 4, capacity: 2, notes: null },
   { shift_id: "DU-18", phase: "during", role: "Cacao bar",                       day: "Sunday",   date: "2026-08-09", start_time: null, end_time: null, hours: 4, capacity: 2, notes: null },
   { shift_id: "DU-21", phase: "during", role: "Tea lounge",                      day: "Sunday",   date: "2026-08-09", start_time: null, end_time: null, hours: 4, capacity: 2, notes: null },
+  { shift_id: "DU-24", phase: "during", role: "Sauna strike",                    day: "Sunday",   date: "2026-08-09", start_time: "7:00 AM",  end_time: "11:00 AM", hours: 4, capacity: 2, notes: "Early breakdown for vendor pickup." },
 
   // ── Sunday Evening Teardown ──
   { shift_id: "SE-01", phase: "sunday_evening", role: "Take down",                  day: "Sunday", date: "2026-08-09", start_time: null, end_time: null, hours: 4, capacity: 4, notes: null },

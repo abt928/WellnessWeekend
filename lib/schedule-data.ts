@@ -413,6 +413,13 @@ export const scheduleDays: ScheduleDay[] = [
         hosts: ["beth"],
       },
       {
+        time: "2:00 PM",
+        event: "Lovewise Cacao Bar",
+        detail: "A sacred cacao ceremony and gathering space — sip heart medicine, slow down, and open to connection before the afternoon unfolds.",
+        element: "fire", location: "Bonfire",
+        hosts: ["zwami"],
+      },
+      {
         time: "3:00 PM",
         event: "Paddleboard Yoga",
         detail: "A final all-levels flow on the water — integrate the weekend floating under the open sky.",
@@ -464,6 +471,7 @@ export const scheduleDays: ScheduleDay[] = [
         detail: "An open community drumming circle at the fire — everyone is invited to play, move, and sound together as the weekend comes to a close.",
         element: "fire", secondElement: "earth",
         location: "Bonfire",
+        hosts: ["zwami"],
       },
       {
         time: "7:00 PM",

@@ -13,7 +13,6 @@ const EXCLUDE_EVENTS = new Set([
   "Gates Open · Check-in",
   "Lakeside Sauna Opens",
   "Lakeside Sauna",
-  "S7INGRAE & Brackish",
   "Shawn Zuke",
   "Kuf Knotz + Christine Elise",
   "J Brave",

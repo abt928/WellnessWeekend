@@ -171,6 +171,13 @@ export const practitioners: Practitioner[] = [
     bio: "Jing Xi Kang（江靖晞）is a guzheng performer whose program draws from the ancient Chinese tradition of the five musical tones — Gong, Shang, Jue, Zhi, and Yu (宫、商、角、徵、羽) — each associated with the Five Elements and different organ systems of the body. Her performance is designed to promote relaxation, mindfulness, and a sense of balance through music.",
   },
   {
+    slug: "zwami",
+    name: "Zwami",
+    role: "Ceremony Holder · Cacao Facilitator · Musician",
+    offering: "Lovewise Cacao Bar · Community Drumming",
+    bio: "Zwami is a ceremony holder, cacao facilitator, and musician who weaves ritual, rhythm, and heart medicine into transformative community experiences. At Wellness Weekend he leads the Lovewise Cacao Bar — a sacred cacao ceremony and gathering space — and closes the weekend's final evening with an open community drumming circle at the fire.",
+  },
+  {
     slug: "akatale",
     name: "ÂKÅTÂLĖ",
     role: "Visiting Artist · Lyran Dragon Warrior · Hawaii",

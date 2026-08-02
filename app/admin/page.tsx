@@ -2959,6 +2959,8 @@ function GiveawayTab() {
   const [seeding, setSeeding] = useState(false);
   const [seedMsg, setSeedMsg] = useState("");
   const [copied, setCopied] = useState<string | null>(null);
+  const [resetConfirm, setResetConfirm] = useState<number | null>(null);
+  const [resetting, setResetting] = useState<number | null>(null);
 
   async function load() {
     setLoading(true);
@@ -2973,119 +2975,177 @@ function GiveawayTab() {
     setSeeding(true); setSeedMsg("");
     const r = await fetch("/api/admin/giveaway", { method: "POST" });
     const d = await r.json();
-    if (r.ok) { setSeedMsg(`Generated ${d.inserted.length} codes!`); await load(); }
+    if (r.ok) { setSeedMsg(`Generated ${d.inserted.length} codes`); await load(); }
     else setSeedMsg(d.error || "Failed to seed");
     setSeeding(false);
   }
 
   async function resetPrize(id: number) {
+    setResetting(id);
     await fetch("/api/admin/giveaway", { method: "PATCH", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ id }) });
+    setResetting(null);
+    setResetConfirm(null);
     await load();
   }
 
   function copyCode(code: string) {
     navigator.clipboard.writeText(code);
     setCopied(code);
-    setTimeout(() => setCopied(null), 1500);
+    setTimeout(() => setCopied(null), 1800);
   }
 
   const claimed = prizes.filter(p => p.claimed).length;
+  const available = prizes.length - claimed;
 
   return (
-    <div>
-      <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: "1.5rem", flexWrap: "wrap", gap: "0.75rem" }}>
+    <div style={{ padding: "1.5rem 2rem" }}>
+
+      {/* Header row */}
+      <div style={{ display: "flex", alignItems: "flex-start", justifyContent: "space-between", marginBottom: "1.5rem", flexWrap: "wrap", gap: "1rem" }}>
         <div>
-          <h2 style={{ fontSize: "1.2rem", fontWeight: 700, margin: 0 }}>Giveaway Prizes</h2>
+          <h2 style={{ fontSize: "1.1rem", fontWeight: 700, color: "var(--ink)", margin: "0 0 0.35rem" }}>Giveaway Prizes</h2>
           {prizes.length > 0 && (
-            <p style={{ margin: "0.25rem 0 0", fontSize: "0.85rem", color: "rgba(255,255,255,0.5)" }}>
-              {claimed} / {prizes.length} claimed
-            </p>
+            <div style={{ display: "flex", gap: "1rem", flexWrap: "wrap" }}>
+              <span style={{ fontSize: "0.8rem", color: "var(--ink-muted)" }}>
+                <span style={{ fontWeight: 700, color: "#2a9d8f" }}>{available}</span> available
+              </span>
+              <span style={{ fontSize: "0.8rem", color: "var(--ink-muted)" }}>
+                <span style={{ fontWeight: 700, color: "#D4AF3C" }}>{claimed}</span> claimed
+              </span>
+              <span style={{ fontSize: "0.8rem", color: "var(--ink-muted)" }}>
+                {prizes.length} total
+              </span>
+            </div>
           )}
         </div>
         <div style={{ display: "flex", gap: "0.75rem", alignItems: "center" }}>
-          {seedMsg && <span style={{ fontSize: "0.85rem", color: prizes.length > 0 ? "#f87171" : "#86efac" }}>{seedMsg}</span>}
+          {seedMsg && (
+            <span style={{ fontSize: "0.82rem", color: seedMsg.includes("Failed") || seedMsg.includes("already") ? "#dc5050" : "#2a9d8f", fontWeight: 500 }}>
+              {seedMsg}
+            </span>
+          )}
           {prizes.length === 0 && (
             <button
               onClick={seedPrizes} disabled={seeding}
-              style={{ padding: "0.55rem 1.25rem", borderRadius: "8px", border: "none", cursor: "pointer", background: "#D4AF3C", color: "#0a0a14", fontWeight: 700, fontSize: "0.85rem", opacity: seeding ? 0.6 : 1 }}
+              style={{ padding: "0.55rem 1.25rem", borderRadius: "8px", border: "none", cursor: seeding ? "not-allowed" : "pointer", background: "#D4AF3C", color: "#fff", fontWeight: 700, fontSize: "0.85rem", fontFamily: "inherit", opacity: seeding ? 0.65 : 1 }}
             >
-              {seeding ? "Generating…" : "Generate Codes"}
+              {seeding ? "Generating…" : "Generate Prize Codes"}
             </button>
+          )}
+          {prizes.length > 0 && (
+            <button onClick={load} style={{ fontSize: "0.78rem", color: "var(--ink-muted)", background: "none", border: "none", cursor: "pointer", fontFamily: "inherit" }}>Refresh</button>
           )}
         </div>
       </div>
 
       {loading ? (
-        <p style={{ color: "rgba(255,255,255,0.4)", fontSize: "0.875rem" }}>Loading…</p>
+        <div className="admin-loading">Loading prizes…</div>
       ) : prizes.length === 0 ? (
-        <div style={{ textAlign: "center", padding: "3rem 1rem", color: "rgba(255,255,255,0.35)", border: "1px dashed rgba(255,255,255,0.1)", borderRadius: "12px" }}>
-          <p style={{ margin: 0, fontSize: "0.95rem" }}>No prizes yet. Click "Generate Codes" to create the 8 giveaway prizes.</p>
+        <div style={{ textAlign: "center", padding: "3rem 1rem", color: "var(--ink-muted)", border: "1px dashed var(--line-medium)", borderRadius: "12px", background: "var(--surface-elevated)" }}>
+          <div style={{ fontSize: "2rem", marginBottom: "0.75rem" }}>🎁</div>
+          <p style={{ margin: "0 0 0.5rem", fontSize: "0.95rem", fontWeight: 600, color: "var(--ink)" }}>No prize codes yet</p>
+          <p style={{ margin: 0, fontSize: "0.85rem" }}>Click "Generate Prize Codes" to create the 8 giveaway prizes with unique redemption codes.</p>
         </div>
       ) : (
-        <div style={{ display: "flex", flexDirection: "column", gap: "0.75rem" }}>
+        <div style={{ display: "flex", flexDirection: "column", gap: "0.6rem" }}>
           {prizes.map(p => (
             <div key={p.id} style={{
-              background: p.claimed ? "rgba(212,175,60,0.06)" : "rgba(255,255,255,0.03)",
-              border: `1px solid ${p.claimed ? "rgba(212,175,60,0.2)" : "rgba(255,255,255,0.08)"}`,
-              borderRadius: 12, padding: "1rem 1.25rem",
-              display: "grid", gridTemplateColumns: "1fr auto", gap: "0.5rem 1.5rem", alignItems: "start",
+              background: "var(--surface-elevated)",
+              border: `1.5px solid ${p.claimed ? "rgba(212,175,60,0.35)" : "var(--line-medium)"}`,
+              borderLeft: `4px solid ${p.claimed ? "#D4AF3C" : "#2a9d8f"}`,
+              borderRadius: "10px",
+              overflow: "hidden",
             }}>
-              {/* Left: prize + code */}
-              <div>
-                <div style={{ display: "flex", alignItems: "center", gap: "0.65rem", marginBottom: "0.25rem", flexWrap: "wrap" }}>
-                  <span style={{ fontWeight: 700, color: "#fff", fontSize: "0.95rem" }}>{p.prize_name}</span>
-                  <span style={{ padding: "0.15rem 0.55rem", borderRadius: 20, fontSize: "0.72rem", fontWeight: 600, background: p.claimed ? "rgba(248,113,113,0.15)" : "rgba(134,239,172,0.15)", color: p.claimed ? "#f87171" : "#86efac" }}>
+              {/* Main row */}
+              <div style={{ padding: "0.9rem 1.1rem", display: "grid", gridTemplateColumns: "1fr auto", gap: "0.75rem 1.5rem", alignItems: "center" }}>
+                <div style={{ display: "flex", flexWrap: "wrap", alignItems: "center", gap: "0.5rem 1rem", minWidth: 0 }}>
+                  {/* Prize name + status */}
+                  <span style={{ fontWeight: 700, fontSize: "0.95rem", color: "var(--ink)" }}>{p.prize_name}</span>
+                  <span style={{
+                    padding: "0.15rem 0.6rem", borderRadius: 20, fontSize: "0.7rem", fontWeight: 700,
+                    background: p.claimed ? "rgba(212,175,60,0.12)" : "rgba(42,157,143,0.12)",
+                    color: p.claimed ? "#C9983F" : "#2a9d8f",
+                    flexShrink: 0,
+                  }}>
                     {p.claimed ? "Claimed" : "Available"}
                   </span>
-                </div>
-                <div style={{ display: "flex", alignItems: "center", gap: "0.5rem", marginBottom: p.claimed ? "0.85rem" : 0 }}>
-                  <code style={{ fontFamily: "monospace", fontSize: "0.85rem", color: "#D4AF3C", letterSpacing: "0.1em" }}>{p.code}</code>
-                  <button onClick={() => copyCode(p.code)} style={{ padding: "0.15rem 0.45rem", borderRadius: 4, border: "1px solid rgba(255,255,255,0.15)", background: "transparent", color: copied === p.code ? "#86efac" : "rgba(255,255,255,0.45)", cursor: "pointer", fontSize: "0.68rem" }}>
-                    {copied === p.code ? "Copied!" : "Copy"}
-                  </button>
-                </div>
-
-                {/* Contact card — only when claimed */}
-                {p.claimed && p.claimed_by_name && (
-                  <div style={{ background: "rgba(0,0,0,0.25)", borderRadius: 8, padding: "0.75rem 1rem", display: "grid", gap: "0.35rem" }}>
-                    <div style={{ display: "flex", alignItems: "baseline", gap: "0.5rem" }}>
-                      <span style={{ fontSize: "0.7rem", textTransform: "uppercase", letterSpacing: "0.08em", color: "rgba(255,255,255,0.35)", fontWeight: 600, minWidth: 38 }}>Name</span>
-                      <span style={{ color: "#fff", fontWeight: 700, fontSize: "0.95rem" }}>{p.claimed_by_name}</span>
-                    </div>
-                    {p.claimed_by_email && (
-                      <div style={{ display: "flex", alignItems: "baseline", gap: "0.5rem" }}>
-                        <span style={{ fontSize: "0.7rem", textTransform: "uppercase", letterSpacing: "0.08em", color: "rgba(255,255,255,0.35)", fontWeight: 600, minWidth: 38 }}>Email</span>
-                        <a href={`mailto:${p.claimed_by_email}`} style={{ color: "#D4AF3C", fontSize: "0.88rem", textDecoration: "none", fontWeight: 500 }}>{p.claimed_by_email}</a>
-                      </div>
-                    )}
-                    {p.claimed_by_phone && (
-                      <div style={{ display: "flex", alignItems: "baseline", gap: "0.5rem" }}>
-                        <span style={{ fontSize: "0.7rem", textTransform: "uppercase", letterSpacing: "0.08em", color: "rgba(255,255,255,0.35)", fontWeight: 600, minWidth: 38 }}>Phone</span>
-                        <a href={`tel:${p.claimed_by_phone}`} style={{ color: "#D4AF3C", fontSize: "0.88rem", textDecoration: "none", fontWeight: 500 }}>{p.claimed_by_phone}</a>
-                      </div>
-                    )}
-                    {!p.claimed_by_phone && (
-                      <div style={{ display: "flex", alignItems: "baseline", gap: "0.5rem" }}>
-                        <span style={{ fontSize: "0.7rem", textTransform: "uppercase", letterSpacing: "0.08em", color: "rgba(255,255,255,0.35)", fontWeight: 600, minWidth: 38 }}>Phone</span>
-                        <span style={{ color: "rgba(255,255,255,0.25)", fontSize: "0.82rem", fontStyle: "italic" }}>not collected</span>
-                      </div>
-                    )}
-                    <div style={{ display: "flex", alignItems: "baseline", gap: "0.5rem" }}>
-                      <span style={{ fontSize: "0.7rem", textTransform: "uppercase", letterSpacing: "0.08em", color: "rgba(255,255,255,0.35)", fontWeight: 600, minWidth: 38 }}>Date</span>
-                      <span style={{ color: "rgba(255,255,255,0.5)", fontSize: "0.82rem" }}>{p.claimed_at ? new Date(p.claimed_at).toLocaleString() : "—"}</span>
-                    </div>
+                  {/* Code + copy */}
+                  <div style={{ display: "flex", alignItems: "center", gap: "0.4rem" }}>
+                    <code style={{ fontFamily: "monospace", fontSize: "0.88rem", fontWeight: 700, color: "var(--ink)", letterSpacing: "0.08em", background: "var(--surface-page)", padding: "0.15rem 0.55rem", borderRadius: 5, border: "1px solid var(--line-medium)" }}>
+                      {p.code}
+                    </code>
+                    <button
+                      onClick={() => copyCode(p.code)}
+                      style={{ padding: "0.15rem 0.5rem", borderRadius: 5, border: "1px solid var(--line-medium)", background: copied === p.code ? "rgba(42,157,143,0.1)" : "transparent", color: copied === p.code ? "#2a9d8f" : "var(--ink-muted)", cursor: "pointer", fontSize: "0.7rem", fontFamily: "inherit", fontWeight: 500, transition: "all 0.15s" }}
+                    >
+                      {copied === p.code ? "Copied ✓" : "Copy"}
+                    </button>
                   </div>
-                )}
+                </div>
+
+                {/* Reset action */}
+                <div style={{ flexShrink: 0 }}>
+                  {p.claimed && resetConfirm !== p.id && (
+                    <button
+                      onClick={() => setResetConfirm(p.id)}
+                      style={{ padding: "0.3rem 0.75rem", borderRadius: 6, border: "1px solid var(--line-medium)", background: "transparent", color: "var(--ink-muted)", cursor: "pointer", fontSize: "0.75rem", fontFamily: "inherit" }}
+                    >
+                      Reset
+                    </button>
+                  )}
+                  {resetConfirm === p.id && (
+                    <div style={{ display: "flex", gap: "0.4rem", alignItems: "center" }}>
+                      <span style={{ fontSize: "0.73rem", color: "#dc5050", fontWeight: 600, whiteSpace: "nowrap" }}>Unclaim?</span>
+                      <button
+                        onClick={() => resetPrize(p.id)}
+                        disabled={resetting === p.id}
+                        style={{ padding: "0.25rem 0.6rem", borderRadius: 5, border: "none", background: "#dc5050", color: "#fff", cursor: "pointer", fontSize: "0.73rem", fontFamily: "inherit", fontWeight: 600 }}
+                      >
+                        {resetting === p.id ? "…" : "Yes"}
+                      </button>
+                      <button
+                        onClick={() => setResetConfirm(null)}
+                        style={{ padding: "0.25rem 0.5rem", borderRadius: 5, border: "1px solid var(--line-medium)", background: "transparent", color: "var(--ink-muted)", cursor: "pointer", fontSize: "0.73rem", fontFamily: "inherit" }}
+                      >
+                        No
+                      </button>
+                    </div>
+                  )}
+                </div>
               </div>
 
-              {/* Right: reset button */}
-              <div>
-                {p.claimed && (
-                  <button onClick={() => resetPrize(p.id)} style={{ padding: "0.25rem 0.65rem", borderRadius: 6, border: "1px solid rgba(248,113,113,0.3)", background: "transparent", color: "#f87171", cursor: "pointer", fontSize: "0.75rem", whiteSpace: "nowrap" }}>
-                    Reset
-                  </button>
-                )}
+              {/* Description row */}
+              <div style={{ padding: "0 1.1rem 0.7rem", fontSize: "0.78rem", color: "var(--ink-muted)", lineHeight: 1.5 }}>
+                {p.prize_description}
               </div>
+
+              {/* Claimed-by details */}
+              {p.claimed && p.claimed_by_name && (
+                <div style={{ borderTop: "1px solid var(--line-subtle)", padding: "0.65rem 1.1rem", background: "rgba(212,175,60,0.04)", display: "flex", flexWrap: "wrap", gap: "0.5rem 1.5rem", alignItems: "center" }}>
+                  <div style={{ display: "flex", alignItems: "center", gap: "0.4rem" }}>
+                    <span style={{ fontSize: "0.68rem", textTransform: "uppercase", letterSpacing: "0.08em", color: "var(--ink-muted)", fontWeight: 600 }}>Winner</span>
+                    <span style={{ fontWeight: 700, fontSize: "0.88rem", color: "var(--ink)" }}>{p.claimed_by_name}</span>
+                  </div>
+                  {p.claimed_by_email && (
+                    <div style={{ display: "flex", alignItems: "center", gap: "0.4rem" }}>
+                      <span style={{ fontSize: "0.68rem", textTransform: "uppercase", letterSpacing: "0.08em", color: "var(--ink-muted)", fontWeight: 600 }}>Email</span>
+                      <a href={`mailto:${p.claimed_by_email}`} style={{ fontSize: "0.85rem", color: "#3DB8AF", textDecoration: "none", fontWeight: 500 }}>{p.claimed_by_email}</a>
+                    </div>
+                  )}
+                  {p.claimed_by_phone && (
+                    <div style={{ display: "flex", alignItems: "center", gap: "0.4rem" }}>
+                      <span style={{ fontSize: "0.68rem", textTransform: "uppercase", letterSpacing: "0.08em", color: "var(--ink-muted)", fontWeight: 600 }}>Phone</span>
+                      <a href={`tel:${p.claimed_by_phone}`} style={{ fontSize: "0.85rem", color: "#3DB8AF", textDecoration: "none", fontWeight: 500 }}>{p.claimed_by_phone}</a>
+                    </div>
+                  )}
+                  {p.claimed_at && (
+                    <div style={{ display: "flex", alignItems: "center", gap: "0.4rem" }}>
+                      <span style={{ fontSize: "0.68rem", textTransform: "uppercase", letterSpacing: "0.08em", color: "var(--ink-muted)", fontWeight: 600 }}>Claimed</span>
+                      <span style={{ fontSize: "0.8rem", color: "var(--ink-muted)" }}>{new Date(p.claimed_at).toLocaleString()}</span>
+                    </div>
+                  )}
+                </div>
+              )}
             </div>
           ))}
         </div>

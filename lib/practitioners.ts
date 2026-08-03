@@ -174,8 +174,8 @@ export const practitioners: Practitioner[] = [
     slug: "zwami",
     name: "Zwami",
     role: "Ceremony Holder · Cacao Facilitator · Musician",
-    offering: "Lovewise Cacao Bar · Community Drumming",
-    bio: "Zwami is a ceremony holder, cacao facilitator, and musician who weaves ritual, rhythm, and heart medicine into transformative community experiences. At Wellness Weekend he leads the Lovewise Cacao Bar — a sacred cacao ceremony and gathering space — and closes the weekend's final evening with an open community drumming circle at the fire.",
+    offering: "Cacao Ceremony · Community Drumming",
+    bio: "Zwami is a ceremony holder, cacao facilitator, and musician who weaves ritual, rhythm, and heart medicine into transformative community experiences. At Wellness Weekend he facilitates the Saturday evening Cacao Ceremony at the bonfire — opening the heart before the night's ecstatic dance — and closes the weekend's final evening with an open community drumming circle at the fire.",
   },
   {
     slug: "akatale",

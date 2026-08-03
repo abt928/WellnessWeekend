@@ -298,6 +298,7 @@ export const scheduleDays: ScheduleDay[] = [
         event: "Cacao Ceremony",
         detail: "Gather at the fire to share ceremonial cacao and open the heart before the night's dance.",
         element: "fire", location: "Bonfire",
+        hosts: ["zwami"],
       },
       {
         time: "8:00 PM",
@@ -415,13 +416,6 @@ export const scheduleDays: ScheduleDay[] = [
         limited: true,
         link: "/aerial",
         hosts: ["beth"],
-      },
-      {
-        time: "2:00 PM",
-        event: "Lovewise Cacao Bar",
-        detail: "A sacred cacao ceremony and gathering space — sip heart medicine, slow down, and open to connection before the afternoon unfolds.",
-        element: "fire", location: "Bonfire",
-        hosts: ["zwami"],
       },
       {
         time: "3:00 PM",

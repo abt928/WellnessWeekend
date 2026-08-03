@@ -387,7 +387,8 @@ export default function Home() {
           <div className="vendor-list">
             {[
               { name: "Retro Roasters Coffee",          role: "Specialty Coffee" },
-              { name: "Cacao Bar",                       role: "Ceremonial Cacao" },
+              { name: "Lovewise Cacao & Cafe",           role: "Ceremonial Cacao · Lionsgate & Fire Horse Blends" },
+              { name: "Cacao Bar",                       role: "Ceremonial Cacao · Lionsgate & Fire Horse Blends" },
               { name: "Flow Massage",                    role: "Chair Massage" },
               { name: "Echo and Sage",                   role: "Stained Glass Art" },
               { name: "Ecuadorian Products",             role: "Artisan Goods" },

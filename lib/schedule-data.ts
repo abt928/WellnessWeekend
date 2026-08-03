@@ -443,7 +443,7 @@ export const scheduleDays: ScheduleDay[] = [
       {
         time: "4:00 PM",
         event: "ÂKÅTÂLĖ",
-        detail: "A live sonic journey to gather the community toward closing.",
+        detail: "4:00–4:30 PM · A 30-minute live sonic journey to gather the community toward closing.",
         element: "sound",
         location: "Main Stage · Live Music",
         hosts: ["akatale"],
@@ -456,7 +456,7 @@ export const scheduleDays: ScheduleDay[] = [
         hosts: ["mystical-moon-dance"],
       },
       {
-        time: "5:00 PM",
+        time: "4:30 PM",
         event: "Community Drumming",
         detail: "An open community drumming circle at the fire — everyone is invited to play, move, and sound together as the weekend comes to a close.",
         element: "fire", secondElement: "earth",
@@ -464,7 +464,7 @@ export const scheduleDays: ScheduleDay[] = [
         hosts: ["zwami"],
       },
       {
-        time: "6:00 PM",
+        time: "5:30 PM",
         event: "Closing & Integration Circle",
         detail: "Led by Avalon Starling — a closing circle to integrate the weekend's medicine, share gratitude, and send you home with a full heart.",
         element: "fire", location: "Main Stage",

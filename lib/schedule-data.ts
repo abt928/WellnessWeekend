@@ -298,7 +298,6 @@ export const scheduleDays: ScheduleDay[] = [
         event: "Cacao Ceremony",
         detail: "Gather at the fire to share ceremonial cacao and open the heart before the night's dance.",
         element: "fire", location: "Bonfire",
-        hosts: ["zwami"],
       },
       {
         time: "8:00 PM",
@@ -458,18 +457,18 @@ export const scheduleDays: ScheduleDay[] = [
       },
       {
         time: "5:00 PM",
-        event: "Closing & Integration Circle",
-        detail: "Led by Avalon Starling — a closing circle to integrate the weekend's medicine, share gratitude, and send you home with a full heart.",
-        element: "fire", location: "Main Stage",
-        hosts: ["avalon-starling"],
-      },
-      {
-        time: "6:00 PM",
         event: "Community Drumming",
         detail: "An open community drumming circle at the fire — everyone is invited to play, move, and sound together as the weekend comes to a close.",
         element: "fire", secondElement: "earth",
         location: "Bonfire",
         hosts: ["zwami"],
+      },
+      {
+        time: "6:00 PM",
+        event: "Closing & Integration Circle",
+        detail: "Led by Avalon Starling — a closing circle to integrate the weekend's medicine, share gratitude, and send you home with a full heart.",
+        element: "fire", location: "Main Stage",
+        hosts: ["avalon-starling"],
       },
       {
         time: "7:00 PM",
@@ -478,7 +477,6 @@ export const scheduleDays: ScheduleDay[] = [
         element: "sound", secondElement: "fire",
         location: "Main Stage",
         fee: "Silk hammock rental available · $20/30 min · See /aerial",
-        hosts: ["flowscape"],
       },
     ],
   },

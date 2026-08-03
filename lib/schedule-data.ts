@@ -105,8 +105,8 @@ export const scheduleDays: ScheduleDay[] = [
       },
       {
         time: "4:00 PM",
-        event: "Tarot + Tea Party",
-        detail: "Divinators gather in the lodge's upstairs lounge to share readings, sip community tea, and activate the space. Come as you are — daily at 4 PM.",
+        event: "Tea Lounge",
+        detail: "Social hour in the lounge — come as you are, sip community tea, connect, and unwind. Readings available.",
         element: "air", location: "Lodge · Upstairs Lounge",
       },
       {
@@ -273,8 +273,8 @@ export const scheduleDays: ScheduleDay[] = [
       },
       {
         time: "4:00 PM",
-        event: "Tarot + Tea Party",
-        detail: "Daily gathering of readers and seekers in the lodge's upstairs lounge — tea, cards, and connection.",
+        event: "Tea Lounge",
+        detail: "Social hour in the lounge — come as you are, sip community tea, connect, and unwind. Readings available.",
         element: "air", location: "Lodge · Upstairs Lounge",
       },
       {
@@ -435,7 +435,7 @@ export const scheduleDays: ScheduleDay[] = [
       {
         time: "3:00 PM",
         event: "Pendulum Readings & Salt Intention Workshop",
-        detail: "An immersive workshop on pendulum divination and the art of creating salt intentions — a sacred pre-ceremony practice before the Tarot + Tea.",
+        detail: "An immersive workshop on pendulum divination and the art of creating salt intentions — a sacred pre-ceremony practice before the Tea Lounge.",
         element: "earth", location: "Labyrinth Garden",
         hosts: ["mystical-moon-dance"],
       },
@@ -457,8 +457,8 @@ export const scheduleDays: ScheduleDay[] = [
       },
       {
         time: "4:00 PM",
-        event: "Tarot + Tea Party",
-        detail: "The final daily lounge gathering — close the weekend with mystery and magic.",
+        event: "Tea Lounge",
+        detail: "Social hour in the lounge — come as you are, sip community tea, connect, and unwind. Readings available.",
         element: "air", location: "Lodge · Upstairs Lounge",
         hosts: ["mystical-moon-dance"],
       },

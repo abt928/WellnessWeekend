@@ -81,13 +81,23 @@ export default function Navigation() {
               {NAV_LINKS.map((l) => (
                 <li key={l.label}><a href={l.href} onClick={close}>{l.label}</a></li>
               ))}
-              <li style={{ borderTop: "1px solid rgba(255,255,255,0.1)", paddingTop: "0.5rem", marginTop: "0.25rem" }} />
+              <li style={{ borderTop: "1px solid rgba(51,53,51,0.08)", paddingTop: "0.5rem", marginTop: "0.25rem" }} />
               {MOBILE_EXTRA.map((l) => (
                 <li key={l.label} style={{ opacity: 0.65 }}>
                   <a href={l.href} onClick={close} style={{ fontSize: "0.9rem" }}>{l.label}</a>
                 </li>
               ))}
             </ul>
+
+            {/* Booking shortcuts */}
+            <div style={{ display: "flex", flexDirection: "column", gap: "0.6rem", padding: "0.75rem 1.5rem", borderTop: "1px solid rgba(51,53,51,0.08)" }}>
+              <a href="/book" className="mobile-menu-book-btn primary" onClick={close}>
+                Book Add-Ons →
+              </a>
+              <a href="/aerial" className="mobile-menu-book-btn secondary" onClick={close}>
+                Book a Silk Class
+              </a>
+            </div>
 
             <a href="/#store" className="mobile-menu-cta" onClick={close}>
               Get Tickets →

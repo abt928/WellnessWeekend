@@ -1660,6 +1660,10 @@ function AerialBookingsTab() {
 
   return (
     <>
+      <div style={{ padding: "1rem 1.5rem 0", fontSize: "0.78rem", color: "var(--ink-muted)", background: "var(--surface-page)", borderBottom: "1px solid var(--line-subtle)" }}>
+        <strong style={{ color: "var(--ink)" }}>Silk · Aerial Bookings</strong> — from <code>/aerial</code> (class &amp; solo hammock rentals).
+        {" "}Aerial class bookings made through <code>/book</code> appear in the <strong>Classes</strong> tab instead.
+      </div>
       <div style={{ padding: "1.25rem 1.5rem 0.25rem" }}>
         {renderStrip("Group Classes · 6 hammocks each", AERIAL_CLASS_SLOTS, "class", 6)}
         {renderStrip("Solo Hammock Rentals · 7 hammocks available", AERIAL_SOLO_SLOTS, "solo", 7)}
@@ -3321,7 +3325,7 @@ export default function AdminPage() {
         {tab("class_reservations",  "Classes")}
         {tab("contrast_bookings",   "Contrast")}
         {tab("massage_bookings",    "Massage")}
-        {tab("aerial_bookings",     "Aerial")}
+        {tab("aerial_bookings",     "Silk · Aerial")}
         {tab("paddleboard_bookings","Paddleboard")}
 
         <span className="admin-tab-sep" />

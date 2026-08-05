@@ -145,25 +145,44 @@ export default function TravelPage() {
           <h2 style={{ fontFamily: "var(--font-display, serif)", fontSize: "clamp(1.4rem, 4vw, 2rem)", marginBottom: "0.75rem" }}>
             Warrior Lodge
           </h2>
-          <p style={{ color: "rgba(255,255,255,0.75)", lineHeight: 1.7, marginBottom: "0.75rem", fontSize: "0.95rem" }}>
-            August in Alaska is wild — radiant summer days that stretch past midnight and cool, crisp nights perfect for gathering under the stars. The Warrior Lodge and on-site cabins were built for exactly this: a warm, dry sanctuary between ceremonies so you never have to leave the magic.
+          <p style={{ color: "rgba(255,255,255,0.75)", lineHeight: 1.7, marginBottom: "1.25rem", fontSize: "0.95rem" }}>
+            August in Alaska is wild — radiant summer days that stretch past midnight and cool, crisp nights perfect for gathering under the stars. The Warrior Lodge cabins were built for exactly this: a warm, dry sanctuary between ceremonies so you never have to leave the magic.
           </p>
-          <p style={{ color: "rgba(255,255,255,0.75)", lineHeight: 1.7, marginBottom: "1.5rem", fontSize: "0.95rem" }}>
-            Wake up steps from the lake. Walk to morning yoga. Return to a real bed after the fire dies. On-site lodging is limited and fills every year.
-          </p>
-          <Link href="/#store" style={{
+
+          {/* Lodging status */}
+          <div style={{ display: "flex", flexDirection: "column", gap: "0.65rem", marginBottom: "1.5rem" }}>
+            <div style={{ display: "flex", alignItems: "center", gap: "0.75rem", background: "rgba(184,74,43,0.18)", border: "1px solid rgba(184,74,43,0.4)", borderRadius: 10, padding: "0.75rem 1rem" }}>
+              <span style={{ fontSize: "0.65rem", fontWeight: 700, letterSpacing: "0.1em", textTransform: "uppercase", color: "#ff8a72", background: "rgba(184,74,43,0.35)", borderRadius: "999px", padding: "0.2rem 0.6rem", whiteSpace: "nowrap" }}>
+                Sold Out
+              </span>
+              <span style={{ fontSize: "0.9rem", color: "rgba(255,255,255,0.85)" }}>
+                <strong>Private Cabins</strong> — all 10 cabins are reserved
+              </span>
+            </div>
+            <div style={{ display: "flex", alignItems: "center", gap: "0.75rem", background: "rgba(201,152,63,0.15)", border: "1px solid rgba(201,152,63,0.35)", borderRadius: 10, padding: "0.75rem 1rem" }}>
+              <span style={{ fontSize: "0.65rem", fontWeight: 700, letterSpacing: "0.1em", textTransform: "uppercase", color: "#e8c06a", background: "rgba(201,152,63,0.3)", borderRadius: "999px", padding: "0.2rem 0.6rem", whiteSpace: "nowrap" }}>
+                Very Limited
+              </span>
+              <span style={{ fontSize: "0.9rem", color: "rgba(255,255,255,0.85)" }}>
+                <strong>Shared Cabins</strong> — fewer than 10 beds remaining
+              </span>
+            </div>
+          </div>
+
+          <a href="mailto:support@thesoundspace.us?subject=Shared%20Cabin%20Inquiry" style={{
             display: "inline-block",
-            background: "var(--gold, #C9983F)",
+            background: "rgba(255,255,255,0.12)",
             color: "#fff",
-            fontWeight: 700,
+            fontWeight: 600,
             fontSize: "0.9rem",
             padding: "0.65rem 1.5rem",
             borderRadius: 30,
             textDecoration: "none",
             letterSpacing: "0.02em",
+            border: "1px solid rgba(255,255,255,0.25)",
           }}>
-            Reserve Lodging →
-          </Link>
+            Inquire About Shared Cabins →
+          </a>
         </div>
 
         {/* Campgrounds */}

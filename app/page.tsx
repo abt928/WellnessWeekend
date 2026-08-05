@@ -406,6 +406,7 @@ export default function Home() {
               { name: "Northern Messages",               role: "Psychic Readings" },
               { name: "The Artery Girdwood",             role: "Tarot · Art" },
               { name: "Sacred Seeds Foundation",         role: "Community Foundation" },
+              { name: "La Galleria De Keown",            role: "Palmistry · Free Readings · Sunday" },
             ].map((v) => (
               <div key={v.name} className="vendor-row">
                 <span className="vendor-name">{v.name}</span>

@@ -12,17 +12,9 @@ export interface Shift {
 }
 
 export const SHIFTS: Shift[] = [
-  // ── Setup · Thursday Aug 6 — all 4-hour shifts ──
-  { shift_id: "SU-01", phase: "setup", role: "Pavilion setup",                   day: "Thursday", date: "2026-08-06", start_time: null, end_time: null, hours: 4, capacity: 2, notes: null },
-  { shift_id: "SU-02", phase: "setup", role: "Lodge staging",                    day: "Thursday", date: "2026-08-06", start_time: null, end_time: null, hours: 4, capacity: 2, notes: null },
-  { shift_id: "SU-03", phase: "setup", role: "Labyrinth garden",                 day: "Thursday", date: "2026-08-06", start_time: null, end_time: null, hours: 4, capacity: 4, notes: null },
-  { shift_id: "SU-05", phase: "setup", role: "Silks, paddleboards & docks",      day: "Thursday", date: "2026-08-06", start_time: null, end_time: null, hours: 4, capacity: 2, notes: null },
-  { shift_id: "SU-06", phase: "setup", role: "Tents – tea lounge & guest svc",  day: "Thursday", date: "2026-08-06", start_time: null, end_time: null, hours: 4, capacity: 2, notes: null },
-  { shift_id: "SU-07", phase: "setup", role: "Lighting",                         day: "Thursday", date: "2026-08-06", start_time: null, end_time: null, hours: 4, capacity: 2, notes: null },
-  { shift_id: "SU-08", phase: "setup", role: "Stage",                            day: "Thursday", date: "2026-08-06", start_time: null, end_time: null, hours: 4, capacity: 2, notes: null },
-  { shift_id: "SU-09", phase: "setup", role: "Decor",                            day: "Thursday", date: "2026-08-06", start_time: null, end_time: null, hours: 4, capacity: 2, notes: null },
-  { shift_id: "SU-10", phase: "setup", role: "Supplies",                         day: "Thursday", date: "2026-08-06", start_time: null, end_time: null, hours: 4, capacity: 2, notes: null },
-  { shift_id: "SU-11", phase: "setup", role: "Green room",                       day: "Thursday", date: "2026-08-06", start_time: null, end_time: null, hours: 4, capacity: 2, notes: null },
+  // ── Setup · Thursday Aug 6 — grounds prep only ──
+  { shift_id: "SU-01", phase: "setup", role: "Pavilion setup",    day: "Thursday", date: "2026-08-06", start_time: null, end_time: null, hours: 4, capacity: 2, notes: null },
+  { shift_id: "SU-02", phase: "setup", role: "Campground setup",  day: "Thursday", date: "2026-08-06", start_time: null, end_time: null, hours: 4, capacity: 2, notes: null },
 
   // ── During · Friday Aug 7 ──
   { shift_id: "DU-01", phase: "during", role: "Marketing / Press",               day: "Friday",   date: "2026-08-07", start_time: null, end_time: null, hours: 4, capacity: 3, notes: null },

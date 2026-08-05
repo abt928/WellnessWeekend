@@ -2,7 +2,7 @@
 import { useState, useEffect } from "react";
 import Link from "next/link";
 
-const TOTAL_BEDS = 40;
+const TOTAL_BEDS = 22;
 
 const C = {
   bg: "#F7F3EC",
@@ -162,7 +162,7 @@ export default function WarriorsPage() {
                 Cabin beds are fully claimed
               </p>
               <p style={{ fontSize: "1rem", color: C.charcoal, lineHeight: 1.7, marginBottom: "1.75rem" }}>
-                All 40 donated beds have been reserved. We&apos;re so grateful for the response. You can still join us — use the code below for 30% off your ticket.
+                All available warrior beds have been reserved. We&apos;re so grateful for the response. You can still join us — use the code below for 30% off your ticket.
               </p>
               <div style={{ background: C.bg, border: `1.5px dashed ${C.goldBorder}`, borderRadius: "10px", padding: "1.25rem 2.5rem", display: "inline-block", marginBottom: "1.5rem" }}>
                 <p style={{ fontSize: "0.68rem", letterSpacing: "0.12em", textTransform: "uppercase", color: C.gold, marginBottom: "0.4rem", fontWeight: 600 }}>30% Discount Code</p>

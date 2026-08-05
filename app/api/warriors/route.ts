@@ -5,7 +5,8 @@ import { sql } from "drizzle-orm";
 
 export const dynamic = "force-dynamic";
 
-const TOTAL_BEDS = 40;
+// 40 original beds minus 18 allocated to cabin packages sold externally = 22 in the warrior pool
+const TOTAL_BEDS = 22;
 
 export async function GET() {
   try {

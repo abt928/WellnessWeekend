@@ -164,7 +164,7 @@ export default function TravelPage() {
                 Very Limited
               </span>
               <span style={{ fontSize: "0.9rem", color: "rgba(255,255,255,0.85)" }}>
-                <strong>Shared Cabins</strong> — fewer than 10 beds remaining
+                <strong>Shared Cabins</strong> — $499 · fewer than 10 beds remaining
               </span>
             </div>
           </div>

@@ -2,7 +2,7 @@
 import { useState, useEffect } from "react";
 import Link from "next/link";
 
-const TOTAL_BEDS = 22;
+const TOTAL_BEDS = 20;
 
 const C = {
   bg: "#F7F3EC",
@@ -101,7 +101,7 @@ export default function WarriorsPage() {
               <ul style={{ listStyle: "none", padding: 0, margin: 0, display: "flex", flexDirection: "column", gap: "0.5rem" }}>
                 {[
                   "Full weekend pass — all three days",
-                  "Lodging at Warrior Lodge",
+                  "Shared cabin lodging at Warrior Lodge (a $499 value)",
                 ].map((item) => (
                   <li key={item} style={{ fontSize: "0.9rem", color: C.charcoal, lineHeight: 1.55 }}>
                     {item}

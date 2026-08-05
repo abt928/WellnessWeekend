@@ -63,6 +63,9 @@ export const SHIFT_MAP: Record<string, Shift> = Object.fromEntries(
   SHIFTS.map((s) => [s.shift_id, s])
 );
 
+// Set to true when all volunteer cabin beds have been allocated
+export const VOLUNTEER_LODGING_FULL = true;
+
 export type RewardKey = "lodging" | "weekend_pass" | "day_pass" | "lodging_discount" | "none";
 
 export interface RewardResult {
@@ -89,12 +92,15 @@ export function calcReward(selectedShifts: Shift[]): RewardResult {
   const daysWithFourPlus = [thuHours, friHours, satHours, sunHours].filter((h) => h >= 4).length;
 
   if (totalHours >= 12 && daysWithFourPlus >= 3) {
-    return {
-      key: "lodging",
-      label: "Comped Lodging",
-      desc: `${totalHours} hrs across ${daysWithFourPlus} days — cabin lodging comped for the weekend.`,
-      totalHours,
-    };
+    if (!VOLUNTEER_LODGING_FULL) {
+      return {
+        key: "lodging",
+        label: "Comped Lodging",
+        desc: `${totalHours} hrs across ${daysWithFourPlus} days — cabin lodging comped for the weekend.`,
+        totalHours,
+      };
+    }
+    // Lodging pool exhausted — fall through to weekend pass
   }
   if (totalHours >= 8) {
     return {

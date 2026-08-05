@@ -6,7 +6,6 @@ import Schedule from "@/components/Schedule";
 import FAQ from "@/components/FAQ";
 import GetInvolved from "@/components/GetInvolved";
 import Store from "@/components/Store";
-import Packages from "@/components/Packages";
 import FloatingActions from "@/components/FloatingActions";
 import ConversionNudges from "@/components/ConversionNudges";
 import PartnerCard from "@/components/PartnerCard";
@@ -284,9 +283,6 @@ export default function Home() {
 
       {/* ═══ TICKETS STORE ═══ */}
       <Store />
-
-      {/* ═══ PACKAGES ═══ */}
-      <Packages />
 
       {/* ═══ BOOK YOUR SESSION ═══ */}
       <BuildYourWeekend />

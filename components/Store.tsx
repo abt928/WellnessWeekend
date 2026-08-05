@@ -27,16 +27,31 @@ interface CartEntry {
 }
 
 const TABS = [
-  { key: "tickets", label: "Tickets", Icon: TicketIcon },
-  { key: "addons", label: "Add-Ons", Icon: SparkleIcon },
-  { key: "cacao", label: "Cacao", Icon: CupIcon },
-  { key: "merch", label: "Merch", Icon: ShirtIcon },
+  { key: "tickets",  label: "Tickets",  Icon: TicketIcon },
+  { key: "packages", label: "Packages", Icon: LotusIcon },
+  { key: "addons",   label: "Add-Ons",  Icon: SparkleIcon },
+  { key: "cacao",    label: "Cacao",    Icon: CupIcon },
+  { key: "merch",    label: "Merch",    Icon: ShirtIcon },
 ];
 
 const MAX_QTY_PER_ITEM = 20;
 
-// Items whose name contains any of these strings (case-insensitive) are shown as sold out
-const SOLD_OUT_PATTERNS: string[] = [];
+// Catalog items whose name matches are shown as sold out
+const SOLD_OUT_PATTERNS: string[] = ["group"];
+
+// Package names matching these terms are sold out
+const PKG_SOLD_OUT_TERMS = ["cabin", "private", "group"];
+function isPkgSoldOut(name: string) {
+  const lower = name.toLowerCase();
+  return PKG_SOLD_OUT_TERMS.some((t) => lower.includes(t));
+}
+
+interface PackageItem {
+  id: string;
+  name: string;
+  description: string;
+  variations: { id: string; name: string; price: number }[];
+}
 
 function formatPrice(cents: number) {
   return `$${(cents / 100).toFixed(cents % 100 === 0 ? 0 : 2)}`;
@@ -61,6 +76,8 @@ function readInitialTab(): string {
 export default function Store() {
   const [items, setItems] = useState<CatalogItem[]>([]);
   const [loading, setLoading] = useState(true);
+  const [packages, setPackages] = useState<PackageItem[]>([]);
+  const [packagesLoading, setPackagesLoading] = useState(true);
   const [activeTab, setActiveTabState] = useState<string>(readInitialTab);
   const [cart, setCart] = useState<CartEntry[]>(readInitialCart);
   const [cartOpen, setCartOpen] = useState(false);
@@ -102,13 +119,21 @@ export default function Store() {
           setLoading(false);
           return;
         }
-        setItems(d.items || []); 
-        setLoading(false); 
+        setItems(d.items || []);
+        setLoading(false);
       })
       .catch(() => {
         setError("Failed to fetch catalog. Please check Square credentials.");
         setLoading(false);
       });
+  }, []);
+
+  // Load packages
+  useEffect(() => {
+    fetch("/api/square/packages")
+      .then((r) => r.json())
+      .then((d) => { setPackages(d.packages || []); setPackagesLoading(false); })
+      .catch(() => setPackagesLoading(false));
   }, []);
 
   // Fire ViewContent when the store section scrolls into view (once)
@@ -362,7 +387,58 @@ export default function Store() {
       </div>
 
       {/* Items Grid */}
-      {error ? (
+      {activeTab === "packages" ? (
+        packagesLoading ? (
+          <div className="store-loading">
+            <div className="store-spinner" />
+            <p>Loading packages…</p>
+          </div>
+        ) : (
+          <div className="store-grid">
+            {packages.map((pkg) => {
+              const soldOut = isPkgSoldOut(pkg.name);
+              const primary = pkg.variations[0];
+              return (
+                <div className={`store-card${soldOut ? " store-card-sold-out" : ""}`} key={pkg.id}>
+                  <div className="store-card-header">
+                    <h3 className="store-card-name">
+                      {pkg.name}
+                      {soldOut && <span className="store-sold-out-badge">Sold Out</span>}
+                    </h3>
+                    {!soldOut && pkg.variations.length === 1 && (
+                      <span className="store-card-price">{formatPrice(primary.price)}</span>
+                    )}
+                  </div>
+                  <p className="store-card-desc">{pkg.description}</p>
+                  <div className="store-card-actions">
+                    {soldOut ? (
+                      <button className="store-add-btn" disabled style={{ opacity: 0.4, cursor: "not-allowed" }}>
+                        Sold Out
+                      </button>
+                    ) : pkg.variations.length === 1 ? (
+                      <button className="store-add-btn" onClick={() => addToCart({ ...pkg, category: "packages" }, primary)}>
+                        Add to Cart
+                      </button>
+                    ) : (
+                      <div className="store-variants">
+                        {pkg.variations.map((v) => (
+                          <button key={v.id} className="store-variant-btn" onClick={() => addToCart({ ...pkg, category: "packages" }, v)}>
+                            <span className="variant-name">{v.name}</span>
+                            <span className="variant-price">{formatPrice(v.price)}</span>
+                          </button>
+                        ))}
+                      </div>
+                    )}
+                  </div>
+                </div>
+              );
+            })}
+            {packages.length === 0 && (
+              <p className="store-empty">No packages available yet.</p>
+            )}
+          </div>
+        )
+      ) : error ? (
         <div style={{ backgroundColor: "rgba(255, 100, 100, 0.1)", border: "1px solid rgba(255, 100, 100, 0.3)", padding: "2rem", borderRadius: "8px", margin: "2rem 0", color: "#ff8888", textAlign: "center" }}>
           <p style={{ fontFamily: "var(--font-display)", fontSize: "1.5rem", marginBottom: "0.5rem" }}>Catalog unavailable</p>
           <p>We can&apos;t load tickets right now. Please refresh, or come back in a few minutes.</p>
@@ -379,47 +455,47 @@ export default function Store() {
               item.name.toLowerCase().includes(p)
             );
             return (
-            <div className={`store-card${soldOut ? " store-card-sold-out" : ""}`} key={item.id}>
-              <div className="store-card-header">
-                <h3 className="store-card-name">
-                  {item.name}
-                  {soldOut && <span className="store-sold-out-badge">Sold Out</span>}
-                </h3>
-                {!soldOut && item.variations.length === 1 && (
-                  <span className="store-card-price">
-                    {formatPrice(item.variations[0].price)}
-                  </span>
-                )}
+              <div className={`store-card${soldOut ? " store-card-sold-out" : ""}`} key={item.id}>
+                <div className="store-card-header">
+                  <h3 className="store-card-name">
+                    {item.name}
+                    {soldOut && <span className="store-sold-out-badge">Sold Out</span>}
+                  </h3>
+                  {!soldOut && item.variations.length === 1 && (
+                    <span className="store-card-price">
+                      {formatPrice(item.variations[0].price)}
+                    </span>
+                  )}
+                </div>
+                <p className="store-card-desc">{item.description}</p>
+                <div className="store-card-actions">
+                  {soldOut ? (
+                    <button className="store-add-btn" disabled style={{ opacity: 0.4, cursor: "not-allowed" }}>
+                      Sold Out
+                    </button>
+                  ) : item.variations.length === 1 ? (
+                    <button
+                      className="store-add-btn"
+                      onClick={() => addToCart(item, item.variations[0])}
+                    >
+                      Add to Cart
+                    </button>
+                  ) : (
+                    <div className="store-variants">
+                      {item.variations.map((v) => (
+                        <button
+                          key={v.id}
+                          className="store-variant-btn"
+                          onClick={() => addToCart(item, v)}
+                        >
+                          <span className="variant-name">{v.name}</span>
+                          <span className="variant-price">{formatPrice(v.price)}</span>
+                        </button>
+                      ))}
+                    </div>
+                  )}
+                </div>
               </div>
-              <p className="store-card-desc">{item.description}</p>
-              <div className="store-card-actions">
-                {soldOut ? (
-                  <button className="store-add-btn" disabled style={{ opacity: 0.4, cursor: "not-allowed" }}>
-                    Sold Out
-                  </button>
-                ) : item.variations.length === 1 ? (
-                  <button
-                    className="store-add-btn"
-                    onClick={() => addToCart(item, item.variations[0])}
-                  >
-                    Add to Cart
-                  </button>
-                ) : (
-                  <div className="store-variants">
-                    {item.variations.map((v) => (
-                      <button
-                        key={v.id}
-                        className="store-variant-btn"
-                        onClick={() => addToCart(item, v)}
-                      >
-                        <span className="variant-name">{v.name}</span>
-                        <span className="variant-price">{formatPrice(v.price)}</span>
-                      </button>
-                    ))}
-                  </div>
-                )}
-              </div>
-            </div>
             );
           })}
           {filtered.length === 0 && !loading && (

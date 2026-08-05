@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { getDb } from "@/lib/db";
 import { neon } from "@neondatabase/serverless";
-import { leads, newsletter, vendors, volunteers, sponsors, instructorWaitlist, affiliates, referralEvents, volunteerRegistrations, volunteerShiftClaims, warriors, members, staffRegistrations, staffGuests, contrastBookings, massageBookings, aerialBookings, paddleboardBookings } from "@/lib/schema";
+import { leads, newsletter, vendors, volunteers, sponsors, instructorWaitlist, affiliates, referralEvents, volunteerRegistrations, volunteerShiftClaims, warriors, members, staffRegistrations, staffGuests, contrastBookings, massageBookings, aerialBookings, paddleboardBookings, earthPassClaims } from "@/lib/schema";
 import { isAdminAuthenticated } from "@/app/api/admin/auth/route";
 import { desc, eq, sql } from "drizzle-orm";
 import { SHIFT_MAP, calcReward } from "@/lib/volunteer-shifts";
@@ -24,6 +24,7 @@ const TABLES = {
   massage_bookings: massageBookings,
   aerial_bookings: aerialBookings,
   paddleboard_bookings: paddleboardBookings,
+  earth_pass_claims: earthPassClaims,
 } as const;
 
 type TableName = keyof typeof TABLES;
@@ -73,6 +74,17 @@ export async function GET(req: NextRequest) {
           slot VARCHAR(50) NOT NULL,
           notes TEXT,
           created_at TIMESTAMPTZ DEFAULT NOW() NOT NULL
+        )
+      `.catch(() => {});
+    }
+    if (table === "earth_pass_claims") {
+      await rawSql`
+        CREATE TABLE IF NOT EXISTS earth_pass_claims (
+          id         SERIAL PRIMARY KEY,
+          name       VARCHAR(255) NOT NULL,
+          email      VARCHAR(255) NOT NULL,
+          phone      VARCHAR(50),
+          created_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
         )
       `.catch(() => {});
     }

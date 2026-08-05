@@ -155,6 +155,14 @@ export const volunteerRegistrations = pgTable("volunteer_registrations", {
   createdAt: timestamp("created_at", { withTimezone: true }).defaultNow().notNull(),
 });
 
+export const earthPassClaims = pgTable("earth_pass_claims", {
+  id: serial("id").primaryKey(),
+  name: varchar("name", { length: 255 }).notNull(),
+  email: varchar("email", { length: 255 }).notNull(),
+  phone: varchar("phone", { length: 50 }),
+  createdAt: timestamp("created_at", { withTimezone: true }).defaultNow().notNull(),
+});
+
 export const volunteerShiftClaims = pgTable("volunteer_shift_claims", {
   id: serial("id").primaryKey(),
   registrationId: integer("registration_id"),

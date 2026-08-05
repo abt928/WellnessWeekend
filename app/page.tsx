@@ -14,6 +14,7 @@ import BuildYourWeekend from "@/components/BuildYourWeekend";
 import InstructorSlideshow from "@/components/InstructorSlideshow";
 import SacredSpaces from "@/components/SacredSpaces";
 import { MapPinIcon } from "@/components/Icons";
+import FlashDealBanner from "@/components/FlashDealBanner";
 
 /* ── static data ── */
 const partners = [
@@ -170,6 +171,9 @@ export default function Home() {
           Last Call — Get Your Ticket →
         </a>
       </div>
+
+      {/* ═══ FLASH DEAL ═══ */}
+      <FlashDealBanner />
 
       {/* ═══ SCHEDULE ═══ */}
       <Schedule />

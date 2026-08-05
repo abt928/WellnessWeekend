@@ -9,7 +9,8 @@ import { SHIFT_MAP, SHIFTS } from "@/lib/volunteer-shifts";
 type TableName =
   | "leads" | "newsletter" | "vendors" | "volunteers"
   | "sponsors" | "instructor_waitlist" | "affiliates" | "referral_events"
-  | "volunteer_registrations" | "warriors" | "members" | "staff_registrations" | "contrast_bookings" | "massage_bookings" | "aerial_bookings" | "paddleboard_bookings";
+  | "volunteer_registrations" | "warriors" | "members" | "staff_registrations" | "contrast_bookings" | "massage_bookings" | "aerial_bookings" | "paddleboard_bookings"
+  | "earth_pass_claims";
 
 type ActiveTab =
   | "overview" | "guest_list" | "budget"
@@ -17,7 +18,7 @@ type ActiveTab =
   | "vendor_agreements"
   | "vendors" | "volunteers" | "volunteer_registrations" | "warriors" | "instructor_waitlist" | "sponsors"
   | "staff_registrations" | "contrast_bookings" | "massage_bookings" | "aerial_bookings" | "paddleboard_bookings"
-  | "confirmations" | "giveaway" | "partner_codes" | "class_reservations" | "people";
+  | "confirmations" | "giveaway" | "partner_codes" | "class_reservations" | "people" | "earth_pass";
 
 interface TabConfig {
   key: TableName;
@@ -3313,6 +3314,7 @@ export default function AdminPage() {
         <span className="admin-tab-group-label">People</span>
 
         {tab("guest_list",            "Guests")}
+        {tab("earth_pass",            "⚡ Earth Pass")}
         {tab("warriors",              "Warriors")}
         {tab("volunteer_registrations","Volunteers")}
         {tab("staff_registrations",   "Staff")}
@@ -3360,6 +3362,7 @@ export default function AdminPage() {
       {activeTab === "vendors"             && <DataTab tableKey="vendors"             columns={["id","name","email","business","category","description","created_at"]} />}
       {activeTab === "volunteers"               && <DataTab tableKey="volunteers"               columns={["id","name","email","phone","interest","experience","availability","created_at"]} />}
       {activeTab === "volunteer_registrations"  && <VolunteerRegistrationsTab />}
+      {activeTab === "earth_pass"               && <DataTab tableKey="earth_pass_claims"         columns={["id","name","email","phone","created_at"]} />}
       {activeTab === "warriors"                 && <DataTab tableKey="warriors"                 columns={["id","name","email","phone","family_size","beds_needed","created_at"]} />}
       {activeTab === "staff_registrations"      && <DataTab tableKey="staff_registrations"      columns={["id","name","email","phone","role","emergency_contact_name","emergency_contact_phone","dietary_needs","ticket_code","created_at"]} />}
       {activeTab === "class_reservations"        && <ClassReservationsTab />}

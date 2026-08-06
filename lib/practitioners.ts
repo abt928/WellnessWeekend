@@ -173,9 +173,9 @@ export const practitioners: Practitioner[] = [
   {
     slug: "zwami",
     name: "Zwami",
-    role: "Musician & Community Drum Circle Leader",
-    offering: "Community Drumming · Sunday 4:30 PM",
-    bio: "Zwami is a musician and community ceremony holder who weaves rhythm into transformative communal experiences. At Wellness Weekend he leads the Sunday evening community drumming circle at the fire — an open invitation for everyone to play, move, and sound together as the weekend draws to a close.",
+    role: "Musician · Ecstatic Dance DJ · Drum Circle Leader",
+    offering: "Ecstatic Dance · Fri & Sat evenings · Sun after closing · Community Drumming · Sun 4:30 PM",
+    bio: "Zwami is a musician and community ceremony holder who weaves rhythm into transformative communal experiences. He leads ecstatic dance on Friday and Saturday evenings and closes out Sunday after the final ceremony — and anchors the Sunday afternoon community drumming circle at the fire, an open invitation for everyone to play, move, and sound together.",
   },
   {
     slug: "akatale",

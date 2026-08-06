@@ -8,15 +8,11 @@ export const metadata = {
   description: "Printable class schedule for Wellness Weekend — August 7–9, 2026 · Sutton, Alaska",
 };
 
-// Exclude logistics, sauna (in add-ons sheet), and passive music performances
+// Exclude logistics and sauna (covered in the add-ons sheet)
 const EXCLUDE_EVENTS = new Set([
   "Gates Open · Check-in",
   "Lakeside Sauna Opens",
   "Lakeside Sauna",
-  "Shawn Zuke",
-  "Kuf Knotz + Christine Elise",
-  "J Brave",
-  "ÂKÅTÂLĖ",
 ]);
 
 function isClass(e: ScheduleEvent): boolean {

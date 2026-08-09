@@ -330,7 +330,15 @@ export const scheduleDays: ScheduleDay[] = [
         element: "sound", secondElement: "earth",
         location: "Labyrinth Garden",
         gloss: LABYRINTH_GLOSS,
-        hosts: ["peace-pixy"],
+        hosts: ["avalon-starling"],
+      },
+      {
+        time: "9:00 AM",
+        event: "Private Sound Healing",
+        detail: "All day · One-on-one private sound healing sessions with Avalon inside the lakeside sauna — a deeply personal sonic experience to integrate the weekend's medicine. Book at the welcome tent.",
+        element: "sound", secondElement: "fire",
+        location: "Lakeside Sauna",
+        hosts: ["avalon-starling"],
       },
       {
         time: "9:00 AM",

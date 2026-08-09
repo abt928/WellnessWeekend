@@ -442,8 +442,8 @@ export const scheduleDays: ScheduleDay[] = [
       },
       {
         time: "4:00 PM",
-        event: "Comedy Workshop",
-        detail: "4:00–4:30 PM · A 30-minute comedy workshop with Zwami to lighten hearts and bring the community together before closing.",
+        event: "Laugh Your Way to Wellness",
+        detail: "4:00–4:30 PM · A 30-minute laughter workshop with Zwami to lighten hearts and bring the community together before closing.",
         element: "fire",
         location: "Main Stage",
         hosts: ["zwami"],

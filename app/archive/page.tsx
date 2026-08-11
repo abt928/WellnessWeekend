@@ -11,6 +11,14 @@ export const metadata = {
 
 const YEARS = [
   {
+    year: 2026,
+    subtitle: "4th Annual",
+    theme: "Lion's Gate · Sound · Fire · Earth Medicine",
+    color: "#C9983F",
+    story: "The fourth gathering was the largest and most transformational yet. Over 1,000 photographs came back from guests in the days that followed — each one a window into something that words barely reach. Ceremonies at the fire, music on the main stage under the midnight sun, sound healing on the water, and a community that showed up fully for one another. We are deeply grateful.",
+    hasSchedule: false,
+  },
+  {
     year: 2025,
     subtitle: "3rd Annual",
     theme: "Sound · Fire · Community",

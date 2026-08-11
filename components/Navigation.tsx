@@ -3,15 +3,13 @@ import { useEffect, useState, useCallback } from "react";
 import { CloseIcon } from "@/components/Icons";
 
 const NAV_LINKS = [
-  { label: "Schedule",       href: "/#schedule" },
-  { label: "Sacred Spaces",  href: "/#sacred-spaces" },
+  { label: "Packages",       href: "/#packages" },
   { label: "Ecstatic Dance", href: "/ecstatic-dance" },
   { label: "Travel",         href: "/travel" },
   { label: "Archive",        href: "/archive" },
 ];
 
 const MOBILE_EXTRA = [
-  { label: "Book Your Session", href: "/#build" },
   { label: "FAQ",               href: "/#faq" },
   { label: "Get Involved",      href: "/#get-involved" },
   { label: "Share Your Story",  href: "/archive#share" },
@@ -50,8 +48,8 @@ export default function Navigation() {
       </ul>
 
       {/* Desktop CTA */}
-      <a href="/#store" className="nav-cta-link" style={{ opacity: scrolled ? 1 : 0, pointerEvents: scrolled ? "auto" : "none", transition: "opacity 0.2s" }}>
-        <button className="nav-cta">Get Tickets</button>
+      <a href="/#packages" className="nav-cta-link" style={{ opacity: scrolled ? 1 : 0, pointerEvents: scrolled ? "auto" : "none", transition: "opacity 0.2s" }}>
+        <button className="nav-cta">Get Passes</button>
       </a>
 
       {/* Hamburger */}
@@ -89,18 +87,8 @@ export default function Navigation() {
               ))}
             </ul>
 
-            {/* Booking shortcuts */}
-            <div style={{ display: "flex", flexDirection: "column", gap: "0.6rem", padding: "0.75rem 1.5rem", borderTop: "1px solid rgba(51,53,51,0.08)" }}>
-              <a href="/book" className="mobile-menu-book-btn primary" onClick={close}>
-                Book Add-Ons →
-              </a>
-              <a href="/aerial" className="mobile-menu-book-btn secondary" onClick={close}>
-                Book a Silk Class
-              </a>
-            </div>
-
-            <a href="/#store" className="mobile-menu-cta" onClick={close}>
-              Get Tickets →
+            <a href="/#packages" className="mobile-menu-cta" onClick={close}>
+              Get Passes →
             </a>
           </div>
         </div>

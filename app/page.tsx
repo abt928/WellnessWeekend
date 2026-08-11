@@ -175,8 +175,131 @@ export default function Home() {
           </div>
         </section>
 
+        {/* ═══ PACKAGES ═══ */}
+        <section id="packages" style={{
+          background: "#090912",
+          padding: "5rem 1.5rem",
+          textAlign: "center",
+          borderTop: "1px solid rgba(255,255,255,0.06)",
+        }}>
+          <div style={{ maxWidth: "860px", margin: "0 auto" }}>
+            <p style={{ fontSize: "0.65rem", letterSpacing: "0.2em", textTransform: "uppercase", color: "var(--gold, #C9983F)", fontWeight: 700, marginBottom: "1rem" }}>
+              2027 Packages · Early Access
+            </p>
+            <h2 style={{ fontFamily: "var(--font-display)", fontSize: "clamp(2rem, 5vw, 3.2rem)", color: "#fff", lineHeight: 1.15, marginBottom: "0.75rem" }}>
+              Choose your weekend.
+            </h2>
+            <p style={{ fontSize: "1rem", color: "rgba(255,255,255,0.45)", lineHeight: 1.75, maxWidth: "480px", margin: "0 auto 3rem" }}>
+              Dates to be announced. Join the list to be first when early access opens.
+            </p>
+
+            {/* Weekend Passes */}
+            <p style={{ fontSize: "0.6rem", letterSpacing: "0.18em", textTransform: "uppercase", color: "rgba(255,255,255,0.3)", fontWeight: 700, marginBottom: "1.25rem" }}>
+              Weekend Passes
+            </p>
+            <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(270px, 1fr))", gap: "1rem", marginBottom: "2.5rem", textAlign: "left" }}>
+
+              {/* Camping Pass */}
+              <div style={{ border: "1px solid rgba(94,138,106,0.35)", borderRadius: 18, padding: "1.75rem", background: "radial-gradient(ellipse at 10% 10%, rgba(94,138,106,0.09) 0%, transparent 60%), rgba(255,255,255,0.02)" }}>
+                <div style={{ fontSize: "1.75rem", marginBottom: "0.75rem" }}>🏕</div>
+                <h3 style={{ fontFamily: "var(--font-display)", fontSize: "1.35rem", color: "#fff", marginBottom: "0.3rem", lineHeight: 1.2 }}>
+                  Camping Weekend Pass
+                </h3>
+                <p style={{ fontSize: "0.72rem", color: "var(--sage, #5E8A6A)", fontWeight: 700, letterSpacing: "0.08em", textTransform: "uppercase", marginBottom: "1.25rem" }}>
+                  Full 3-Day Access · Grounds Camping
+                </p>
+                <ul style={{ listStyle: "none", padding: 0, margin: "0 0 1.75rem", display: "flex", flexDirection: "column", gap: "0.55rem" }}>
+                  <li style={{ fontSize: "0.875rem", color: "rgba(255,255,255,0.6)", display: "flex", gap: "0.5rem" }}><span style={{ color: "var(--sage, #5E8A6A)", flexShrink: 0 }}>✓</span> All workshops &amp; ceremonies</li>
+                  <li style={{ fontSize: "0.875rem", color: "rgba(255,255,255,0.6)", display: "flex", gap: "0.5rem" }}><span style={{ color: "var(--sage, #5E8A6A)", flexShrink: 0 }}>✓</span> Sound healing &amp; meditation</li>
+                  <li style={{ fontSize: "0.875rem", color: "rgba(255,255,255,0.6)", display: "flex", gap: "0.5rem" }}><span style={{ color: "var(--sage, #5E8A6A)", flexShrink: 0 }}>✓</span> Live music &amp; ecstatic dance</li>
+                  <li style={{ fontSize: "0.875rem", color: "rgba(255,255,255,0.6)", display: "flex", gap: "0.5rem" }}><span style={{ color: "var(--sage, #5E8A6A)", flexShrink: 0 }}>✓</span> Campsite on the grounds</li>
+                  <li style={{ fontSize: "0.875rem", color: "rgba(255,255,255,0.6)", display: "flex", gap: "0.5rem" }}><span style={{ color: "var(--sage, #5E8A6A)", flexShrink: 0 }}>✓</span> Community fire circle</li>
+                </ul>
+                <a href="#notify" style={{ display: "block", textAlign: "center", padding: "0.72rem 1.25rem", borderRadius: 30, border: "1px solid rgba(94,138,106,0.5)", color: "var(--sage, #5E8A6A)", fontSize: "0.85rem", fontWeight: 700, textDecoration: "none", letterSpacing: "0.04em" }}>
+                  Notify Me When Booking Opens
+                </a>
+              </div>
+
+              {/* Cabin Pass */}
+              <div style={{ border: "1px solid rgba(201,152,63,0.4)", borderRadius: 18, padding: "1.75rem", background: "radial-gradient(ellipse at 10% 10%, rgba(201,152,63,0.1) 0%, transparent 60%), rgba(255,255,255,0.02)", position: "relative" }}>
+                <div style={{ position: "absolute", top: "1.25rem", right: "1.25rem", fontSize: "0.6rem", fontWeight: 700, letterSpacing: "0.1em", textTransform: "uppercase", color: "var(--gold, #C9983F)", background: "rgba(201,152,63,0.12)", border: "1px solid rgba(201,152,63,0.3)", borderRadius: 20, padding: "0.2rem 0.65rem" }}>
+                  Premium
+                </div>
+                <div style={{ fontSize: "1.75rem", marginBottom: "0.75rem" }}>🏡</div>
+                <h3 style={{ fontFamily: "var(--font-display)", fontSize: "1.35rem", color: "#fff", marginBottom: "0.3rem", lineHeight: 1.2 }}>
+                  Cabin Weekend Pass
+                </h3>
+                <p style={{ fontSize: "0.72rem", color: "var(--gold, #C9983F)", fontWeight: 700, letterSpacing: "0.08em", textTransform: "uppercase", marginBottom: "1.25rem" }}>
+                  Full 3-Day Access · Private Cabin
+                </p>
+                <ul style={{ listStyle: "none", padding: 0, margin: "0 0 1.75rem", display: "flex", flexDirection: "column", gap: "0.55rem" }}>
+                  <li style={{ fontSize: "0.875rem", color: "rgba(255,255,255,0.6)", display: "flex", gap: "0.5rem" }}><span style={{ color: "var(--gold, #C9983F)", flexShrink: 0 }}>✓</span> Everything in Camping Pass</li>
+                  <li style={{ fontSize: "0.875rem", color: "rgba(255,255,255,0.6)", display: "flex", gap: "0.5rem" }}><span style={{ color: "var(--gold, #C9983F)", flexShrink: 0 }}>✓</span> Private cabin accommodation</li>
+                  <li style={{ fontSize: "0.875rem", color: "rgba(255,255,255,0.6)", display: "flex", gap: "0.5rem" }}><span style={{ color: "var(--gold, #C9983F)", flexShrink: 0 }}>✓</span> Priority workshop registration</li>
+                  <li style={{ fontSize: "0.875rem", color: "rgba(255,255,255,0.6)", display: "flex", gap: "0.5rem" }}><span style={{ color: "var(--gold, #C9983F)", flexShrink: 0 }}>✓</span> Dedicated cabin-only spaces</li>
+                  <li style={{ fontSize: "0.875rem", color: "rgba(255,255,255,0.6)", display: "flex", gap: "0.5rem" }}><span style={{ color: "var(--gold, #C9983F)", flexShrink: 0 }}>✓</span> Concierge check-in &amp; setup</li>
+                </ul>
+                <a href="#notify" style={{ display: "block", textAlign: "center", padding: "0.72rem 1.25rem", borderRadius: 30, background: "var(--gold, #C9983F)", color: "#fff", fontSize: "0.85rem", fontWeight: 700, textDecoration: "none", letterSpacing: "0.04em" }}>
+                  Notify Me When Booking Opens
+                </a>
+              </div>
+            </div>
+
+            {/* Experience Bundles */}
+            <p style={{ fontSize: "0.6rem", letterSpacing: "0.18em", textTransform: "uppercase", color: "rgba(255,255,255,0.3)", fontWeight: 700, marginBottom: "1.25rem" }}>
+              Experience Bundles · Add to Any Pass
+            </p>
+            <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(270px, 1fr))", gap: "1rem", textAlign: "left" }}>
+
+              {/* Recovery Bundle */}
+              <div style={{ border: "1px solid rgba(61,184,175,0.3)", borderRadius: 18, padding: "1.75rem", background: "radial-gradient(ellipse at 10% 10%, rgba(61,184,175,0.07) 0%, transparent 60%), rgba(255,255,255,0.02)" }}>
+                <div style={{ fontSize: "1.75rem", marginBottom: "0.75rem" }}>🌿</div>
+                <h3 style={{ fontFamily: "var(--font-display)", fontSize: "1.25rem", color: "#fff", marginBottom: "0.3rem" }}>
+                  Recovery Bundle
+                </h3>
+                <p style={{ fontSize: "0.72rem", color: "rgba(61,184,175,0.85)", fontWeight: 700, letterSpacing: "0.08em", textTransform: "uppercase", marginBottom: "1.25rem" }}>
+                  Sauna · Massage
+                </p>
+                <ul style={{ listStyle: "none", padding: 0, margin: "0 0 1.75rem", display: "flex", flexDirection: "column", gap: "0.55rem" }}>
+                  <li style={{ fontSize: "0.875rem", color: "rgba(255,255,255,0.6)", display: "flex", gap: "0.5rem" }}><span style={{ color: "rgba(61,184,175,0.85)", flexShrink: 0 }}>✓</span> Lakeside sauna session</li>
+                  <li style={{ fontSize: "0.875rem", color: "rgba(255,255,255,0.6)", display: "flex", gap: "0.5rem" }}><span style={{ color: "rgba(61,184,175,0.85)", flexShrink: 0 }}>✓</span> 60-min therapeutic massage</li>
+                  <li style={{ fontSize: "0.875rem", color: "rgba(255,255,255,0.6)", display: "flex", gap: "0.5rem" }}><span style={{ color: "rgba(61,184,175,0.85)", flexShrink: 0 }}>✓</span> Nervous system restoration</li>
+                  <li style={{ fontSize: "0.875rem", color: "rgba(255,255,255,0.6)", display: "flex", gap: "0.5rem" }}><span style={{ color: "rgba(61,184,175,0.85)", flexShrink: 0 }}>✓</span> Reserved 1-on-1 sessions</li>
+                </ul>
+                <a href="#notify" style={{ display: "block", textAlign: "center", padding: "0.72rem 1.25rem", borderRadius: 30, border: "1px solid rgba(61,184,175,0.4)", color: "rgba(61,184,175,0.9)", fontSize: "0.85rem", fontWeight: 700, textDecoration: "none", letterSpacing: "0.04em" }}>
+                  Notify Me When Booking Opens
+                </a>
+              </div>
+
+              {/* Adventure Bundle */}
+              <div style={{ border: "1px solid rgba(155,127,212,0.3)", borderRadius: 18, padding: "1.75rem", background: "radial-gradient(ellipse at 10% 10%, rgba(155,127,212,0.07) 0%, transparent 60%), rgba(255,255,255,0.02)" }}>
+                <div style={{ fontSize: "1.75rem", marginBottom: "0.75rem" }}>🏄</div>
+                <h3 style={{ fontFamily: "var(--font-display)", fontSize: "1.25rem", color: "#fff", marginBottom: "0.3rem" }}>
+                  Adventure Bundle
+                </h3>
+                <p style={{ fontSize: "0.72rem", color: "rgba(155,127,212,0.85)", fontWeight: 700, letterSpacing: "0.08em", textTransform: "uppercase", marginBottom: "1.25rem" }}>
+                  Paddleboard · Nature Immersion
+                </p>
+                <ul style={{ listStyle: "none", padding: 0, margin: "0 0 1.75rem", display: "flex", flexDirection: "column", gap: "0.55rem" }}>
+                  <li style={{ fontSize: "0.875rem", color: "rgba(255,255,255,0.6)", display: "flex", gap: "0.5rem" }}><span style={{ color: "rgba(155,127,212,0.85)", flexShrink: 0 }}>✓</span> Guided paddleboard yoga</li>
+                  <li style={{ fontSize: "0.875rem", color: "rgba(255,255,255,0.6)", display: "flex", gap: "0.5rem" }}><span style={{ color: "rgba(155,127,212,0.85)", flexShrink: 0 }}>✓</span> Nature immersion experience</li>
+                  <li style={{ fontSize: "0.875rem", color: "rgba(255,255,255,0.6)", display: "flex", gap: "0.5rem" }}><span style={{ color: "rgba(155,127,212,0.85)", flexShrink: 0 }}>✓</span> Lake &amp; mountain access</li>
+                  <li style={{ fontSize: "0.875rem", color: "rgba(255,255,255,0.6)", display: "flex", gap: "0.5rem" }}><span style={{ color: "rgba(155,127,212,0.85)", flexShrink: 0 }}>✓</span> Small-group adventure sessions</li>
+                </ul>
+                <a href="#notify" style={{ display: "block", textAlign: "center", padding: "0.72rem 1.25rem", borderRadius: 30, border: "1px solid rgba(155,127,212,0.4)", color: "rgba(155,127,212,0.9)", fontSize: "0.85rem", fontWeight: 700, textDecoration: "none", letterSpacing: "0.04em" }}>
+                  Notify Me When Booking Opens
+                </a>
+              </div>
+            </div>
+
+            <p style={{ fontSize: "0.8rem", color: "rgba(255,255,255,0.22)", marginTop: "2.5rem", lineHeight: 1.6 }}>
+              Pricing and dates announced soon. List members hear first.
+            </p>
+          </div>
+        </section>
+
         {/* ═══ 2027 TEASER ═══ */}
-        <section style={{
+        <section id="notify" style={{
           background: "var(--cream, #f5f0ea)",
           padding: "5rem 1.5rem",
           textAlign: "center",

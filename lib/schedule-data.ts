@@ -92,7 +92,6 @@ export const scheduleDays: ScheduleDay[] = [
         event: "Guided Meditation",
         detail: "Guided bilateral movement for a deeply relaxing, grounding session.",
         element: "earth", location: "Main Stage",
-        hosts: ["dixie"],
       },
       {
         time: "3:00 PM",
@@ -298,6 +297,7 @@ export const scheduleDays: ScheduleDay[] = [
         event: "Cacao Ceremony",
         detail: "Gather at the fire to share ceremonial cacao and open the heart before the night's dance.",
         element: "fire", location: "Bonfire",
+        hosts: ["zwami"],
       },
       {
         time: "8:00 PM",
@@ -438,7 +438,6 @@ export const scheduleDays: ScheduleDay[] = [
         event: "Pendulum Readings & Salt Intention Workshop",
         detail: "An immersive workshop on pendulum divination and the art of creating salt intentions — a sacred pre-ceremony practice before the Tea Lounge.",
         element: "earth", location: "Labyrinth Garden",
-        hosts: ["mystical-moon-dance"],
       },
       {
         time: "3:15 PM",
@@ -461,7 +460,6 @@ export const scheduleDays: ScheduleDay[] = [
         event: "Tea Lounge",
         detail: "Social hour in the lounge — come as you are, sip community tea, connect, and unwind. Readings available.",
         element: "air", location: "Lodge · Upstairs Lounge",
-        hosts: ["mystical-moon-dance"],
       },
       {
         time: "4:30 PM",
@@ -474,9 +472,9 @@ export const scheduleDays: ScheduleDay[] = [
       {
         time: "5:30 PM",
         event: "Closing & Integration Circle",
-        detail: "Led by Avalon Starling — a closing circle to integrate the weekend's medicine, share gratitude, and send you home with a full heart.",
+        detail: "A closing circle to integrate the weekend's medicine, share gratitude, and send you home with a full heart.",
         element: "fire", location: "Main Stage",
-        hosts: ["avalon-starling"],
+        hosts: ["avalon-starling", "zwami"],
       },
       {
         time: "7:00 PM",

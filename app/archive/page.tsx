@@ -3,6 +3,7 @@ import Image from "next/image";
 import Gallery from "@/components/Gallery";
 import ShareStoryForm from "./ShareStoryForm";
 import ScheduleViewer2023 from "./ScheduleViewer2023";
+import ArchiveContent2026 from "./ArchiveContent2026";
 
 export const metadata = {
   title: "Archive | Wellness Weekend",
@@ -125,7 +126,11 @@ export default function ArchivePage() {
                 {y.story}
               </p>
 
-              {y.hasSchedule ? (
+              {y.year === 2026 ? (
+                <div style={{ marginTop: "1.25rem" }}>
+                  <ArchiveContent2026 color={y.color} />
+                </div>
+              ) : y.hasSchedule ? (
                 <div style={{ marginTop: "1.25rem" }}>
                   <ScheduleViewer2023 color={y.color} />
                 </div>

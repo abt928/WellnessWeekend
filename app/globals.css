@@ -6254,3 +6254,125 @@ body {
   color: rgba(255,255,255,0.55);
   margin: 0.4rem 0 0;
 }
+
+/* ── Admin Sidebar Layout ────────────────────────────────────────────── */
+
+.admin-shell {
+  display: flex;
+  min-height: 100vh;
+}
+
+.admin-sidebar {
+  width: 220px;
+  min-width: 220px;
+  background: #12111c;
+  border-right: 1px solid rgba(255,255,255,0.07);
+  display: flex;
+  flex-direction: column;
+  position: fixed;
+  top: 0;
+  left: 0;
+  height: 100vh;
+  overflow-y: auto;
+  z-index: 100;
+}
+
+.admin-main {
+  flex: 1;
+  margin-left: 220px;
+  min-height: 100vh;
+  background: var(--surface-page, #f4f3f0);
+}
+
+.admin-main-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0.65rem 1.5rem;
+  border-bottom: 1px solid var(--line-subtle);
+  background: var(--surface-elevated, #fff);
+  position: sticky;
+  top: 0;
+  z-index: 10;
+}
+
+.admin-main-content {
+  max-width: 1200px;
+}
+
+.admin-sidebar-brand {
+  padding: 1.1rem 1rem;
+  border-bottom: 1px solid rgba(255,255,255,0.07);
+  display: flex;
+  align-items: center;
+  gap: 0.65rem;
+  flex-shrink: 0;
+}
+
+.admin-sidebar-logo {
+  width: 34px;
+  height: 34px;
+  background: #D4AF3C;
+  border-radius: 7px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 800;
+  font-size: 0.7rem;
+  color: #1a1a18;
+  flex-shrink: 0;
+  letter-spacing: 0.04em;
+}
+
+.admin-sidebar-title {
+  font-size: 0.76rem;
+  font-weight: 700;
+  color: #ffffff;
+  line-height: 1.2;
+}
+
+.admin-sidebar-role {
+  font-size: 0.62rem;
+  color: rgba(255,255,255,0.32);
+  text-transform: capitalize;
+  margin-top: 0.1rem;
+}
+
+.admin-sidebar-group {
+  font-size: 0.58rem;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: rgba(255,255,255,0.22);
+  padding: 1.1rem 1rem 0.3rem;
+}
+
+.admin-sidebar-item {
+  display: block;
+  width: 100%;
+  text-align: left;
+  padding: 0.5rem 1rem;
+  font-size: 0.81rem;
+  color: rgba(255,255,255,0.52);
+  background: none;
+  border: none;
+  cursor: pointer;
+  transition: color 0.12s, background 0.12s;
+  line-height: 1.35;
+}
+
+.admin-sidebar-item:hover {
+  color: rgba(255,255,255,0.88);
+  background: rgba(255,255,255,0.05);
+}
+
+.admin-sidebar-item.active {
+  color: #D4AF3C;
+  background: rgba(212,175,60,0.1);
+  font-weight: 600;
+}
+
+@media (max-width: 700px) {
+  .admin-sidebar { display: none; }
+  .admin-main    { margin-left: 0; }
+}

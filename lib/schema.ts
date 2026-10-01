@@ -240,3 +240,14 @@ export const staffRegistrations = pgTable("staff_registrations", {
   ticketCode: varchar("ticket_code", { length: 20 }).notNull().unique(),
   createdAt: timestamp("created_at", { withTimezone: true }).defaultNow().notNull(),
 });
+
+export const bedAllocations = pgTable("bed_allocations", {
+  id: serial("id").primaryKey(),
+  category: varchar("category", { length: 20 }).notNull(), // staff | artist | sponsor | package
+  name: varchar("name", { length: 255 }).notNull(),
+  email: varchar("email", { length: 255 }),
+  beds: integer("beds").notNull().default(1),
+  notes: text("notes"),
+  year: integer("year").notNull().default(2027),
+  createdAt: timestamp("created_at", { withTimezone: true }).defaultNow().notNull(),
+});

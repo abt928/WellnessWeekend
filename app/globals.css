@@ -3728,47 +3728,69 @@ textarea:focus-visible {
 .mobile-menu {
   position: absolute; right: 0; top: 0; bottom: 0;
   width: 300px; max-width: 85vw;
-  background: linear-gradient(180deg, var(--forest) 0%, var(--psyche-indigo) 100%);
+  background: #FEFCF8;
   display: flex; flex-direction: column;
   animation: slideInRight 0.35s cubic-bezier(0.16, 1, 0.3, 1);
-  box-shadow: -10px 0 40px rgba(0,0,0,0.3);
+  box-shadow: -10px 0 40px rgba(0,0,0,0.18);
 }
 .mobile-menu-header {
   display: flex; justify-content: space-between; align-items: center;
   padding: 1.25rem 1.5rem;
-  border-bottom: 1px solid rgba(255,255,255,0.1);
+  border-bottom: 1px solid rgba(51,53,51,0.1);
 }
 .mobile-menu-header .nav-logo {
-  font-size: 0.9rem; letter-spacing: 0.12em;
+  font-size: 0.9rem; letter-spacing: 0.12em; color: #1a1a18;
 }
 .mobile-menu-close {
   background: none; border: none;
-  color: rgba(255,255,255,0.6); font-size: 1.2rem;
+  color: rgba(51,53,51,0.5); font-size: 1.2rem;
   cursor: pointer; padding: 0.25rem;
   transition: color 0.2s;
 }
-.mobile-menu-close:hover { color: white; }
+.mobile-menu-close:hover { color: #1a1a18; }
 
 .mobile-menu-links {
   list-style: none; padding: 1rem 0; flex: 1;
+  overflow-y: auto;
 }
 .mobile-menu-links li {
-  border-bottom: 1px solid rgba(255,255,255,0.06);
+  border-bottom: 1px solid rgba(51,53,51,0.07);
 }
 .mobile-menu-links a {
   display: block; padding: 1rem 1.75rem;
-  color: rgba(255,255,255,0.8); text-decoration: none;
+  color: #1a1a18; text-decoration: none;
   font-size: 1rem; letter-spacing: 0.08em; text-transform: uppercase;
   transition: all 0.2s;
 }
 .mobile-menu-links a:hover {
-  color: var(--gold-light);
-  background: rgba(255,255,255,0.04);
+  color: #5E8A6A;
+  background: rgba(94,138,106,0.06);
   padding-left: 2rem;
 }
 
+/* Booking CTAs inside mobile menu */
+.mobile-menu-booking-ctас {
+  display: flex; flex-direction: column; gap: 0.6rem;
+  padding: 0.75rem 1.5rem;
+  border-top: 1px solid rgba(51,53,51,0.08);
+}
+.mobile-menu-book-btn {
+  display: block; padding: 0.75rem 1.25rem; text-align: center;
+  border-radius: 10px; font-size: 0.85rem; letter-spacing: 0.06em;
+  text-transform: uppercase; font-weight: 700; text-decoration: none;
+  transition: transform 0.2s, box-shadow 0.2s;
+}
+.mobile-menu-book-btn:hover { transform: translateY(-1px); box-shadow: 0 4px 14px rgba(0,0,0,0.12); }
+.mobile-menu-book-btn.primary {
+  background: #5E8A6A; color: #fff;
+}
+.mobile-menu-book-btn.secondary {
+  background: transparent; color: #5E8A6A;
+  border: 1.5px solid rgba(94,138,106,0.5);
+}
+
 .mobile-menu-cta {
-  display: block; margin: 1rem 1.5rem 2rem;
+  display: block; margin: 0.75rem 1.5rem 1.75rem;
   padding: 0.85rem 1.5rem; text-align: center;
   background: linear-gradient(135deg, var(--aurora), var(--gold));
   color: white; text-decoration: none; border-radius: 30px;

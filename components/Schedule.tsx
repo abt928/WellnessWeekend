@@ -214,7 +214,7 @@ export default function Schedule() {
             </div>
             <div className="book-ahead-list">
               {limited.map((e, i) => (
-                <a key={i} href="#store" className="book-ahead-item">
+                <a key={i} href={e.link || "/book"} className="book-ahead-item">
                   <span className="book-ahead-time">{e.time}</span>
                   <span className="book-ahead-name">{e.event}</span>
                   <span className="book-ahead-cta">Reserve →</span>

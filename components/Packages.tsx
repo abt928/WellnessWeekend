@@ -21,6 +21,13 @@ function formatPrice(cents: number) {
 
 const PACKAGE_ICONS = ["✦", "◈", "⬡"];
 
+// Packages whose names match these terms are sold out and cannot be added to cart
+const SOLD_OUT_TERMS = ["cabin", "private"];
+function isSoldOut(name: string) {
+  const lower = name.toLowerCase();
+  return SOLD_OUT_TERMS.some((t) => lower.includes(t));
+}
+
 export default function Packages() {
   const [packages, setPackages] = useState<Package[]>([]);
   const [loading, setLoading] = useState(true);
@@ -80,15 +87,31 @@ export default function Packages() {
           {packages.map((pkg, i) => {
             const icon = PACKAGE_ICONS[i % PACKAGE_ICONS.length];
             const primaryVariation = pkg.variations[0];
+            const soldOut = isSoldOut(pkg.name);
             return (
               <Reveal key={pkg.id}>
-                <div className="package-card">
+                <div className="package-card" style={soldOut ? { opacity: 0.7 } : undefined}>
                   <div className="package-card-glow" />
                   <div className="package-icon">{icon}</div>
+                  {soldOut && (
+                    <span style={{
+                      display: "inline-block", marginBottom: "0.5rem",
+                      fontSize: "0.65rem", fontWeight: 700, letterSpacing: "0.12em",
+                      textTransform: "uppercase", color: "#B84A2B",
+                      background: "rgba(184,74,43,0.1)", border: "1px solid rgba(184,74,43,0.25)",
+                      borderRadius: "999px", padding: "0.2rem 0.65rem",
+                    }}>
+                      Sold Out
+                    </span>
+                  )}
                   <h3 className="package-name">{pkg.name}</h3>
                   <p className="package-desc">{pkg.description}</p>
                   <div className="package-footer">
-                    {pkg.variations.length === 1 ? (
+                    {soldOut ? (
+                      <button className="package-btn" disabled style={{ opacity: 0.4, cursor: "not-allowed" }}>
+                        Sold Out
+                      </button>
+                    ) : pkg.variations.length === 1 ? (
                       <>
                         <span className="package-price">{formatPrice(primaryVariation.price)}</span>
                         <button

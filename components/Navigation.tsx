@@ -3,15 +3,13 @@ import { useEffect, useState, useCallback } from "react";
 import { CloseIcon } from "@/components/Icons";
 
 const NAV_LINKS = [
-  { label: "Schedule",       href: "/#schedule" },
-  { label: "Sacred Spaces",  href: "/#sacred-spaces" },
+  { label: "Packages",       href: "/#packages" },
   { label: "Ecstatic Dance", href: "/ecstatic-dance" },
   { label: "Travel",         href: "/travel" },
   { label: "Archive",        href: "/archive" },
 ];
 
 const MOBILE_EXTRA = [
-  { label: "Book Your Session", href: "/#build" },
   { label: "FAQ",               href: "/#faq" },
   { label: "Get Involved",      href: "/#get-involved" },
   { label: "Share Your Story",  href: "/archive#share" },
@@ -50,8 +48,8 @@ export default function Navigation() {
       </ul>
 
       {/* Desktop CTA */}
-      <a href="/#store" className="nav-cta-link" style={{ opacity: scrolled ? 1 : 0, pointerEvents: scrolled ? "auto" : "none", transition: "opacity 0.2s" }}>
-        <button className="nav-cta">Get Tickets</button>
+      <a href="/#packages" className="nav-cta-link" style={{ opacity: scrolled ? 1 : 0, pointerEvents: scrolled ? "auto" : "none", transition: "opacity 0.2s" }}>
+        <button className="nav-cta">Get Passes</button>
       </a>
 
       {/* Hamburger */}
@@ -81,7 +79,7 @@ export default function Navigation() {
               {NAV_LINKS.map((l) => (
                 <li key={l.label}><a href={l.href} onClick={close}>{l.label}</a></li>
               ))}
-              <li style={{ borderTop: "1px solid rgba(255,255,255,0.1)", paddingTop: "0.5rem", marginTop: "0.25rem" }} />
+              <li style={{ borderTop: "1px solid rgba(51,53,51,0.08)", paddingTop: "0.5rem", marginTop: "0.25rem" }} />
               {MOBILE_EXTRA.map((l) => (
                 <li key={l.label} style={{ opacity: 0.65 }}>
                   <a href={l.href} onClick={close} style={{ fontSize: "0.9rem" }}>{l.label}</a>
@@ -89,8 +87,8 @@ export default function Navigation() {
               ))}
             </ul>
 
-            <a href="/#store" className="mobile-menu-cta" onClick={close}>
-              Get Tickets →
+            <a href="/#packages" className="mobile-menu-cta" onClick={close}>
+              Get Passes →
             </a>
           </div>
         </div>

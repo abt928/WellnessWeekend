@@ -3,6 +3,7 @@ import Image from "next/image";
 import Gallery from "@/components/Gallery";
 import ShareStoryForm from "./ShareStoryForm";
 import ScheduleViewer2023 from "./ScheduleViewer2023";
+import ArchiveContent2026 from "./ArchiveContent2026";
 
 export const metadata = {
   title: "Archive | Wellness Weekend",
@@ -10,6 +11,14 @@ export const metadata = {
 };
 
 const YEARS = [
+  {
+    year: 2026,
+    subtitle: "4th Annual",
+    theme: "Lion's Gate · Sound · Fire · Earth Medicine",
+    color: "#C9983F",
+    story: "The fourth gathering was the largest and most transformational yet. Over 1,000 photographs came back from guests in the days that followed — each one a window into something that words barely reach. Ceremonies at the fire, music on the main stage under the midnight sun, sound healing on the water, and a community that showed up fully for one another. We are deeply grateful.",
+    hasSchedule: false,
+  },
   {
     year: 2025,
     subtitle: "3rd Annual",
@@ -117,7 +126,11 @@ export default function ArchivePage() {
                 {y.story}
               </p>
 
-              {y.hasSchedule ? (
+              {y.year === 2026 ? (
+                <div style={{ marginTop: "1.25rem" }}>
+                  <ArchiveContent2026 color={y.color} />
+                </div>
+              ) : y.hasSchedule ? (
                 <div style={{ marginTop: "1.25rem" }}>
                   <ScheduleViewer2023 color={y.color} />
                 </div>

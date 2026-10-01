@@ -5,7 +5,8 @@ import { sql } from "drizzle-orm";
 
 export const dynamic = "force-dynamic";
 
-const TOTAL_BEDS = 40;
+// Current warrior bed pool — update manually when inventory changes
+const TOTAL_BEDS = 20;
 
 export async function GET() {
   try {

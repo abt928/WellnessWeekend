@@ -1,7 +1,7 @@
 "use client";
 import { useState, useEffect, useRef } from "react";
 import Link from "next/link";
-import { SHIFTS, calcReward, type Shift, type RewardResult } from "@/lib/volunteer-shifts";
+import { SHIFTS, calcReward, VOLUNTEER_LODGING_FULL, type Shift, type RewardResult } from "@/lib/volunteer-shifts";
 
 const C = {
   bg: "#F7F3EC",
@@ -158,17 +158,19 @@ export default function VolunteerPage() {
           {/* Reward tiers */}
           <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit,minmax(155px,1fr))", gap: "0.75rem", marginBottom: "2.75rem" }}>
             {[
-              { key: "day_pass",     label: "Day Pass",       hours: "3+ hrs",  desc: "For the day you volunteer" },
-              { key: "weekend_pass", label: "Weekend Pass",   hours: "8+ hrs",  desc: "Full 3-day pass" },
-              { key: "lodging",      label: "Comped Lodging", hours: "12+ hrs", desc: "4+ hrs on 3 of 4 days · Thu–Sun" },
+              { key: "day_pass",     label: "Day Pass",       hours: "3+ hrs",  desc: "For the day you volunteer",           full: false },
+              { key: "weekend_pass", label: "Weekend Pass",   hours: "8+ hrs",  desc: "Full 3-day pass",                     full: false },
+              { key: "lodging",      label: "Comped Lodging", hours: "12+ hrs", desc: "4+ hrs on 3 of 4 days · Thu–Sun",    full: VOLUNTEER_LODGING_FULL },
             ].map((tier) => {
               const meta = REWARD_META[tier.key];
               return (
-                <div key={tier.key} style={{ background: C.card, border: `1px solid ${C.border}`, borderRadius: "12px", padding: "1rem", textAlign: "center" }}>
-                  <div style={{ fontSize: "1.4rem", marginBottom: "0.3rem" }}>{meta.emoji}</div>
-                  <p style={{ fontSize: "0.78rem", fontWeight: 700, color: meta.color, marginBottom: "0.2rem" }}>{tier.label}</p>
+                <div key={tier.key} style={{ background: C.card, border: `1px solid ${tier.full ? C.error + "44" : C.border}`, borderRadius: "12px", padding: "1rem", textAlign: "center", opacity: tier.full ? 0.65 : 1 }}>
+                  <div style={{ fontSize: "1.4rem", marginBottom: "0.3rem" }}>{tier.full ? "🔒" : meta.emoji}</div>
+                  <p style={{ fontSize: "0.78rem", fontWeight: 700, color: tier.full ? C.error : meta.color, marginBottom: "0.2rem" }}>
+                    {tier.label}{tier.full ? " · Full" : ""}
+                  </p>
                   <p style={{ fontSize: "0.75rem", color: C.charcoal, fontWeight: 600, marginBottom: "0.15rem" }}>{tier.hours}</p>
-                  <p style={{ fontSize: "0.72rem", color: C.muted }}>{tier.desc}</p>
+                  <p style={{ fontSize: "0.72rem", color: C.muted }}>{tier.full ? "All cabin beds allocated" : tier.desc}</p>
                 </div>
               );
             })}

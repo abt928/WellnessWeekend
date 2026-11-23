@@ -1,5 +1,6 @@
 import Navigation from "@/components/Navigation";
 import NewsletterSignup2027 from "@/components/NewsletterSignup2027";
+import BlackFridayBanner from "@/components/BlackFridayBanner";
 import { MapPinIcon } from "@/components/Icons";
 
 export const metadata = {
@@ -37,6 +38,7 @@ export default function Home() {
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
       />
+      <BlackFridayBanner />
       <Navigation />
 
       <main>

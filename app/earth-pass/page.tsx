@@ -76,17 +76,26 @@ export default function EarthPassPage() {
           {/* Header */}
           <div style={{ textAlign: "center", marginBottom: "2.5rem" }}>
             <p style={{ fontSize: "0.68rem", letterSpacing: "0.14em", textTransform: "uppercase", color: C.gold, marginBottom: "0.6rem", fontWeight: 600 }}>
-              ⚡ Flash Deal · Limited Availability
+              🖤 Black Friday · Limited · 10 Spots
             </p>
             <h1 style={{ fontFamily: "var(--font-display)", fontSize: "clamp(2.2rem, 6vw, 3.4rem)", fontWeight: 700, lineHeight: 1.1, marginBottom: "0.75rem", color: C.charcoal }}>
               Earth Pass
             </h1>
             <div style={{ display: "inline-flex", alignItems: "baseline", gap: "0.4rem", marginBottom: "1rem" }}>
-              <span style={{ fontFamily: "var(--font-display)", fontSize: "clamp(2rem, 5vw, 3rem)", fontWeight: 800, color: C.sage }}>$299</span>
-              <span style={{ fontSize: "0.85rem", color: C.muted }}>· full 3-day weekend pass</span>
+              <span style={{ fontFamily: "var(--font-display)", fontSize: "clamp(2rem, 5vw, 3rem)", fontWeight: 800, color: C.sage }}>$177</span>
+              <span style={{ fontSize: "0.85rem", color: C.muted }}>Black Friday price · full 3-day pass</span>
             </div>
             <p style={{ fontSize: "1rem", lineHeight: 1.75, color: C.muted, maxWidth: "480px", margin: "0 auto" }}>
-              Claim your spot now — we&apos;ll follow up within minutes with a payment link. Only 10 passes available at this price.
+              Claim your spot now — we&apos;ll follow up within minutes with a payment link. Only 10 Earth Passes at this Black Friday price.
+            </p>
+          </div>
+
+          {/* Refund eligible note */}
+          <div style={{ background: "rgba(201,152,63,0.07)", border: `1px solid ${C.goldBorder}`, borderRadius: "10px", padding: "0.9rem 1.1rem", marginBottom: "1.5rem", display: "flex", gap: "0.6rem" }}>
+            <span style={{ color: C.gold, flexShrink: 0 }}>↩</span>
+            <p style={{ fontSize: "0.78rem", color: C.muted, lineHeight: 1.6, margin: 0 }}>
+              <strong style={{ color: C.gold }}>Refund eligible</strong> — purchased before 2027 dates &amp; schedule are announced.{" "}
+              <Link href="/refunds" style={{ color: C.gold, textDecoration: "underline" }}>See policy →</Link>
             </p>
           </div>
 
@@ -97,7 +106,7 @@ export default function EarthPassPage() {
             </p>
             <ul style={{ listStyle: "none", padding: 0, margin: 0, display: "flex", flexDirection: "column", gap: "0.6rem" }}>
               {[
-                "Full 3-day weekend pass — August 7, 8 & 9",
+                "Full 3-day weekend pass — 2027",
                 "All main-stage ceremonies, music & healing arts",
                 "On-site camping at Warrior Lodge",
                 "Access to morning movement, yoga & breathwork",

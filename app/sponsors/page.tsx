@@ -181,7 +181,7 @@ export default function SponsorsPage() {
                 fontWeight: 600,
               }}
             >
-              August 7–9, 2026 · Sutton, Alaska
+              5th Annual · 2027 · Sutton, Alaska
             </p>
             <h1
               style={{
@@ -204,11 +204,33 @@ export default function SponsorsPage() {
                 margin: "0 auto 1rem",
               }}
             >
-              For 4+ years we&apos;ve brought a team of master healers to Alaska for a
-              premier healing arts festival experience. We intentionally limit capacity
-              to curate a safe, family-friendly environment — festival vibes, intimate
-              gathering. Three tiers. Real impact.
+              For 5 years we&apos;ve brought a team of master healers to Alaska for a
+              premier healing arts festival experience. 2027 is our biggest year yet —
+              scaling to 500 attendees across 3 transformational days. Three tiers. Real impact.
             </p>
+            <div style={{ marginBottom: "1.5rem" }}>
+              <a
+                href="/sponsors/deck"
+                target="_blank"
+                rel="noopener noreferrer"
+                style={{
+                  display: "inline-flex",
+                  alignItems: "center",
+                  gap: "0.5rem",
+                  padding: "0.6rem 1.4rem",
+                  background: "transparent",
+                  border: `1.5px solid ${C.goldBorder}`,
+                  borderRadius: "30px",
+                  color: C.gold,
+                  fontWeight: 700,
+                  fontSize: "0.85rem",
+                  textDecoration: "none",
+                  letterSpacing: "0.03em",
+                }}
+              >
+                ⬇ Download Sponsor Deck (PDF)
+              </a>
+            </div>
             <div
               style={{
                 display: "inline-flex",
@@ -219,8 +241,8 @@ export default function SponsorsPage() {
               }}
             >
               {[
-                ["4+", "Years Running"],
-                ["150+", "Attendees"],
+                ["5th", "Annual"],
+                ["500", "2027 Capacity"],
                 ["3", "Days"],
                 ["25+", "Practitioners / yr"],
               ].map(([num, label]) => (

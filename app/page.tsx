@@ -1,5 +1,6 @@
 import Navigation from "@/components/Navigation";
 import NewsletterSignup2027 from "@/components/NewsletterSignup2027";
+import BlackFridayBanner from "@/components/BlackFridayBanner";
 import { MapPinIcon } from "@/components/Icons";
 
 export const metadata = {
@@ -37,6 +38,7 @@ export default function Home() {
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
       />
+      <BlackFridayBanner />
       <Navigation />
 
       <main>
@@ -189,9 +191,40 @@ export default function Home() {
             <h2 style={{ fontFamily: "var(--font-display)", fontSize: "clamp(2rem, 5vw, 3.2rem)", color: "#fff", lineHeight: 1.15, marginBottom: "0.75rem" }}>
               Choose your weekend.
             </h2>
-            <p style={{ fontSize: "1rem", color: "rgba(255,255,255,0.45)", lineHeight: 1.75, maxWidth: "480px", margin: "0 auto 3rem" }}>
+            <p style={{ fontSize: "1rem", color: "rgba(255,255,255,0.45)", lineHeight: 1.75, maxWidth: "480px", margin: "0 auto 2rem" }}>
               Dates to be announced. Join the list to be first when early access opens.
             </p>
+
+            {/* Black Friday Live */}
+            <div style={{ background: "linear-gradient(135deg, rgba(26,10,0,0.9) 0%, rgba(45,18,0,0.9) 50%, rgba(26,10,0,0.9) 100%)", border: "1px solid rgba(201,152,63,0.4)", borderRadius: 18, padding: "1.75rem", marginBottom: "2.5rem", textAlign: "left" }}>
+              <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", flexWrap: "wrap", gap: "0.75rem", marginBottom: "1.25rem" }}>
+                <div>
+                  <p style={{ fontSize: "0.6rem", letterSpacing: "0.18em", textTransform: "uppercase", color: "rgba(201,152,63,0.9)", fontWeight: 700, marginBottom: "0.35rem" }}>
+                    🖤 Black Friday 2027 · Live Now
+                  </p>
+                  <p style={{ fontSize: "0.9rem", color: "rgba(255,255,255,0.75)", lineHeight: 1.5 }}>
+                    Limited spots at special pricing. <strong style={{ color: "rgba(255,255,255,0.9)" }}>Refund eligible</strong> — dates not yet announced.
+                  </p>
+                </div>
+              </div>
+              <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(200px, 1fr))", gap: "0.75rem" }}>
+                <a href="/weekend-pass" style={{ display: "block", background: "rgba(94,138,106,0.12)", border: "1px solid rgba(94,138,106,0.4)", borderRadius: 12, padding: "1.1rem 1.25rem", textDecoration: "none" }}>
+                  <p style={{ fontSize: "0.62rem", letterSpacing: "0.1em", textTransform: "uppercase", color: "rgba(94,138,106,0.9)", fontWeight: 700, marginBottom: "0.3rem" }}>Weekend Pass</p>
+                  <p style={{ fontFamily: "var(--font-display)", fontSize: "1.6rem", fontWeight: 800, color: "#fff", marginBottom: "0.2rem", lineHeight: 1 }}>$77</p>
+                  <p style={{ fontSize: "0.78rem", color: "rgba(255,255,255,0.45)" }}>25 spots · 3-day pass →</p>
+                </a>
+                <a href="/earth-pass" style={{ display: "block", background: "rgba(201,152,63,0.1)", border: "1px solid rgba(201,152,63,0.4)", borderRadius: 12, padding: "1.1rem 1.25rem", textDecoration: "none" }}>
+                  <p style={{ fontSize: "0.62rem", letterSpacing: "0.1em", textTransform: "uppercase", color: "rgba(201,152,63,0.9)", fontWeight: 700, marginBottom: "0.3rem" }}>Earth Pass</p>
+                  <p style={{ fontFamily: "var(--font-display)", fontSize: "1.6rem", fontWeight: 800, color: "#fff", marginBottom: "0.2rem", lineHeight: 1 }}>$177</p>
+                  <p style={{ fontSize: "0.78rem", color: "rgba(255,255,255,0.45)" }}>10 spots · full access →</p>
+                </a>
+                <a href="/deposit" style={{ display: "block", background: "rgba(155,127,212,0.08)", border: "1px solid rgba(155,127,212,0.3)", borderRadius: 12, padding: "1.1rem 1.25rem", textDecoration: "none" }}>
+                  <p style={{ fontSize: "0.62rem", letterSpacing: "0.1em", textTransform: "uppercase", color: "rgba(155,127,212,0.9)", fontWeight: 700, marginBottom: "0.3rem" }}>Hold a Package</p>
+                  <p style={{ fontFamily: "var(--font-display)", fontSize: "1.6rem", fontWeight: 800, color: "#fff", marginBottom: "0.2rem", lineHeight: 1 }}>$250</p>
+                  <p style={{ fontSize: "0.78rem", color: "rgba(255,255,255,0.45)" }}>Deposit · Sanctuary or Recovery →</p>
+                </a>
+              </div>
+            </div>
 
             {/* Weekend Passes */}
             <p style={{ fontSize: "0.6rem", letterSpacing: "0.18em", textTransform: "uppercase", color: "rgba(255,255,255,0.3)", fontWeight: 700, marginBottom: "1.25rem" }}>

@@ -44,6 +44,25 @@ export default function RefundPolicy() {
                 Contact us to arrange a transfer prior to the event.
               </p>
 
+              <h3>Promotional Purchase Exceptions</h3>
+              <p>
+                Certain promotional ticket purchases are eligible for a full refund. The following promotions qualify:
+              </p>
+              <ul>
+                <li>
+                  <strong>Black Friday 2027</strong> — Weekend Passes ($77), Earth Passes ($177), and package
+                  deposits ($250) purchased during the Black Friday 2027 promotional period (November 27–30, 2027)
+                  are <strong>refund eligible</strong> because festival dates and the program schedule have not yet
+                  been announced at the time of purchase. Refund requests for these purchases will be honored in full
+                  upon request until 30 days after the official 2027 dates are announced.
+                </li>
+              </ul>
+              <p>
+                To request a refund for an eligible promotional purchase, contact us at{" "}
+                <a href="mailto:support@thesoundspace.us">support@thesoundspace.us</a> with your name, email,
+                and order details.
+              </p>
+
               <h3>Event Cancellation</h3>
               <p>
                 In the unlikely event that Wellness Weekend is cancelled by the

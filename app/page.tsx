@@ -226,17 +226,17 @@ export default function Home() {
               </div>
             </div>
 
-            {/* Weekend Passes */}
+            {/* Passes with accommodation */}
             <p style={{ fontSize: "0.6rem", letterSpacing: "0.18em", textTransform: "uppercase", color: "rgba(255,255,255,0.3)", fontWeight: 700, marginBottom: "1.25rem" }}>
-              Weekend Passes
+              Weekend Passes · $250 Deposit
             </p>
             <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(270px, 1fr))", gap: "1rem", marginBottom: "2.5rem", textAlign: "left" }}>
 
-              {/* Camping Pass */}
+              {/* Earth Pass / Camping */}
               <div style={{ border: "1px solid rgba(94,138,106,0.35)", borderRadius: 18, padding: "1.75rem", background: "radial-gradient(ellipse at 10% 10%, rgba(94,138,106,0.09) 0%, transparent 60%), rgba(255,255,255,0.02)" }}>
                 <div style={{ fontSize: "1.75rem", marginBottom: "0.75rem" }}>🏕</div>
                 <h3 style={{ fontFamily: "var(--font-display)", fontSize: "1.35rem", color: "#fff", marginBottom: "0.3rem", lineHeight: 1.2 }}>
-                  Camping Weekend Pass
+                  Earth Pass
                 </h3>
                 <p style={{ fontSize: "0.72rem", color: "var(--sage, #5E8A6A)", fontWeight: 700, letterSpacing: "0.08em", textTransform: "uppercase", marginBottom: "1.25rem" }}>
                   Full 3-Day Access · Grounds Camping
@@ -248,85 +248,120 @@ export default function Home() {
                   <li style={{ fontSize: "0.875rem", color: "rgba(255,255,255,0.6)", display: "flex", gap: "0.5rem" }}><span style={{ color: "var(--sage, #5E8A6A)", flexShrink: 0 }}>✓</span> Campsite on the grounds</li>
                   <li style={{ fontSize: "0.875rem", color: "rgba(255,255,255,0.6)", display: "flex", gap: "0.5rem" }}><span style={{ color: "var(--sage, #5E8A6A)", flexShrink: 0 }}>✓</span> Community fire circle</li>
                 </ul>
-                <a href="/deposit?pkg=camping" style={{ display: "block", textAlign: "center", padding: "0.72rem 1.25rem", borderRadius: 30, border: "1px solid rgba(94,138,106,0.5)", color: "var(--sage, #5E8A6A)", fontSize: "0.85rem", fontWeight: 700, textDecoration: "none", letterSpacing: "0.04em" }}>
+                <a href="/earth-pass" style={{ display: "block", textAlign: "center", padding: "0.72rem 1.25rem", borderRadius: 30, border: "1px solid rgba(94,138,106,0.5)", color: "var(--sage, #5E8A6A)", fontSize: "0.85rem", fontWeight: 700, textDecoration: "none", letterSpacing: "0.04em" }}>
                   Reserve with $250 Deposit →
                 </a>
               </div>
 
-              {/* Cabin Pass */}
-              <div style={{ border: "1px solid rgba(201,152,63,0.4)", borderRadius: 18, padding: "1.75rem", background: "radial-gradient(ellipse at 10% 10%, rgba(201,152,63,0.1) 0%, transparent 60%), rgba(255,255,255,0.02)", position: "relative" }}>
-                <div style={{ position: "absolute", top: "1.25rem", right: "1.25rem", fontSize: "0.6rem", fontWeight: 700, letterSpacing: "0.1em", textTransform: "uppercase", color: "var(--gold, #C9983F)", background: "rgba(201,152,63,0.12)", border: "1px solid rgba(201,152,63,0.3)", borderRadius: 20, padding: "0.2rem 0.65rem" }}>
-                  Premium
-                </div>
-                <div style={{ fontSize: "1.75rem", marginBottom: "0.75rem" }}>🏡</div>
+              {/* Sanctuary Pass */}
+              <div style={{ border: "1px solid rgba(155,127,212,0.35)", borderRadius: 18, padding: "1.75rem", background: "radial-gradient(ellipse at 10% 10%, rgba(155,127,212,0.09) 0%, transparent 60%), rgba(255,255,255,0.02)" }}>
+                <div style={{ fontSize: "1.75rem", marginBottom: "0.75rem" }}>🌙</div>
                 <h3 style={{ fontFamily: "var(--font-display)", fontSize: "1.35rem", color: "#fff", marginBottom: "0.3rem", lineHeight: 1.2 }}>
-                  Cabin Weekend Pass
+                  Sanctuary Pass
                 </h3>
-                <p style={{ fontSize: "0.72rem", color: "var(--gold, #C9983F)", fontWeight: 700, letterSpacing: "0.08em", textTransform: "uppercase", marginBottom: "1.25rem" }}>
-                  Full 3-Day Access · Private Cabin
+                <p style={{ fontSize: "0.72rem", color: "rgba(155,127,212,0.85)", fontWeight: 700, letterSpacing: "0.08em", textTransform: "uppercase", marginBottom: "1.25rem" }}>
+                  Cabin Bed · 2 Nights · Shared Cabin
                 </p>
                 <ul style={{ listStyle: "none", padding: 0, margin: "0 0 1.75rem", display: "flex", flexDirection: "column", gap: "0.55rem" }}>
-                  <li style={{ fontSize: "0.875rem", color: "rgba(255,255,255,0.6)", display: "flex", gap: "0.5rem" }}><span style={{ color: "var(--gold, #C9983F)", flexShrink: 0 }}>✓</span> Everything in Camping Pass</li>
-                  <li style={{ fontSize: "0.875rem", color: "rgba(255,255,255,0.6)", display: "flex", gap: "0.5rem" }}><span style={{ color: "var(--gold, #C9983F)", flexShrink: 0 }}>✓</span> Private cabin accommodation</li>
-                  <li style={{ fontSize: "0.875rem", color: "rgba(255,255,255,0.6)", display: "flex", gap: "0.5rem" }}><span style={{ color: "var(--gold, #C9983F)", flexShrink: 0 }}>✓</span> Priority workshop registration</li>
-                  <li style={{ fontSize: "0.875rem", color: "rgba(255,255,255,0.6)", display: "flex", gap: "0.5rem" }}><span style={{ color: "var(--gold, #C9983F)", flexShrink: 0 }}>✓</span> Dedicated cabin-only spaces</li>
-                  <li style={{ fontSize: "0.875rem", color: "rgba(255,255,255,0.6)", display: "flex", gap: "0.5rem" }}><span style={{ color: "var(--gold, #C9983F)", flexShrink: 0 }}>✓</span> Concierge check-in &amp; setup</li>
+                  <li style={{ fontSize: "0.875rem", color: "rgba(255,255,255,0.6)", display: "flex", gap: "0.5rem" }}><span style={{ color: "rgba(155,127,212,0.85)", flexShrink: 0 }}>✓</span> Cabin bed, 2 nights — shared (5–6 adults)</li>
+                  <li style={{ fontSize: "0.875rem", color: "rgba(255,255,255,0.6)", display: "flex", gap: "0.5rem" }}><span style={{ color: "rgba(155,127,212,0.85)", flexShrink: 0 }}>✓</span> Full 3-day weekend access</li>
+                  <li style={{ fontSize: "0.875rem", color: "rgba(255,255,255,0.6)", display: "flex", gap: "0.5rem" }}><span style={{ color: "rgba(155,127,212,0.85)", flexShrink: 0 }}>✓</span> All workshops, ceremonies &amp; healing arts</li>
+                  <li style={{ fontSize: "0.875rem", color: "rgba(255,255,255,0.6)", display: "flex", gap: "0.5rem" }}><span style={{ color: "rgba(155,127,212,0.85)", flexShrink: 0 }}>✓</span> Morning movement &amp; breathwork</li>
+                  <li style={{ fontSize: "0.875rem", color: "rgba(255,255,255,0.6)", display: "flex", gap: "0.5rem" }}><span style={{ color: "rgba(155,127,212,0.85)", flexShrink: 0 }}>✓</span> Community fire circle</li>
                 </ul>
-                <a href="/deposit?pkg=cabin" style={{ display: "block", textAlign: "center", padding: "0.72rem 1.25rem", borderRadius: 30, background: "var(--gold, #C9983F)", color: "#fff", fontSize: "0.85rem", fontWeight: 700, textDecoration: "none", letterSpacing: "0.04em" }}>
+                <a href="/deposit?pkg=sanctuary" style={{ display: "block", textAlign: "center", padding: "0.72rem 1.25rem", borderRadius: 30, border: "1px solid rgba(155,127,212,0.5)", color: "rgba(155,127,212,0.9)", fontSize: "0.85rem", fontWeight: 700, textDecoration: "none", letterSpacing: "0.04em" }}>
                   Reserve with $250 Deposit →
+                </a>
+              </div>
+
+              {/* Private Suite */}
+              <div style={{ border: "1px solid rgba(212,131,63,0.4)", borderRadius: 18, padding: "1.75rem", background: "radial-gradient(ellipse at 10% 10%, rgba(212,131,63,0.1) 0%, transparent 60%), rgba(255,255,255,0.02)", position: "relative" }}>
+                <div style={{ position: "absolute", top: "1.25rem", right: "1.25rem", fontSize: "0.6rem", fontWeight: 700, letterSpacing: "0.1em", textTransform: "uppercase", color: "rgba(212,131,63,0.9)", background: "rgba(212,131,63,0.12)", border: "1px solid rgba(212,131,63,0.3)", borderRadius: 20, padding: "0.2rem 0.65rem" }}>
+                  Family Rate
+                </div>
+                <div style={{ fontSize: "1.75rem", marginBottom: "0.75rem" }}>🏠</div>
+                <h3 style={{ fontFamily: "var(--font-display)", fontSize: "1.35rem", color: "#fff", marginBottom: "0.3rem", lineHeight: 1.2 }}>
+                  Private Suite
+                </h3>
+                <p style={{ fontSize: "0.72rem", color: "rgba(212,131,63,0.85)", fontWeight: 700, letterSpacing: "0.08em", textTransform: "uppercase", marginBottom: "1.25rem" }}>
+                  6-Bed Cabin · Your Group Only · $500 Deposit
+                </p>
+                <ul style={{ listStyle: "none", padding: 0, margin: "0 0 1.75rem", display: "flex", flexDirection: "column", gap: "0.55rem" }}>
+                  <li style={{ fontSize: "0.875rem", color: "rgba(255,255,255,0.6)", display: "flex", gap: "0.5rem" }}><span style={{ color: "rgba(212,131,63,0.85)", flexShrink: 0 }}>✓</span> Private 6-bed cabin — your group only</li>
+                  <li style={{ fontSize: "0.875rem", color: "rgba(255,255,255,0.6)", display: "flex", gap: "0.5rem" }}><span style={{ color: "rgba(212,131,63,0.85)", flexShrink: 0 }}>✓</span> Full weekend access for all guests</li>
+                  <li style={{ fontSize: "0.875rem", color: "rgba(255,255,255,0.6)", display: "flex", gap: "0.5rem" }}><span style={{ color: "rgba(212,131,63,0.85)", flexShrink: 0 }}>✓</span> All workshops, ceremonies &amp; healing arts</li>
+                  <li style={{ fontSize: "0.875rem", color: "rgba(255,255,255,0.6)", display: "flex", gap: "0.5rem" }}><span style={{ color: "rgba(212,131,63,0.85)", flexShrink: 0 }}>✓</span> Priority check-in</li>
+                  <li style={{ fontSize: "0.875rem", color: "rgba(255,255,255,0.6)", display: "flex", gap: "0.5rem" }}><span style={{ color: "rgba(212,131,63,0.85)", flexShrink: 0 }}>✓</span> Ideal for families &amp; groups of 5–6</li>
+                </ul>
+                <a href="/deposit?pkg=suite" style={{ display: "block", textAlign: "center", padding: "0.72rem 1.25rem", borderRadius: 30, background: "rgba(212,131,63,0.85)", color: "#fff", fontSize: "0.85rem", fontWeight: 700, textDecoration: "none", letterSpacing: "0.04em" }}>
+                  Reserve with $500 Deposit →
                 </a>
               </div>
             </div>
 
-            {/* Experience Bundles */}
+            {/* Add-on Bundles */}
             <p style={{ fontSize: "0.6rem", letterSpacing: "0.18em", textTransform: "uppercase", color: "rgba(255,255,255,0.3)", fontWeight: 700, marginBottom: "1.25rem" }}>
-              Experience Bundles · Add to Any Pass
+              Add-On Bundles · $250 Deposit · Add to Any Pass
             </p>
-            <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(270px, 1fr))", gap: "1rem", textAlign: "left" }}>
+            <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(260px, 1fr))", gap: "1rem", textAlign: "left" }}>
 
-              {/* Recovery Bundle */}
+              {/* Recovery */}
               <div style={{ border: "1px solid rgba(61,184,175,0.3)", borderRadius: 18, padding: "1.75rem", background: "radial-gradient(ellipse at 10% 10%, rgba(61,184,175,0.07) 0%, transparent 60%), rgba(255,255,255,0.02)" }}>
                 <div style={{ fontSize: "1.75rem", marginBottom: "0.75rem" }}>🌿</div>
-                <h3 style={{ fontFamily: "var(--font-display)", fontSize: "1.25rem", color: "#fff", marginBottom: "0.3rem" }}>
-                  Recovery Bundle
-                </h3>
+                <h3 style={{ fontFamily: "var(--font-display)", fontSize: "1.25rem", color: "#fff", marginBottom: "0.3rem" }}>Recovery Bundle</h3>
                 <p style={{ fontSize: "0.72rem", color: "rgba(61,184,175,0.85)", fontWeight: 700, letterSpacing: "0.08em", textTransform: "uppercase", marginBottom: "1.25rem" }}>
-                  Sauna · Massage
+                  Massage · Sauna
                 </p>
                 <ul style={{ listStyle: "none", padding: 0, margin: "0 0 1.75rem", display: "flex", flexDirection: "column", gap: "0.55rem" }}>
-                  <li style={{ fontSize: "0.875rem", color: "rgba(255,255,255,0.6)", display: "flex", gap: "0.5rem" }}><span style={{ color: "rgba(61,184,175,0.85)", flexShrink: 0 }}>✓</span> Lakeside sauna session</li>
                   <li style={{ fontSize: "0.875rem", color: "rgba(255,255,255,0.6)", display: "flex", gap: "0.5rem" }}><span style={{ color: "rgba(61,184,175,0.85)", flexShrink: 0 }}>✓</span> 60-min therapeutic massage</li>
+                  <li style={{ fontSize: "0.875rem", color: "rgba(255,255,255,0.6)", display: "flex", gap: "0.5rem" }}><span style={{ color: "rgba(61,184,175,0.85)", flexShrink: 0 }}>✓</span> Lakeside sauna session</li>
                   <li style={{ fontSize: "0.875rem", color: "rgba(255,255,255,0.6)", display: "flex", gap: "0.5rem" }}><span style={{ color: "rgba(61,184,175,0.85)", flexShrink: 0 }}>✓</span> Nervous system restoration</li>
-                  <li style={{ fontSize: "0.875rem", color: "rgba(255,255,255,0.6)", display: "flex", gap: "0.5rem" }}><span style={{ color: "rgba(61,184,175,0.85)", flexShrink: 0 }}>✓</span> Reserved 1-on-1 sessions</li>
+                  <li style={{ fontSize: "0.875rem", color: "rgba(255,255,255,0.6)", display: "flex", gap: "0.5rem" }}><span style={{ color: "rgba(61,184,175,0.85)", flexShrink: 0 }}>✓</span> Reserved 1-on-1 time slot</li>
                 </ul>
                 <a href="/deposit?pkg=recovery" style={{ display: "block", textAlign: "center", padding: "0.72rem 1.25rem", borderRadius: 30, border: "1px solid rgba(61,184,175,0.4)", color: "rgba(61,184,175,0.9)", fontSize: "0.85rem", fontWeight: 700, textDecoration: "none", letterSpacing: "0.04em" }}>
                   Reserve with $250 Deposit →
                 </a>
               </div>
 
-              {/* Adventure Bundle */}
-              <div style={{ border: "1px solid rgba(155,127,212,0.3)", borderRadius: 18, padding: "1.75rem", background: "radial-gradient(ellipse at 10% 10%, rgba(155,127,212,0.07) 0%, transparent 60%), rgba(255,255,255,0.02)" }}>
+              {/* Adventure */}
+              <div style={{ border: "1px solid rgba(91,155,213,0.3)", borderRadius: 18, padding: "1.75rem", background: "radial-gradient(ellipse at 10% 10%, rgba(91,155,213,0.07) 0%, transparent 60%), rgba(255,255,255,0.02)" }}>
                 <div style={{ fontSize: "1.75rem", marginBottom: "0.75rem" }}>🏄</div>
-                <h3 style={{ fontFamily: "var(--font-display)", fontSize: "1.25rem", color: "#fff", marginBottom: "0.3rem" }}>
-                  Adventure Bundle
-                </h3>
-                <p style={{ fontSize: "0.72rem", color: "rgba(155,127,212,0.85)", fontWeight: 700, letterSpacing: "0.08em", textTransform: "uppercase", marginBottom: "1.25rem" }}>
-                  Paddleboard · Nature Immersion
+                <h3 style={{ fontFamily: "var(--font-display)", fontSize: "1.25rem", color: "#fff", marginBottom: "0.3rem" }}>Adventure Bundle</h3>
+                <p style={{ fontSize: "0.72rem", color: "rgba(91,155,213,0.85)", fontWeight: 700, letterSpacing: "0.08em", textTransform: "uppercase", marginBottom: "1.25rem" }}>
+                  Paddleboard · Sauna
                 </p>
                 <ul style={{ listStyle: "none", padding: 0, margin: "0 0 1.75rem", display: "flex", flexDirection: "column", gap: "0.55rem" }}>
-                  <li style={{ fontSize: "0.875rem", color: "rgba(255,255,255,0.6)", display: "flex", gap: "0.5rem" }}><span style={{ color: "rgba(155,127,212,0.85)", flexShrink: 0 }}>✓</span> Guided paddleboard yoga</li>
-                  <li style={{ fontSize: "0.875rem", color: "rgba(255,255,255,0.6)", display: "flex", gap: "0.5rem" }}><span style={{ color: "rgba(155,127,212,0.85)", flexShrink: 0 }}>✓</span> Nature immersion experience</li>
-                  <li style={{ fontSize: "0.875rem", color: "rgba(255,255,255,0.6)", display: "flex", gap: "0.5rem" }}><span style={{ color: "rgba(155,127,212,0.85)", flexShrink: 0 }}>✓</span> Lake &amp; mountain access</li>
-                  <li style={{ fontSize: "0.875rem", color: "rgba(255,255,255,0.6)", display: "flex", gap: "0.5rem" }}><span style={{ color: "rgba(155,127,212,0.85)", flexShrink: 0 }}>✓</span> Small-group adventure sessions</li>
+                  <li style={{ fontSize: "0.875rem", color: "rgba(255,255,255,0.6)", display: "flex", gap: "0.5rem" }}><span style={{ color: "rgba(91,155,213,0.85)", flexShrink: 0 }}>✓</span> Guided paddleboard yoga</li>
+                  <li style={{ fontSize: "0.875rem", color: "rgba(255,255,255,0.6)", display: "flex", gap: "0.5rem" }}><span style={{ color: "rgba(91,155,213,0.85)", flexShrink: 0 }}>✓</span> Lakeside sauna session</li>
+                  <li style={{ fontSize: "0.875rem", color: "rgba(255,255,255,0.6)", display: "flex", gap: "0.5rem" }}><span style={{ color: "rgba(91,155,213,0.85)", flexShrink: 0 }}>✓</span> Lake &amp; mountain access</li>
+                  <li style={{ fontSize: "0.875rem", color: "rgba(255,255,255,0.6)", display: "flex", gap: "0.5rem" }}><span style={{ color: "rgba(91,155,213,0.85)", flexShrink: 0 }}>✓</span> Small-group adventure sessions</li>
                 </ul>
-                <a href="/deposit?pkg=adventure" style={{ display: "block", textAlign: "center", padding: "0.72rem 1.25rem", borderRadius: 30, border: "1px solid rgba(155,127,212,0.4)", color: "rgba(155,127,212,0.9)", fontSize: "0.85rem", fontWeight: 700, textDecoration: "none", letterSpacing: "0.04em" }}>
+                <a href="/deposit?pkg=adventure" style={{ display: "block", textAlign: "center", padding: "0.72rem 1.25rem", borderRadius: 30, border: "1px solid rgba(91,155,213,0.4)", color: "rgba(91,155,213,0.9)", fontSize: "0.85rem", fontWeight: 700, textDecoration: "none", letterSpacing: "0.04em" }}>
+                  Reserve with $250 Deposit →
+                </a>
+              </div>
+
+              {/* Portal */}
+              <div style={{ border: "1px solid rgba(201,152,63,0.35)", borderRadius: 18, padding: "1.75rem", background: "radial-gradient(ellipse at 10% 10%, rgba(201,152,63,0.09) 0%, transparent 60%), rgba(255,255,255,0.02)" }}>
+                <div style={{ fontSize: "1.75rem", marginBottom: "0.75rem" }}>✦</div>
+                <h3 style={{ fontFamily: "var(--font-display)", fontSize: "1.25rem", color: "#fff", marginBottom: "0.3rem" }}>Portal Package</h3>
+                <p style={{ fontSize: "0.72rem", color: "rgba(201,152,63,0.85)", fontWeight: 700, letterSpacing: "0.08em", textTransform: "uppercase", marginBottom: "1.25rem" }}>
+                  Cacao · Merch · Full Package
+                </p>
+                <ul style={{ listStyle: "none", padding: 0, margin: "0 0 1.75rem", display: "flex", flexDirection: "column", gap: "0.55rem" }}>
+                  <li style={{ fontSize: "0.875rem", color: "rgba(255,255,255,0.6)", display: "flex", gap: "0.5rem" }}><span style={{ color: "rgba(201,152,63,0.85)", flexShrink: 0 }}>✓</span> Full 3-day weekend access</li>
+                  <li style={{ fontSize: "0.875rem", color: "rgba(255,255,255,0.6)", display: "flex", gap: "0.5rem" }}><span style={{ color: "rgba(201,152,63,0.85)", flexShrink: 0 }}>✓</span> Cacao ceremony participation</li>
+                  <li style={{ fontSize: "0.875rem", color: "rgba(255,255,255,0.6)", display: "flex", gap: "0.5rem" }}><span style={{ color: "rgba(201,152,63,0.85)", flexShrink: 0 }}>✓</span> Exclusive Wellness Weekend merch</li>
+                  <li style={{ fontSize: "0.875rem", color: "rgba(255,255,255,0.6)", display: "flex", gap: "0.5rem" }}><span style={{ color: "rgba(201,152,63,0.85)", flexShrink: 0 }}>✓</span> All workshops &amp; healing arts</li>
+                </ul>
+                <a href="/deposit?pkg=portal" style={{ display: "block", textAlign: "center", padding: "0.72rem 1.25rem", borderRadius: 30, border: "1px solid rgba(201,152,63,0.5)", color: "rgba(201,152,63,0.9)", fontSize: "0.85rem", fontWeight: 700, textDecoration: "none", letterSpacing: "0.04em" }}>
                   Reserve with $250 Deposit →
                 </a>
               </div>
             </div>
 
             <p style={{ fontSize: "0.8rem", color: "rgba(255,255,255,0.22)", marginTop: "2.5rem", lineHeight: 1.6 }}>
-              Pricing and dates announced soon. List members hear first.
+              Full pricing and 2027 dates announced soon. Deposits applied to your total — refund eligible until dates drop.
             </p>
           </div>
         </section>

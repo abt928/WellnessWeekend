@@ -4,7 +4,12 @@ import { neon } from "@neondatabase/serverless";
 export const dynamic = "force-dynamic";
 
 const TOTAL_PER_TYPE = 10;
-const VALID_TYPES = ["sanctuary", "recovery", "camping", "cabin", "adventure"] as const;
+const SUITE_TOTAL = 5;
+const VALID_TYPES = ["sanctuary", "recovery", "adventure", "portal", "suite"] as const;
+
+function totalForType(type: string) {
+  return type === "suite" ? SUITE_TOTAL : TOTAL_PER_TYPE;
+}
 
 async function ensureTable() {
   const dbUrl = process.env.DATABASE_URL;
@@ -37,7 +42,8 @@ export async function GET(req: NextRequest) {
     await ensureTable();
     const type = req.nextUrl.searchParams.get("type") || "sanctuary";
     const claimed = await getCount(type);
-    return NextResponse.json({ remaining: TOTAL_PER_TYPE - claimed, total: TOTAL_PER_TYPE, type });
+    const total = totalForType(type);
+    return NextResponse.json({ remaining: total - claimed, total, type });
   } catch {
     return NextResponse.json({ error: "Failed to fetch availability" }, { status: 500 });
   }
@@ -54,8 +60,9 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: `packageType must be one of: ${VALID_TYPES.join(", ")}` }, { status: 400 });
     }
 
+    const total = totalForType(packageType);
     const claimed = await getCount(packageType);
-    if (claimed >= TOTAL_PER_TYPE) {
+    if (claimed >= total) {
       return NextResponse.json({ error: `All ${packageType} deposit spots are taken` }, { status: 409 });
     }
 
@@ -67,7 +74,7 @@ export async function POST(req: NextRequest) {
       VALUES (${packageType}, ${name.trim()}, ${email.trim().toLowerCase()}, ${phone?.trim() || null})
     `;
 
-    return NextResponse.json({ success: true, remaining: TOTAL_PER_TYPE - claimed - 1 });
+    return NextResponse.json({ success: true, remaining: total - claimed - 1 });
   } catch {
     return NextResponse.json({ error: "Failed to hold package" }, { status: 500 });
   }

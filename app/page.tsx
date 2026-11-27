@@ -48,9 +48,9 @@ const PILLARS = [
 ];
 
 const PARTNERS: { name: string; logo: string | null; href: string }[] = [
-  { name: "Warrior Lodge", logo: null, href: "/partner" },
-  { name: "The Sound Space", logo: "/logos/sound-space.png", href: "/partner" },
-  { name: "Alaska Fly Dog", logo: "/logos/alaska-fly-dog.png", href: "/partner" },
+  { name: "The Sound Space", logo: "/logos/sound-space.png", href: "https://thesoundspace.us" },
+  { name: "Alaska Fly Dog", logo: "/logos/alaska-fly-dog.png", href: "https://alaskaflydog.com" },
+  { name: "Alaska's Healing Hearts", logo: null, href: "https://alaskashealinghearts.com" },
 ];
 
 export default function Home() {
@@ -474,39 +474,56 @@ export default function Home() {
             <div style={{
               display: "flex",
               flexWrap: "wrap",
-              gap: "2.5rem",
+              gap: "1rem",
               justifyContent: "center",
-              alignItems: "center",
+              alignItems: "stretch",
             }}>
-              {PARTNERS.map((p) =>
-                p.logo ? (
-                  <a key={p.name} href={p.href} style={{ opacity: 0.55, transition: "opacity 0.2s", display: "flex", alignItems: "center" }}>
-                    {/* eslint-disable-next-line @next/next/no-img-element */}
+              {PARTNERS.map((p) => (
+                <a
+                  key={p.name}
+                  href={p.href}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  style={{
+                    display: "flex",
+                    flexDirection: "column",
+                    alignItems: "center",
+                    justifyContent: "center",
+                    gap: "0.75rem",
+                    padding: "1.25rem 1.75rem",
+                    background: "rgba(255,255,255,0.04)",
+                    border: "1px solid rgba(255,255,255,0.1)",
+                    borderRadius: 14,
+                    textDecoration: "none",
+                    minWidth: "180px",
+                    transition: "border-color 0.2s, background 0.2s",
+                  }}
+                >
+                  {p.logo ? (
+                    // eslint-disable-next-line @next/next/no-img-element
                     <img
                       src={p.logo}
                       alt={p.name}
-                      style={{
-                        height: "36px",
-                        maxWidth: "120px",
-                        objectFit: "contain",
-                        filter: "brightness(0) invert(1)",
-                      }}
+                      style={{ height: "32px", maxWidth: "110px", objectFit: "contain", filter: "brightness(0) invert(1)", opacity: 0.7 }}
                     />
-                  </a>
-                ) : (
-                  <a key={p.name} href={p.href} style={{
-                    textDecoration: "none",
-                    fontSize: "0.78rem",
-                    letterSpacing: "0.1em",
-                    textTransform: "uppercase",
-                    color: "rgba(255,255,255,0.35)",
-                    fontWeight: 700,
-                    opacity: 0.8,
+                  ) : (
+                    <span style={{ fontSize: "0.82rem", letterSpacing: "0.08em", textTransform: "uppercase", color: "rgba(255,255,255,0.6)", fontWeight: 700, textAlign: "center" }}>
+                      {p.name}
+                    </span>
+                  )}
+                  <span style={{
+                    fontSize: "0.72rem",
+                    color: "rgba(201,152,63,0.8)",
+                    fontWeight: 600,
+                    letterSpacing: "0.06em",
+                    border: "1px solid rgba(201,152,63,0.3)",
+                    borderRadius: 20,
+                    padding: "0.25rem 0.9rem",
                   }}>
-                    {p.name}
-                  </a>
-                )
-              )}
+                    Visit →
+                  </span>
+                </a>
+              ))}
             </div>
           </div>
         </section>

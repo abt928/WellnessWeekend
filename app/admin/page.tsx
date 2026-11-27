@@ -11,7 +11,9 @@ type Section =
   | "budget" | "affiliates" | "partners"
   | "analytics"
   | "archive"
-  | "giveaway";
+  | "giveaway"
+  | "tickets"
+  | "guestlist";
 
 interface BudgetItem {
   id: number; type: string; category: string; description: string;
@@ -1002,10 +1004,204 @@ function GiveawaySection() {
   );
 }
 
+// ── TicketsSection ─────────────────────────────────────────────────────
+
+interface TicketOrder { id: number; square_payment_id: string; square_order_id: string; customer_email: string; amount_cents: number; created_at: string; }
+interface DepositRow { id: number; package_type: string; name: string; email: string; phone: string | null; created_at: string; }
+interface TicketsData {
+  weekendPasses: TicketOrder[];
+  earthPasses: TicketOrder[];
+  deposits: DepositRow[];
+  summary: { weekendPassCount: number; weekendPassRevenue: number; earthPassCount: number; earthPassRevenue: number; depositCount: number; depositRevenue: number };
+}
+
+function TicketsSection() {
+  const [data, setData] = useState<TicketsData | null>(null);
+  const [err, setErr] = useState("");
+
+  useEffect(() => {
+    const pw = (() => { try { return localStorage.getItem("ww-admin-pw") ?? ""; } catch { return ""; } })();
+    fetch("/api/admin/tickets", { headers: { Authorization: `Bearer ${pw}` } })
+      .then(r => r.json())
+      .then(d => { if (d.error) setErr(d.error); else setData(d); })
+      .catch(() => setErr("Failed to load"));
+  }, []);
+
+  if (err) return <p style={{ color: "#ff8a72", padding: "2rem" }}>{err}</p>;
+  if (!data) return <p style={{ color: "rgba(255,255,255,0.4)", padding: "2rem" }}>Loading…</p>;
+
+  const { summary } = data;
+  const statBox = (label: string, value: string, sub: string) => (
+    <div style={{ background: "rgba(255,255,255,0.04)", border: "1px solid rgba(255,255,255,0.08)", borderRadius: "12px", padding: "1.25rem 1.5rem" }}>
+      <div style={{ fontSize: "0.62rem", letterSpacing: "0.14em", textTransform: "uppercase", color: "rgba(255,255,255,0.35)", marginBottom: "0.4rem" }}>{label}</div>
+      <div style={{ fontFamily: "var(--font-display)", fontSize: "2rem", fontWeight: 700, color: "#fff" }}>{value}</div>
+      <div style={{ fontSize: "0.78rem", color: "rgba(255,255,255,0.4)", marginTop: "0.25rem" }}>{sub}</div>
+    </div>
+  );
+
+  const orderTable = (rows: TicketOrder[], price: number) => (
+    <div className="admin-table-wrap">
+      <table className="admin-table">
+        <thead><tr>
+          <th style={hcell}>#</th>
+          <th style={hcell}>Email</th>
+          <th style={hcell}>Amount</th>
+          <th style={hcell}>Date</th>
+          <th style={hcell}>Square Order</th>
+        </tr></thead>
+        <tbody>
+          {rows.length === 0 && (
+            <tr><td colSpan={5} style={{ ...cell, textAlign: "center", color: "rgba(255,255,255,0.3)", padding: "2rem" }}>No sales yet</td></tr>
+          )}
+          {rows.map((r, i) => (
+            <tr key={r.id}>
+              <td style={cell}>{i + 1}</td>
+              <td style={cell}>{r.customer_email || "—"}</td>
+              <td style={cell}>${price}</td>
+              <td style={cell}>{fmtDate(r.created_at)}</td>
+              <td style={{ ...cell, fontSize: "0.72rem", color: "rgba(255,255,255,0.35)" }}>{r.square_order_id || r.square_payment_id || "—"}</td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
+    </div>
+  );
+
+  const DEPOSIT_LABEL: Record<string, string> = { sanctuary: "Sanctuary Pass", recovery: "Recovery Bundle", adventure: "Adventure Bundle", portal: "Portal Package", suite: "Private Suite" };
+  const DEPOSIT_AMT: Record<string, number> = { suite: 500 };
+
+  return (
+    <div>
+      <h2 style={{ fontFamily: "var(--font-display)", fontSize: "1.6rem", color: "#fff", marginBottom: "1.75rem" }}>2027 Ticket Sales</h2>
+
+      <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(160px, 1fr))", gap: "1rem", marginBottom: "2.5rem" }}>
+        {statBox("Weekend Pass", String(summary.weekendPassCount), `$${summary.weekendPassRevenue} revenue · 25 total`)}
+        {statBox("Earth Pass", String(summary.earthPassCount), `$${summary.earthPassRevenue} revenue · 10 total`)}
+        {statBox("Deposits", String(summary.depositCount), `$${summary.depositRevenue} held`)}
+        {statBox("Total Revenue", `$${summary.weekendPassRevenue + summary.earthPassRevenue + summary.depositRevenue}`, "paid + deposits")}
+      </div>
+
+      <h3 style={{ fontSize: "0.9rem", color: "rgba(255,255,255,0.5)", textTransform: "uppercase", letterSpacing: "0.1em", marginBottom: "0.75rem" }}>Weekend Pass — $77 ({summary.weekendPassCount}/25 sold)</h3>
+      {orderTable(data.weekendPasses, 77)}
+
+      <h3 style={{ fontSize: "0.9rem", color: "rgba(255,255,255,0.5)", textTransform: "uppercase", letterSpacing: "0.1em", margin: "2rem 0 0.75rem" }}>Earth Pass — $177 ({summary.earthPassCount}/10 sold)</h3>
+      {orderTable(data.earthPasses, 177)}
+
+      <h3 style={{ fontSize: "0.9rem", color: "rgba(255,255,255,0.5)", textTransform: "uppercase", letterSpacing: "0.1em", margin: "2rem 0 0.75rem" }}>Package Deposits ({summary.depositCount} holds)</h3>
+      <div className="admin-table-wrap">
+        <table className="admin-table">
+          <thead><tr>
+            <th style={hcell}>#</th>
+            <th style={hcell}>Name</th>
+            <th style={hcell}>Email</th>
+            <th style={hcell}>Package</th>
+            <th style={hcell}>Deposit</th>
+            <th style={hcell}>Phone</th>
+            <th style={hcell}>Date</th>
+          </tr></thead>
+          <tbody>
+            {data.deposits.length === 0 && (
+              <tr><td colSpan={7} style={{ ...cell, textAlign: "center", color: "rgba(255,255,255,0.3)", padding: "2rem" }}>No deposits yet</td></tr>
+            )}
+            {data.deposits.map((r, i) => (
+              <tr key={r.id}>
+                <td style={cell}>{i + 1}</td>
+                <td style={cell}>{r.name}</td>
+                <td style={cell}>{r.email}</td>
+                <td style={cell}>{DEPOSIT_LABEL[r.package_type] || r.package_type}</td>
+                <td style={cell}>${DEPOSIT_AMT[r.package_type] ?? 250}</td>
+                <td style={cell}>{r.phone || "—"}</td>
+                <td style={cell}>{fmtDate(r.created_at)}</td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+    </div>
+  );
+}
+
+// ── GuestListSection ───────────────────────────────────────────────────
+
+interface GuestEntry { type: string; name: string; email: string; phone?: string; detail?: string; date: string; }
+
+function GuestListSection() {
+  const [guests, setGuests] = useState<GuestEntry[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [search, setSearch] = useState("");
+
+  useEffect(() => {
+    const pw = (() => { try { return localStorage.getItem("ww-admin-pw") ?? ""; } catch { return ""; } })();
+    Promise.all([
+      fetch("/api/admin/tickets", { headers: { Authorization: `Bearer ${pw}` } }).then(r => r.json()),
+    ]).then(([tickets]) => {
+      const list: GuestEntry[] = [];
+      if (!tickets.error) {
+        (tickets.weekendPasses as TicketOrder[]).forEach(o => list.push({ type: "Weekend Pass ($77)", name: "—", email: o.customer_email || "—", detail: "paid via Square", date: o.created_at }));
+        (tickets.earthPasses as TicketOrder[]).forEach(o => list.push({ type: "Earth Pass ($177)", name: "—", email: o.customer_email || "—", detail: "paid via Square", date: o.created_at }));
+        (tickets.deposits as DepositRow[]).forEach(d => list.push({ type: `${d.package_type} deposit`, name: d.name, email: d.email, phone: d.phone || undefined, detail: `$${d.package_type === "suite" ? 500 : 250} deposit`, date: d.created_at }));
+      }
+      list.sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime());
+      setGuests(list);
+      setLoading(false);
+    }).catch(() => setLoading(false));
+  }, []);
+
+  const filtered = guests.filter(g => {
+    const q = search.toLowerCase();
+    return !q || g.name.toLowerCase().includes(q) || g.email.toLowerCase().includes(q) || g.type.toLowerCase().includes(q);
+  });
+
+  return (
+    <div>
+      <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "1.5rem", flexWrap: "wrap", gap: "1rem" }}>
+        <h2 style={{ fontFamily: "var(--font-display)", fontSize: "1.6rem", color: "#fff" }}>Guest List — 2027</h2>
+        <div style={{ display: "flex", alignItems: "center", gap: "0.75rem" }}>
+          <span style={{ fontSize: "0.78rem", color: "rgba(255,255,255,0.4)" }}>{filtered.length} guests</span>
+          <input value={search} onChange={e => setSearch(e.target.value)} placeholder="Search…" style={{ background: "rgba(255,255,255,0.06)", border: "1px solid rgba(255,255,255,0.12)", borderRadius: "8px", color: "#fff", padding: "0.45rem 0.85rem", fontSize: "0.85rem", outline: "none" }} />
+        </div>
+      </div>
+      {loading ? <p style={{ color: "rgba(255,255,255,0.4)", padding: "2rem" }}>Loading…</p> : (
+        <div className="admin-table-wrap">
+          <table className="admin-table">
+            <thead><tr>
+              <th style={hcell}>#</th>
+              <th style={hcell}>Name</th>
+              <th style={hcell}>Email</th>
+              <th style={hcell}>Ticket / Package</th>
+              <th style={hcell}>Detail</th>
+              <th style={hcell}>Phone</th>
+              <th style={hcell}>Date</th>
+            </tr></thead>
+            <tbody>
+              {filtered.length === 0 && (
+                <tr><td colSpan={7} style={{ ...cell, textAlign: "center", color: "rgba(255,255,255,0.3)", padding: "2rem" }}>No guests yet</td></tr>
+              )}
+              {filtered.map((g, i) => (
+                <tr key={i}>
+                  <td style={cell}>{i + 1}</td>
+                  <td style={cell}>{g.name}</td>
+                  <td style={cell}>{g.email}</td>
+                  <td style={cell}>{g.type}</td>
+                  <td style={{ ...cell, color: "rgba(255,255,255,0.45)" }}>{g.detail || "—"}</td>
+                  <td style={cell}>{g.phone || "—"}</td>
+                  <td style={cell}>{fmtDate(g.date)}</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      )}
+    </div>
+  );
+}
+
 // ── Sidebar ────────────────────────────────────────────────────────────
 
 const NAV_ITEMS: Array<{ section: Section; label: string; group?: string }> = [
   { section: "overview",     label: "Overview" },
+  { section: "tickets",      label: "2027 Tickets",      group: "2027 Sales" },
+  { section: "guestlist",    label: "Guest List",        group: "2027 Sales" },
   { section: "newsletter",   label: "Newsletter",        group: "2027 Pipeline" },
   { section: "leads",        label: "Leads & Inquiries", group: "2027 Pipeline" },
   { section: "instructors",  label: "Instructors",       group: "2027 Pipeline" },
@@ -1155,6 +1351,8 @@ export default function AdminPage() {
         </div>
         <div className="admin-main-content">
           {section === "overview"    && <OverviewSection onNavigate={setSection} />}
+          {section === "tickets"     && <TicketsSection />}
+          {section === "guestlist"   && <GuestListSection />}
           {section === "newsletter"  && (
             <div style={{ padding: "2rem" }}>
               <h1 style={{ fontFamily: "var(--font-display)", fontSize: "1.6rem", marginBottom: "2rem" }}>Newsletter</h1>

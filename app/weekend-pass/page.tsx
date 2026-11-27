@@ -3,6 +3,7 @@ import { useState, useEffect } from "react";
 import Link from "next/link";
 
 const TOTAL = 25;
+const VARIATION_ID = "TRYEWJV7VC2XUYWSSEWTIVBP";
 
 const C = {
   bg: "#090912",
@@ -21,12 +22,8 @@ const C = {
 
 export default function WeekendPassPage() {
   const [remaining, setRemaining] = useState<number | null>(null);
-  const [submitted, setSubmitted] = useState(false);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
-  const [name, setName] = useState("");
-  const [email, setEmail] = useState("");
-  const [phone, setPhone] = useState("");
 
   useEffect(() => {
     fetch("/api/weekend-pass")
@@ -35,26 +32,23 @@ export default function WeekendPassPage() {
       .catch(() => setRemaining(0));
   }, []);
 
-  async function handleSubmit(e: React.FormEvent) {
-    e.preventDefault();
+  async function handleCheckout() {
     setError("");
     setLoading(true);
     try {
-      const res = await fetch("/api/weekend-pass", {
+      const res = await fetch("/api/square/checkout", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ name, email, phone }),
+        body: JSON.stringify({
+          items: [{ variationId: VARIATION_ID, quantity: 1, name: "Weekend Pass" }],
+          returnUrl: window.location.origin,
+        }),
       });
       const data = await res.json();
-      if (!res.ok) {
-        setError(data.error || "Something went wrong. Please try again.");
-      } else {
-        setRemaining(data.remaining);
-        setSubmitted(true);
-      }
+      if (!res.ok) throw new Error(data.error || "Checkout failed");
+      window.location.href = data.checkoutUrl;
     } catch {
-      setError("Unable to submit. Please try again.");
-    } finally {
+      setError("Unable to start checkout. Please try again or contact support@thesoundspace.us");
       setLoading(false);
     }
   }
@@ -106,7 +100,7 @@ export default function WeekendPassPage() {
             <span style={{ fontSize: "0.85rem", color: C.faint }}>Black Friday price · full 3-day pass</span>
           </div>
           <p style={{ fontSize: "0.95rem", lineHeight: 1.8, color: C.dim, maxWidth: "420px", margin: "0 auto" }}>
-            Claim your spot — we&apos;ll follow up with a payment link within minutes. Only {TOTAL} passes at this price.
+            Only {TOTAL} passes at this price. Pay now through Square — secure checkout.
           </p>
         </div>
 
@@ -142,7 +136,7 @@ export default function WeekendPassPage() {
         {claimed !== null && (
           <div style={{ marginBottom: "1.75rem" }}>
             <div style={{ display: "flex", justifyContent: "space-between", marginBottom: "0.4rem" }}>
-              <span style={{ fontSize: "0.78rem", color: C.faint }}>{claimed} of {TOTAL} claimed</span>
+              <span style={{ fontSize: "0.78rem", color: C.faint }}>{claimed} of {TOTAL} sold</span>
               <span style={{ fontSize: "0.78rem", fontWeight: 600, color: isFull ? C.faint : isLow ? C.error : C.sage }}>
                 {isFull ? "Sold out" : `${remaining} remaining`}
               </span>
@@ -167,11 +161,11 @@ export default function WeekendPassPage() {
           <p style={{ textAlign: "center", color: C.faint, padding: "1.5rem 0", fontSize: "0.85rem" }}>Checking availability…</p>
         )}
 
-        {isFull && !submitted && (
+        {isFull ? (
           <div style={{ textAlign: "center", background: C.card, border: `1px solid ${C.border}`, borderRadius: "16px", padding: "2.5rem 2rem" }}>
             <p style={{ fontSize: "0.7rem", letterSpacing: "0.14em", textTransform: "uppercase", color: C.faint, marginBottom: "0.75rem", fontWeight: 700 }}>Sold Out</p>
             <p style={{ fontSize: "1rem", color: C.dim, lineHeight: 1.75, marginBottom: "1.5rem" }}>
-              All {TOTAL} Weekend Passes have been claimed. See more options below.
+              All {TOTAL} Weekend Passes have been sold. See more options below.
             </p>
             <Link href="/#packages" style={{
               display: "inline-block", padding: "0.8rem 2rem",
@@ -182,82 +176,33 @@ export default function WeekendPassPage() {
               View All Options →
             </Link>
           </div>
-        )}
-
-        {submitted && (
-          <div style={{ textAlign: "center", background: C.card, border: `1px solid rgba(94,138,106,0.3)`, borderRadius: "16px", padding: "2.75rem 2rem" }}>
-            <div style={{ fontSize: "2.5rem", marginBottom: "0.75rem" }}>🌿</div>
-            <p style={{ fontFamily: "var(--font-display)", fontSize: "1.7rem", fontWeight: 700, color: C.white, marginBottom: "0.75rem", lineHeight: 1.2 }}>
-              Spot claimed. ✦
-            </p>
-            <p style={{ fontSize: "1rem", color: C.dim, lineHeight: 1.8, marginBottom: "0.5rem" }}>
-              Thank you, {name.split(" ")[0]}. We&apos;ll send a payment link to{" "}
-              <strong style={{ color: C.white }}>{email}</strong> within minutes.
-            </p>
-            <p style={{ fontSize: "0.82rem", color: C.faint, lineHeight: 1.7, marginBottom: "2rem" }}>
-              Your spot is held for <strong>24 hours</strong> while payment processes.
-            </p>
-            <p style={{ fontSize: "0.78rem", color: C.faint, marginTop: "0.5rem" }}>
-              Questions? <a href="mailto:support@thesoundspace.us" style={{ color: C.sage }}>support@thesoundspace.us</a>
-            </p>
-          </div>
-        )}
-
-        {!isFull && !submitted && remaining !== null && (
-          <form onSubmit={handleSubmit} style={{ display: "flex", flexDirection: "column", gap: "1.1rem" }}>
-            <Field label="Full Name">
-              <input type="text" required value={name} onChange={e => setName(e.target.value)} placeholder="Your full name" style={inputStyle} />
-            </Field>
-            <Field label="Email Address">
-              <input type="email" required value={email} onChange={e => setEmail(e.target.value)} placeholder="your@email.com" style={inputStyle} />
-            </Field>
-            <Field label="Phone Number (optional)">
-              <input type="tel" value={phone} onChange={e => setPhone(e.target.value)} placeholder="(907) 555-0100" style={inputStyle} />
-            </Field>
-
+        ) : remaining !== null && (
+          <div style={{ display: "flex", flexDirection: "column", gap: "1rem" }}>
             {error && (
               <p style={{ fontSize: "0.88rem", color: C.error, background: C.errorBg, border: "1px solid rgba(184,74,43,0.25)", borderRadius: "8px", padding: "0.75rem 1rem", margin: 0 }}>
                 {error}
               </p>
             )}
 
-            <button type="submit" disabled={loading} style={{
-              marginTop: "0.5rem", padding: "1rem 2rem",
+            <button onClick={handleCheckout} disabled={loading} style={{
+              padding: "1rem 2rem",
               background: loading ? "rgba(94,138,106,0.25)" : `linear-gradient(135deg, ${C.sage}, ${C.gold})`,
               color: "#fff", fontWeight: 700, fontSize: "1rem",
               border: "none", borderRadius: "30px",
               cursor: loading ? "not-allowed" : "pointer",
               letterSpacing: "0.03em", transition: "opacity 0.2s",
             }}>
-              {loading ? "Claiming…" : "Claim My Weekend Pass — $77 →"}
+              {loading ? "Opening checkout…" : "Buy My Weekend Pass — $77 →"}
             </button>
 
             <p style={{ fontSize: "0.76rem", color: C.faint, textAlign: "center", lineHeight: 1.7 }}>
-              We&apos;ll email you a Square payment link within minutes. Spot held 24 hrs.{" "}
-              <Link href="/refunds" style={{ color: C.faint, textDecoration: "underline" }}>Refund eligible</Link> — dates not yet announced.
+              Secure checkout via Square.{" "}
+              <Link href="/refunds" style={{ color: C.faint, textDecoration: "underline" }}>Refund eligible</Link> — 2027 dates not yet announced.
             </p>
-          </form>
+          </div>
         )}
 
       </main>
     </div>
   );
 }
-
-function Field({ label, children }: { label: string; children: React.ReactNode }) {
-  return (
-    <div style={{ display: "flex", flexDirection: "column", gap: "0.4rem" }}>
-      <label style={{ fontSize: "0.7rem", letterSpacing: "0.1em", textTransform: "uppercase", color: "rgba(255,255,255,0.35)", fontWeight: 600 }}>
-        {label}
-      </label>
-      {children}
-    </div>
-  );
-}
-
-const inputStyle: React.CSSProperties = {
-  width: "100%", padding: "0.8rem 1rem",
-  background: "rgba(255,255,255,0.05)",
-  border: "1px solid rgba(255,255,255,0.12)",
-  borderRadius: "8px", color: "#fff", fontSize: "1rem", outline: "none", boxSizing: "border-box",
-};

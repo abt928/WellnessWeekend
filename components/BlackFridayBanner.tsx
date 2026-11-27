@@ -2,7 +2,7 @@
 import { useState, useEffect } from "react";
 
 const SALE_START_UTC = new Date("2026-11-27T09:00:00Z"); // midnight AKST (UTC-9)
-const SALE_END_UTC = new Date("2026-11-30T09:00:00Z");   // midnight AKST Sunday
+const SALE_END_UTC = new Date("2026-12-01T09:00:00Z");   // midnight AKST Monday Dec 1
 
 function getTimeLeft(target: Date) {
   const diff = target.getTime() - Date.now();
@@ -116,8 +116,8 @@ export default function BlackFridayBanner() {
             margin: 0,
           }}>
             {saleActive
-              ? "Exclusive Black Friday pricing on all 2027 passes. Through Sunday only."
-              : "Exclusive flat-rate pricing for 72 hours only. Be ready at midnight Nov 27."}
+              ? "Exclusive Black Friday pricing on all 2027 passes. Ends Monday, December 1."
+              : "Exclusive flat-rate pricing for 4 days only. Be ready at midnight Nov 27."}
           </p>
         </div>
 

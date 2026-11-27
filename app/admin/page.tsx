@@ -1018,14 +1018,35 @@ interface TicketsData {
 function TicketsSection() {
   const [data, setData] = useState<TicketsData | null>(null);
   const [err, setErr] = useState("");
+  const [syncing, setSyncing] = useState(false);
+  const [syncResult, setSyncResult] = useState<string>("");
 
-  useEffect(() => {
-    const pw = (() => { try { return localStorage.getItem("ww-admin-pw") ?? ""; } catch { return ""; } })();
+  const pw = (() => { try { return localStorage.getItem("ww-admin-pw") ?? ""; } catch { return ""; } })();
+
+  function loadTickets() {
     fetch("/api/admin/tickets", { headers: { Authorization: `Bearer ${pw}` } })
       .then(r => r.json())
       .then(d => { if (d.error) setErr(d.error); else setData(d); })
       .catch(() => setErr("Failed to load"));
-  }, []);
+  }
+
+  useEffect(() => { loadTickets(); }, []);
+
+  async function syncFromSquare() {
+    setSyncing(true);
+    setSyncResult("");
+    try {
+      const res = await fetch("/api/admin/sync-square", { method: "POST", headers: { Authorization: `Bearer ${pw}` } });
+      const d = await res.json();
+      if (!res.ok) { setSyncResult(`Error: ${d.error}`); return; }
+      setSyncResult(`✓ Synced — ${d.imported} imported, ${d.skipped} already in DB`);
+      if (d.imported > 0) loadTickets();
+    } catch {
+      setSyncResult("Sync failed — check console");
+    } finally {
+      setSyncing(false);
+    }
+  }
 
   if (err) return <p style={{ color: "#ff8a72", padding: "2rem" }}>{err}</p>;
   if (!data) return <p style={{ color: "var(--ink-muted)", padding: "2rem" }}>Loading…</p>;
@@ -1078,7 +1099,15 @@ function TicketsSection() {
 
   return (
     <div>
-      <h2 style={{ fontFamily: "var(--font-display)", fontSize: "1.6rem", color: "var(--ink)", marginBottom: "1.75rem" }}>2027 Ticket Sales</h2>
+      <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", flexWrap: "wrap", gap: "0.75rem", marginBottom: "1.75rem" }}>
+        <h2 style={{ fontFamily: "var(--font-display)", fontSize: "1.6rem", color: "var(--ink)", margin: 0 }}>2027 Ticket Sales</h2>
+        <div style={{ display: "flex", alignItems: "center", gap: "0.75rem" }}>
+          {syncResult && <span style={{ fontSize: "0.78rem", color: syncResult.startsWith("✓") ? "#2a7a4f" : "#B84A2B" }}>{syncResult}</span>}
+          <button onClick={syncFromSquare} disabled={syncing} style={{ padding: "0.5rem 1.1rem", background: syncing ? "var(--line-subtle)" : "var(--surface-elevated)", border: "1px solid var(--line-medium)", borderRadius: "8px", fontSize: "0.78rem", fontWeight: 600, color: "var(--ink)", cursor: syncing ? "not-allowed" : "pointer", letterSpacing: "0.03em" }}>
+            {syncing ? "Syncing…" : "↻ Sync from Square"}
+          </button>
+        </div>
+      </div>
 
       {/* All-time summary */}
       <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(160px, 1fr))", gap: "1rem", marginBottom: "1.5rem" }}>

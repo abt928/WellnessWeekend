@@ -3,6 +3,7 @@ import { useState, useEffect } from "react";
 import Link from "next/link";
 
 const TOTAL = 10;
+const VARIATION_ID = "X36FSIIGPG4BKGU6QOZYLMTH";
 
 const C = {
   bg: "#F7F3EC",
@@ -20,13 +21,8 @@ const C = {
 
 export default function EarthPassPage() {
   const [remaining, setRemaining] = useState<number | null>(null);
-  const [submitted, setSubmitted] = useState(false);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
-
-  const [name, setName] = useState("");
-  const [email, setEmail] = useState("");
-  const [phone, setPhone] = useState("");
 
   useEffect(() => {
     fetch("/api/earth-pass")
@@ -34,26 +30,23 @@ export default function EarthPassPage() {
       .then((d) => setRemaining(d.remaining ?? 0));
   }, []);
 
-  async function handleSubmit(e: React.FormEvent) {
-    e.preventDefault();
+  async function handleCheckout() {
     setError("");
     setLoading(true);
     try {
-      const res = await fetch("/api/earth-pass", {
+      const res = await fetch("/api/square/checkout", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ name, email, phone }),
+        body: JSON.stringify({
+          items: [{ variationId: VARIATION_ID, quantity: 1, name: "Earth Pass" }],
+          returnUrl: window.location.origin,
+        }),
       });
       const data = await res.json();
-      if (!res.ok) {
-        setError(data.error || "Something went wrong. Please try again.");
-      } else {
-        setRemaining(data.remaining);
-        setSubmitted(true);
-      }
+      if (!res.ok) throw new Error(data.error || "Checkout failed");
+      window.location.href = data.checkoutUrl;
     } catch {
-      setError("Unable to submit. Please try again.");
-    } finally {
+      setError("Unable to start checkout. Please try again or contact support@thesoundspace.us");
       setLoading(false);
     }
   }
@@ -176,82 +169,18 @@ export default function EarthPassPage() {
             </div>
           )}
 
-          {/* Success */}
-          {submitted && (
-            <div style={{ textAlign: "center", background: C.card, border: `1px solid ${C.goldBorder}`, borderRadius: "16px", padding: "2.5rem 2rem" }}>
-              <div style={{ fontSize: "2.5rem", marginBottom: "0.75rem" }}>🌿</div>
-              <p style={{ fontFamily: "var(--font-display)", fontSize: "1.6rem", fontWeight: 700, color: C.charcoal, marginBottom: "0.75rem", lineHeight: 1.2 }}>
-                Spot claimed. ✦
-              </p>
-              <p style={{ fontSize: "1rem", color: C.muted, lineHeight: 1.75, marginBottom: "1rem" }}>
-                Thank you, {name.split(" ")[0]}. We&apos;ll send a payment link to{" "}
-                <strong style={{ color: C.charcoal }}>{email}</strong> within minutes.
-              </p>
-              <p style={{ fontSize: "0.85rem", color: C.muted, lineHeight: 1.7, marginBottom: "1.75rem" }}>
-                Your spot is held for <strong>24 hours</strong> while payment processes. Complete it before it expires.
-              </p>
-              <div style={{ borderTop: `1px solid ${C.border}`, paddingTop: "1.5rem" }}>
-                <a href="/#schedule" style={{
-                  display: "inline-block",
-                  padding: "0.75rem 2rem",
-                  background: `linear-gradient(135deg, ${C.gold}, #FF6B35)`,
-                  color: "#fff",
-                  fontWeight: 700,
-                  fontSize: "0.95rem",
-                  borderRadius: "30px",
-                  textDecoration: "none",
-                }}>
-                  View the Schedule →
-                </a>
-              </div>
-              <p style={{ fontSize: "0.8rem", color: C.faint, marginTop: "1.25rem" }}>
-                Questions? <a href="mailto:support@thesoundspace.us" style={{ color: C.gold }}>support@thesoundspace.us</a>
-              </p>
-            </div>
-          )}
-
-          {/* Form */}
-          {!isFull && !submitted && remaining !== null && (
-            <form onSubmit={handleSubmit} style={{ display: "flex", flexDirection: "column", gap: "1.25rem" }}>
-
-              <Field label="Full Name">
-                <input
-                  type="text" required value={name}
-                  onChange={(e) => setName(e.target.value)}
-                  placeholder="Your full name"
-                  style={inputStyle}
-                />
-              </Field>
-
-              <Field label="Email Address">
-                <input
-                  type="email" required value={email}
-                  onChange={(e) => setEmail(e.target.value)}
-                  placeholder="your@email.com"
-                  style={inputStyle}
-                />
-              </Field>
-
-              <Field label="Phone Number (optional)">
-                <input
-                  type="tel" value={phone}
-                  onChange={(e) => setPhone(e.target.value)}
-                  placeholder="(907) 555-0100"
-                  style={inputStyle}
-                />
-              </Field>
-
+          {/* Checkout button */}
+          {!isFull && remaining !== null && (
+            <div style={{ display: "flex", flexDirection: "column", gap: "1rem" }}>
               {error && (
                 <p style={{ fontSize: "0.9rem", color: C.error, background: C.errorBg, border: `1px solid rgba(184,74,43,0.2)`, borderRadius: "8px", padding: "0.75rem 1rem", margin: 0 }}>
                   {error}
                 </p>
               )}
-
               <button
-                type="submit"
+                onClick={handleCheckout}
                 disabled={loading}
                 style={{
-                  marginTop: "0.25rem",
                   padding: "0.9rem 2rem",
                   background: loading ? `rgba(94,138,106,0.5)` : `linear-gradient(135deg, ${C.sage}, ${C.gold})`,
                   color: "#fff",
@@ -264,14 +193,13 @@ export default function EarthPassPage() {
                   transition: "opacity 0.2s",
                 }}
               >
-                {loading ? "Claiming…" : "Claim My Earth Pass →"}
+                {loading ? "Opening checkout…" : "Buy My Earth Pass — $177 →"}
               </button>
-
               <p style={{ fontSize: "0.78rem", color: C.faint, textAlign: "center", lineHeight: 1.6 }}>
-                We&apos;ll email you a Square payment link within minutes. Spot held 24 hrs.{" "}
-                Questions? <a href="mailto:support@thesoundspace.us" style={{ color: C.gold }}>support@thesoundspace.us</a>
+                Secure checkout via Square.{" "}
+                <Link href="/refunds" style={{ color: C.gold, textDecoration: "underline" }}>Refund eligible</Link> — 2027 dates not yet announced.
               </p>
-            </form>
+            </div>
           )}
 
         </div>
@@ -280,25 +208,3 @@ export default function EarthPassPage() {
   );
 }
 
-function Field({ label, children }: { label: string; children: React.ReactNode }) {
-  return (
-    <div style={{ display: "flex", flexDirection: "column", gap: "0.4rem" }}>
-      <label style={{ fontSize: "0.75rem", letterSpacing: "0.08em", textTransform: "uppercase", color: "rgba(51,53,51,0.55)", fontWeight: 600 }}>
-        {label}
-      </label>
-      {children}
-    </div>
-  );
-}
-
-const inputStyle: React.CSSProperties = {
-  width: "100%",
-  padding: "0.75rem 1rem",
-  background: "#fff",
-  border: "1px solid rgba(51,53,51,0.18)",
-  borderRadius: "8px",
-  color: "#333533",
-  fontSize: "1rem",
-  outline: "none",
-  boxSizing: "border-box",
-};

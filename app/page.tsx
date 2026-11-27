@@ -1,5 +1,4 @@
 import Navigation from "@/components/Navigation";
-import NewsletterSignup2027 from "@/components/NewsletterSignup2027";
 import BlackFridayBanner from "@/components/BlackFridayBanner";
 import BFEndCountdown from "@/components/BFEndCountdown";
 import { MapPinIcon } from "@/components/Icons";
@@ -48,19 +47,10 @@ const PILLARS = [
   },
 ];
 
-const PARTNERS: { name: string; logo: string | null }[] = [
-  { name: "The Sound Space", logo: "/logos/sound-space.png" },
-  { name: "Alaska Fly Dog", logo: "/logos/alaska-fly-dog.png" },
-  { name: "Warrior Lodge", logo: null },
-  { name: "Alaska Massage Band", logo: "/logos/alaska-massage-band.png" },
-  { name: "Solstice Sauna", logo: "/logos/solstice-saunas.jpg" },
-];
-
-const GALLERY = [
-  { src: "/images/client-2026/lakeside-aerial-silks-setup.jpg", alt: "Aerial silks by the lake" },
-  { src: "/images/gallery/2025-08-09_Festival_Wellness_Group-Dancing-Labyrinth.jpg", alt: "Ecstatic dance in the labyrinth" },
-  { src: "/images/gallery/2023-08-06_Festival_Wellness_Evening-Campfire.jpg", alt: "Evening campfire ceremony" },
-  { src: "/images/client-2026/akatale-feature.jpg", alt: "Live music on the main stage" },
+const PARTNERS: { name: string; logo: string | null; href: string }[] = [
+  { name: "Warrior Lodge", logo: null, href: "/partner" },
+  { name: "The Sound Space", logo: "/logos/sound-space.png", href: "/partner" },
+  { name: "Alaska Fly Dog", logo: "/logos/alaska-fly-dog.png", href: "/partner" },
 ];
 
 export default function Home() {
@@ -98,82 +88,30 @@ export default function Home() {
 
       <main>
 
-        {/* ═══ HERO ═══ */}
+        {/* ═══ COMPACT HEADER ═══ */}
         <div style={{
-          minHeight: "100vh",
-          background:
-            "radial-gradient(ellipse at 20% 30%, rgba(155,127,212,0.2) 0%, transparent 55%)," +
-            "radial-gradient(ellipse at 80% 70%, rgba(201,152,63,0.15) 0%, transparent 50%)," +
-            "radial-gradient(ellipse at 50% 10%, rgba(61,184,175,0.1) 0%, transparent 45%)," +
-            "#090912",
-          display: "flex",
-          flexDirection: "column",
-          alignItems: "center",
-          justifyContent: "center",
+          background: "#090912",
+          borderBottom: "1px solid rgba(255,255,255,0.06)",
+          padding: "3rem 1.5rem 2.5rem",
           textAlign: "center",
-          padding: "6rem 1.5rem 5rem",
-          position: "relative",
-          overflow: "hidden",
         }}>
-          <div style={{
-            position: "absolute", bottom: 0, left: "50%", transform: "translateX(-50%)",
-            width: "60%", height: "200px",
-            background: "radial-gradient(ellipse at 50% 100%, rgba(201,152,63,0.12) 0%, transparent 70%)",
-            pointerEvents: "none",
-          }} />
-
-          <p style={{
-            fontSize: "0.65rem", letterSpacing: "0.2em", textTransform: "uppercase",
-            color: "rgba(201,152,63,0.8)", fontWeight: 700, marginBottom: "1.5rem",
-          }}>
+          <p style={{ fontSize: "0.65rem", letterSpacing: "0.2em", textTransform: "uppercase", color: "rgba(201,152,63,0.8)", fontWeight: 700, marginBottom: "0.75rem" }}>
             5th Annual · Wellness Weekend
           </p>
-
           <h1 style={{
             fontFamily: "var(--font-display)",
-            fontSize: "clamp(3rem, 10vw, 7rem)",
-            fontWeight: 700, lineHeight: 1.0,
+            fontSize: "clamp(2rem, 6vw, 3.5rem)",
+            fontWeight: 700, lineHeight: 1.1,
             color: "#fff",
-            marginBottom: "1rem",
-            letterSpacing: "-0.01em",
+            marginBottom: "0.75rem",
           }}>
-            We&apos;ll see you<br />
-            <em style={{ color: "var(--gold, #C9983F)" }}>around the fire.</em>
+            Sound healing, dance &amp; ceremony<br />
+            <em style={{ color: "var(--gold, #C9983F)" }}>under Alaska&apos;s midnight sun.</em>
           </h1>
-
-          <p style={{
-            fontSize: "clamp(1rem, 2.5vw, 1.2rem)",
-            color: "rgba(255,255,255,0.5)",
-            lineHeight: 1.8,
-            maxWidth: "500px",
-            margin: "0 auto 2.5rem",
-          }}>
-            Sound healing, ecstatic dance, ceremony &amp; earth medicine under the midnight sun. Returning to Warrior Lodge in Sutton, Alaska for 2027.
-          </p>
-
-          <div style={{ display: "flex", alignItems: "center", gap: "0.5rem", marginBottom: "3rem", color: "rgba(255,255,255,0.3)", fontSize: "0.82rem" }}>
+          <div style={{ display: "flex", alignItems: "center", justifyContent: "center", gap: "0.5rem", color: "rgba(255,255,255,0.3)", fontSize: "0.82rem" }}>
             <MapPinIcon size={14} color="rgba(255,255,255,0.3)" />
             Warrior Lodge · Sutton, Alaska · 2027
           </div>
-
-          <div style={{ width: "100%", maxWidth: "420px", marginBottom: "2rem" }}>
-            <p style={{ fontSize: "0.75rem", letterSpacing: "0.1em", textTransform: "uppercase", color: "rgba(255,255,255,0.35)", marginBottom: "0.75rem", fontWeight: 600 }}>
-              Be the first to know when dates drop
-            </p>
-            <NewsletterSignup2027 />
-          </div>
-
-          <a href="#packages" style={{
-            fontSize: "0.78rem",
-            color: "rgba(255,255,255,0.3)",
-            textDecoration: "none",
-            letterSpacing: "0.08em",
-            display: "flex",
-            alignItems: "center",
-            gap: "0.4rem",
-          }}>
-            ↓ See 2027 Packages
-          </a>
         </div>
 
         {/* ═══ PACKAGES ═══ */}
@@ -542,7 +480,7 @@ export default function Home() {
             }}>
               {PARTNERS.map((p) =>
                 p.logo ? (
-                  <a key={p.name} href="/partner" style={{ opacity: 0.55, transition: "opacity 0.2s", display: "flex", alignItems: "center" }}>
+                  <a key={p.name} href={p.href} style={{ opacity: 0.55, transition: "opacity 0.2s", display: "flex", alignItems: "center" }}>
                     {/* eslint-disable-next-line @next/next/no-img-element */}
                     <img
                       src={p.logo}
@@ -556,7 +494,7 @@ export default function Home() {
                     />
                   </a>
                 ) : (
-                  <a key={p.name} href="/partner" style={{
+                  <a key={p.name} href={p.href} style={{
                     textDecoration: "none",
                     fontSize: "0.78rem",
                     letterSpacing: "0.1em",
@@ -573,68 +511,27 @@ export default function Home() {
           </div>
         </section>
 
-        {/* ═══ MEMORIES ═══ */}
+        {/* ═══ ARCHIVE LINK ═══ */}
         <section style={{
           background: "#090912",
-          padding: "5rem 1.5rem",
+          padding: "3rem 1.5rem",
           textAlign: "center",
+          borderTop: "1px solid rgba(255,255,255,0.05)",
         }}>
-          <div style={{ maxWidth: "900px", margin: "0 auto" }}>
-            <p style={{ fontSize: "0.65rem", letterSpacing: "0.18em", textTransform: "uppercase", color: "rgba(255,255,255,0.3)", fontWeight: 700, marginBottom: "0.9rem" }}>
-              The Archive
-            </p>
-            <h2 style={{
-              fontFamily: "var(--font-display)",
-              fontSize: "clamp(1.8rem, 4.5vw, 3rem)",
-              color: "#fff",
-              lineHeight: 1.15,
-              marginBottom: "0.75rem",
-            }}>
-              1,000+ moments from 2026.
-            </h2>
-            <p style={{ fontSize: "0.95rem", color: "rgba(255,255,255,0.4)", lineHeight: 1.75, maxWidth: "460px", margin: "0 auto 2.5rem" }}>
-              Every year we gather, and 1,000 photographs come back — each one a window into something words barely reach.
-            </p>
-
-            <div style={{
-              display: "grid",
-              gridTemplateColumns: "repeat(2, 1fr)",
-              gap: "0.5rem",
-              borderRadius: 16,
-              overflow: "hidden",
-              marginBottom: "2rem",
-            }}>
-              {GALLERY.map((img) => (
-                // eslint-disable-next-line @next/next/no-img-element
-                <img
-                  key={img.src}
-                  src={img.src}
-                  alt={img.alt}
-                  style={{
-                    width: "100%",
-                    aspectRatio: "4/3",
-                    objectFit: "cover",
-                    display: "block",
-                  }}
-                />
-              ))}
-            </div>
-
-            <a href="/archive" style={{
-              display: "inline-block",
-              padding: "0.85rem 2.25rem",
-              background: "rgba(255,255,255,0.07)",
-              border: "1px solid rgba(255,255,255,0.15)",
-              color: "rgba(255,255,255,0.8)",
-              fontWeight: 700,
-              fontSize: "0.9rem",
-              borderRadius: "30px",
-              textDecoration: "none",
-              letterSpacing: "0.04em",
-            }}>
-              Explore the Full Archive →
-            </a>
-          </div>
+          <a href="/archive" style={{
+            display: "inline-block",
+            padding: "0.85rem 2.25rem",
+            background: "rgba(255,255,255,0.07)",
+            border: "1px solid rgba(255,255,255,0.15)",
+            color: "rgba(255,255,255,0.8)",
+            fontWeight: 700,
+            fontSize: "0.9rem",
+            borderRadius: "30px",
+            textDecoration: "none",
+            letterSpacing: "0.04em",
+          }}>
+            Explore the Archive →
+          </a>
         </section>
 
       </main>

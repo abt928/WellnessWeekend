@@ -14,43 +14,29 @@ const C = {
   orange: "#FF6B35",
   border: "rgba(51,53,51,0.12)",
   sage: "#5E8A6A",
-  violet: "#8B5FBF",
+  violet: "#9B7FD4",
   teal: "#3DB8AF",
+  amber: "#D4833F",
   error: "#B84A2B",
   errorBg: "rgba(184,74,43,0.07)",
 };
 
 const PACKAGES = [
   {
-    key: "camping",
-    label: "Camping Weekend Pass",
-    emoji: "🏕",
-    color: C.sage,
-    colorBg: "rgba(94,138,106,0.07)",
-    colorBorder: "rgba(94,138,106,0.3)",
-    description: "Full 3-day access with on-site camping at Warrior Lodge.",
+    key: "sanctuary",
+    label: "Sanctuary Pass",
+    emoji: "🌙",
+    color: C.violet,
+    colorBg: "rgba(155,127,212,0.07)",
+    colorBorder: "rgba(155,127,212,0.3)",
+    depositAmount: 250,
+    description: "A cabin bed for 2 nights in a shared cabin (5–6 adults). Full weekend access included.",
     includes: [
-      "Full 3-day weekend pass — 2027",
+      "Cabin bed · 2 nights — shared cabin (5–6 adults)",
+      "Full 3-day weekend access",
       "All workshops, ceremonies & healing arts",
-      "Campsite on the grounds",
-      "Live music & ecstatic dance",
+      "Morning movement & breathwork",
       "Community fire circle",
-    ],
-  },
-  {
-    key: "cabin",
-    label: "Cabin Weekend Pass",
-    emoji: "🏡",
-    color: C.gold,
-    colorBg: "rgba(201,152,63,0.07)",
-    colorBorder: "rgba(201,152,63,0.3)",
-    description: "Full 3-day access with a private cabin — the premium experience.",
-    includes: [
-      "Everything in Camping Pass",
-      "Private cabin accommodation",
-      "Priority workshop registration",
-      "Dedicated cabin-only spaces",
-      "Concierge check-in & setup",
     ],
   },
   {
@@ -60,45 +46,65 @@ const PACKAGES = [
     color: C.teal,
     colorBg: "rgba(61,184,175,0.07)",
     colorBorder: "rgba(61,184,175,0.3)",
-    description: "Add a sauna session and 60-minute therapeutic massage to any pass.",
+    depositAmount: 250,
+    description: "60-minute therapeutic massage and a lakeside sauna session — add to any pass.",
     includes: [
-      "Lakeside sauna session",
       "60-min therapeutic massage",
+      "Lakeside sauna session",
       "Nervous system restoration",
       "Reserved 1-on-1 time slot",
-      "Add-on to any weekend pass",
+      "Add to any weekend pass",
     ],
   },
   {
     key: "adventure",
     label: "Adventure Bundle",
     emoji: "🏄",
-    color: C.violet,
-    colorBg: "rgba(139,95,191,0.07)",
-    colorBorder: "rgba(139,95,191,0.3)",
-    description: "Guided paddleboard yoga, nature immersion, and lake access.",
+    color: "#5B9BD5",
+    colorBg: "rgba(91,155,213,0.07)",
+    colorBorder: "rgba(91,155,213,0.3)",
+    depositAmount: 250,
+    description: "Guided paddleboard yoga on the lake plus a sauna session.",
     includes: [
       "Guided paddleboard yoga",
-      "Nature immersion experience",
+      "Lakeside sauna session",
       "Lake & mountain access",
       "Small-group adventure sessions",
-      "Add-on to any weekend pass",
+      "Add to any weekend pass",
     ],
   },
   {
-    key: "sanctuary",
-    label: "Sanctuary Pass",
+    key: "portal",
+    label: "Portal Package",
     emoji: "✦",
-    color: "#9B7FD4",
-    colorBg: "rgba(155,127,212,0.07)",
-    colorBorder: "rgba(155,127,212,0.3)",
-    description: "The full curated experience — priority access to ceremonies and intimate sessions.",
+    color: C.gold,
+    colorBg: "rgba(201,152,63,0.07)",
+    colorBorder: "rgba(201,152,63,0.3)",
+    depositAmount: 250,
+    description: "Full packaged experience — cacao ceremony and exclusive Wellness Weekend merch included.",
     includes: [
-      "Full 3-day weekend pass",
-      "Priority ceremony & workshop access",
-      "Exclusive Sanctuary-tier sessions",
-      "Warrior Lodge camping",
-      "Morning movement & breathwork",
+      "Full 3-day weekend access",
+      "Cacao ceremony participation",
+      "Exclusive Wellness Weekend merch",
+      "All workshops & healing arts",
+      "Community fire circle",
+    ],
+  },
+  {
+    key: "suite",
+    label: "Private Suite",
+    emoji: "🏠",
+    color: C.amber,
+    colorBg: "rgba(212,131,63,0.07)",
+    colorBorder: "rgba(212,131,63,0.3)",
+    depositAmount: 500,
+    description: "Full private 6-bed cabin for a family or group. Family rate — shared with your own party only.",
+    includes: [
+      "Private 6-bed cabin — your group only",
+      "Full weekend access for all guests",
+      "All workshops, ceremonies & healing arts",
+      "Priority check-in",
+      "Ideal for families & groups of 5–6",
     ],
   },
 ];
@@ -107,8 +113,8 @@ type PkgKey = typeof PACKAGES[number]["key"];
 
 function DepositPageInner() {
   const searchParams = useSearchParams();
-  const initialPkg = (searchParams.get("pkg") as PkgKey) ?? "camping";
-  const validInitial = PACKAGES.find(p => p.key === initialPkg) ? initialPkg : "camping";
+  const initialPkg = searchParams.get("pkg") as PkgKey ?? "sanctuary";
+  const validInitial = PACKAGES.find(p => p.key === initialPkg) ? initialPkg : "sanctuary";
 
   const [selected, setSelected] = useState<PkgKey>(validInitial);
   const [remaining, setRemaining] = useState<Record<string, number>>({});
@@ -164,27 +170,27 @@ function DepositPageInner() {
       <nav style={{ background: C.bg, borderBottom: `1px solid ${C.border}`, padding: "0.9rem 1.5rem", display: "flex", justifyContent: "space-between", alignItems: "center" }}>
         <Link href="/" style={{ fontSize: "0.85rem", color: C.muted, textDecoration: "none" }}>← Back to Wellness Weekend</Link>
         <span style={{ fontSize: "0.62rem", letterSpacing: "0.14em", textTransform: "uppercase", color: C.gold, fontWeight: 700 }}>
-          2027 · $250 Deposit
+          2027 · Reserve Your Spot
         </span>
       </nav>
 
       <main style={{ minHeight: "100vh", background: C.bg, padding: "3rem 1.5rem 6rem" }}>
-        <div style={{ maxWidth: "680px", margin: "0 auto" }}>
+        <div style={{ maxWidth: "700px", margin: "0 auto" }}>
 
           <div style={{ textAlign: "center", marginBottom: "2.5rem" }}>
             <p style={{ fontSize: "0.68rem", letterSpacing: "0.14em", textTransform: "uppercase", color: C.gold, marginBottom: "0.6rem", fontWeight: 600 }}>
-              2027 Wellness Weekend · Reserve Your Spot
+              2027 Wellness Weekend · Hold Your Spot
             </p>
             <h1 style={{ fontFamily: "var(--font-display)", fontSize: "clamp(2rem, 5vw, 3.2rem)", fontWeight: 700, lineHeight: 1.1, marginBottom: "0.75rem", color: C.charcoal }}>
-              Hold Your Package
+              Reserve with a Deposit
             </h1>
             <p style={{ fontSize: "1rem", lineHeight: 1.75, color: C.muted, maxWidth: "480px", margin: "0 auto" }}>
-              A $250 deposit locks in your package selection. Full pricing and dates announced later — deposit is fully refundable until then.
+              Deposit holds your package selection. Full pricing and 2027 dates coming soon — deposit is fully refundable until then.
             </p>
           </div>
 
-          {/* Package selector grid */}
-          <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(190px, 1fr))", gap: "0.75rem", marginBottom: "2rem" }}>
+          {/* Package selector */}
+          <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(170px, 1fr))", gap: "0.75rem", marginBottom: "2rem" }}>
             {PACKAGES.map(pkg => {
               const rem = remaining[pkg.key];
               const full = rem !== undefined && rem <= 0;
@@ -207,12 +213,15 @@ function DepositPageInner() {
                   }}
                 >
                   <div style={{ fontSize: "1.3rem", marginBottom: "0.4rem" }}>{pkg.emoji}</div>
-                  <p style={{ fontSize: "0.82rem", fontWeight: 700, color: isSelected ? pkg.color : C.charcoal, marginBottom: "0.15rem", lineHeight: 1.2 }}>
+                  <p style={{ fontSize: "0.82rem", fontWeight: 700, color: isSelected ? pkg.color : C.charcoal, marginBottom: "0.1rem", lineHeight: 1.2 }}>
                     {pkg.label}
                   </p>
+                  <p style={{ fontFamily: "var(--font-display)", fontSize: "1rem", fontWeight: 800, color: isSelected ? pkg.color : C.charcoal, marginBottom: "0.1rem" }}>
+                    ${pkg.depositAmount}
+                  </p>
                   {rem !== undefined && (
-                    <p style={{ fontSize: "0.65rem", color: full ? C.faint : pkg.color, fontWeight: 600 }}>
-                      {full ? "Fully reserved" : `${rem} spots left`}
+                    <p style={{ fontSize: "0.62rem", color: full ? C.faint : pkg.color, fontWeight: 600 }}>
+                      {full ? "Fully reserved" : `${rem} spots`}
                     </p>
                   )}
                 </button>
@@ -220,11 +229,16 @@ function DepositPageInner() {
             })}
           </div>
 
-          {/* Selected package includes */}
+          {/* Selected package details */}
           <div style={{ background: C.card, border: `1px solid ${activePkg.colorBorder}`, borderRadius: "12px", padding: "1.25rem 1.5rem", marginBottom: "1.25rem" }}>
-            <p style={{ fontSize: "0.65rem", letterSpacing: "0.12em", textTransform: "uppercase", color: activePkg.color, fontWeight: 700, marginBottom: "0.75rem" }}>
-              {activePkg.label} · What&apos;s Included
-            </p>
+            <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", marginBottom: "0.65rem" }}>
+              <p style={{ fontSize: "0.65rem", letterSpacing: "0.12em", textTransform: "uppercase", color: activePkg.color, fontWeight: 700 }}>
+                {activePkg.label} · What&apos;s Included
+              </p>
+              <span style={{ fontFamily: "var(--font-display)", fontSize: "1.25rem", fontWeight: 800, color: activePkg.color }}>
+                ${activePkg.depositAmount} deposit
+              </span>
+            </div>
             <p style={{ fontSize: "0.82rem", color: C.muted, lineHeight: 1.55, marginBottom: "0.75rem" }}>{activePkg.description}</p>
             <ul style={{ listStyle: "none", padding: 0, margin: 0, display: "flex", flexDirection: "column", gap: "0.45rem" }}>
               {activePkg.includes.map(item => (
@@ -236,10 +250,10 @@ function DepositPageInner() {
             </ul>
           </div>
 
-          {/* Deposit + refund note */}
+          {/* Refund note */}
           <div style={{ background: "rgba(201,152,63,0.07)", border: `1px solid ${C.goldBorder}`, borderRadius: "10px", padding: "0.9rem 1.1rem", marginBottom: "2rem" }}>
             <p style={{ fontSize: "0.82rem", color: C.charcoal, lineHeight: 1.65, margin: 0 }}>
-              <strong style={{ color: C.gold }}>$250 deposit</strong> holds your {activePkg.label}. Full pricing announced with 2027 dates.{" "}
+              <strong style={{ color: C.gold }}>Deposit holds your spot.</strong> Full pricing announced with 2027 dates — deposit applied to your total.{" "}
               <Link href="/refunds" style={{ color: C.gold }}>Refund eligible →</Link>
             </p>
           </div>
@@ -247,7 +261,7 @@ function DepositPageInner() {
           {isFull && !submitted && (
             <div style={{ textAlign: "center", background: C.card, border: `1px solid ${C.border}`, borderRadius: "16px", padding: "2.5rem 2rem" }}>
               <p style={{ fontSize: "0.85rem", color: C.muted, marginBottom: "1.25rem" }}>
-                All deposit spots for <strong>{activePkg.label}</strong> are reserved. Choose another package above.
+                All deposit spots for <strong>{activePkg.label}</strong> are reserved. Choose another option above.
               </p>
               <Link href="/" style={{ display: "inline-block", padding: "0.75rem 2rem", background: `linear-gradient(135deg, ${C.gold}, ${C.orange})`, color: "#fff", fontWeight: 700, fontSize: "0.95rem", borderRadius: "30px", textDecoration: "none" }}>
                 Back to Home →
@@ -256,15 +270,16 @@ function DepositPageInner() {
           )}
 
           {submitted && (
-            <div style={{ textAlign: "center", background: C.card, border: `1px solid ${C.goldBorder}`, borderRadius: "16px", padding: "2.5rem 2rem" }}>
+            <div style={{ textAlign: "center", background: C.card, border: `1px solid ${C.goldBorder}`, borderRadius: "16px", padding: "2.75rem 2rem" }}>
               <div style={{ fontSize: "2.5rem", marginBottom: "0.75rem" }}>{activePkg.emoji}</div>
               <p style={{ fontFamily: "var(--font-display)", fontSize: "1.6rem", fontWeight: 700, color: C.charcoal, marginBottom: "0.75rem", lineHeight: 1.2 }}>
                 {activePkg.label} held. ✦
               </p>
               <p style={{ fontSize: "1rem", color: C.muted, lineHeight: 1.75, marginBottom: "1rem" }}>
-                Thank you, {name.split(" ")[0]}. We&apos;ll send a $250 deposit payment link to <strong style={{ color: C.charcoal }}>{email}</strong> within minutes.
+                Thank you, {name.split(" ")[0]}. We&apos;ll send a ${activePkg.depositAmount} deposit payment link to{" "}
+                <strong style={{ color: C.charcoal }}>{email}</strong> within minutes.
               </p>
-              <p style={{ fontSize: "0.82rem", color: C.faint, marginTop: "0.5rem" }}>
+              <p style={{ fontSize: "0.82rem", color: C.faint }}>
                 Questions? <a href="mailto:support@thesoundspace.us" style={{ color: C.gold }}>support@thesoundspace.us</a>
               </p>
             </div>
@@ -291,7 +306,7 @@ function DepositPageInner() {
                 </div>
                 <div style={{ textAlign: "right" }}>
                   <p style={{ fontSize: "0.72rem", color: C.faint, letterSpacing: "0.08em", textTransform: "uppercase", marginBottom: "0.2rem" }}>Deposit</p>
-                  <p style={{ fontFamily: "var(--font-display)", fontSize: "1.5rem", fontWeight: 800, color: C.gold }}>$250</p>
+                  <p style={{ fontFamily: "var(--font-display)", fontSize: "1.6rem", fontWeight: 800, color: C.gold }}>${activePkg.depositAmount}</p>
                 </div>
               </div>
 
@@ -309,7 +324,7 @@ function DepositPageInner() {
                 cursor: loading ? "not-allowed" : "pointer",
                 letterSpacing: "0.03em", transition: "opacity 0.2s",
               }}>
-                {loading ? "Submitting…" : `Hold My ${activePkg.label} — $250 →`}
+                {loading ? "Submitting…" : `Hold My ${activePkg.label} — $${activePkg.depositAmount} →`}
               </button>
 
               <p style={{ fontSize: "0.78rem", color: C.faint, textAlign: "center", lineHeight: 1.6 }}>

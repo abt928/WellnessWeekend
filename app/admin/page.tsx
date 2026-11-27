@@ -1028,14 +1028,20 @@ function TicketsSection() {
   }, []);
 
   if (err) return <p style={{ color: "#ff8a72", padding: "2rem" }}>{err}</p>;
-  if (!data) return <p style={{ color: "rgba(255,255,255,0.4)", padding: "2rem" }}>Loading…</p>;
+  if (!data) return <p style={{ color: "var(--ink-muted)", padding: "2rem" }}>Loading…</p>;
 
   const { summary } = data;
-  const statBox = (label: string, value: string, sub: string) => (
-    <div style={{ background: "rgba(255,255,255,0.04)", border: "1px solid rgba(255,255,255,0.08)", borderRadius: "12px", padding: "1.25rem 1.5rem" }}>
-      <div style={{ fontSize: "0.62rem", letterSpacing: "0.14em", textTransform: "uppercase", color: "rgba(255,255,255,0.35)", marginBottom: "0.4rem" }}>{label}</div>
-      <div style={{ fontFamily: "var(--font-display)", fontSize: "2rem", fontWeight: 700, color: "#fff" }}>{value}</div>
-      <div style={{ fontSize: "0.78rem", color: "rgba(255,255,255,0.4)", marginTop: "0.25rem" }}>{sub}</div>
+  const BF_START = new Date("2026-11-27T09:00:00Z");
+  const bfEarth = data.earthPasses.filter(r => new Date(r.created_at) >= BF_START);
+  const bfWeekend = data.weekendPasses.filter(r => new Date(r.created_at) >= BF_START);
+  const cabins = data.deposits.filter(d => d.package_type === "sanctuary" || d.package_type === "suite");
+  const privateSuites = data.deposits.filter(d => d.package_type === "suite");
+
+  const statBox = (label: string, value: string, sub: string, accent?: string) => (
+    <div style={{ background: "var(--surface-elevated)", border: `1px solid ${accent ? "rgba(201,152,63,0.3)" : "var(--line-subtle)"}`, borderRadius: "12px", padding: "1.25rem 1.5rem" }}>
+      <div style={{ fontSize: "0.62rem", letterSpacing: "0.14em", textTransform: "uppercase", color: "var(--ink-muted)", marginBottom: "0.4rem" }}>{label}</div>
+      <div style={{ fontFamily: "var(--font-display)", fontSize: "2rem", fontWeight: 700, color: accent ?? "var(--ink)" }}>{value}</div>
+      <div style={{ fontSize: "0.78rem", color: "var(--ink-muted)", marginTop: "0.25rem" }}>{sub}</div>
     </div>
   );
 
@@ -1051,7 +1057,7 @@ function TicketsSection() {
         </tr></thead>
         <tbody>
           {rows.length === 0 && (
-            <tr><td colSpan={5} style={{ ...cell, textAlign: "center", color: "rgba(255,255,255,0.3)", padding: "2rem" }}>No sales yet</td></tr>
+            <tr><td colSpan={5} style={{ ...cell, textAlign: "center", color: "var(--ink-muted)", padding: "2rem" }}>No sales yet</td></tr>
           )}
           {rows.map((r, i) => (
             <tr key={r.id}>
@@ -1059,7 +1065,7 @@ function TicketsSection() {
               <td style={cell}>{r.customer_email || "—"}</td>
               <td style={cell}>${price}</td>
               <td style={cell}>{fmtDate(r.created_at)}</td>
-              <td style={{ ...cell, fontSize: "0.72rem", color: "rgba(255,255,255,0.35)" }}>{r.square_order_id || r.square_payment_id || "—"}</td>
+              <td style={{ ...cell, fontSize: "0.72rem", color: "var(--ink-muted)" }}>{r.square_order_id || r.square_payment_id || "—"}</td>
             </tr>
           ))}
         </tbody>
@@ -1072,22 +1078,33 @@ function TicketsSection() {
 
   return (
     <div>
-      <h2 style={{ fontFamily: "var(--font-display)", fontSize: "1.6rem", color: "#fff", marginBottom: "1.75rem" }}>2027 Ticket Sales</h2>
+      <h2 style={{ fontFamily: "var(--font-display)", fontSize: "1.6rem", color: "var(--ink)", marginBottom: "1.75rem" }}>2027 Ticket Sales</h2>
 
-      <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(160px, 1fr))", gap: "1rem", marginBottom: "2.5rem" }}>
+      {/* All-time summary */}
+      <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(160px, 1fr))", gap: "1rem", marginBottom: "1.5rem" }}>
         {statBox("Weekend Pass", String(summary.weekendPassCount), `$${summary.weekendPassRevenue} revenue · 25 total`)}
         {statBox("Earth Pass", String(summary.earthPassCount), `$${summary.earthPassRevenue} revenue · 10 total`)}
-        {statBox("Deposits", String(summary.depositCount), `$${summary.depositRevenue} held`)}
+        {statBox("Cabins", String(cabins.length), `${privateSuites.length} private · ${cabins.length - privateSuites.length} shared`)}
         {statBox("Total Revenue", `$${summary.weekendPassRevenue + summary.earthPassRevenue + summary.depositRevenue}`, "paid + deposits")}
       </div>
 
-      <h3 style={{ fontSize: "0.9rem", color: "rgba(255,255,255,0.5)", textTransform: "uppercase", letterSpacing: "0.1em", marginBottom: "0.75rem" }}>Weekend Pass — $77 ({summary.weekendPassCount}/25 sold)</h3>
+      {/* Black Friday section */}
+      <div style={{ background: "rgba(201,152,63,0.06)", border: "1px solid rgba(201,152,63,0.2)", borderRadius: "12px", padding: "1.25rem 1.5rem", marginBottom: "2.5rem" }}>
+        <div style={{ fontSize: "0.68rem", letterSpacing: "0.14em", textTransform: "uppercase", color: "#C9983F", fontWeight: 700, marginBottom: "0.75rem" }}>● Black Friday Sales — Nov 27–Dec 1</div>
+        <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(140px, 1fr))", gap: "0.75rem" }}>
+          {statBox("BF Earth Passes", String(bfEarth.length), `$${bfEarth.length * 177} revenue`, "#C9983F")}
+          {statBox("BF Weekend Passes", String(bfWeekend.length), `$${bfWeekend.length * 77} revenue`, "#C9983F")}
+          {statBox("BF Total", `$${bfEarth.length * 177 + bfWeekend.length * 77}`, `${bfEarth.length + bfWeekend.length} tickets sold`, "#C9983F")}
+        </div>
+      </div>
+
+      <h3 style={{ fontSize: "0.9rem", color: "var(--ink-muted)", textTransform: "uppercase", letterSpacing: "0.1em", marginBottom: "0.75rem" }}>Weekend Pass — $77 ({summary.weekendPassCount}/25 sold)</h3>
       {orderTable(data.weekendPasses, 77)}
 
-      <h3 style={{ fontSize: "0.9rem", color: "rgba(255,255,255,0.5)", textTransform: "uppercase", letterSpacing: "0.1em", margin: "2rem 0 0.75rem" }}>Earth Pass — $177 ({summary.earthPassCount}/10 sold)</h3>
+      <h3 style={{ fontSize: "0.9rem", color: "var(--ink-muted)", textTransform: "uppercase", letterSpacing: "0.1em", margin: "2rem 0 0.75rem" }}>Earth Pass — $177 ({summary.earthPassCount}/10 sold)</h3>
       {orderTable(data.earthPasses, 177)}
 
-      <h3 style={{ fontSize: "0.9rem", color: "rgba(255,255,255,0.5)", textTransform: "uppercase", letterSpacing: "0.1em", margin: "2rem 0 0.75rem" }}>Package Deposits ({summary.depositCount} holds)</h3>
+      <h3 style={{ fontSize: "0.9rem", color: "var(--ink-muted)", textTransform: "uppercase", letterSpacing: "0.1em", margin: "2rem 0 0.75rem" }}>Package Deposits — Cabins &amp; Bundles ({summary.depositCount} holds)</h3>
       <div className="admin-table-wrap">
         <table className="admin-table">
           <thead><tr>
@@ -1101,7 +1118,7 @@ function TicketsSection() {
           </tr></thead>
           <tbody>
             {data.deposits.length === 0 && (
-              <tr><td colSpan={7} style={{ ...cell, textAlign: "center", color: "rgba(255,255,255,0.3)", padding: "2rem" }}>No deposits yet</td></tr>
+              <tr><td colSpan={7} style={{ ...cell, textAlign: "center", color: "var(--ink-muted)", padding: "2rem" }}>No deposits yet</td></tr>
             )}
             {data.deposits.map((r, i) => (
               <tr key={r.id}>
@@ -1155,13 +1172,13 @@ function GuestListSection() {
   return (
     <div>
       <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "1.5rem", flexWrap: "wrap", gap: "1rem" }}>
-        <h2 style={{ fontFamily: "var(--font-display)", fontSize: "1.6rem", color: "#fff" }}>Guest List — 2027</h2>
+        <h2 style={{ fontFamily: "var(--font-display)", fontSize: "1.6rem", color: "var(--ink)" }}>Guest List — 2027</h2>
         <div style={{ display: "flex", alignItems: "center", gap: "0.75rem" }}>
-          <span style={{ fontSize: "0.78rem", color: "rgba(255,255,255,0.4)" }}>{filtered.length} guests</span>
-          <input value={search} onChange={e => setSearch(e.target.value)} placeholder="Search…" style={{ background: "rgba(255,255,255,0.06)", border: "1px solid rgba(255,255,255,0.12)", borderRadius: "8px", color: "#fff", padding: "0.45rem 0.85rem", fontSize: "0.85rem", outline: "none" }} />
+          <span style={{ fontSize: "0.78rem", color: "var(--ink-muted)" }}>{filtered.length} guests</span>
+          <input value={search} onChange={e => setSearch(e.target.value)} placeholder="Search…" style={{ background: "var(--surface-elevated)", border: "1px solid var(--line-subtle)", borderRadius: "8px", color: "var(--ink)", padding: "0.45rem 0.85rem", fontSize: "0.85rem", outline: "none" }} />
         </div>
       </div>
-      {loading ? <p style={{ color: "rgba(255,255,255,0.4)", padding: "2rem" }}>Loading…</p> : (
+      {loading ? <p style={{ color: "var(--ink-muted)", padding: "2rem" }}>Loading…</p> : (
         <div className="admin-table-wrap">
           <table className="admin-table">
             <thead><tr>
@@ -1175,7 +1192,7 @@ function GuestListSection() {
             </tr></thead>
             <tbody>
               {filtered.length === 0 && (
-                <tr><td colSpan={7} style={{ ...cell, textAlign: "center", color: "rgba(255,255,255,0.3)", padding: "2rem" }}>No guests yet</td></tr>
+                <tr><td colSpan={7} style={{ ...cell, textAlign: "center", color: "var(--ink-muted)", padding: "2rem" }}>No guests yet</td></tr>
               )}
               {filtered.map((g, i) => (
                 <tr key={i}>
@@ -1183,7 +1200,7 @@ function GuestListSection() {
                   <td style={cell}>{g.name}</td>
                   <td style={cell}>{g.email}</td>
                   <td style={cell}>{g.type}</td>
-                  <td style={{ ...cell, color: "rgba(255,255,255,0.45)" }}>{g.detail || "—"}</td>
+                  <td style={{ ...cell, color: "var(--ink-muted)" }}>{g.detail || "—"}</td>
                   <td style={cell}>{g.phone || "—"}</td>
                   <td style={cell}>{fmtDate(g.date)}</td>
                 </tr>

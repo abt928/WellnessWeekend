@@ -58,6 +58,96 @@ This agreement is governed by the laws of the State of Alaska. Any disputes shal
 
 Questions? Contact us at support@thesoundspace.us or (907) 600-4390.`;
 
+export function VendorWaitlist2027() {
+  const [name, setName] = useState("");
+  const [email, setEmail] = useState("");
+  const [phone, setPhone] = useState("");
+  const [businessName, setBusinessName] = useState("");
+  const [category, setCategory] = useState("");
+  const [website, setWebsite] = useState("");
+  const [spaceInterest, setSpaceInterest] = useState("");
+  const [notes, setNotes] = useState("");
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState("");
+  const [submitted, setSubmitted] = useState(false);
+
+  async function handleWaitlist(e: React.FormEvent) {
+    e.preventDefault();
+    setError("");
+    setLoading(true);
+    try {
+      const res = await fetch("/api/vendor-waitlist", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ name, email, phone: phone || undefined, businessName: businessName || undefined, category, website: website || undefined, spaceInterest: spaceInterest || undefined, notes: notes || undefined }),
+      });
+      const data = await res.json();
+      if (!res.ok) { setError(data.error || "Something went wrong."); return; }
+      setSubmitted(true);
+    } catch {
+      setError("Unable to submit. Please try again.");
+    } finally {
+      setLoading(false);
+    }
+  }
+
+  const C2 = { bg: "#F7F3EC", card: "#FBF9F4", charcoal: "#333533", muted: "rgba(51,53,51,0.6)", faint: "rgba(51,53,51,0.38)", gold: "#C9983F", orange: "#FF6B35", border: "rgba(51,53,51,0.12)", error: "#B84A2B", errorBg: "rgba(184,74,43,0.07)" };
+  const inp2: React.CSSProperties = { width: "100%", padding: "0.75rem 1rem", background: "#fff", border: "1px solid rgba(51,53,51,0.18)", borderRadius: "8px", color: "#333533", fontSize: "1rem", outline: "none", boxSizing: "border-box" };
+
+  return (
+    <div style={{ background: C2.card, border: `1.5px solid rgba(201,152,63,0.4)`, borderRadius: "20px", padding: "2.5rem 2rem", marginBottom: "3rem" }}>
+      <div style={{ display: "flex", alignItems: "center", gap: "0.75rem", marginBottom: "0.5rem" }}>
+        <span style={{ fontSize: "0.68rem", letterSpacing: "0.14em", textTransform: "uppercase", color: C2.gold, fontWeight: 700 }}>● Now Accepting</span>
+        <span style={{ fontSize: "0.68rem", letterSpacing: "0.14em", textTransform: "uppercase", color: C2.faint, fontWeight: 600 }}>2027 Vendor Interest</span>
+      </div>
+      <h2 style={{ fontFamily: "var(--font-display)", fontSize: "1.6rem", fontWeight: 700, color: C2.charcoal, marginBottom: "0.5rem" }}>Join the 2027 Vendor Waitlist</h2>
+      <p style={{ fontSize: "0.9rem", color: C2.muted, marginBottom: "2rem", lineHeight: 1.65 }}>
+        Wellness Weekend 2027 — August, Sutton, Alaska. Tell us about your offerings and we'll reach out with space availability, pricing, and agreement details.
+      </p>
+      {submitted ? (
+        <div style={{ textAlign: "center", padding: "1.5rem 0" }}>
+          <p style={{ fontSize: "0.7rem", letterSpacing: "0.14em", textTransform: "uppercase", color: C2.gold, marginBottom: "0.5rem", fontWeight: 600 }}>You're on the list ✦</p>
+          <p style={{ fontSize: "1rem", color: C2.charcoal, fontWeight: 600 }}>Thanks, {name.split(" ")[0]}! We'll be in touch at {email}.</p>
+        </div>
+      ) : (
+        <form onSubmit={handleWaitlist} style={{ display: "flex", flexDirection: "column", gap: "1rem" }}>
+          <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "1rem" }}>
+            <div><label style={{ fontSize: "0.7rem", letterSpacing: "0.08em", textTransform: "uppercase", color: "rgba(51,53,51,0.55)", fontWeight: 600, display: "block", marginBottom: "0.4rem" }}>Contact Name *</label>
+              <input type="text" required value={name} onChange={e => setName(e.target.value)} style={inp2} /></div>
+            <div><label style={{ fontSize: "0.7rem", letterSpacing: "0.08em", textTransform: "uppercase", color: "rgba(51,53,51,0.55)", fontWeight: 600, display: "block", marginBottom: "0.4rem" }}>Email *</label>
+              <input type="email" required value={email} onChange={e => setEmail(e.target.value)} style={inp2} /></div>
+            <div><label style={{ fontSize: "0.7rem", letterSpacing: "0.08em", textTransform: "uppercase", color: "rgba(51,53,51,0.55)", fontWeight: 600, display: "block", marginBottom: "0.4rem" }}>Business Name</label>
+              <input type="text" value={businessName} onChange={e => setBusinessName(e.target.value)} placeholder="Optional" style={inp2} /></div>
+            <div><label style={{ fontSize: "0.7rem", letterSpacing: "0.08em", textTransform: "uppercase", color: "rgba(51,53,51,0.55)", fontWeight: 600, display: "block", marginBottom: "0.4rem" }}>Phone</label>
+              <input type="tel" value={phone} onChange={e => setPhone(e.target.value)} placeholder="Optional" style={inp2} /></div>
+          </div>
+          <div><label style={{ fontSize: "0.7rem", letterSpacing: "0.08em", textTransform: "uppercase", color: "rgba(51,53,51,0.55)", fontWeight: 600, display: "block", marginBottom: "0.4rem" }}>What do you sell / offer? *</label>
+            <input type="text" required value={category} onChange={e => setCategory(e.target.value)} placeholder="e.g. Crystals & Minerals, Handmade Jewelry, Herbal Remedies…" style={inp2} /></div>
+          <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "1rem" }}>
+            <div><label style={{ fontSize: "0.7rem", letterSpacing: "0.08em", textTransform: "uppercase", color: "rgba(51,53,51,0.55)", fontWeight: 600, display: "block", marginBottom: "0.4rem" }}>Website / Social</label>
+              <input type="url" value={website} onChange={e => setWebsite(e.target.value)} placeholder="https://" style={inp2} /></div>
+            <div><label style={{ fontSize: "0.7rem", letterSpacing: "0.08em", textTransform: "uppercase", color: "rgba(51,53,51,0.55)", fontWeight: 600, display: "block", marginBottom: "0.4rem" }}>Space Preference</label>
+              <select value={spaceInterest} onChange={e => setSpaceInterest(e.target.value)} style={{ ...inp2, appearance: "none" as React.CSSProperties["appearance"] }}>
+                <option value="">No preference</option>
+                <option value="1day-10x10">1 Day — 10×10 ft</option>
+                <option value="3day-10x10">3 Days — 10×10 ft</option>
+                <option value="3day-10x20">3 Days — 10×20 ft (Premium)</option>
+                <option value="sponsor">Sponsor / Partner</option>
+              </select>
+            </div>
+          </div>
+          <div><label style={{ fontSize: "0.7rem", letterSpacing: "0.08em", textTransform: "uppercase", color: "rgba(51,53,51,0.55)", fontWeight: 600, display: "block", marginBottom: "0.4rem" }}>Anything else to share?</label>
+            <textarea value={notes} onChange={e => setNotes(e.target.value)} rows={3} placeholder="Optional — previous festivals, special requirements, etc." style={{ ...inp2, resize: "vertical" as React.CSSProperties["resize"], lineHeight: 1.6 }} /></div>
+          {error && <p style={{ fontSize: "0.9rem", color: C2.error, background: C2.errorBg, border: `1px solid rgba(184,74,43,0.2)`, borderRadius: "8px", padding: "0.75rem 1rem", margin: 0 }}>{error}</p>}
+          <button type="submit" disabled={loading} style={{ padding: "0.9rem 2rem", background: loading ? `rgba(201,152,63,0.5)` : `linear-gradient(135deg, ${C2.gold}, ${C2.orange})`, color: "#fff", fontWeight: 700, fontSize: "1rem", border: "none", borderRadius: "30px", cursor: loading ? "not-allowed" : "pointer" }}>
+            {loading ? "Submitting…" : "Join the 2027 Vendor Waitlist →"}
+          </button>
+        </form>
+      )}
+    </div>
+  );
+}
+
 export default function VendorAgreementPage() {
   // Form fields
   const [vendorName,   setVendorName]   = useState("");
@@ -240,6 +330,12 @@ export default function VendorAgreementPage() {
               vendor space at Warrior Lodge. Payment is collected securely through Square.
             </p>
           </header>
+
+          {/* 2027 Vendor Waitlist */}
+          <VendorWaitlist2027 />
+
+          <hr style={{ border: "none", borderTop: "1px solid rgba(51,53,51,0.12)", margin: "0 0 2.5rem" }} />
+          <p style={{ fontSize: "0.78rem", color: "rgba(51,53,51,0.5)", textAlign: "center", marginBottom: "2rem", letterSpacing: "0.06em", textTransform: "uppercase" }}>⬇ 2026 Vendor Agreement (for existing vendors)</p>
 
           {/* Sponsor callout */}
           <div style={{

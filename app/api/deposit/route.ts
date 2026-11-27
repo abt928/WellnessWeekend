@@ -4,7 +4,7 @@ import { neon } from "@neondatabase/serverless";
 export const dynamic = "force-dynamic";
 
 const TOTAL_PER_TYPE = 10;
-const VALID_TYPES = ["sanctuary", "recovery"] as const;
+const VALID_TYPES = ["sanctuary", "recovery", "camping", "cabin", "adventure"] as const;
 
 async function ensureTable() {
   const dbUrl = process.env.DATABASE_URL;
@@ -51,7 +51,7 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: "name, email, and packageType are required" }, { status: 400 });
     }
     if (!VALID_TYPES.includes(packageType)) {
-      return NextResponse.json({ error: "packageType must be sanctuary or recovery" }, { status: 400 });
+      return NextResponse.json({ error: `packageType must be one of: ${VALID_TYPES.join(", ")}` }, { status: 400 });
     }
 
     const claimed = await getCount(packageType);

@@ -248,8 +248,8 @@ export default function Home() {
                   <li style={{ fontSize: "0.875rem", color: "rgba(255,255,255,0.6)", display: "flex", gap: "0.5rem" }}><span style={{ color: "var(--sage, #5E8A6A)", flexShrink: 0 }}>✓</span> Campsite on the grounds</li>
                   <li style={{ fontSize: "0.875rem", color: "rgba(255,255,255,0.6)", display: "flex", gap: "0.5rem" }}><span style={{ color: "var(--sage, #5E8A6A)", flexShrink: 0 }}>✓</span> Community fire circle</li>
                 </ul>
-                <a href="#notify" style={{ display: "block", textAlign: "center", padding: "0.72rem 1.25rem", borderRadius: 30, border: "1px solid rgba(94,138,106,0.5)", color: "var(--sage, #5E8A6A)", fontSize: "0.85rem", fontWeight: 700, textDecoration: "none", letterSpacing: "0.04em" }}>
-                  Notify Me When Booking Opens
+                <a href="/deposit?pkg=camping" style={{ display: "block", textAlign: "center", padding: "0.72rem 1.25rem", borderRadius: 30, border: "1px solid rgba(94,138,106,0.5)", color: "var(--sage, #5E8A6A)", fontSize: "0.85rem", fontWeight: 700, textDecoration: "none", letterSpacing: "0.04em" }}>
+                  Reserve with $250 Deposit →
                 </a>
               </div>
 
@@ -272,8 +272,8 @@ export default function Home() {
                   <li style={{ fontSize: "0.875rem", color: "rgba(255,255,255,0.6)", display: "flex", gap: "0.5rem" }}><span style={{ color: "var(--gold, #C9983F)", flexShrink: 0 }}>✓</span> Dedicated cabin-only spaces</li>
                   <li style={{ fontSize: "0.875rem", color: "rgba(255,255,255,0.6)", display: "flex", gap: "0.5rem" }}><span style={{ color: "var(--gold, #C9983F)", flexShrink: 0 }}>✓</span> Concierge check-in &amp; setup</li>
                 </ul>
-                <a href="#notify" style={{ display: "block", textAlign: "center", padding: "0.72rem 1.25rem", borderRadius: 30, background: "var(--gold, #C9983F)", color: "#fff", fontSize: "0.85rem", fontWeight: 700, textDecoration: "none", letterSpacing: "0.04em" }}>
-                  Notify Me When Booking Opens
+                <a href="/deposit?pkg=cabin" style={{ display: "block", textAlign: "center", padding: "0.72rem 1.25rem", borderRadius: 30, background: "var(--gold, #C9983F)", color: "#fff", fontSize: "0.85rem", fontWeight: 700, textDecoration: "none", letterSpacing: "0.04em" }}>
+                  Reserve with $250 Deposit →
                 </a>
               </div>
             </div>
@@ -299,8 +299,8 @@ export default function Home() {
                   <li style={{ fontSize: "0.875rem", color: "rgba(255,255,255,0.6)", display: "flex", gap: "0.5rem" }}><span style={{ color: "rgba(61,184,175,0.85)", flexShrink: 0 }}>✓</span> Nervous system restoration</li>
                   <li style={{ fontSize: "0.875rem", color: "rgba(255,255,255,0.6)", display: "flex", gap: "0.5rem" }}><span style={{ color: "rgba(61,184,175,0.85)", flexShrink: 0 }}>✓</span> Reserved 1-on-1 sessions</li>
                 </ul>
-                <a href="#notify" style={{ display: "block", textAlign: "center", padding: "0.72rem 1.25rem", borderRadius: 30, border: "1px solid rgba(61,184,175,0.4)", color: "rgba(61,184,175,0.9)", fontSize: "0.85rem", fontWeight: 700, textDecoration: "none", letterSpacing: "0.04em" }}>
-                  Notify Me When Booking Opens
+                <a href="/deposit?pkg=recovery" style={{ display: "block", textAlign: "center", padding: "0.72rem 1.25rem", borderRadius: 30, border: "1px solid rgba(61,184,175,0.4)", color: "rgba(61,184,175,0.9)", fontSize: "0.85rem", fontWeight: 700, textDecoration: "none", letterSpacing: "0.04em" }}>
+                  Reserve with $250 Deposit →
                 </a>
               </div>
 
@@ -319,8 +319,8 @@ export default function Home() {
                   <li style={{ fontSize: "0.875rem", color: "rgba(255,255,255,0.6)", display: "flex", gap: "0.5rem" }}><span style={{ color: "rgba(155,127,212,0.85)", flexShrink: 0 }}>✓</span> Lake &amp; mountain access</li>
                   <li style={{ fontSize: "0.875rem", color: "rgba(255,255,255,0.6)", display: "flex", gap: "0.5rem" }}><span style={{ color: "rgba(155,127,212,0.85)", flexShrink: 0 }}>✓</span> Small-group adventure sessions</li>
                 </ul>
-                <a href="#notify" style={{ display: "block", textAlign: "center", padding: "0.72rem 1.25rem", borderRadius: 30, border: "1px solid rgba(155,127,212,0.4)", color: "rgba(155,127,212,0.9)", fontSize: "0.85rem", fontWeight: 700, textDecoration: "none", letterSpacing: "0.04em" }}>
-                  Notify Me When Booking Opens
+                <a href="/deposit?pkg=adventure" style={{ display: "block", textAlign: "center", padding: "0.72rem 1.25rem", borderRadius: 30, border: "1px solid rgba(155,127,212,0.4)", color: "rgba(155,127,212,0.9)", fontSize: "0.85rem", fontWeight: 700, textDecoration: "none", letterSpacing: "0.04em" }}>
+                  Reserve with $250 Deposit →
                 </a>
               </div>
             </div>

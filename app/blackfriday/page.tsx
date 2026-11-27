@@ -2,7 +2,6 @@
 import { useState, useEffect } from "react";
 import Link from "next/link";
 
-const PASSWORD = "FIRE";
 
 const C = {
   bg: "#0a0500",
@@ -186,20 +185,10 @@ function CountdownUnit({ value, label }: { value: number; label: string }) {
 }
 
 export default function BlackFridayPage() {
-  const [unlocked, setUnlocked] = useState(false);
-  const [pw, setPw] = useState("");
-  const [pwError, setPwError] = useState(false);
   const [remaining, setRemaining] = useState<Record<string, number>>({});
   const { h, m, s, expired } = useCountdown(SALE_END_UTC);
 
   useEffect(() => {
-    try {
-      if (sessionStorage.getItem("bf_unlocked") === "1") setUnlocked(true);
-    } catch {}
-  }, []);
-
-  useEffect(() => {
-    if (!unlocked) return;
     const keys = ["weekend-pass", "earth-pass", "deposit?type=sanctuary", "deposit?type=recovery"];
     const labels = ["weekend", "earth", "sanctuary-deposit", "recovery-deposit"];
     Promise.all(
@@ -211,75 +200,7 @@ export default function BlackFridayPage() {
       results.forEach(r => (map[r.key] = r.remaining));
       setRemaining(map);
     }).catch(() => {});
-  }, [unlocked]);
-
-  function handleUnlock(e: React.FormEvent) {
-    e.preventDefault();
-    if (pw.trim().toUpperCase() === PASSWORD) {
-      setUnlocked(true);
-      setPwError(false);
-      try { sessionStorage.setItem("bf_unlocked", "1"); } catch {}
-    } else {
-      setPwError(true);
-      setPw("");
-    }
-  }
-
-  if (!unlocked) {
-    return (
-      <div style={{
-        minHeight: "100vh",
-        background: `radial-gradient(ellipse at 50% 0%, rgba(201,152,63,0.18) 0%, transparent 60%), ${C.bg}`,
-        display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center",
-        padding: "2rem 1.5rem",
-      }}>
-        <div style={{ maxWidth: "400px", width: "100%", textAlign: "center" }}>
-          <div style={{ fontSize: "3rem", marginBottom: "1.25rem" }}>🖤</div>
-          <p style={{ fontSize: "0.62rem", letterSpacing: "0.2em", textTransform: "uppercase", color: C.gold, fontWeight: 700, marginBottom: "0.75rem" }}>
-            Wellness Weekend · Black Friday 2027
-          </p>
-          <h1 style={{ fontFamily: "var(--font-display)", fontSize: "clamp(2rem, 6vw, 3rem)", fontWeight: 700, color: C.white, lineHeight: 1.1, marginBottom: "0.75rem" }}>
-            Private Access
-          </h1>
-          <p style={{ fontSize: "0.95rem", color: C.dim, lineHeight: 1.75, marginBottom: "2rem" }}>
-            Enter your access code to view the Black Friday sale.
-          </p>
-
-          <form onSubmit={handleUnlock} style={{ display: "flex", flexDirection: "column", gap: "0.9rem" }}>
-            <input
-              type="text"
-              value={pw}
-              onChange={e => { setPw(e.target.value); setPwError(false); }}
-              placeholder="Enter code"
-              autoCapitalize="characters"
-              style={{
-                width: "100%", padding: "1rem 1.25rem",
-                background: "rgba(255,255,255,0.06)",
-                border: pwError ? "1px solid rgba(255,138,114,0.6)" : `1px solid ${C.border}`,
-                borderRadius: "10px", color: C.white,
-                fontSize: "1.2rem", letterSpacing: "0.18em", fontWeight: 700,
-                textAlign: "center", outline: "none", boxSizing: "border-box",
-              }}
-            />
-            {pwError && (
-              <p style={{ fontSize: "0.85rem", color: C.error, margin: 0 }}>
-                Incorrect code. Try again.
-              </p>
-            )}
-            <button type="submit" style={{
-              padding: "0.9rem 2rem",
-              background: `linear-gradient(135deg, ${C.gold}, ${C.orange})`,
-              color: "#fff", fontWeight: 700, fontSize: "1rem",
-              border: "none", borderRadius: "30px", cursor: "pointer",
-              letterSpacing: "0.04em",
-            }}>
-              Enter →
-            </button>
-          </form>
-        </div>
-      </div>
-    );
-  }
+  }, []);
 
   return (
     <div style={{ minHeight: "100vh", background: C.bg, color: C.white }}>

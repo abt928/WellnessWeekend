@@ -169,7 +169,7 @@ export default function Home() {
                 <a href="/earth-pass" style={{ display: "block", background: "rgba(201,152,63,0.1)", border: "1px solid rgba(201,152,63,0.4)", borderRadius: 12, padding: "1.1rem 1.25rem", textDecoration: "none" }}>
                   <p style={{ fontSize: "0.62rem", letterSpacing: "0.1em", textTransform: "uppercase", color: "rgba(201,152,63,0.9)", fontWeight: 700, marginBottom: "0.3rem" }}>Earth Pass</p>
                   <p style={{ fontFamily: "var(--font-display)", fontSize: "1.6rem", fontWeight: 800, color: "#fff", marginBottom: "0.2rem", lineHeight: 1 }}>$177</p>
-                  <p style={{ fontSize: "0.78rem", color: "rgba(255,255,255,0.4)" }}>10 spots · full access + camping →</p>
+                  <p style={{ fontSize: "0.78rem", color: "rgba(255,255,255,0.4)" }}>2 of 10 claimed · 8 spots left →</p>
                 </a>
                 <a href="/deposit" style={{ display: "block", background: "rgba(155,127,212,0.08)", border: "1px solid rgba(155,127,212,0.3)", borderRadius: 12, padding: "1.1rem 1.25rem", textDecoration: "none" }}>
                   <p style={{ fontSize: "0.62rem", letterSpacing: "0.1em", textTransform: "uppercase", color: "rgba(155,127,212,0.9)", fontWeight: 700, marginBottom: "0.3rem" }}>Hold a Package</p>

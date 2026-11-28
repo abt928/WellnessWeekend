@@ -14,7 +14,6 @@ export async function GET() {
       SELECT COUNT(*)::int AS count FROM orders
       WHERE status = 'completed'
         AND amount_cents = 17700
-        AND line_items::text ILIKE '%Earth Pass%'
     `;
     const sold = Number(count);
     return NextResponse.json({ remaining: Math.max(0, TOTAL - sold), total: TOTAL });

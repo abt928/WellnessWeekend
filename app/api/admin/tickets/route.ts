@@ -15,6 +15,21 @@ export async function GET(req: NextRequest) {
   try {
     const sql = neon(dbUrl);
 
+    await sql`
+      CREATE TABLE IF NOT EXISTS orders (
+        id SERIAL PRIMARY KEY,
+        square_payment_id TEXT UNIQUE NOT NULL,
+        square_order_id TEXT,
+        amount_cents INTEGER NOT NULL,
+        currency TEXT NOT NULL DEFAULT 'USD',
+        customer_email TEXT,
+        referral_code TEXT,
+        line_items TEXT,
+        status TEXT NOT NULL DEFAULT 'completed',
+        created_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
+      )
+    `.catch(() => {});
+
     const [weekendPasses, earthPasses, deposits, upgradeRequests] = await Promise.all([
       sql`
         SELECT id, square_payment_id, square_order_id, customer_email, amount_cents, created_at
@@ -22,14 +37,14 @@ export async function GET(req: NextRequest) {
         WHERE status = 'completed'
           AND amount_cents = 7700
         ORDER BY created_at DESC
-      `,
+      `.catch(() => [] as Record<string, unknown>[]),
       sql`
         SELECT id, square_payment_id, square_order_id, customer_email, amount_cents, created_at
         FROM orders
         WHERE status = 'completed'
           AND amount_cents = 17700
         ORDER BY created_at DESC
-      `,
+      `.catch(() => [] as Record<string, unknown>[]),
       sql`
         SELECT id, package_type, name, email, phone, created_at
         FROM package_deposits

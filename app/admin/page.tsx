@@ -1042,7 +1042,7 @@ function TicketsSection() {
       const d = await res.json();
       if (!res.ok) { setSyncResult(`Error: ${d.error}`); return; }
       setSyncResult(`✓ Synced — ${d.imported} imported, ${d.skipped} already in DB`);
-      if (d.imported > 0) loadTickets();
+      loadTickets();
     } catch {
       setSyncResult("Sync failed — check console");
     } finally {
@@ -1166,7 +1166,7 @@ function TicketsSection() {
         </table>
       </div>
 
-      <h3 style={{ fontSize: "0.9rem", color: "var(--ink-muted)", textTransform: "uppercase", letterSpacing: "0.1em", margin: "2rem 0 0.75rem" }}>Upgrade Pipeline ({data.upgradeRequests.length} requests)</h3>
+      <h3 style={{ fontSize: "0.9rem", color: "var(--ink-muted)", textTransform: "uppercase", letterSpacing: "0.1em", margin: "2rem 0 0.75rem" }}>Upgrade Pipeline ({(data.upgradeRequests ?? []).length} requests)</h3>
       <div className="admin-table-wrap">
         <table className="admin-table">
           <thead><tr>
@@ -1180,10 +1180,10 @@ function TicketsSection() {
             <th style={hcell}>Date</th>
           </tr></thead>
           <tbody>
-            {data.upgradeRequests.length === 0 && (
+            {(data.upgradeRequests ?? []).length === 0 && (
               <tr><td colSpan={8} style={{ ...cell, textAlign: "center", color: "var(--ink-muted)", padding: "2rem" }}>No upgrade requests yet</td></tr>
             )}
-            {data.upgradeRequests.map((r, i) => (
+            {(data.upgradeRequests ?? []).map((r, i) => (
               <tr key={r.id}>
                 <td style={cell}>{i + 1}</td>
                 <td style={cell}>{r.name}</td>

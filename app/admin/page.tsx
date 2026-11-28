@@ -1008,10 +1008,12 @@ function GiveawaySection() {
 
 interface TicketOrder { id: number; square_payment_id: string; square_order_id: string; customer_email: string; amount_cents: number; created_at: string; }
 interface DepositRow { id: number; package_type: string; name: string; email: string; phone: string | null; created_at: string; }
+interface UpgradeRow { id: number; name: string; email: string; current_pass: string | null; desired_upgrade: string; notes: string | null; status: string; created_at: string; }
 interface TicketsData {
   weekendPasses: TicketOrder[];
   earthPasses: TicketOrder[];
   deposits: DepositRow[];
+  upgradeRequests: UpgradeRow[];
   summary: { weekendPassCount: number; weekendPassRevenue: number; earthPassCount: number; earthPassRevenue: number; depositCount: number; depositRevenue: number };
 }
 
@@ -1157,6 +1159,39 @@ function TicketsSection() {
                 <td style={cell}>{DEPOSIT_LABEL[r.package_type] || r.package_type}</td>
                 <td style={cell}>${DEPOSIT_AMT[r.package_type] ?? 250}</td>
                 <td style={cell}>{r.phone || "—"}</td>
+                <td style={cell}>{fmtDate(r.created_at)}</td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+
+      <h3 style={{ fontSize: "0.9rem", color: "var(--ink-muted)", textTransform: "uppercase", letterSpacing: "0.1em", margin: "2rem 0 0.75rem" }}>Upgrade Pipeline ({data.upgradeRequests.length} requests)</h3>
+      <div className="admin-table-wrap">
+        <table className="admin-table">
+          <thead><tr>
+            <th style={hcell}>#</th>
+            <th style={hcell}>Name</th>
+            <th style={hcell}>Email</th>
+            <th style={hcell}>Has</th>
+            <th style={hcell}>Wants</th>
+            <th style={hcell}>Status</th>
+            <th style={hcell}>Notes</th>
+            <th style={hcell}>Date</th>
+          </tr></thead>
+          <tbody>
+            {data.upgradeRequests.length === 0 && (
+              <tr><td colSpan={8} style={{ ...cell, textAlign: "center", color: "var(--ink-muted)", padding: "2rem" }}>No upgrade requests yet</td></tr>
+            )}
+            {data.upgradeRequests.map((r, i) => (
+              <tr key={r.id}>
+                <td style={cell}>{i + 1}</td>
+                <td style={cell}>{r.name}</td>
+                <td style={cell}>{r.email}</td>
+                <td style={cell}>{r.current_pass || "—"}</td>
+                <td style={cell}>{r.desired_upgrade}</td>
+                <td style={{ ...cell, color: r.status === "converted" ? "#2a7a4f" : r.status === "contacted" ? "#C9983F" : "var(--ink-muted)", fontWeight: 600, fontSize: "0.78rem" }}>{r.status}</td>
+                <td style={{ ...cell, color: "var(--ink-muted)", fontSize: "0.78rem", maxWidth: "200px" }}>{r.notes || "—"}</td>
                 <td style={cell}>{fmtDate(r.created_at)}</td>
               </tr>
             ))}

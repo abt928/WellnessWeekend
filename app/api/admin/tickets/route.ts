@@ -15,13 +15,12 @@ export async function GET(req: NextRequest) {
   try {
     const sql = neon(dbUrl);
 
-    const [weekendPasses, earthPasses, deposits] = await Promise.all([
+    const [weekendPasses, earthPasses, deposits, upgradeRequests] = await Promise.all([
       sql`
         SELECT id, square_payment_id, square_order_id, customer_email, amount_cents, created_at
         FROM orders
         WHERE status = 'completed'
           AND amount_cents = 7700
-          AND line_items::text ILIKE '%Weekend Pass%'
         ORDER BY created_at DESC
       `,
       sql`
@@ -29,12 +28,16 @@ export async function GET(req: NextRequest) {
         FROM orders
         WHERE status = 'completed'
           AND amount_cents = 17700
-          AND line_items::text ILIKE '%Earth Pass%'
         ORDER BY created_at DESC
       `,
       sql`
         SELECT id, package_type, name, email, phone, created_at
         FROM package_deposits
+        ORDER BY created_at DESC
+      `.catch(() => [] as Record<string, unknown>[]),
+      sql`
+        SELECT id, name, email, current_pass, desired_upgrade, notes, status, created_at
+        FROM upgrade_requests
         ORDER BY created_at DESC
       `.catch(() => [] as Record<string, unknown>[]),
     ]);
@@ -43,6 +46,7 @@ export async function GET(req: NextRequest) {
       weekendPasses,
       earthPasses,
       deposits,
+      upgradeRequests,
       summary: {
         weekendPassCount: weekendPasses.length,
         weekendPassRevenue: weekendPasses.length * 77,

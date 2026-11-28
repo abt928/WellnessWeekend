@@ -1296,11 +1296,22 @@ const NAV_ITEMS: Array<{ section: Section; label: string; group?: string }> = [
   { section: "giveaway",     label: "Giveaway",          group: "Settings" },
 ];
 
-function Sidebar({ active, onSelect, role }: { active: Section; onSelect: (s: Section) => void; role: AdminRole }) {
+function Sidebar({ active, onSelect, role, mobileOpen, onMobileClose }: {
+  active: Section; onSelect: (s: Section) => void; role: AdminRole;
+  mobileOpen?: boolean; onMobileClose?: () => void;
+}) {
   let lastGroup: string | undefined = undefined;
 
+  function pick(s: Section) {
+    onSelect(s);
+    onMobileClose?.();
+  }
+
   return (
-    <aside className="admin-sidebar">
+    <aside className={`admin-sidebar${mobileOpen ? " open" : ""}`}>
+      <div className="admin-sidebar-close">
+        <button onClick={onMobileClose} aria-label="Close menu">✕</button>
+      </div>
       <div className="admin-sidebar-brand">
         <div className="admin-sidebar-logo">WW</div>
         <div>
@@ -1319,7 +1330,7 @@ function Sidebar({ active, onSelect, role }: { active: Section; onSelect: (s: Se
               )}
               <button
                 className={`admin-sidebar-item${active === item.section ? " active" : ""}`}
-                onClick={() => onSelect(item.section)}
+                onClick={() => pick(item.section)}
               >
                 {item.label}
               </button>
@@ -1342,6 +1353,7 @@ export default function AdminPage() {
   const [remember, setRemember] = useState(() => readSavedPassword().remembered);
   const [loginError, setLoginError] = useState("");
   const [loggingIn, setLoggingIn]   = useState(false);
+  const [mobileNavOpen, setMobileNavOpen] = useState(false);
 
   useEffect(() => {
     fetch("/api/admin/auth").then(async r => {
@@ -1420,9 +1432,23 @@ export default function AdminPage() {
     );
   }
 
+  const currentLabel = NAV_ITEMS.find(n => n.section === section)?.label ?? "Overview";
+
   return (
     <div className="admin-layout admin-shell">
-      <Sidebar active={section} onSelect={setSection} role={role} />
+      {/* Mobile top bar */}
+      <header className="admin-mobile-header">
+        <button className="admin-hamburger" onClick={() => setMobileNavOpen(true)} aria-label="Open menu">
+          <span /><span /><span />
+        </button>
+        <span className="admin-mobile-title">{currentLabel}</span>
+        <button className="admin-logout-btn" onClick={handleLogout} style={{ fontSize: "0.72rem", padding: "0.3rem 0.6rem" }}>Out</button>
+      </header>
+
+      {/* Overlay behind drawer */}
+      {mobileNavOpen && <div className="admin-mobile-overlay" onClick={() => setMobileNavOpen(false)} />}
+
+      <Sidebar active={section} onSelect={setSection} role={role} mobileOpen={mobileNavOpen} onMobileClose={() => setMobileNavOpen(false)} />
       <main className="admin-main">
         <div className="admin-main-header">
           <div style={{ fontSize: "0.78rem", color: "var(--ink-muted)" }}>

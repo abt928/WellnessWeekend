@@ -6372,7 +6372,122 @@ body {
   font-weight: 600;
 }
 
+/* ── Mobile nav ── */
+.admin-mobile-header { display: none; }
+.admin-mobile-overlay { display: none; }
+
 @media (max-width: 700px) {
-  .admin-sidebar { display: none; }
-  .admin-main    { margin-left: 0; }
+  /* Sidebar becomes a slide-in drawer */
+  .admin-sidebar {
+    position: fixed;
+    left: 0; top: 0; bottom: 0;
+    transform: translateX(-100%);
+    transition: transform 0.22s ease;
+    z-index: 200;
+    box-shadow: 4px 0 24px rgba(0,0,0,0.4);
+  }
+  .admin-sidebar.open {
+    transform: translateX(0);
+  }
+
+  /* Main shifts down to clear the mobile header */
+  .admin-main {
+    margin-left: 0;
+    padding-top: 56px;
+  }
+
+  /* Mobile top bar */
+  .admin-mobile-header {
+    display: flex;
+    position: fixed;
+    top: 0; left: 0; right: 0;
+    height: 56px;
+    background: #12111c;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 1rem;
+    z-index: 150;
+    border-bottom: 1px solid rgba(255,255,255,0.07);
+  }
+  .admin-mobile-title {
+    font-size: 0.82rem;
+    font-weight: 600;
+    color: #fff;
+    letter-spacing: 0.03em;
+  }
+  .admin-hamburger {
+    background: none;
+    border: none;
+    cursor: pointer;
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+    padding: 6px;
+  }
+  .admin-hamburger span {
+    display: block;
+    width: 22px;
+    height: 2px;
+    background: #fff;
+    border-radius: 2px;
+    transition: opacity 0.15s;
+  }
+
+  /* Dim overlay behind drawer */
+  .admin-mobile-overlay {
+    display: block;
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,0.55);
+    z-index: 199;
+    animation: fadeIn 0.18s ease;
+  }
+
+  /* Sidebar close button (mobile only) */
+  .admin-sidebar-close {
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    padding: 0.6rem 0.75rem 0;
+  }
+  .admin-sidebar-close button {
+    background: none;
+    border: none;
+    color: rgba(255,255,255,0.5);
+    font-size: 1.25rem;
+    cursor: pointer;
+    padding: 0.25rem 0.5rem;
+    line-height: 1;
+  }
+
+  /* Better touch targets for sidebar items */
+  .admin-sidebar-item {
+    padding: 0.85rem 1rem;
+    font-size: 0.9rem;
+  }
+
+  /* Main content padding */
+  .admin-main-content {
+    padding: 1rem;
+  }
+
+  /* Stat cards full-width stack */
+  .admin-main-header {
+    padding: 0.75rem 1rem;
+  }
+
+  /* Tables: horizontal scroll with momentum */
+  .admin-table-wrap {
+    -webkit-overflow-scrolling: touch;
+  }
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}
+
+@media (min-width: 701px) {
+  .admin-sidebar-close { display: none; }
+  .admin-mobile-header { display: none; }
 }

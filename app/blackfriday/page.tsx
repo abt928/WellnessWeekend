@@ -37,17 +37,17 @@ function useCountdown(target: Date) {
 const DEALS = [
   {
     key: "weekend",
-    emoji: "🏕",
+    emoji: "🎟",
     title: "Weekend Pass",
     price: "$77",
-    originalNote: "Full 3-day access",
+    originalNote: "Full 3-day grounds access",
     spots: 25,
     color: C.sage,
     colorBg: "rgba(94,138,106,0.1)",
     colorBorder: "rgba(94,138,106,0.4)",
     href: "/weekend-pass",
     cta: "Claim Weekend Pass →",
-    includes: ["All workshops, ceremonies & healing arts", "Grounds camping · Warrior Lodge", "Live music & ecstatic dance", "Morning movement & breathwork"],
+    includes: ["All workshops, ceremonies & healing arts", "Grounds access · Warrior Lodge (no overnight)", "Live music & ecstatic dance", "Morning movement & breathwork"],
   },
   {
     key: "earth",

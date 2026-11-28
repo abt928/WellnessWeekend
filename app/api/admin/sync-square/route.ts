@@ -42,26 +42,30 @@ export async function POST(req: NextRequest) {
 
     // Search Square for completed payments — look back 90 days
     const beginTime = new Date(Date.now() - 90 * 24 * 60 * 60 * 1000).toISOString();
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    const paymentsRes = await (client as any).payments.list({
-      beginTime,
-      sortOrder: "DESC",
-      limit: 100,
-    });
 
-    const payments = paymentsRes?.payments ?? [];
+    // Square SDK v44 returns an async iterable from payments.list()
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const iter = (client as any).payments.list({ beginTime, sortOrder: "DESC" });
+    const payments: Record<string, unknown>[] = [];
+    for await (const p of iter) {
+      payments.push(p);
+      if (payments.length >= 200) break;
+    }
     let imported = 0;
     let skipped = 0;
     const errors: string[] = [];
 
     for (const payment of payments) {
-      if (payment.status !== "COMPLETED") { skipped++; continue; }
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      const p = payment as any;
+      if (p.status !== "COMPLETED") { skipped++; continue; }
 
-      const paymentId: string = payment.id;
-      const orderId: string | undefined = payment.orderId;
-      const amountCents: number = Number(payment.amountMoney?.amount ?? 0);
-      const currency: string = payment.amountMoney?.currency ?? "USD";
-      const email: string | undefined = payment.buyerEmailAddress;
+      const paymentId: string = String(p.id ?? "");
+      if (!paymentId) { skipped++; continue; }
+      const orderId: string | undefined = p.orderId ?? p.order_id;
+      const amountCents: number = Number(p.amountMoney?.amount ?? p.amount_money?.amount ?? 0);
+      const currency: string = p.amountMoney?.currency ?? p.amount_money?.currency ?? "USD";
+      const email: string | undefined = p.buyerEmailAddress ?? p.buyer_email_address;
 
       // Check if already in DB
       const existing = await sql`SELECT id FROM orders WHERE square_payment_id = ${paymentId}`;
@@ -104,7 +108,7 @@ export async function POST(req: NextRequest) {
             ${referralCode},
             ${JSON.stringify(lineItems)},
             'completed',
-            ${payment.createdAt ?? new Date().toISOString()}
+            ${(p.createdAt ?? p.created_at ?? new Date().toISOString())}
           )
           ON CONFLICT (square_payment_id) DO NOTHING
         `;

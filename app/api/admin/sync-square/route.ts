@@ -43,14 +43,15 @@ export async function POST(req: NextRequest) {
     // Search Square for completed payments — look back 90 days
     const beginTime = new Date(Date.now() - 90 * 24 * 60 * 60 * 1000).toISOString();
 
-    // Square SDK v44 returns an async iterable from payments.list()
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    const iter = (client as any).payments.list({ beginTime, sortOrder: "DESC" });
-    const payments: Record<string, unknown>[] = [];
-    for await (const p of iter) {
-      payments.push(p);
-      if (payments.length >= 200) break;
-    }
+    const paymentsRes = await (client as any).payments.list({
+      beginTime,
+      sortOrder: "DESC",
+      limit: 100,
+    });
+    // SDK v44 wraps response in .result; handle both shapes
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const payments: any[] = paymentsRes?.result?.payments ?? paymentsRes?.payments ?? [];
     let imported = 0;
     let skipped = 0;
     const errors: string[] = [];

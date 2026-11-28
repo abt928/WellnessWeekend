@@ -1462,7 +1462,16 @@ export default function AdminPage() {
           {section === "guestlist"   && <GuestListSection />}
           {section === "newsletter"  && (
             <div style={{ padding: "2rem" }}>
-              <h1 style={{ fontFamily: "var(--font-display)", fontSize: "1.6rem", marginBottom: "2rem" }}>Newsletter</h1>
+              <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: "2rem", flexWrap: "wrap", gap: "1rem" }}>
+                <h1 style={{ fontFamily: "var(--font-display)", fontSize: "1.6rem", margin: 0 }}>Newsletter</h1>
+                <a
+                  href="/api/admin/export/newsletter"
+                  download
+                  style={{ padding: "0.5rem 1.1rem", background: "var(--surface-elevated)", border: "1px solid var(--line-medium)", borderRadius: "8px", fontSize: "0.78rem", fontWeight: 600, color: "var(--ink)", textDecoration: "none", letterSpacing: "0.03em" }}
+                >
+                  ↓ Download CSV
+                </a>
+              </div>
               <DataTab tableKey="newsletter" columns={["id", "email", "created_at"]} />
             </div>
           )}
